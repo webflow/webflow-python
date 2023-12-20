@@ -8,7 +8,7 @@ request and response fields, and offers both synchronous and asynchronous client
 
 ## Documentation
 
-API reference documentation is available [here](https://docs.metriport.com/home/welcome).
+API reference documentation is available [here](https://developers.webflow.com/reference/designer-api-reference).
 
 ## Installation
 
