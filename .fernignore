@@ -2,3 +2,6 @@
 
 README.md
 assets/
+
+src/webflow/client.py
+src/webflow/oauth.py

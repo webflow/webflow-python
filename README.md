@@ -26,7 +26,11 @@ Simply import `Webflow` and start making calls to our API.
 ```python
 from webflow.client import Webflow
 
-client = Webflow(access_token="YOUR_ACCESS_TOKEN")
+client = Webflow(
+  client_id="YOUR_CLIENT_ID",
+  client_secret="YOUR_CLIENT_SECRET",
+  code="YOUR_AUTHORIZATION_CODE"
+)
 site = client.sites.get("site-id")
 ```
 
@@ -38,7 +42,9 @@ calls to our API.
 from webflow.client import AsyncWebflow
 
 client = AsyncWebflow(
-    access_token="YOUR_ACCESS_TOKEN",
+  client_id="YOUR_CLIENT_ID",
+  client_secret="YOUR_CLIENT_SECRET", 
+  code="YOUR_AUTHORIZATION_CODE"
 )
 
 async def main() -> None:
@@ -46,6 +52,58 @@ async def main() -> None:
     print("Received site", site)
 
 asyncio.run(main())
+```
+
+## OAuth
+
+To implement OAuth, you'll need a registred Webflow App.
+
+### Step 1: Authorize URL 
+
+The first step in OAuth is to generate an authorization url. Use this URL 
+to fetch your authorization code. See the [docs](https://docs.developers.webflow.com/v1.0.0/docs/oauth#user-authorization
+for more details. 
+
+```python
+from webflow.oauth import authorize_url
+from webflow import OauthScope
+
+url = webflow.authorize_url({
+  client_id = "[CLIENT ID]",
+  scope = OauthScope.ReadUsers, # or [OauthScope.ReadUsers, OauthScope.WriteUsers]
+  state = "1234567890", # optional
+  redirect_uri = "https://my.server.com/oauth/callback", # optional
+});
+
+print(url)
+```
+
+### Step 2: Instantiate the client
+Pass in your `client_id`, `client_secret`, `authorization_code` when instantiating 
+the client. Our SDK handles generating an access token and passing that to every endpoint. 
+
+```python
+from webflow.client import Webflow
+
+client = Webflow(
+  client_id="YOUR_CLIENT_ID",
+  client_secret="YOUR_CLIENT_SECRET",
+  code="YOUR_AUTHORIZATION_CODE",
+  redirect_uri = "https://my.server.com/oauth/callback", # optional
+)
+```
+
+If you want to generate an access token yourself, simply import the 
+`get_access_token` function. 
+
+```python
+from webflow.oauth import get_access_token
+
+access_token = get_access_token(
+  client_id="YOUR_CLIENT_ID", 
+  client_secret="YOUR_CLIENT_SECRET", 
+  code="YOUR_AUTHORIZATION_CODE"
+  )
 ```
 
 ## Webflow Module
