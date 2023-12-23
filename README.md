@@ -61,7 +61,7 @@ To implement OAuth, you'll need a registred Webflow App.
 ### Step 1: Authorize URL 
 
 The first step in OAuth is to generate an authorization url. Use this URL 
-to fetch your authorization code. See the [docs](https://docs.developers.webflow.com/v1.0.0/docs/oauth#user-authorization
+to fetch your authorization code. See the [docs](https://docs.developers.webflow.com/v1.0.0/docs/oauth#user-authorization)
 for more details. 
 
 ```python
