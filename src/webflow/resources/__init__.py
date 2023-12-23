@@ -8,6 +8,7 @@ from . import (
     forms,
     inventory,
     orders,
+    packaqe,
     pages,
     products,
     scripts,
@@ -19,12 +20,14 @@ from . import (
 from .access_groups import AccessGroupsListRequestSort
 from .inventory import InventoryUpdateRequestInventoryType
 from .orders import OrdersListRequestStatus, OrdersRefundRequestReason
+from .packaqe import OauthScheme
 from .products import ProductsCreateSkuResponse
 from .users import UsersListRequestSort
 
 __all__ = [
     "AccessGroupsListRequestSort",
     "InventoryUpdateRequestInventoryType",
+    "OauthScheme",
     "OrdersListRequestStatus",
     "OrdersRefundRequestReason",
     "ProductsCreateSkuResponse",
@@ -36,6 +39,7 @@ __all__ = [
     "forms",
     "inventory",
     "orders",
+    "packaqe",
     "pages",
     "products",
     "scripts",
