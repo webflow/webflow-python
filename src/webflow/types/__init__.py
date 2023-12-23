@@ -49,6 +49,7 @@ from .inventory_item_inventory_type import InventoryItemInventoryType
 from .list_custom_code_blocks import ListCustomCodeBlocks
 from .missing_scopes import MissingScopes
 from .no_domains import NoDomains
+from .oauth_scope import OauthScope
 from .order import Order
 from .order_address import OrderAddress
 from .order_address_japan_type import OrderAddressJapanType
@@ -173,6 +174,7 @@ __all__ = [
     "ListCustomCodeBlocks",
     "MissingScopes",
     "NoDomains",
+    "OauthScope",
     "Order",
     "OrderAddress",
     "OrderAddressJapanType",
