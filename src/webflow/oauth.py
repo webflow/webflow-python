@@ -58,7 +58,7 @@ def authorize_url(
     if scope is not OMIT and isinstance(scope, str): 
         params["scope"] = scope.value
     elif scope is not OMIT: 
-        params["scope"] = ",".join([s.value for s in scope])  # type: ignore
+        params["scope"] = " ".join([s.value for s in scope])  # type: ignore
     return f"https://webflow.com/oauth/authorize?{urllib.parse.urlencode(params)}"
 
 
