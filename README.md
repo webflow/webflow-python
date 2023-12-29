@@ -70,7 +70,7 @@ from webflow import OauthScope
 
 url = authorize_url(
   client_id="[CLIENT ID]",
-  scope=OauthScope.ReadUsers, # or [OauthScope.ReadUsers, OauthScope.WriteUsers]
+  scope=OauthScope.USERS_READ, # or [OauthScope.USERS_READ, OauthScope.USERS_WRITE]
   state="1234567890", # optional
   redirect_uri="https://my.server.com/oauth/callback", # optional
 );
