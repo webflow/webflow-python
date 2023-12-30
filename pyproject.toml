@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "webflow"
-version = "0.1.0b1"
+version = "0.0.5"
 description = ""
 readme = "README.md"
 authors = []
