@@ -6,7 +6,6 @@ import httpx
 
 from .core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from .environment import WebflowEnvironment
-from .oauth import get_access_token
 from .resources.access_groups.client import AccessGroupsClient, AsyncAccessGroupsClient
 from .resources.assets.client import AssetsClient, AsyncAssetsClient
 from .resources.collections.client import AsyncCollectionsClient, CollectionsClient
@@ -27,22 +26,15 @@ class Webflow:
     def __init__(
         self,
         *,
-        client_id: str,
-        client_secret: str,
-        code: str,
-        redirect_uri: typing.Optional[str] = None,
+        base_url: typing.Optional[str] = None,
         environment: WebflowEnvironment = WebflowEnvironment.DEFAULT,
+        access_token: typing.Union[str, typing.Callable[[], str]],
         timeout: typing.Optional[float] = 60,
         httpx_client: typing.Optional[httpx.Client] = None
     ):
-        self._token = get_access_token(
-                client_id=client_id,
-                client_secret=client_secret,
-                code=code,
-                redirect_uri=redirect_uri)
         self._client_wrapper = SyncClientWrapper(
-            base_url=_get_base_url(base_url=None, environment=environment),
-            access_token=self._token,
+            base_url=_get_base_url(base_url=base_url, environment=environment),
+            access_token=access_token,
             httpx_client=httpx.Client(timeout=timeout) if httpx_client is None else httpx_client,
         )
         self.token = TokenClient(client_wrapper=self._client_wrapper)
@@ -65,22 +57,15 @@ class AsyncWebflow:
     def __init__(
         self,
         *,
-        client_id: str,
-        client_secret: str,
-        code: str,
-        redirect_uri: typing.Optional[str] = None,
+        base_url: typing.Optional[str] = None,
         environment: WebflowEnvironment = WebflowEnvironment.DEFAULT,
+        access_token: typing.Union[str, typing.Callable[[], str]],
         timeout: typing.Optional[float] = 60,
         httpx_client: typing.Optional[httpx.AsyncClient] = None
     ):
-        self._token = get_access_token(
-            client_id=client_id,
-            client_secret=client_secret,
-            code=code,
-            redirect_uri=redirect_uri)
         self._client_wrapper = AsyncClientWrapper(
-            base_url=_get_base_url(base_url=None, environment=environment),
-            access_token=self._token,
+            base_url=_get_base_url(base_url=base_url, environment=environment),
+            access_token=access_token,
             httpx_client=httpx.AsyncClient(timeout=timeout) if httpx_client is None else httpx_client,
         )
         self.token = AsyncTokenClient(client_wrapper=self._client_wrapper)
