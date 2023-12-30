@@ -1,6 +1,7 @@
 # Webflow Python Library
 
 [![fern shield](https://img.shields.io/badge/%F0%9F%8C%BF-SDK%20generated%20by%20Fern-brightgreen)](https://github.com/fern-api/fern)
+[![pypi](https://img.shields.io/pypi/v/webflow.svg)](https://pypi.python.org/pypi/webflow)
 
 The Webflow Python Library provides convenient access to the Webflow API from 
 applications written in Python. The library includes type definitions for all 
