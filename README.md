@@ -68,12 +68,12 @@ for more details.
 from webflow.oauth import authorize_url
 from webflow import OauthScope
 
-url = webflow.authorize_url({
-  client_id = "[CLIENT ID]",
-  scope = OauthScope.ReadUsers, # or [OauthScope.ReadUsers, OauthScope.WriteUsers]
-  state = "1234567890", # optional
-  redirect_uri = "https://my.server.com/oauth/callback", # optional
-});
+url = authorize_url(
+  client_id="[CLIENT ID]",
+  scope=OauthScope.USERS_READ, # or [OauthScope.USERS_READ, OauthScope.USERS_WRITE]
+  state="1234567890", # optional
+  redirect_uri="https://my.server.com/oauth/callback", # optional
+);
 
 print(url)
 ```
@@ -89,7 +89,7 @@ client = Webflow(
   client_id="YOUR_CLIENT_ID",
   client_secret="YOUR_CLIENT_SECRET",
   code="YOUR_AUTHORIZATION_CODE",
-  redirect_uri = "https://my.server.com/oauth/callback", # optional
+  redirect_uri="https://my.server.com/oauth/callback", # optional
 )
 ```
 
@@ -131,7 +131,7 @@ except webflow.BadRequestError as e: # Handle specific error
 ## Advanced
 
 ### Timeouts
-By default requests time out after 60 seconds. You can configure this with a 
+By default, requests time out after 60 seconds. You can configure this with a 
 timeout option, which accepts a float.
 
 ```python
@@ -144,7 +144,7 @@ client = Webflow(
 ```
 
 ### Custom HTTP client
-You can override the httpx client to customize it for your use case. Some common usecases 
+You can override the httpx client to customize it for your use case. Some common use-cases 
 include support for proxies and transports.
 
 ```python
