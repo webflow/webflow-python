@@ -27,9 +27,7 @@ Simply import `Webflow` and start making calls to our API.
 from webflow.client import Webflow
 
 client = Webflow(
-  client_id="YOUR_CLIENT_ID",
-  client_secret="YOUR_CLIENT_SECRET",
-  code="YOUR_AUTHORIZATION_CODE"
+  access_token="YOUR_ACCESS_TOKEN"
 )
 site = client.sites.get("site-id")
 ```
@@ -42,9 +40,7 @@ calls to our API.
 from webflow.client import AsyncWebflow
 
 client = AsyncWebflow(
-  client_id="YOUR_CLIENT_ID",
-  client_secret="YOUR_CLIENT_SECRET", 
-  code="YOUR_AUTHORIZATION_CODE"
+  access_token="YOUR_ACCESS_TOKEN"
 )
 
 async def main() -> None:
@@ -69,32 +65,18 @@ from webflow.oauth import authorize_url
 from webflow import OauthScope
 
 url = authorize_url(
-  client_id="[CLIENT ID]",
+  client_id="YOUR_CLIENT_ID",
   scope=OauthScope.USERS_READ, # or [OauthScope.USERS_READ, OauthScope.USERS_WRITE]
   state="1234567890", # optional
   redirect_uri="https://my.server.com/oauth/callback", # optional
-);
+)
 
 print(url)
 ```
 
-### Step 2: Instantiate the client
-Pass in your `client_id`, `client_secret`, `authorization_code` when instantiating 
-the client. Our SDK handles generating an access token and passing that to every endpoint. 
-
-```python
-from webflow.client import Webflow
-
-client = Webflow(
-  client_id="YOUR_CLIENT_ID",
-  client_secret="YOUR_CLIENT_SECRET",
-  code="YOUR_AUTHORIZATION_CODE",
-  redirect_uri="https://my.server.com/oauth/callback", # optional
-)
-```
-
-If you want to generate an access token yourself, simply import the 
-`get_access_token` function. 
+### Step 2: Retrieve your acccess token
+Use the `get_access_token` function and pass in your `client_id`, 
+`client_secret`, and `authorization_code`. 
 
 ```python
 from webflow.oauth import get_access_token
@@ -104,6 +86,17 @@ access_token = get_access_token(
   client_secret="YOUR_CLIENT_SECRET", 
   code="YOUR_AUTHORIZATION_CODE"
   )
+```
+
+### Step 3: Instantiate the client
+Instantiate the client using your access_token. 
+
+```python
+from webflow.client import Webflow
+
+client = Webflow(
+  access_token=access_token
+)
 ```
 
 ## Webflow Module
