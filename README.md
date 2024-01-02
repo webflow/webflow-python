@@ -3,13 +3,15 @@
 [![fern shield](https://img.shields.io/badge/%F0%9F%8C%BF-SDK%20generated%20by%20Fern-brightgreen)](https://github.com/fern-api/fern)
 [![pypi](https://img.shields.io/pypi/v/webflow.svg)](https://pypi.python.org/pypi/webflow)
 
-The Webflow Python Library provides convenient access to the Webflow API from 
-applications written in Python. The library includes type definitions for all 
+The Webflow Python Library provides convenient access to the [Webflow Data API](https://developers.webflow.com/reference/rest-introduction) from 
+applications written in Python. 
+
+The library includes type definitions for all 
 request and response fields, and offers both synchronous and asynchronous clients powered by httpx.
 
 ## Documentation
 
-API reference documentation is available [here](https://developers.webflow.com/reference/designer-api-reference).
+Explore the API reference documentation [here](https://developers.webflow.com/reference/rest-introduction).
 
 ## Installation
 
@@ -53,12 +55,12 @@ asyncio.run(main())
 
 ## OAuth
 
-To implement OAuth, you'll need a registred Webflow App.
+To implement OAuth, you'll need to [register a Webflow App in your Workspace](https://developers.webflow.com/reference/authorization)
 
 ### Step 1: Authorize URL 
 
-The first step in OAuth is to generate an authorization url. Use this URL 
-to fetch your authorization code. See the [docs](https://docs.developers.webflow.com/v1.0.0/docs/oauth#user-authorization)
+The first step in OAuth is to generate an Authorization URL. Use this URL 
+to fetch your Authorization Code. See the [docs](https://docs.developers.webflow.com/v1.0.0/docs/oauth#user-authorization)
 for more details. 
 
 ```python
@@ -90,7 +92,7 @@ access_token = get_access_token(
 ```
 
 ### Step 3: Instantiate the client
-Instantiate the client using your access_token. 
+Instantiate the client using your `access_token`. 
 
 ```python
 from webflow.client import Webflow
@@ -101,13 +103,13 @@ client = Webflow(
 ```
 
 ## Webflow Module
-All of the models are nested within the Webflow module. Let Intellisense 
+All of the models are nested within the Webflow module. Let IntelliSense 
 guide you! 
 
 ![Alt text](assets/module.png)
 
 ## Exception Handling
-All errors thrown by the SDK will be sublcasses of [`ApiError`](./src/webflow/core/api_error.py).
+All errors thrown by the SDK will be subclasses of [`ApiError`](./src/webflow/core/api_error.py).
 
 ```python
 import webflow
@@ -138,7 +140,7 @@ client = Webflow(
 ```
 
 ### Custom HTTP client
-You can override the httpx client to customize it for your use case. Some common use-cases 
+You can override the httpx client to customize it for your use-case. Some common use-cases 
 include support for proxies and transports.
 
 ```python
@@ -156,9 +158,10 @@ client = Webflow(
 
 ## Beta Status
 
-This SDK is in beta, and there may be breaking changes between versions without a major 
-version update. Therefore, we recommend pinning the package version to a specific version. 
-This way, you can install the same version each time without breaking changes.
+This SDK is in **Preview**, and there may be breaking changes between versions without a major 
+version update. 
+
+To ensure a reproducible environment (and minimize risk of breaking changes), we recommend pinning a specific package version.
 
 ## Contributing
 
