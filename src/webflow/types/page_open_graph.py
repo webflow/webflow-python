@@ -16,13 +16,18 @@ class PageOpenGraph(pydantic.BaseModel):
     Open Graph fields for the Page
     """
 
-    title: typing.Optional[str] = pydantic.Field(description="The title supplied to Open Graph annotations")
-    title_copied: typing.Optional[bool] = pydantic.Field(
-        alias="titleCopied", description="Indicates the Open Graph title was copied from the SEO title"
+    title: typing.Optional[str] = pydantic.Field(
+        default=None, description="The title supplied to Open Graph annotations"
     )
-    description: typing.Optional[str] = pydantic.Field(description="The description supplied to Open Graph annotations")
+    title_copied: typing.Optional[bool] = pydantic.Field(
+        alias="titleCopied", default=None, description="Indicates the Open Graph title was copied from the SEO title"
+    )
+    description: typing.Optional[str] = pydantic.Field(
+        default=None, description="The description supplied to Open Graph annotations"
+    )
     description_copied: typing.Optional[bool] = pydantic.Field(
         alias="descriptionCopied",
+        default=None,
         description="Indicates the Open Graph description was copied from the SEO description",
     )
 

@@ -17,17 +17,19 @@ class Sku(pydantic.BaseModel):
     The SKU object
     """
 
-    id: typing.Optional[str] = pydantic.Field(description="Unique identifier for the Product")
+    id: typing.Optional[str] = pydantic.Field(default=None, description="Unique identifier for the Product")
     last_published: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="lastPublished", description="The date the Product was last published"
+        alias="lastPublished", default=None, description="The date the Product was last published"
     )
     last_updated: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="lastUpdated", description="The date the Product was last updated"
+        alias="lastUpdated", default=None, description="The date the Product was last updated"
     )
     created_on: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="createdOn", description="The date the Product was created"
+        alias="createdOn", default=None, description="The date the Product was created"
     )
-    field_data: typing.Optional[SkuFieldData] = pydantic.Field(alias="fieldData")
+    field_data: typing.Optional[SkuFieldData] = pydantic.Field(
+        alias="fieldData", default=None, description="Standard and Custom fields for a SKU"
+    )
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

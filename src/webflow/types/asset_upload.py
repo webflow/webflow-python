@@ -14,25 +14,28 @@ except ImportError:
 
 class AssetUpload(pydantic.BaseModel):
     upload_details: typing.Optional[AssetUploadUploadDetails] = pydantic.Field(
-        alias="uploadDetails", description="Metadata for uploading the asset binary"
+        alias="uploadDetails", default=None, description="Metadata for uploading the asset binary"
     )
-    id: typing.Optional[str]
-    content_type: typing.Optional[str] = pydantic.Field(alias="contentType")
+    id: typing.Optional[str] = None
+    content_type: typing.Optional[str] = pydantic.Field(alias="contentType", default=None)
     parent_folder: typing.Optional[str] = pydantic.Field(
-        alias="parentFolder", description="Parent folder for the asset"
+        alias="parentFolder", default=None, description="Parent folder for the asset"
     )
-    hosted_url: typing.Optional[str] = pydantic.Field(alias="hostedUrl", description="Represents the link to the asset")
-    upload_url: typing.Optional[str] = pydantic.Field(alias="uploadUrl")
-    asset_url: typing.Optional[str] = pydantic.Field(alias="assetUrl", description="S3 link to the asset")
+    hosted_url: typing.Optional[str] = pydantic.Field(
+        alias="hostedUrl", default=None, description="Represents the link to the asset"
+    )
+    upload_url: typing.Optional[str] = pydantic.Field(alias="uploadUrl", default=None)
+    asset_url: typing.Optional[str] = pydantic.Field(alias="assetUrl", default=None, description="S3 link to the asset")
     original_file_name: typing.Optional[str] = pydantic.Field(
         alias="originalFileName",
+        default=None,
         description="Original file name when uploaded. If not specified at time of upload, it may be extracted from the raw file name",
     )
     last_updated: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="lastUpdated", description="Date the asset metadata was last updated"
+        alias="lastUpdated", default=None, description="Date the asset metadata was last updated"
     )
     created_on: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="createdOn", description="Date the asset metadata was created"
+        alias="createdOn", default=None, description="Date the asset metadata was created"
     )
 
     def json(self, **kwargs: typing.Any) -> str:

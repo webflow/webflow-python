@@ -17,23 +17,25 @@ class AuthorizationAuthorization(pydantic.BaseModel):
     The Authorization object
     """
 
-    id: typing.Optional[str] = pydantic.Field(description="The unique id of the Authorization instance")
+    id: typing.Optional[str] = pydantic.Field(default=None, description="The unique id of the Authorization instance")
     created_on: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="createdOn", description="The date the Authorization was created"
+        alias="createdOn", default=None, description="The date the Authorization was created"
     )
     last_used: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="lastUsed", description="The date the Authorization was last used"
+        alias="lastUsed", default=None, description="The date the Authorization was last used"
     )
     grant_type: typing.Optional[str] = pydantic.Field(
-        alias="grantType", description="The grant type of the Authorization"
+        alias="grantType", default=None, description="The grant type of the Authorization"
     )
     rate_limit: typing.Optional[int] = pydantic.Field(
-        alias="rateLimit", description="The default rate limit for the Authorization (requests/min)"
+        alias="rateLimit", default=None, description="The default rate limit for the Authorization (requests/min)"
     )
     scope: typing.Optional[str] = pydantic.Field(
-        description="Comma separted list of OAuth scopes corresponding to the Authorization"
+        default=None, description="Comma separted list of OAuth scopes corresponding to the Authorization"
     )
-    authorized_to: typing.Optional[AuthorizationAuthorizationAuthorizedTo] = pydantic.Field(alias="authorizedTo")
+    authorized_to: typing.Optional[AuthorizationAuthorizationAuthorizedTo] = pydantic.Field(
+        alias="authorizedTo", default=None
+    )
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

@@ -12,11 +12,15 @@ except ImportError:
 
 
 class Application(pydantic.BaseModel):
-    id: typing.Optional[str] = pydantic.Field(description="Unique identifier for the Application")
-    description: typing.Optional[str] = pydantic.Field(description="Application description provided by the developer")
-    homepage: typing.Optional[str] = pydantic.Field(description="Application homepage URL provided by the developer")
+    id: typing.Optional[str] = pydantic.Field(default=None, description="Unique identifier for the Application")
+    description: typing.Optional[str] = pydantic.Field(
+        default=None, description="Application description provided by the developer"
+    )
+    homepage: typing.Optional[str] = pydantic.Field(
+        default=None, description="Application homepage URL provided by the developer"
+    )
     display_name: typing.Optional[str] = pydantic.Field(
-        alias="displayName", description="Application name provided by the developer"
+        alias="displayName", default=None, description="Application name provided by the developer"
     )
 
     def json(self, **kwargs: typing.Any) -> str:

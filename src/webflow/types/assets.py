@@ -13,7 +13,7 @@ except ImportError:
 
 
 class Assets(pydantic.BaseModel):
-    assets: typing.Optional[typing.List[Asset]]
+    assets: typing.Optional[typing.List[Asset]] = None
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

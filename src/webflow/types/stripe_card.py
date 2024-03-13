@@ -19,11 +19,17 @@ class StripeCard(pydantic.BaseModel):
     """
 
     last_4: typing.Optional[str] = pydantic.Field(
-        alias="last4", description="The last 4 digits on the card as a string"
+        alias="last4", default=None, description="The last 4 digits on the card as a string"
     )
-    brand: typing.Optional[StripeCardBrand] = pydantic.Field(description="The card's brand (ie. credit card network)")
-    owner_name: typing.Optional[str] = pydantic.Field(alias="ownerName", description="The name on the card.")
-    expires: typing.Optional[StripeCardExpires] = pydantic.Field(description="The card's expiration date.")
+    brand: typing.Optional[StripeCardBrand] = pydantic.Field(
+        default=None, description="The card's brand (ie. credit card network)"
+    )
+    owner_name: typing.Optional[str] = pydantic.Field(
+        alias="ownerName", default=None, description="The name on the card."
+    )
+    expires: typing.Optional[StripeCardExpires] = pydantic.Field(
+        default=None, description="The card's expiration date."
+    )
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

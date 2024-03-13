@@ -6,6 +6,9 @@ from json.decoder import JSONDecodeError
 
 from ...core.api_error import ApiError
 from ...core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
+from ...core.jsonable_encoder import jsonable_encoder
+from ...core.remove_none_from_dict import remove_none_from_dict
+from ...core.request_options import RequestOptions
 from ...errors.bad_request_error import BadRequestError
 from ...errors.conflict_error import ConflictError
 from ...errors.forbidden_error import ForbiddenError
@@ -25,7 +28,9 @@ class EcommerceClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def get_settings(self, site_id: str) -> EcommerceSettings:
+    def get_settings(
+        self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> EcommerceSettings:
         """
         Retrieve ecommerce settings for a site.
 
@@ -33,6 +38,8 @@ class EcommerceClient:
 
         Parameters:
             - site_id: str. Unique identifier for a Site
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import Webflow
 
@@ -40,14 +47,28 @@ class EcommerceClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.ecommerce.get_settings(
-            site_id="site-id",
+            site_id="site_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/ecommerce/settings"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"sites/{jsonable_encoder(site_id)}/ecommerce/settings"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(EcommerceSettings, _response.json())  # type: ignore
@@ -76,7 +97,9 @@ class AsyncEcommerceClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def get_settings(self, site_id: str) -> EcommerceSettings:
+    async def get_settings(
+        self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> EcommerceSettings:
         """
         Retrieve ecommerce settings for a site.
 
@@ -84,6 +107,8 @@ class AsyncEcommerceClient:
 
         Parameters:
             - site_id: str. Unique identifier for a Site
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import AsyncWebflow
 
@@ -91,14 +116,28 @@ class AsyncEcommerceClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.ecommerce.get_settings(
-            site_id="site-id",
+            site_id="site_id",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/ecommerce/settings"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"sites/{jsonable_encoder(site_id)}/ecommerce/settings"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(EcommerceSettings, _response.json())  # type: ignore

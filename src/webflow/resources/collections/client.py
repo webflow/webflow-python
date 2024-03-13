@@ -7,6 +7,8 @@ from json.decoder import JSONDecodeError
 from ...core.api_error import ApiError
 from ...core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ...core.jsonable_encoder import jsonable_encoder
+from ...core.remove_none_from_dict import remove_none_from_dict
+from ...core.request_options import RequestOptions
 from ...errors.bad_request_error import BadRequestError
 from ...errors.internal_server_error import InternalServerError
 from ...errors.not_found_error import NotFoundError
@@ -32,12 +34,14 @@ class CollectionsClient:
         self.fields = FieldsClient(client_wrapper=self._client_wrapper)
         self.items = ItemsClient(client_wrapper=self._client_wrapper)
 
-    def list(self, site_id: str) -> CollectionList:
+    def list(self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> CollectionList:
         """
         List of all Collections within a Site. </br></br> Required scope | `cms:read`
 
         Parameters:
             - site_id: str. Unique identifier for a Site
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import Webflow
 
@@ -45,14 +49,28 @@ class CollectionsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.collections.list(
-            site_id="site-id",
+            site_id="site_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/collections"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"sites/{jsonable_encoder(site_id)}/collections"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(CollectionList, _response.json())  # type: ignore
@@ -73,7 +91,13 @@ class CollectionsClient:
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
     def create(
-        self, site_id: str, *, display_name: str, singular_name: str, slug: typing.Optional[str] = OMIT
+        self,
+        site_id: str,
+        *,
+        display_name: str,
+        singular_name: str,
+        slug: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> Collection:
         """
         Create a Collection for a site. </br></br> Required scope | `cms:write`
@@ -86,16 +110,49 @@ class CollectionsClient:
             - singular_name: str. Singular name of each item.
 
             - slug: typing.Optional[str]. Part of a URL that identifier
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
+        ---
+        from webflow.client import Webflow
+
+        client = Webflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+        client.collections.create(
+            site_id="site_id",
+            display_name="Blog Posts",
+            singular_name="Blog Post",
+            slug="posts",
+        )
         """
         _request: typing.Dict[str, typing.Any] = {"displayName": display_name, "singularName": singular_name}
         if slug is not OMIT:
             _request["slug"] = slug
         _response = self._client_wrapper.httpx_client.request(
             "POST",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/collections"),
-            json=jsonable_encoder(_request),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"sites/{jsonable_encoder(site_id)}/collections"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(_request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(_request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(Collection, _response.json())  # type: ignore
@@ -115,12 +172,14 @@ class CollectionsClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get(self, collection_id: str) -> Collection:
+    def get(self, collection_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> Collection:
         """
         Get the full details of a collection from its ID. </br></br> Required scope | `cms:read`
 
         Parameters:
             - collection_id: str. Unique identifier for a Collection
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import Webflow
 
@@ -128,14 +187,28 @@ class CollectionsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.collections.get(
-            collection_id="collection-id",
+            collection_id="collection_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"collections/{collection_id}"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"collections/{jsonable_encoder(collection_id)}"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(Collection, _response.json())  # type: ignore
@@ -155,12 +228,14 @@ class CollectionsClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def delete_collection(self, collection_id: str) -> None:
+    def delete_collection(self, collection_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
         """
         Delete a collection using its ID. </br></br> Required scope | `cms:write`
 
         Parameters:
             - collection_id: str. Unique identifier for a Collection
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import Webflow
 
@@ -168,14 +243,28 @@ class CollectionsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.collections.delete_collection(
-            collection_id="collection-id",
+            collection_id="collection_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             "DELETE",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"collections/{collection_id}"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"collections/{jsonable_encoder(collection_id)}"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return
@@ -195,7 +284,9 @@ class CollectionsClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def delete(self, collection_id: str, field_id: str) -> None:
+    def delete(
+        self, collection_id: str, field_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> None:
         """
         Delete a custom field in a collection. This endpoint does not currently support bulk deletion. </br></br> Required scope | `cms:write`
 
@@ -203,6 +294,8 @@ class CollectionsClient:
             - collection_id: str. Unique identifier for a Collection
 
             - field_id: str. Unique identifier for a Field in a collection
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import Webflow
 
@@ -210,17 +303,30 @@ class CollectionsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.collections.delete(
-            collection_id="collection-id",
-            field_id="field-id",
+            collection_id="collection_id",
+            field_id="field_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             "DELETE",
             urllib.parse.urljoin(
-                f"{self._client_wrapper.get_base_url()}/", f"collections/{collection_id}/fields/{field_id}"
+                f"{self._client_wrapper.get_base_url()}/",
+                f"collections/{jsonable_encoder(collection_id)}/fields/{jsonable_encoder(field_id)}",
             ),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return
@@ -247,12 +353,14 @@ class AsyncCollectionsClient:
         self.fields = AsyncFieldsClient(client_wrapper=self._client_wrapper)
         self.items = AsyncItemsClient(client_wrapper=self._client_wrapper)
 
-    async def list(self, site_id: str) -> CollectionList:
+    async def list(self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> CollectionList:
         """
         List of all Collections within a Site. </br></br> Required scope | `cms:read`
 
         Parameters:
             - site_id: str. Unique identifier for a Site
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import AsyncWebflow
 
@@ -260,14 +368,28 @@ class AsyncCollectionsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.collections.list(
-            site_id="site-id",
+            site_id="site_id",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/collections"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"sites/{jsonable_encoder(site_id)}/collections"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(CollectionList, _response.json())  # type: ignore
@@ -288,7 +410,13 @@ class AsyncCollectionsClient:
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
     async def create(
-        self, site_id: str, *, display_name: str, singular_name: str, slug: typing.Optional[str] = OMIT
+        self,
+        site_id: str,
+        *,
+        display_name: str,
+        singular_name: str,
+        slug: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> Collection:
         """
         Create a Collection for a site. </br></br> Required scope | `cms:write`
@@ -301,16 +429,49 @@ class AsyncCollectionsClient:
             - singular_name: str. Singular name of each item.
 
             - slug: typing.Optional[str]. Part of a URL that identifier
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
+        ---
+        from webflow.client import AsyncWebflow
+
+        client = AsyncWebflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+        await client.collections.create(
+            site_id="site_id",
+            display_name="Blog Posts",
+            singular_name="Blog Post",
+            slug="posts",
+        )
         """
         _request: typing.Dict[str, typing.Any] = {"displayName": display_name, "singularName": singular_name}
         if slug is not OMIT:
             _request["slug"] = slug
         _response = await self._client_wrapper.httpx_client.request(
             "POST",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/collections"),
-            json=jsonable_encoder(_request),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"sites/{jsonable_encoder(site_id)}/collections"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(_request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(_request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(Collection, _response.json())  # type: ignore
@@ -330,12 +491,14 @@ class AsyncCollectionsClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def get(self, collection_id: str) -> Collection:
+    async def get(self, collection_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> Collection:
         """
         Get the full details of a collection from its ID. </br></br> Required scope | `cms:read`
 
         Parameters:
             - collection_id: str. Unique identifier for a Collection
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import AsyncWebflow
 
@@ -343,14 +506,28 @@ class AsyncCollectionsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.collections.get(
-            collection_id="collection-id",
+            collection_id="collection_id",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"collections/{collection_id}"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"collections/{jsonable_encoder(collection_id)}"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(Collection, _response.json())  # type: ignore
@@ -370,12 +547,16 @@ class AsyncCollectionsClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def delete_collection(self, collection_id: str) -> None:
+    async def delete_collection(
+        self, collection_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> None:
         """
         Delete a collection using its ID. </br></br> Required scope | `cms:write`
 
         Parameters:
             - collection_id: str. Unique identifier for a Collection
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import AsyncWebflow
 
@@ -383,14 +564,28 @@ class AsyncCollectionsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.collections.delete_collection(
-            collection_id="collection-id",
+            collection_id="collection_id",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
             "DELETE",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"collections/{collection_id}"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"collections/{jsonable_encoder(collection_id)}"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return
@@ -410,7 +605,9 @@ class AsyncCollectionsClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def delete(self, collection_id: str, field_id: str) -> None:
+    async def delete(
+        self, collection_id: str, field_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> None:
         """
         Delete a custom field in a collection. This endpoint does not currently support bulk deletion. </br></br> Required scope | `cms:write`
 
@@ -418,6 +615,8 @@ class AsyncCollectionsClient:
             - collection_id: str. Unique identifier for a Collection
 
             - field_id: str. Unique identifier for a Field in a collection
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import AsyncWebflow
 
@@ -425,17 +624,30 @@ class AsyncCollectionsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.collections.delete(
-            collection_id="collection-id",
-            field_id="field-id",
+            collection_id="collection_id",
+            field_id="field_id",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
             "DELETE",
             urllib.parse.urljoin(
-                f"{self._client_wrapper.get_base_url()}/", f"collections/{collection_id}/fields/{field_id}"
+                f"{self._client_wrapper.get_base_url()}/",
+                f"collections/{jsonable_encoder(collection_id)}/fields/{jsonable_encoder(field_id)}",
             ),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return

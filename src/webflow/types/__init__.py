@@ -25,6 +25,7 @@ from .collection_list_array_item import CollectionListArrayItem
 from .custom_code_block import CustomCodeBlock
 from .custom_code_block_type import CustomCodeBlockType
 from .custom_code_response import CustomCodeResponse
+from .dom import Dom
 from .domain import Domain
 from .duplicate_user_email import DuplicateUserEmail
 from .ecommerce_settings import EcommerceSettings
@@ -43,12 +44,17 @@ from .form_submission import FormSubmission
 from .form_submission_list import FormSubmissionList
 from .form_submission_trigger import FormSubmissionTrigger
 from .form_submission_trigger_payload import FormSubmissionTriggerPayload
+from .image_node import ImageNode
 from .invalid_domain import InvalidDomain
+from .invalid_scopes import InvalidScopes
 from .inventory_item import InventoryItem
 from .inventory_item_inventory_type import InventoryItemInventoryType
 from .list_custom_code_blocks import ListCustomCodeBlocks
 from .missing_scopes import MissingScopes
 from .no_domains import NoDomains
+from .node import Node
+from .node_type import NodeType
+from .not_enterprise_plan_site import NotEnterprisePlanSite
 from .oauth_scope import OauthScope
 from .order import Order
 from .order_address import OrderAddress
@@ -84,6 +90,8 @@ from .product import Product
 from .product_and_sk_us import ProductAndSkUs
 from .product_and_sk_us_list import ProductAndSkUsList
 from .product_field_data import ProductFieldData
+from .product_field_data_ec_product_type import ProductFieldDataEcProductType
+from .product_field_data_tax_category import ProductFieldDataTaxCategory
 from .publish_status import PublishStatus
 from .published_items import PublishedItems
 from .published_site import PublishedSite
@@ -95,12 +103,17 @@ from .script_apply_location import ScriptApplyLocation
 from .site import Site
 from .site_activity_log_item import SiteActivityLogItem
 from .site_activity_log_item_resource_operation import SiteActivityLogItemResourceOperation
+from .site_activity_log_item_user import SiteActivityLogItemUser
 from .site_activity_log_response import SiteActivityLogResponse
 from .site_publish import SitePublish
 from .site_publish_payload import SitePublishPayload
 from .sites import Sites
 from .sku import Sku
 from .sku_field_data import SkuFieldData
+from .sku_field_data_compare_at_price import SkuFieldDataCompareAtPrice
+from .sku_field_data_ec_sku_billing_method import SkuFieldDataEcSkuBillingMethod
+from .sku_field_data_ec_sku_subscription_plan import SkuFieldDataEcSkuSubscriptionPlan
+from .sku_field_data_ec_sku_subscription_plan_interval import SkuFieldDataEcSkuSubscriptionPlanInterval
 from .sku_field_data_price import SkuFieldDataPrice
 from .sku_property_list import SkuPropertyList
 from .sku_property_list_enum_item import SkuPropertyListEnumItem
@@ -109,6 +122,7 @@ from .stripe_card import StripeCard
 from .stripe_card_brand import StripeCardBrand
 from .stripe_card_expires import StripeCardExpires
 from .stripe_details import StripeDetails
+from .text_node import TextNode
 from .trigger_type import TriggerType
 from .user import User
 from .user_access_groups_item import UserAccessGroupsItem
@@ -150,6 +164,7 @@ __all__ = [
     "CustomCodeBlock",
     "CustomCodeBlockType",
     "CustomCodeResponse",
+    "Dom",
     "Domain",
     "DuplicateUserEmail",
     "EcommerceSettings",
@@ -168,12 +183,17 @@ __all__ = [
     "FormSubmissionList",
     "FormSubmissionTrigger",
     "FormSubmissionTriggerPayload",
+    "ImageNode",
     "InvalidDomain",
+    "InvalidScopes",
     "InventoryItem",
     "InventoryItemInventoryType",
     "ListCustomCodeBlocks",
     "MissingScopes",
     "NoDomains",
+    "Node",
+    "NodeType",
+    "NotEnterprisePlanSite",
     "OauthScope",
     "Order",
     "OrderAddress",
@@ -209,6 +229,8 @@ __all__ = [
     "ProductAndSkUs",
     "ProductAndSkUsList",
     "ProductFieldData",
+    "ProductFieldDataEcProductType",
+    "ProductFieldDataTaxCategory",
     "PublishStatus",
     "PublishedItems",
     "PublishedSite",
@@ -220,12 +242,17 @@ __all__ = [
     "Site",
     "SiteActivityLogItem",
     "SiteActivityLogItemResourceOperation",
+    "SiteActivityLogItemUser",
     "SiteActivityLogResponse",
     "SitePublish",
     "SitePublishPayload",
     "Sites",
     "Sku",
     "SkuFieldData",
+    "SkuFieldDataCompareAtPrice",
+    "SkuFieldDataEcSkuBillingMethod",
+    "SkuFieldDataEcSkuSubscriptionPlan",
+    "SkuFieldDataEcSkuSubscriptionPlanInterval",
     "SkuFieldDataPrice",
     "SkuPropertyList",
     "SkuPropertyListEnumItem",
@@ -234,6 +261,7 @@ __all__ = [
     "StripeCardBrand",
     "StripeCardExpires",
     "StripeDetails",
+    "TextNode",
     "TriggerType",
     "User",
     "UserAccessGroupsItem",

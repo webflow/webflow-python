@@ -13,12 +13,12 @@ except ImportError:
 
 
 class ScriptApplyList(pydantic.BaseModel):
-    scripts: typing.Optional[typing.List[ScriptApply]]
+    scripts: typing.Optional[typing.List[ScriptApply]] = None
     last_updated: typing.Optional[str] = pydantic.Field(
-        alias="lastUpdated", description="Date when the Site's scripts were last updated"
+        alias="lastUpdated", default=None, description="Date when the Site's scripts were last updated"
     )
     created_on: typing.Optional[str] = pydantic.Field(
-        alias="createdOn", description="Date when the Site's scripts were created"
+        alias="createdOn", default=None, description="Date when the Site's scripts were created"
     )
 
     def json(self, **kwargs: typing.Any) -> str:

@@ -7,6 +7,8 @@ from json.decoder import JSONDecodeError
 from ...core.api_error import ApiError
 from ...core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ...core.jsonable_encoder import jsonable_encoder
+from ...core.remove_none_from_dict import remove_none_from_dict
+from ...core.request_options import RequestOptions
 from ...errors.bad_request_error import BadRequestError
 from ...errors.forbidden_error import ForbiddenError
 from ...errors.internal_server_error import InternalServerError
@@ -16,6 +18,7 @@ from ...errors.unauthorized_error import UnauthorizedError
 from ...types.domain import Domain
 from ...types.site import Site
 from ...types.sites import Sites
+from .resources.activity_logs.client import ActivityLogsClient, AsyncActivityLogsClient
 from .resources.scripts.client import AsyncScriptsClient, ScriptsClient
 
 try:
@@ -30,12 +33,15 @@ OMIT = typing.cast(typing.Any, ...)
 class SitesClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
+        self.activity_logs = ActivityLogsClient(client_wrapper=self._client_wrapper)
         self.scripts = ScriptsClient(client_wrapper=self._client_wrapper)
 
-    def list(self) -> Sites:
+    def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> Sites:
         """
         List of all sites the provided access token is able to access. </br></br> Required scope | `sites:read`
 
+        Parameters:
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import Webflow
 
@@ -47,8 +53,20 @@ class SitesClient:
         _response = self._client_wrapper.httpx_client.request(
             "GET",
             urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", "sites"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(Sites, _response.json())  # type: ignore
@@ -68,12 +86,14 @@ class SitesClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get(self, site_id: str) -> Site:
+    def get(self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> Site:
         """
         Get a site by site id </br></br> Required scope | `sites:read`
 
         Parameters:
             - site_id: str. Unique identifier for a Site
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import Webflow
 
@@ -81,14 +101,26 @@ class SitesClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.sites.get(
-            site_id="site-id",
+            site_id="site_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{jsonable_encoder(site_id)}"),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(Site, _response.json())  # type: ignore
@@ -108,12 +140,14 @@ class SitesClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get_custom_domain(self, site_id: str) -> Domain:
+    def get_custom_domain(self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> Domain:
         """
         Get a list of all custom domains related to site. </br></br> Required scope | `sites:read`
 
         Parameters:
             - site_id: str. Unique identifier for a Site
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import Webflow
 
@@ -121,14 +155,28 @@ class SitesClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.sites.get_custom_domain(
-            site_id="site-id",
+            site_id="site_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/custom_domains"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"sites/{jsonable_encoder(site_id)}/custom_domains"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(Domain, _response.json())  # type: ignore
@@ -152,8 +200,9 @@ class SitesClient:
         self,
         site_id: str,
         *,
-        custom_domains: typing.Optional[typing.List[str]] = OMIT,
+        custom_domains: typing.Optional[typing.Sequence[str]] = OMIT,
         publish_to_webflow_subdomain: typing.Optional[bool] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> None:
         """
         Publish a site to one more more domains. </br></br> Required scope | `sites:write`
@@ -161,9 +210,11 @@ class SitesClient:
         Parameters:
             - site_id: str. Unique identifier for a Site
 
-            - custom_domains: typing.Optional[typing.List[str]]. Array of Custom Domain ids to publish
+            - custom_domains: typing.Optional[typing.Sequence[str]]. Array of Custom Domain ids to publish
 
             - publish_to_webflow_subdomain: typing.Optional[bool]. Choice of whether to publish to the default Webflow Subdomain
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import Webflow
 
@@ -171,7 +222,7 @@ class SitesClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.sites.publish(
-            site_id="site-id",
+            site_id="site_id",
             publish_to_webflow_subdomain=False,
         )
         """
@@ -182,10 +233,29 @@ class SitesClient:
             _request["publishToWebflowSubdomain"] = publish_to_webflow_subdomain
         _response = self._client_wrapper.httpx_client.request(
             "POST",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/publish"),
-            json=jsonable_encoder(_request),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"sites/{jsonable_encoder(site_id)}/publish"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(_request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(_request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return
@@ -209,12 +279,15 @@ class SitesClient:
 class AsyncSitesClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
+        self.activity_logs = AsyncActivityLogsClient(client_wrapper=self._client_wrapper)
         self.scripts = AsyncScriptsClient(client_wrapper=self._client_wrapper)
 
-    async def list(self) -> Sites:
+    async def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> Sites:
         """
         List of all sites the provided access token is able to access. </br></br> Required scope | `sites:read`
 
+        Parameters:
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import AsyncWebflow
 
@@ -226,8 +299,20 @@ class AsyncSitesClient:
         _response = await self._client_wrapper.httpx_client.request(
             "GET",
             urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", "sites"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(Sites, _response.json())  # type: ignore
@@ -247,12 +332,14 @@ class AsyncSitesClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def get(self, site_id: str) -> Site:
+    async def get(self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> Site:
         """
         Get a site by site id </br></br> Required scope | `sites:read`
 
         Parameters:
             - site_id: str. Unique identifier for a Site
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import AsyncWebflow
 
@@ -260,14 +347,26 @@ class AsyncSitesClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.sites.get(
-            site_id="site-id",
+            site_id="site_id",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{jsonable_encoder(site_id)}"),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(Site, _response.json())  # type: ignore
@@ -287,12 +386,16 @@ class AsyncSitesClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def get_custom_domain(self, site_id: str) -> Domain:
+    async def get_custom_domain(
+        self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> Domain:
         """
         Get a list of all custom domains related to site. </br></br> Required scope | `sites:read`
 
         Parameters:
             - site_id: str. Unique identifier for a Site
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import AsyncWebflow
 
@@ -300,14 +403,28 @@ class AsyncSitesClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.sites.get_custom_domain(
-            site_id="site-id",
+            site_id="site_id",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/custom_domains"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"sites/{jsonable_encoder(site_id)}/custom_domains"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(Domain, _response.json())  # type: ignore
@@ -331,8 +448,9 @@ class AsyncSitesClient:
         self,
         site_id: str,
         *,
-        custom_domains: typing.Optional[typing.List[str]] = OMIT,
+        custom_domains: typing.Optional[typing.Sequence[str]] = OMIT,
         publish_to_webflow_subdomain: typing.Optional[bool] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> None:
         """
         Publish a site to one more more domains. </br></br> Required scope | `sites:write`
@@ -340,9 +458,11 @@ class AsyncSitesClient:
         Parameters:
             - site_id: str. Unique identifier for a Site
 
-            - custom_domains: typing.Optional[typing.List[str]]. Array of Custom Domain ids to publish
+            - custom_domains: typing.Optional[typing.Sequence[str]]. Array of Custom Domain ids to publish
 
             - publish_to_webflow_subdomain: typing.Optional[bool]. Choice of whether to publish to the default Webflow Subdomain
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import AsyncWebflow
 
@@ -350,7 +470,7 @@ class AsyncSitesClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.sites.publish(
-            site_id="site-id",
+            site_id="site_id",
             publish_to_webflow_subdomain=False,
         )
         """
@@ -361,10 +481,29 @@ class AsyncSitesClient:
             _request["publishToWebflowSubdomain"] = publish_to_webflow_subdomain
         _response = await self._client_wrapper.httpx_client.request(
             "POST",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/publish"),
-            json=jsonable_encoder(_request),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"sites/{jsonable_encoder(site_id)}/publish"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(_request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(_request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return

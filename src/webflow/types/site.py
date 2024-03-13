@@ -15,26 +15,30 @@ except ImportError:
 class Site(pydantic.BaseModel):
     id: str = pydantic.Field(description="Unique identifier for the Site")
     workspace_id: typing.Optional[str] = pydantic.Field(
-        alias="workspaceId", description="Unique identifier for the Workspace"
+        alias="workspaceId", default=None, description="Unique identifier for the Workspace"
     )
     created_on: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="createdOn", description="Date the Site was created"
+        alias="createdOn", default=None, description="Date the Site was created"
     )
-    display_name: typing.Optional[str] = pydantic.Field(alias="displayName", description="Name given to Site")
-    short_name: typing.Optional[str] = pydantic.Field(alias="shortName", description="Slugified version of name")
+    display_name: typing.Optional[str] = pydantic.Field(
+        alias="displayName", default=None, description="Name given to Site"
+    )
+    short_name: typing.Optional[str] = pydantic.Field(
+        alias="shortName", default=None, description="Slugified version of name"
+    )
     last_published: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="lastPublished", description="Date the Site was last published"
+        alias="lastPublished", default=None, description="Date the Site was last published"
     )
     last_updated: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="lastUpdated", description="Date the Site was last updated"
+        alias="lastUpdated", default=None, description="Date the Site was last updated"
     )
     preview_url: typing.Optional[str] = pydantic.Field(
-        alias="previewUrl", description="URL of a generated image for the given Site"
+        alias="previewUrl", default=None, description="URL of a generated image for the given Site"
     )
     time_zone: typing.Optional[str] = pydantic.Field(
-        alias="timeZone", description="Site timezone set under Site Settings"
+        alias="timeZone", default=None, description="Site timezone set under Site Settings"
     )
-    custom_domains: typing.Optional[typing.List[Domain]] = pydantic.Field(alias="customDomains")
+    custom_domains: typing.Optional[typing.List[Domain]] = pydantic.Field(alias="customDomains", default=None)
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

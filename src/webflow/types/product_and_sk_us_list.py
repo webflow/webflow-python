@@ -19,9 +19,10 @@ class ProductAndSkUsList(pydantic.BaseModel):
     """
 
     items: typing.Optional[typing.List[ProductAndSkUs]] = pydantic.Field(
-        description="List of Item objects within the Collection. Contains product and skus keys for each Item"
+        default=None,
+        description="List of Item objects within the Collection. Contains product and skus keys for each Item",
     )
-    pagination: typing.Optional[Pagination]
+    pagination: typing.Optional[Pagination] = None
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

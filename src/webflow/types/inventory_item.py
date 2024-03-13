@@ -17,12 +17,12 @@ class InventoryItem(pydantic.BaseModel):
     The availabile inventory for an item
     """
 
-    id: typing.Optional[str] = pydantic.Field(description="Unique identifier for a SKU item")
+    id: typing.Optional[str] = pydantic.Field(default=None, description="Unique identifier for a SKU item")
     quantity: typing.Optional[float] = pydantic.Field(
-        description="Total quantity of items remaining in inventory (if inventoryType is finite)"
+        default=None, description="Total quantity of items remaining in inventory (if inventoryType is finite)"
     )
     inventory_type: typing.Optional[InventoryItemInventoryType] = pydantic.Field(
-        alias="inventoryType", description="infinite or finite"
+        alias="inventoryType", default=None, description="infinite or finite"
     )
 
     def json(self, **kwargs: typing.Any) -> str:

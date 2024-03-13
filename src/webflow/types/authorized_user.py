@@ -12,10 +12,12 @@ except ImportError:
 
 
 class AuthorizedUser(pydantic.BaseModel):
-    id: typing.Optional[str] = pydantic.Field(description="The unique id of the user")
-    email: typing.Optional[str] = pydantic.Field(description="The user's email address")
-    first_name: typing.Optional[str] = pydantic.Field(alias="firstName", description="The user's first name")
-    last_name: typing.Optional[str] = pydantic.Field(alias="lastName", description="The user's last name")
+    id: typing.Optional[str] = pydantic.Field(default=None, description="The unique id of the user")
+    email: typing.Optional[str] = pydantic.Field(default=None, description="The user's email address")
+    first_name: typing.Optional[str] = pydantic.Field(
+        alias="firstName", default=None, description="The user's first name"
+    )
+    last_name: typing.Optional[str] = pydantic.Field(alias="lastName", default=None, description="The user's last name")
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

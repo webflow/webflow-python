@@ -7,6 +7,8 @@ from json.decoder import JSONDecodeError
 from ...core.api_error import ApiError
 from ...core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ...core.jsonable_encoder import jsonable_encoder
+from ...core.remove_none_from_dict import remove_none_from_dict
+from ...core.request_options import RequestOptions
 from ...errors.bad_request_error import BadRequestError
 from ...errors.conflict_error import ConflictError
 from ...errors.forbidden_error import ForbiddenError
@@ -32,12 +34,25 @@ class FormsClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def list(self, site_id: str) -> FormList:
+    def list(
+        self,
+        site_id: str,
+        *,
+        limit: typing.Optional[float] = None,
+        offset: typing.Optional[float] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> FormList:
         """
         List forms for a given site </br></br> Required scope | `forms:read`
 
         Parameters:
             - site_id: str. Unique identifier for a Site
+
+            - limit: typing.Optional[float]. Maximum number of records to be returned (max limit: 100)
+
+            - offset: typing.Optional[float]. Offset used for pagination if the results have more than limit records
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import Webflow
 
@@ -45,14 +60,36 @@ class FormsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.forms.list(
-            site_id="site-id",
+            site_id="site_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/forms"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{jsonable_encoder(site_id)}/forms"),
+            params=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        "limit": limit,
+                        "offset": offset,
+                        **(
+                            request_options.get("additional_query_parameters", {})
+                            if request_options is not None
+                            else {}
+                        ),
+                    }
+                )
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(FormList, _response.json())  # type: ignore
@@ -76,12 +113,14 @@ class FormsClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get(self, form_id: str) -> Form:
+    def get(self, form_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> Form:
         """
         Get information about a given form</br></br> Required scope | `forms:read`
 
         Parameters:
             - form_id: str. Unique identifier for a Form
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import Webflow
 
@@ -89,14 +128,26 @@ class FormsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.forms.get(
-            form_id="form-id",
+            form_id="form_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"forms/{form_id}"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"forms/{jsonable_encoder(form_id)}"),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(Form, _response.json())  # type: ignore
@@ -118,12 +169,16 @@ class FormsClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def list_submissions(self, form_id: str) -> FormSubmissionList:
+    def list_submissions(
+        self, form_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> FormSubmissionList:
         """
         List form submissions for a given form </br></br> Required scope | `forms:read`
 
         Parameters:
             - form_id: str. Unique identifier for a Form
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import Webflow
 
@@ -131,14 +186,28 @@ class FormsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.forms.list_submissions(
-            form_id="form-id",
+            form_id="form_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"forms/{form_id}/submissions"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"forms/{jsonable_encoder(form_id)}/submissions"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(FormSubmissionList, _response.json())  # type: ignore
@@ -160,12 +229,16 @@ class FormsClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get_submission(self, form_submission_id: str) -> FormSubmission:
+    def get_submission(
+        self, form_submission_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> FormSubmission:
         """
         Get information about a given form submission</br></br> Required scope | `forms:read`
 
         Parameters:
             - form_submission_id: str. Unique identifier for a Form Submission
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import Webflow
 
@@ -173,14 +246,28 @@ class FormsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.forms.get_submission(
-            form_submission_id="form-submission-id",
+            form_submission_id="form_submission_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"form_submissions/{form_submission_id}"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"form_submissions/{jsonable_encoder(form_submission_id)}"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(FormSubmission, _response.json())  # type: ignore
@@ -203,7 +290,11 @@ class FormsClient:
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
     def update_submission(
-        self, form_submission_id: str, *, form_submission_data: typing.Optional[typing.Dict[str, typing.Any]] = OMIT
+        self,
+        form_submission_id: str,
+        *,
+        form_submission_data: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> FormSubmission:
         """
         Update hidden fields on a form submission</br></br> Required scope | `forms:write`
@@ -212,6 +303,8 @@ class FormsClient:
             - form_submission_id: str. Unique identifier for a Form Submission
 
             - form_submission_data: typing.Optional[typing.Dict[str, typing.Any]]. An existing **hidden field** defined on the form schema, and the corresponding value to set
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import Webflow
 
@@ -219,7 +312,7 @@ class FormsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.forms.update_submission(
-            form_submission_id="form-submission-id",
+            form_submission_id="form_submission_id",
         )
         """
         _request: typing.Dict[str, typing.Any] = {}
@@ -227,10 +320,29 @@ class FormsClient:
             _request["formSubmissionData"] = form_submission_data
         _response = self._client_wrapper.httpx_client.request(
             "PATCH",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"form_submissions/{form_submission_id}"),
-            json=jsonable_encoder(_request),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"form_submissions/{jsonable_encoder(form_submission_id)}"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(_request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(_request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(FormSubmission, _response.json())  # type: ignore
@@ -259,12 +371,25 @@ class AsyncFormsClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def list(self, site_id: str) -> FormList:
+    async def list(
+        self,
+        site_id: str,
+        *,
+        limit: typing.Optional[float] = None,
+        offset: typing.Optional[float] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> FormList:
         """
         List forms for a given site </br></br> Required scope | `forms:read`
 
         Parameters:
             - site_id: str. Unique identifier for a Site
+
+            - limit: typing.Optional[float]. Maximum number of records to be returned (max limit: 100)
+
+            - offset: typing.Optional[float]. Offset used for pagination if the results have more than limit records
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import AsyncWebflow
 
@@ -272,14 +397,36 @@ class AsyncFormsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.forms.list(
-            site_id="site-id",
+            site_id="site_id",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/forms"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{jsonable_encoder(site_id)}/forms"),
+            params=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        "limit": limit,
+                        "offset": offset,
+                        **(
+                            request_options.get("additional_query_parameters", {})
+                            if request_options is not None
+                            else {}
+                        ),
+                    }
+                )
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(FormList, _response.json())  # type: ignore
@@ -303,12 +450,14 @@ class AsyncFormsClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def get(self, form_id: str) -> Form:
+    async def get(self, form_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> Form:
         """
         Get information about a given form</br></br> Required scope | `forms:read`
 
         Parameters:
             - form_id: str. Unique identifier for a Form
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import AsyncWebflow
 
@@ -316,14 +465,26 @@ class AsyncFormsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.forms.get(
-            form_id="form-id",
+            form_id="form_id",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"forms/{form_id}"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"forms/{jsonable_encoder(form_id)}"),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(Form, _response.json())  # type: ignore
@@ -345,12 +506,16 @@ class AsyncFormsClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def list_submissions(self, form_id: str) -> FormSubmissionList:
+    async def list_submissions(
+        self, form_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> FormSubmissionList:
         """
         List form submissions for a given form </br></br> Required scope | `forms:read`
 
         Parameters:
             - form_id: str. Unique identifier for a Form
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import AsyncWebflow
 
@@ -358,14 +523,28 @@ class AsyncFormsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.forms.list_submissions(
-            form_id="form-id",
+            form_id="form_id",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"forms/{form_id}/submissions"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"forms/{jsonable_encoder(form_id)}/submissions"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(FormSubmissionList, _response.json())  # type: ignore
@@ -387,12 +566,16 @@ class AsyncFormsClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def get_submission(self, form_submission_id: str) -> FormSubmission:
+    async def get_submission(
+        self, form_submission_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> FormSubmission:
         """
         Get information about a given form submission</br></br> Required scope | `forms:read`
 
         Parameters:
             - form_submission_id: str. Unique identifier for a Form Submission
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import AsyncWebflow
 
@@ -400,14 +583,28 @@ class AsyncFormsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.forms.get_submission(
-            form_submission_id="form-submission-id",
+            form_submission_id="form_submission_id",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"form_submissions/{form_submission_id}"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"form_submissions/{jsonable_encoder(form_submission_id)}"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(FormSubmission, _response.json())  # type: ignore
@@ -430,7 +627,11 @@ class AsyncFormsClient:
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
     async def update_submission(
-        self, form_submission_id: str, *, form_submission_data: typing.Optional[typing.Dict[str, typing.Any]] = OMIT
+        self,
+        form_submission_id: str,
+        *,
+        form_submission_data: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> FormSubmission:
         """
         Update hidden fields on a form submission</br></br> Required scope | `forms:write`
@@ -439,6 +640,8 @@ class AsyncFormsClient:
             - form_submission_id: str. Unique identifier for a Form Submission
 
             - form_submission_data: typing.Optional[typing.Dict[str, typing.Any]]. An existing **hidden field** defined on the form schema, and the corresponding value to set
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import AsyncWebflow
 
@@ -446,7 +649,7 @@ class AsyncFormsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.forms.update_submission(
-            form_submission_id="form-submission-id",
+            form_submission_id="form_submission_id",
         )
         """
         _request: typing.Dict[str, typing.Any] = {}
@@ -454,10 +657,29 @@ class AsyncFormsClient:
             _request["formSubmissionData"] = form_submission_data
         _response = await self._client_wrapper.httpx_client.request(
             "PATCH",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"form_submissions/{form_submission_id}"),
-            json=jsonable_encoder(_request),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"form_submissions/{jsonable_encoder(form_submission_id)}"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(_request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(_request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(FormSubmission, _response.json())  # type: ignore

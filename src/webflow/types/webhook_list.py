@@ -14,8 +14,8 @@ except ImportError:
 
 
 class WebhookList(pydantic.BaseModel):
-    pagination: typing.Optional[Pagination]
-    webhooks: typing.Optional[typing.List[Webhook]]
+    pagination: typing.Optional[Pagination] = None
+    webhooks: typing.Optional[typing.List[Webhook]] = None
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

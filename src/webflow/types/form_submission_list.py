@@ -14,8 +14,8 @@ except ImportError:
 
 
 class FormSubmissionList(pydantic.BaseModel):
-    submissions: typing.Optional[typing.List[FormSubmission]]
-    pagination: typing.Optional[Pagination]
+    submissions: typing.Optional[typing.List[FormSubmission]] = None
+    pagination: typing.Optional[Pagination] = None
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

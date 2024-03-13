@@ -17,9 +17,9 @@ class PublishedItems(pydantic.BaseModel):
     """
 
     published_item_ids: typing.Optional[typing.List[str]] = pydantic.Field(
-        alias="publishedItemIds", description="Array of published item ids"
+        alias="publishedItemIds", default=None, description="Array of published item ids"
     )
-    errors: typing.Optional[typing.List[str]] = pydantic.Field(description="Array of errors")
+    errors: typing.Optional[typing.List[str]] = pydantic.Field(default=None, description="Array of errors")
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

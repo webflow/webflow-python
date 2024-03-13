@@ -7,6 +7,8 @@ from json.decoder import JSONDecodeError
 from ...core.api_error import ApiError
 from ...core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ...core.jsonable_encoder import jsonable_encoder
+from ...core.remove_none_from_dict import remove_none_from_dict
+from ...core.request_options import RequestOptions
 from ...errors.bad_request_error import BadRequestError
 from ...errors.internal_server_error import InternalServerError
 from ...errors.not_found_error import NotFoundError
@@ -30,12 +32,14 @@ class AssetsClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def list(self, site_id: str) -> typing.List[Asset]:
+    def list(self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> typing.List[Asset]:
         """
         List assets for a given site </br></br> Required scope | `assets:read`
 
         Parameters:
             - site_id: str. Unique identifier for a Site
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import Webflow
 
@@ -43,14 +47,28 @@ class AssetsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.assets.list(
-            site_id="site-id",
+            site_id="site_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/assets"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"sites/{jsonable_encoder(site_id)}/assets"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(typing.List[Asset], _response.json())  # type: ignore
@@ -71,7 +89,13 @@ class AssetsClient:
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
     def create(
-        self, site_id: str, *, file_name: str, file_hash: str, parent_folder: typing.Optional[str] = OMIT
+        self,
+        site_id: str,
+        *,
+        file_name: str,
+        file_hash: str,
+        parent_folder: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> AssetUpload:
         """
         Create a new asset entry. </br></br> This endpoint generates a response with the following information: `uploadUrl` and `uploadDetails`. You can use these two properties to [upload the file to Amazon s3 by making a POST](https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPOST.html) request to the `uploadUrl` with the `uploadDetails` object as your header information in the request. </br></br> Required scope | `assets:write`
@@ -84,6 +108,8 @@ class AssetsClient:
             - file_hash: str. MD5 hash of the file
 
             - parent_folder: typing.Optional[str]. id of the Asset folder (optional)
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import Webflow
 
@@ -91,7 +117,7 @@ class AssetsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.assets.create(
-            site_id="site-id",
+            site_id="site_id",
             file_name="file.png",
             file_hash="3c7d87c9575702bc3b1e991f4d3c638e",
             parent_folder="6436b1ce5281cace05b65aea",
@@ -102,10 +128,29 @@ class AssetsClient:
             _request["parentFolder"] = parent_folder
         _response = self._client_wrapper.httpx_client.request(
             "POST",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/assets"),
-            json=jsonable_encoder(_request),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"sites/{jsonable_encoder(site_id)}/assets"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(_request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(_request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(AssetUpload, _response.json())  # type: ignore
@@ -125,12 +170,14 @@ class AssetsClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get(self, asset_id: str) -> Asset:
+    def get(self, asset_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> Asset:
         """
         Get an Asset </br></br> Required scope | `assets:read`
 
         Parameters:
             - asset_id: str. Unique identifier for an Asset on a site
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import Webflow
 
@@ -138,14 +185,26 @@ class AssetsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.assets.get(
-            asset_id="asset-id",
+            asset_id="asset_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"assets/{asset_id}"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"assets/{jsonable_encoder(asset_id)}"),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(Asset, _response.json())  # type: ignore
@@ -165,12 +224,14 @@ class AssetsClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def delete(self, asset_id: str) -> None:
+    def delete(self, asset_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
         """
         Delete an Asset
 
         Parameters:
             - asset_id: str. Unique identifier for an Asset on a site
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import Webflow
 
@@ -178,14 +239,26 @@ class AssetsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.assets.delete(
-            asset_id="asset-id",
+            asset_id="asset_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             "DELETE",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"assets/{asset_id}"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"assets/{jsonable_encoder(asset_id)}"),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return
@@ -205,12 +278,79 @@ class AssetsClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def list_folders(self, site_id: str) -> AssetFolderList:
+    def update(
+        self, asset_id: str, *, display_name: str, request_options: typing.Optional[RequestOptions] = None
+    ) -> Asset:
+        """
+        Update an Asset </br></br> Required scope | `assets:write`
+
+        Parameters:
+            - asset_id: str. Unique identifier for an Asset on a site
+
+            - display_name: str. file name including file extension
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
+        ---
+        from webflow.client import Webflow
+
+        client = Webflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+        client.assets.update(
+            asset_id="asset_id",
+            display_name="file.png",
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "PATCH",
+            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"assets/{jsonable_encoder(asset_id)}"),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder({"displayName": display_name})
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder({"displayName": display_name}),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
+        )
+        if 200 <= _response.status_code < 300:
+            return pydantic.parse_obj_as(Asset, _response.json())  # type: ignore
+        if _response.status_code == 400:
+            raise BadRequestError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 401:
+            raise UnauthorizedError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 404:
+            raise NotFoundError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 429:
+            raise TooManyRequestsError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 500:
+            raise InternalServerError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        try:
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    def list_folders(self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> AssetFolderList:
         """
         List Asset Folders within a given site <br><br> Required scope | `assets:read`
 
         Parameters:
             - site_id: str. Unique identifier for a Site
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import Webflow
 
@@ -218,14 +358,28 @@ class AssetsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.assets.list_folders(
-            site_id="site-id",
+            site_id="site_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/asset_folders"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"sites/{jsonable_encoder(site_id)}/asset_folders"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(AssetFolderList, _response.json())  # type: ignore
@@ -246,7 +400,12 @@ class AssetsClient:
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
     def create_folder(
-        self, site_id: str, *, display_name: str, parent_folder: typing.Optional[str] = OMIT
+        self,
+        site_id: str,
+        *,
+        display_name: str,
+        parent_folder: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> AssetFolder:
         """
         Create an Asset Folder within a given site <br><br> Required scope | `assets:write`
@@ -257,6 +416,8 @@ class AssetsClient:
             - display_name: str. A human readable name for the Asset Folder
 
             - parent_folder: typing.Optional[str]. An (optional) pointer to a parent Asset Folder (or null for root)
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import Webflow
 
@@ -264,7 +425,7 @@ class AssetsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.assets.create_folder(
-            site_id="site-id",
+            site_id="site_id",
             display_name="my asset folder",
             parent_folder="6390c49774a71f99f21a08eb",
         )
@@ -274,10 +435,29 @@ class AssetsClient:
             _request["parentFolder"] = parent_folder
         _response = self._client_wrapper.httpx_client.request(
             "POST",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/asset_folders"),
-            json=jsonable_encoder(_request),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"sites/{jsonable_encoder(site_id)}/asset_folders"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(_request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(_request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(AssetFolder, _response.json())  # type: ignore
@@ -297,12 +477,16 @@ class AssetsClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get_folder(self, asset_folder_id: str) -> AssetFolder:
+    def get_folder(
+        self, asset_folder_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AssetFolder:
         """
         Get details about a specific Asset Folder <br><br> Required scope | `assets:read`
 
         Parameters:
             - asset_folder_id: str. Unique identifier for an Asset Folder
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import Webflow
 
@@ -310,14 +494,28 @@ class AssetsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.assets.get_folder(
-            asset_folder_id="asset-folder-id",
+            asset_folder_id="asset_folder_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"asset_folders/{asset_folder_id}"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"asset_folders/{jsonable_encoder(asset_folder_id)}"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(AssetFolder, _response.json())  # type: ignore
@@ -342,12 +540,16 @@ class AsyncAssetsClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def list(self, site_id: str) -> typing.List[Asset]:
+    async def list(
+        self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> typing.List[Asset]:
         """
         List assets for a given site </br></br> Required scope | `assets:read`
 
         Parameters:
             - site_id: str. Unique identifier for a Site
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import AsyncWebflow
 
@@ -355,14 +557,28 @@ class AsyncAssetsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.assets.list(
-            site_id="site-id",
+            site_id="site_id",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/assets"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"sites/{jsonable_encoder(site_id)}/assets"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(typing.List[Asset], _response.json())  # type: ignore
@@ -383,7 +599,13 @@ class AsyncAssetsClient:
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
     async def create(
-        self, site_id: str, *, file_name: str, file_hash: str, parent_folder: typing.Optional[str] = OMIT
+        self,
+        site_id: str,
+        *,
+        file_name: str,
+        file_hash: str,
+        parent_folder: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> AssetUpload:
         """
         Create a new asset entry. </br></br> This endpoint generates a response with the following information: `uploadUrl` and `uploadDetails`. You can use these two properties to [upload the file to Amazon s3 by making a POST](https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPOST.html) request to the `uploadUrl` with the `uploadDetails` object as your header information in the request. </br></br> Required scope | `assets:write`
@@ -396,6 +618,8 @@ class AsyncAssetsClient:
             - file_hash: str. MD5 hash of the file
 
             - parent_folder: typing.Optional[str]. id of the Asset folder (optional)
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import AsyncWebflow
 
@@ -403,7 +627,7 @@ class AsyncAssetsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.assets.create(
-            site_id="site-id",
+            site_id="site_id",
             file_name="file.png",
             file_hash="3c7d87c9575702bc3b1e991f4d3c638e",
             parent_folder="6436b1ce5281cace05b65aea",
@@ -414,10 +638,29 @@ class AsyncAssetsClient:
             _request["parentFolder"] = parent_folder
         _response = await self._client_wrapper.httpx_client.request(
             "POST",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/assets"),
-            json=jsonable_encoder(_request),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"sites/{jsonable_encoder(site_id)}/assets"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(_request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(_request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(AssetUpload, _response.json())  # type: ignore
@@ -437,12 +680,14 @@ class AsyncAssetsClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def get(self, asset_id: str) -> Asset:
+    async def get(self, asset_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> Asset:
         """
         Get an Asset </br></br> Required scope | `assets:read`
 
         Parameters:
             - asset_id: str. Unique identifier for an Asset on a site
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import AsyncWebflow
 
@@ -450,14 +695,26 @@ class AsyncAssetsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.assets.get(
-            asset_id="asset-id",
+            asset_id="asset_id",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"assets/{asset_id}"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"assets/{jsonable_encoder(asset_id)}"),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(Asset, _response.json())  # type: ignore
@@ -477,12 +734,14 @@ class AsyncAssetsClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def delete(self, asset_id: str) -> None:
+    async def delete(self, asset_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
         """
         Delete an Asset
 
         Parameters:
             - asset_id: str. Unique identifier for an Asset on a site
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import AsyncWebflow
 
@@ -490,14 +749,26 @@ class AsyncAssetsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.assets.delete(
-            asset_id="asset-id",
+            asset_id="asset_id",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
             "DELETE",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"assets/{asset_id}"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"assets/{jsonable_encoder(asset_id)}"),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return
@@ -517,12 +788,81 @@ class AsyncAssetsClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def list_folders(self, site_id: str) -> AssetFolderList:
+    async def update(
+        self, asset_id: str, *, display_name: str, request_options: typing.Optional[RequestOptions] = None
+    ) -> Asset:
+        """
+        Update an Asset </br></br> Required scope | `assets:write`
+
+        Parameters:
+            - asset_id: str. Unique identifier for an Asset on a site
+
+            - display_name: str. file name including file extension
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
+        ---
+        from webflow.client import AsyncWebflow
+
+        client = AsyncWebflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+        await client.assets.update(
+            asset_id="asset_id",
+            display_name="file.png",
+        )
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "PATCH",
+            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"assets/{jsonable_encoder(asset_id)}"),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder({"displayName": display_name})
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder({"displayName": display_name}),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
+        )
+        if 200 <= _response.status_code < 300:
+            return pydantic.parse_obj_as(Asset, _response.json())  # type: ignore
+        if _response.status_code == 400:
+            raise BadRequestError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 401:
+            raise UnauthorizedError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 404:
+            raise NotFoundError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 429:
+            raise TooManyRequestsError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 500:
+            raise InternalServerError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        try:
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def list_folders(
+        self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AssetFolderList:
         """
         List Asset Folders within a given site <br><br> Required scope | `assets:read`
 
         Parameters:
             - site_id: str. Unique identifier for a Site
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import AsyncWebflow
 
@@ -530,14 +870,28 @@ class AsyncAssetsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.assets.list_folders(
-            site_id="site-id",
+            site_id="site_id",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/asset_folders"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"sites/{jsonable_encoder(site_id)}/asset_folders"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(AssetFolderList, _response.json())  # type: ignore
@@ -558,7 +912,12 @@ class AsyncAssetsClient:
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
     async def create_folder(
-        self, site_id: str, *, display_name: str, parent_folder: typing.Optional[str] = OMIT
+        self,
+        site_id: str,
+        *,
+        display_name: str,
+        parent_folder: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> AssetFolder:
         """
         Create an Asset Folder within a given site <br><br> Required scope | `assets:write`
@@ -569,6 +928,8 @@ class AsyncAssetsClient:
             - display_name: str. A human readable name for the Asset Folder
 
             - parent_folder: typing.Optional[str]. An (optional) pointer to a parent Asset Folder (or null for root)
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import AsyncWebflow
 
@@ -576,7 +937,7 @@ class AsyncAssetsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.assets.create_folder(
-            site_id="site-id",
+            site_id="site_id",
             display_name="my asset folder",
             parent_folder="6390c49774a71f99f21a08eb",
         )
@@ -586,10 +947,29 @@ class AsyncAssetsClient:
             _request["parentFolder"] = parent_folder
         _response = await self._client_wrapper.httpx_client.request(
             "POST",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/asset_folders"),
-            json=jsonable_encoder(_request),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"sites/{jsonable_encoder(site_id)}/asset_folders"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(_request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(_request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(AssetFolder, _response.json())  # type: ignore
@@ -609,12 +989,16 @@ class AsyncAssetsClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def get_folder(self, asset_folder_id: str) -> AssetFolder:
+    async def get_folder(
+        self, asset_folder_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AssetFolder:
         """
         Get details about a specific Asset Folder <br><br> Required scope | `assets:read`
 
         Parameters:
             - asset_folder_id: str. Unique identifier for an Asset Folder
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import AsyncWebflow
 
@@ -622,14 +1006,28 @@ class AsyncAssetsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.assets.get_folder(
-            asset_folder_id="asset-folder-id",
+            asset_folder_id="asset_folder_id",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"asset_folders/{asset_folder_id}"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"asset_folders/{jsonable_encoder(asset_folder_id)}"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(AssetFolder, _response.json())  # type: ignore

@@ -16,9 +16,11 @@ class PageSeo(pydantic.BaseModel):
     SEO-related fields for the Page
     """
 
-    title: typing.Optional[str] = pydantic.Field(description="The Page title shown in search engine results")
+    title: typing.Optional[str] = pydantic.Field(
+        default=None, description="The Page title shown in search engine results"
+    )
     description: typing.Optional[str] = pydantic.Field(
-        description="The Page description shown in search engine results"
+        default=None, description="The Page description shown in search engine results"
     )
 
     def json(self, **kwargs: typing.Any) -> str:

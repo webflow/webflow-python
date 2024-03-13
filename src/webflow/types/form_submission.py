@@ -12,21 +12,21 @@ except ImportError:
 
 
 class FormSubmission(pydantic.BaseModel):
-    id: typing.Optional[str] = pydantic.Field(description="The unique id of the Form submission")
+    id: typing.Optional[str] = pydantic.Field(default=None, description="The unique id of the Form submission")
     display_name: typing.Optional[str] = pydantic.Field(
-        alias="displayName", description="The Form name displayed on the site"
+        alias="displayName", default=None, description="The Form name displayed on the site"
     )
     site_id: typing.Optional[str] = pydantic.Field(
-        alias="siteId", description="The unique id of the Site the Form belongs to"
+        alias="siteId", default=None, description="The unique id of the Site the Form belongs to"
     )
     workspace_id: typing.Optional[str] = pydantic.Field(
-        alias="workspaceId", description="The unique id of the Workspace the Site belongs to"
+        alias="workspaceId", default=None, description="The unique id of the Workspace the Site belongs to"
     )
     date_submitted: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="dateSubmitted", description="Date that the Form was submitted on"
+        alias="dateSubmitted", default=None, description="Date that the Form was submitted on"
     )
     form_response: typing.Optional[typing.Dict[str, typing.Any]] = pydantic.Field(
-        alias="formResponse", description="The data submitted in the Form"
+        alias="formResponse", default=None, description="The data submitted in the Form"
     )
 
     def json(self, **kwargs: typing.Any) -> str:

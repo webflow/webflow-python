@@ -16,15 +16,19 @@ class FormSubmissionTriggerPayload(pydantic.BaseModel):
     The payload of data sent from Webflow
     """
 
-    name: typing.Optional[str] = pydantic.Field(description="The name of the form")
+    name: typing.Optional[str] = pydantic.Field(default=None, description="The name of the form")
     site_id: typing.Optional[str] = pydantic.Field(
-        alias="siteId", description="The id of the site that the form was submitted from"
+        alias="siteId", default=None, description="The id of the site that the form was submitted from"
     )
-    data: typing.Optional[typing.Dict[str, typing.Any]] = pydantic.Field(description="The data submitted in the form")
+    data: typing.Optional[typing.Dict[str, typing.Any]] = pydantic.Field(
+        default=None, description="The data submitted in the form"
+    )
     submitted_at: typing.Optional[str] = pydantic.Field(
-        alias="submittedAt", description="The timestamp the form was submitted"
+        alias="submittedAt", default=None, description="The timestamp the form was submitted"
     )
-    form_id: typing.Optional[str] = pydantic.Field(alias="formId", description="The id of the form submission")
+    form_id: typing.Optional[str] = pydantic.Field(
+        alias="formId", default=None, description="The id of the form submission"
+    )
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

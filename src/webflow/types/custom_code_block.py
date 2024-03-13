@@ -19,18 +19,20 @@ class CustomCodeBlock(pydantic.BaseModel):
     """
 
     site_id: typing.Optional[str] = pydantic.Field(
-        alias="siteId", description="The Site id where the custom code was applied"
+        alias="siteId", default=None, description="The Site id where the custom code was applied"
     )
-    page_id: typing.Optional[str] = pydantic.Field(alias="pageId", description="The Page id (if applied at Page-level)")
+    page_id: typing.Optional[str] = pydantic.Field(
+        alias="pageId", default=None, description="The Page id (if applied at Page-level)"
+    )
     type: typing.Optional[CustomCodeBlockType] = pydantic.Field(
-        description="Whether the Custom Code script is applied at the Site-level or Page-level"
+        default=None, description="Whether the Custom Code script is applied at the Site-level or Page-level"
     )
-    scripts: typing.Optional[typing.List[ScriptApply]]
+    scripts: typing.Optional[typing.List[ScriptApply]] = None
     created_on: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="createdOn", description="The date the Block was created"
+        alias="createdOn", default=None, description="The date the Block was created"
     )
     last_updated: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="lastUpdated", description="The date the Block was most recently updated"
+        alias="lastUpdated", default=None, description="The date the Block was most recently updated"
     )
 
     def json(self, **kwargs: typing.Any) -> str:

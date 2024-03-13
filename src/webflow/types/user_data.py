@@ -17,7 +17,7 @@ class UserData(pydantic.BaseModel):
     An object containing the User's basic info and custom fields
     """
 
-    data: typing.Optional[UserDataData]
+    data: typing.Optional[UserDataData] = None
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

@@ -19,7 +19,7 @@ class ScriptApply(pydantic.BaseModel):
     )
     version: str = pydantic.Field(description="Semantic Version String for the registered script _e.g. 0.0.1_")
     attributes: typing.Optional[typing.Dict[str, typing.Any]] = pydantic.Field(
-        description="Developer-specified key/value pairs to be applied as attributes to the script"
+        default=None, description="Developer-specified key/value pairs to be applied as attributes to the script"
     )
 
     def json(self, **kwargs: typing.Any) -> str:

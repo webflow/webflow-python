@@ -14,33 +14,33 @@ except ImportError:
 
 
 class Form(pydantic.BaseModel):
-    id: typing.Optional[str] = pydantic.Field(description="The unique id for the Form")
+    id: typing.Optional[str] = pydantic.Field(default=None, description="The unique id for the Form")
     display_name: typing.Optional[str] = pydantic.Field(
-        alias="displayName", description="The Form name displayed on the site"
+        alias="displayName", default=None, description="The Form name displayed on the site"
     )
     site_id: typing.Optional[str] = pydantic.Field(
-        alias="siteId", description="The unique id of the Site the Form belongs to"
+        alias="siteId", default=None, description="The unique id of the Site the Form belongs to"
     )
     site_domain_id: typing.Optional[str] = pydantic.Field(
-        alias="siteDomainId", description="The unique id corresponding to the site's Domain name"
+        alias="siteDomainId", default=None, description="The unique id corresponding to the site's Domain name"
     )
     page_id: typing.Optional[str] = pydantic.Field(
-        alias="pageId", description="The unique id for the Page on which the Form is placed"
+        alias="pageId", default=None, description="The unique id for the Page on which the Form is placed"
     )
     page_name: typing.Optional[str] = pydantic.Field(
-        alias="pageName", description="The user-visible name of the Page where the Form is placed"
+        alias="pageName", default=None, description="The user-visible name of the Page where the Form is placed"
     )
     workspace_id: typing.Optional[str] = pydantic.Field(
-        alias="workspaceId", description="The unique id of the Workspace the Site belongs to"
+        alias="workspaceId", default=None, description="The unique id of the Workspace the Site belongs to"
     )
     created_on: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="createdOn", description="Date that the Form was created on"
+        alias="createdOn", default=None, description="Date that the Form was created on"
     )
     last_updated: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="lastUpdated", description="Date that the Form was last updated on"
+        alias="lastUpdated", default=None, description="Date that the Form was last updated on"
     )
-    fields: typing.Optional[typing.List[FormField]]
-    response_settings: typing.Optional[FormResponseSettings] = pydantic.Field(alias="responseSettings")
+    fields: typing.Optional[typing.List[FormField]] = None
+    response_settings: typing.Optional[FormResponseSettings] = pydantic.Field(alias="responseSettings", default=None)
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

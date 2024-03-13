@@ -17,11 +17,11 @@ class UserList(pydantic.BaseModel):
     The list users results
     """
 
-    count: typing.Optional[float] = pydantic.Field(description="Number of users returned")
-    limit: typing.Optional[float] = pydantic.Field(description="The limit specified in the request")
-    offset: typing.Optional[float] = pydantic.Field(description="The offset specified for pagination")
-    total: typing.Optional[float] = pydantic.Field(description="Total number of users in the collection")
-    users: typing.Optional[typing.List[User]] = pydantic.Field(description="List of Users for a Site")
+    count: typing.Optional[float] = pydantic.Field(default=None, description="Number of users returned")
+    limit: typing.Optional[float] = pydantic.Field(default=None, description="The limit specified in the request")
+    offset: typing.Optional[float] = pydantic.Field(default=None, description="The offset specified for pagination")
+    total: typing.Optional[float] = pydantic.Field(default=None, description="Total number of users in the collection")
+    users: typing.Optional[typing.List[User]] = pydantic.Field(default=None, description="List of Users for a Site")
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

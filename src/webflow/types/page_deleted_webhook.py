@@ -16,10 +16,10 @@ class PageDeletedWebhook(pydantic.BaseModel):
     The Webhook payload for when a Page is deleted
     """
 
-    site_id: typing.Optional[str] = pydantic.Field(alias="siteId")
-    page_id: typing.Optional[str] = pydantic.Field(alias="pageId")
-    page_title: typing.Optional[str] = pydantic.Field(alias="pageTitle")
-    deleted_at: typing.Optional[dt.datetime] = pydantic.Field(alias="deletedAt")
+    site_id: typing.Optional[str] = pydantic.Field(alias="siteId", default=None)
+    page_id: typing.Optional[str] = pydantic.Field(alias="pageId", default=None)
+    page_title: typing.Optional[str] = pydantic.Field(alias="pageTitle", default=None)
+    deleted_at: typing.Optional[dt.datetime] = pydantic.Field(alias="deletedAt", default=None)
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

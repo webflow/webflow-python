@@ -12,17 +12,20 @@ except ImportError:
 
 
 class UserDataData(pydantic.BaseModel):
-    name: typing.Optional[str] = pydantic.Field(description="The name of the user")
-    email: typing.Optional[str] = pydantic.Field(description="The email address of the user")
+    name: typing.Optional[str] = pydantic.Field(default=None, description="The name of the user")
+    email: typing.Optional[str] = pydantic.Field(default=None, description="The email address of the user")
     accept_privacy: typing.Optional[bool] = pydantic.Field(
-        alias="accept-privacy", description="Boolean indicating if the user has accepted the privacy policy"
+        alias="accept-privacy",
+        default=None,
+        description="Boolean indicating if the user has accepted the privacy policy",
     )
     accept_communications: typing.Optional[bool] = pydantic.Field(
         alias="accept-communications",
+        default=None,
         description="Boolean indicating if the user has accepted to receive communications",
     )
     additional_properties: typing.Optional[str] = pydantic.Field(
-        alias="additionalProperties", description="Custom user attributes"
+        alias="additionalProperties", default=None, description="Custom user attributes"
     )
 
     def json(self, **kwargs: typing.Any) -> str:

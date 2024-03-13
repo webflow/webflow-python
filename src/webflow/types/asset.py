@@ -13,24 +13,28 @@ except ImportError:
 
 
 class Asset(pydantic.BaseModel):
-    id: typing.Optional[str] = pydantic.Field(description="Unique identifier for this asset")
-    content_type: typing.Optional[str] = pydantic.Field(alias="contentType", description="File format type")
-    size: typing.Optional[int] = pydantic.Field(description="size in bytes")
+    id: typing.Optional[str] = pydantic.Field(default=None, description="Unique identifier for this asset")
+    content_type: typing.Optional[str] = pydantic.Field(
+        alias="contentType", default=None, description="File format type"
+    )
+    size: typing.Optional[int] = pydantic.Field(default=None, description="size in bytes")
     site_id: typing.Optional[str] = pydantic.Field(
-        alias="siteId", description="Unique identifier for the site that hosts this asset"
+        alias="siteId", default=None, description="Unique identifier for the site that hosts this asset"
     )
-    hosted_url: typing.Optional[str] = pydantic.Field(alias="hostedUrl", description="Link to the asset")
+    hosted_url: typing.Optional[str] = pydantic.Field(alias="hostedUrl", default=None, description="Link to the asset")
     original_file_name: typing.Optional[str] = pydantic.Field(
-        alias="originalFileName", description="Original file name at the time of upload"
+        alias="originalFileName", default=None, description="Original file name at the time of upload"
     )
-    display_name: typing.Optional[str] = pydantic.Field(alias="displayName", description="Display name of the asset")
+    display_name: typing.Optional[str] = pydantic.Field(
+        alias="displayName", default=None, description="Display name of the asset"
+    )
     last_updated: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="lastUpdated", description="Date the asset metadata was last updated"
+        alias="lastUpdated", default=None, description="Date the asset metadata was last updated"
     )
     created_on: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="createdOn", description="Date the asset metadata was created"
+        alias="createdOn", default=None, description="Date the asset metadata was created"
     )
-    variants: typing.Optional[typing.List[AssetVariant]]
+    variants: typing.Optional[typing.List[AssetVariant]] = None
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

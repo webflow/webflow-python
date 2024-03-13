@@ -18,8 +18,8 @@ class PageList(pydantic.BaseModel):
     The Page object
     """
 
-    pages: typing.Optional[typing.List[Page]]
-    pagination: typing.Optional[Pagination]
+    pages: typing.Optional[typing.List[Page]] = None
+    pagination: typing.Optional[Pagination] = None
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

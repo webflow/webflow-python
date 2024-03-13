@@ -13,16 +13,18 @@ except ImportError:
 
 class FormResponseSettings(pydantic.BaseModel):
     send_email_confirmation: typing.Optional[bool] = pydantic.Field(
-        alias="sendEmailConfirmation", description="Whether to send an email confirmation to the user"
+        alias="sendEmailConfirmation", default=None, description="Whether to send an email confirmation to the user"
     )
     redirect_url: typing.Optional[str] = pydantic.Field(
-        alias="redirectUrl", description="The url or path to redirect the user to after form submission"
+        alias="redirectUrl", default=None, description="The url or path to redirect the user to after form submission"
     )
     redirect_method: typing.Optional[str] = pydantic.Field(
-        alias="redirectMethod", description="The HTTP request method to use for the redirectUrl (eg. POST or GET)"
+        alias="redirectMethod",
+        default=None,
+        description="The HTTP request method to use for the redirectUrl (eg. POST or GET)",
     )
     redirect_action: typing.Optional[str] = pydantic.Field(
-        alias="redirectAction", description="The action to take after form submission"
+        alias="redirectAction", default=None, description="The action to take after form submission"
     )
 
     def json(self, **kwargs: typing.Any) -> str:

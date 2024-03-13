@@ -14,7 +14,7 @@ except ImportError:
 
 class CollectionList(pydantic.BaseModel):
     collections: typing.Optional[typing.List[CollectionListArrayItem]] = pydantic.Field(
-        description="An array of Collections"
+        default=None, description="An array of Collections"
     )
 
     def json(self, **kwargs: typing.Any) -> str:

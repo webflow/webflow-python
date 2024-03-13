@@ -14,10 +14,10 @@ except ImportError:
 
 class FormSubmissionTrigger(pydantic.BaseModel):
     trigger_type: typing.Optional[str] = pydantic.Field(
-        alias="triggerType", description="The type of event that triggered the request"
+        alias="triggerType", default=None, description="The type of event that triggered the request"
     )
     payload: typing.Optional[FormSubmissionTriggerPayload] = pydantic.Field(
-        description="The payload of data sent from Webflow"
+        default=None, description="The payload of data sent from Webflow"
     )
 
     def json(self, **kwargs: typing.Any) -> str:

@@ -18,8 +18,10 @@ class AssetFolderList(pydantic.BaseModel):
     The Asset Folders object
     """
 
-    pagination: typing.Optional[Pagination]
-    pages: typing.Optional[typing.List[AssetFolder]]
+    asset_folders: typing.Optional[typing.List[AssetFolder]] = pydantic.Field(
+        alias="assetFolders", default=None, description="A list of Asset folders"
+    )
+    pagination: typing.Optional[Pagination] = None
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
@@ -32,4 +34,5 @@ class AssetFolderList(pydantic.BaseModel):
     class Config:
         frozen = True
         smart_union = True
+        allow_population_by_field_name = True
         json_encoders = {dt.datetime: serialize_datetime}

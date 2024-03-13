@@ -7,6 +7,8 @@ from json.decoder import JSONDecodeError
 from ...core.api_error import ApiError
 from ...core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ...core.jsonable_encoder import jsonable_encoder
+from ...core.remove_none_from_dict import remove_none_from_dict
+from ...core.request_options import RequestOptions
 from ...errors.bad_request_error import BadRequestError
 from ...errors.conflict_error import ConflictError
 from ...errors.forbidden_error import ForbiddenError
@@ -30,7 +32,9 @@ class InventoryClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def list(self, collection_id: str, item_id: str) -> InventoryItem:
+    def list(
+        self, collection_id: str, item_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> InventoryItem:
         """
         List the current inventory levels for a particular SKU item.
 
@@ -40,6 +44,8 @@ class InventoryClient:
             - collection_id: str. Unique identifier for a Collection
 
             - item_id: str. Unique identifier for an Item
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import Webflow
 
@@ -47,17 +53,30 @@ class InventoryClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.inventory.list(
-            collection_id="collection-id",
-            item_id="item-id",
+            collection_id="collection_id",
+            item_id="item_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             "GET",
             urllib.parse.urljoin(
-                f"{self._client_wrapper.get_base_url()}/", f"collections/{collection_id}/items/{item_id}/inventory"
+                f"{self._client_wrapper.get_base_url()}/",
+                f"collections/{jsonable_encoder(collection_id)}/items/{jsonable_encoder(item_id)}/inventory",
             ),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(InventoryItem, _response.json())  # type: ignore
@@ -89,6 +108,7 @@ class InventoryClient:
         inventory_type: InventoryUpdateRequestInventoryType,
         update_quantity: typing.Optional[float] = OMIT,
         quantity: typing.Optional[float] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> InventoryItem:
         """
         Updates the current inventory levels for a particular SKU item. Updates may be given in one or two methods, absolutely or incrementally. Absolute updates are done by setting `quantity` directly. Incremental updates are by specifying the inventory delta in `updateQuantity` which is then added to the `quantity` stored on the server.
@@ -105,6 +125,8 @@ class InventoryClient:
             - update_quantity: typing.Optional[float]. Adds this quantity to currently store quantity. Can be negative.
 
             - quantity: typing.Optional[float]. Immediately sets quantity to this value.
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow import InventoryUpdateRequestInventoryType
         from webflow.client import Webflow
@@ -113,8 +135,8 @@ class InventoryClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.inventory.update(
-            collection_id="collection-id",
-            item_id="item-id",
+            collection_id="collection_id",
+            item_id="item_id",
             inventory_type=InventoryUpdateRequestInventoryType.INFINITE,
             update_quantity=1.0,
             quantity=100.0,
@@ -128,11 +150,29 @@ class InventoryClient:
         _response = self._client_wrapper.httpx_client.request(
             "PATCH",
             urllib.parse.urljoin(
-                f"{self._client_wrapper.get_base_url()}/", f"collections/{collection_id}/items/{item_id}/inventory"
+                f"{self._client_wrapper.get_base_url()}/",
+                f"collections/{jsonable_encoder(collection_id)}/items/{jsonable_encoder(item_id)}/inventory",
             ),
-            json=jsonable_encoder(_request),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(_request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(_request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(InventoryItem, _response.json())  # type: ignore
@@ -161,7 +201,9 @@ class AsyncInventoryClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def list(self, collection_id: str, item_id: str) -> InventoryItem:
+    async def list(
+        self, collection_id: str, item_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> InventoryItem:
         """
         List the current inventory levels for a particular SKU item.
 
@@ -171,6 +213,8 @@ class AsyncInventoryClient:
             - collection_id: str. Unique identifier for a Collection
 
             - item_id: str. Unique identifier for an Item
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import AsyncWebflow
 
@@ -178,17 +222,30 @@ class AsyncInventoryClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.inventory.list(
-            collection_id="collection-id",
-            item_id="item-id",
+            collection_id="collection_id",
+            item_id="item_id",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
             "GET",
             urllib.parse.urljoin(
-                f"{self._client_wrapper.get_base_url()}/", f"collections/{collection_id}/items/{item_id}/inventory"
+                f"{self._client_wrapper.get_base_url()}/",
+                f"collections/{jsonable_encoder(collection_id)}/items/{jsonable_encoder(item_id)}/inventory",
             ),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(InventoryItem, _response.json())  # type: ignore
@@ -220,6 +277,7 @@ class AsyncInventoryClient:
         inventory_type: InventoryUpdateRequestInventoryType,
         update_quantity: typing.Optional[float] = OMIT,
         quantity: typing.Optional[float] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> InventoryItem:
         """
         Updates the current inventory levels for a particular SKU item. Updates may be given in one or two methods, absolutely or incrementally. Absolute updates are done by setting `quantity` directly. Incremental updates are by specifying the inventory delta in `updateQuantity` which is then added to the `quantity` stored on the server.
@@ -236,6 +294,8 @@ class AsyncInventoryClient:
             - update_quantity: typing.Optional[float]. Adds this quantity to currently store quantity. Can be negative.
 
             - quantity: typing.Optional[float]. Immediately sets quantity to this value.
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow import InventoryUpdateRequestInventoryType
         from webflow.client import AsyncWebflow
@@ -244,8 +304,8 @@ class AsyncInventoryClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.inventory.update(
-            collection_id="collection-id",
-            item_id="item-id",
+            collection_id="collection_id",
+            item_id="item_id",
             inventory_type=InventoryUpdateRequestInventoryType.INFINITE,
             update_quantity=1.0,
             quantity=100.0,
@@ -259,11 +319,29 @@ class AsyncInventoryClient:
         _response = await self._client_wrapper.httpx_client.request(
             "PATCH",
             urllib.parse.urljoin(
-                f"{self._client_wrapper.get_base_url()}/", f"collections/{collection_id}/items/{item_id}/inventory"
+                f"{self._client_wrapper.get_base_url()}/",
+                f"collections/{jsonable_encoder(collection_id)}/items/{jsonable_encoder(item_id)}/inventory",
             ),
-            json=jsonable_encoder(_request),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(_request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(_request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(InventoryItem, _response.json())  # type: ignore

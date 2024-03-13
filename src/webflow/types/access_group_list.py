@@ -17,12 +17,14 @@ class AccessGroupList(pydantic.BaseModel):
     The list access groups results
     """
 
-    count: typing.Optional[float] = pydantic.Field(description="Number of access groups returned")
-    limit: typing.Optional[float] = pydantic.Field(description="The limit specified in the request")
-    offset: typing.Optional[float] = pydantic.Field(description="The offset specified for pagination")
-    total: typing.Optional[float] = pydantic.Field(description="Total number of access groups in the collection")
+    count: typing.Optional[float] = pydantic.Field(default=None, description="Number of access groups returned")
+    limit: typing.Optional[float] = pydantic.Field(default=None, description="The limit specified in the request")
+    offset: typing.Optional[float] = pydantic.Field(default=None, description="The offset specified for pagination")
+    total: typing.Optional[float] = pydantic.Field(
+        default=None, description="Total number of access groups in the collection"
+    )
     access_groups: typing.Optional[typing.List[AccessGroup]] = pydantic.Field(
-        alias="accessGroups", description="List of Site Access Groups"
+        alias="accessGroups", default=None, description="List of Site Access Groups"
     )
 
     def json(self, **kwargs: typing.Any) -> str:

@@ -17,9 +17,9 @@ class RemovedItems(pydantic.BaseModel):
     """
 
     deleted_item_ids: typing.Optional[typing.List[str]] = pydantic.Field(
-        alias="deletedItemIds", description="Array of deleted item ids"
+        alias="deletedItemIds", default=None, description="Array of deleted item ids"
     )
-    errors: typing.Optional[typing.List[str]] = pydantic.Field(description="Array of errors")
+    errors: typing.Optional[typing.List[str]] = pydantic.Field(default=None, description="Array of errors")
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

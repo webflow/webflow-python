@@ -13,7 +13,7 @@ except ImportError:
 
 class Domain(pydantic.BaseModel):
     id: str = pydantic.Field(description="Unique identifier for the Domain")
-    url: typing.Optional[str] = pydantic.Field(description="The registered Domain name")
+    url: typing.Optional[str] = pydantic.Field(default=None, description="The registered Domain name")
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

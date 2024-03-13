@@ -6,7 +6,9 @@ from json.decoder import JSONDecodeError
 
 from ...core.api_error import ApiError
 from ...core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
+from ...core.jsonable_encoder import jsonable_encoder
 from ...core.remove_none_from_dict import remove_none_from_dict
+from ...core.request_options import RequestOptions
 from ...errors.bad_request_error import BadRequestError
 from ...errors.forbidden_error import ForbiddenError
 from ...errors.internal_server_error import InternalServerError
@@ -33,6 +35,7 @@ class AccessGroupsClient:
         offset: typing.Optional[float] = None,
         limit: typing.Optional[float] = None,
         sort: typing.Optional[AccessGroupsListRequestSort] = None,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> AccessGroupList:
         """
         Get a list of access groups for a site <br><br> Required scope | `users:read`
@@ -45,24 +48,48 @@ class AccessGroupsClient:
             - limit: typing.Optional[float]. Maximum number of records to be returned (max limit: 100)
 
             - sort: typing.Optional[AccessGroupsListRequestSort]. Sort string to use when ordering access groups
-                                                                  Can be prefixed with a `-` to reverse the sort (ex. `-CreatedOn`)---
-        from webflow import AccessGroupsListRequestSort
+                                                                  Can be prefixed with a `-` to reverse the sort (ex. `-CreatedOn`)
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
+        ---
         from webflow.client import Webflow
 
         client = Webflow(
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.access_groups.list(
-            site_id="site-id",
-            sort=AccessGroupsListRequestSort.CREATED_ON_ASCENDING,
+            site_id="site_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/accessgroups"),
-            params=remove_none_from_dict({"offset": offset, "limit": limit, "sort": sort}),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"sites/{jsonable_encoder(site_id)}/accessgroups"
+            ),
+            params=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        "offset": offset,
+                        "limit": limit,
+                        "sort": sort,
+                        **(
+                            request_options.get("additional_query_parameters", {})
+                            if request_options is not None
+                            else {}
+                        ),
+                    }
+                )
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(AccessGroupList, _response.json())  # type: ignore
@@ -96,6 +123,7 @@ class AsyncAccessGroupsClient:
         offset: typing.Optional[float] = None,
         limit: typing.Optional[float] = None,
         sort: typing.Optional[AccessGroupsListRequestSort] = None,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> AccessGroupList:
         """
         Get a list of access groups for a site <br><br> Required scope | `users:read`
@@ -108,24 +136,48 @@ class AsyncAccessGroupsClient:
             - limit: typing.Optional[float]. Maximum number of records to be returned (max limit: 100)
 
             - sort: typing.Optional[AccessGroupsListRequestSort]. Sort string to use when ordering access groups
-                                                                  Can be prefixed with a `-` to reverse the sort (ex. `-CreatedOn`)---
-        from webflow import AccessGroupsListRequestSort
+                                                                  Can be prefixed with a `-` to reverse the sort (ex. `-CreatedOn`)
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
+        ---
         from webflow.client import AsyncWebflow
 
         client = AsyncWebflow(
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.access_groups.list(
-            site_id="site-id",
-            sort=AccessGroupsListRequestSort.CREATED_ON_ASCENDING,
+            site_id="site_id",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/accessgroups"),
-            params=remove_none_from_dict({"offset": offset, "limit": limit, "sort": sort}),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"sites/{jsonable_encoder(site_id)}/accessgroups"
+            ),
+            params=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        "offset": offset,
+                        "limit": limit,
+                        "sort": sort,
+                        **(
+                            request_options.get("additional_query_parameters", {})
+                            if request_options is not None
+                            else {}
+                        ),
+                    }
+                )
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(AccessGroupList, _response.json())  # type: ignore

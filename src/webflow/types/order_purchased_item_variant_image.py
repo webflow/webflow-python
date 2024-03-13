@@ -13,8 +13,8 @@ except ImportError:
 
 
 class OrderPurchasedItemVariantImage(pydantic.BaseModel):
-    url: typing.Optional[str] = pydantic.Field(description="The hosted location for the Variant's image")
-    file: typing.Optional[OrderPurchasedItemVariantImageFile]
+    url: typing.Optional[str] = pydantic.Field(default=None, description="The hosted location for the Variant's image")
+    file: typing.Optional[OrderPurchasedItemVariantImageFile] = None
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

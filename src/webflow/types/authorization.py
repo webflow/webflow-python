@@ -14,8 +14,10 @@ except ImportError:
 
 
 class Authorization(pydantic.BaseModel):
-    authorization: typing.Optional[AuthorizationAuthorization] = pydantic.Field(description="The Authorization object")
-    application: typing.Optional[Application]
+    authorization: typing.Optional[AuthorizationAuthorization] = pydantic.Field(
+        default=None, description="The Authorization object"
+    )
+    application: typing.Optional[Application] = None
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

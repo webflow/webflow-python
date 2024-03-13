@@ -7,6 +7,8 @@ from json.decoder import JSONDecodeError
 from ...core.api_error import ApiError
 from ...core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ...core.jsonable_encoder import jsonable_encoder
+from ...core.remove_none_from_dict import remove_none_from_dict
+from ...core.request_options import RequestOptions
 from ...errors.bad_request_error import BadRequestError
 from ...errors.internal_server_error import InternalServerError
 from ...errors.not_found_error import NotFoundError
@@ -28,12 +30,14 @@ class ScriptsClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def list(self, site_id: str) -> RegisteredScriptList:
+    def list(self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> RegisteredScriptList:
         """
         List of scripts registered to a Site. </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. Additionally, Scripts can be remotely hosted, or registered as inline snippets. </br></br> Required scope | `custom_code:read`
 
         Parameters:
             - site_id: str. Unique identifier for a Site
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import Webflow
 
@@ -41,14 +45,28 @@ class ScriptsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.scripts.list(
-            site_id="site-id",
+            site_id="site_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/registered_scripts"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"sites/{jsonable_encoder(site_id)}/registered_scripts"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(RegisteredScriptList, _response.json())  # type: ignore
@@ -77,6 +95,7 @@ class ScriptsClient:
         can_copy: typing.Optional[bool] = OMIT,
         version: str,
         display_name: str,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> CustomCodeResponse:
         """
         Add a script to a Site's Custom Code registry. </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. Additionally, Scripts can be remotely hosted, or registered as inline snippets. </br></br> Required scope | `custom_code:write`
@@ -93,6 +112,21 @@ class ScriptsClient:
             - version: str. A Semantic Version (SemVer) string, denoting the version of the script
 
             - display_name: str. User-facing name for the script
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
+        ---
+        from webflow.client import Webflow
+
+        client = Webflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+        client.scripts.register_hosted(
+            site_id="site_id",
+            hosted_location="hostedLocation",
+            integrity_hash="integrityHash",
+            version="version",
+            display_name="displayName",
+        )
         """
         _request: typing.Dict[str, typing.Any] = {
             "hostedLocation": hosted_location,
@@ -105,11 +139,29 @@ class ScriptsClient:
         _response = self._client_wrapper.httpx_client.request(
             "POST",
             urllib.parse.urljoin(
-                f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/registered_scripts/hosted"
+                f"{self._client_wrapper.get_base_url()}/",
+                f"sites/{jsonable_encoder(site_id)}/registered_scripts/hosted",
             ),
-            json=jsonable_encoder(_request),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(_request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(_request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(CustomCodeResponse, _response.json())  # type: ignore
@@ -138,6 +190,7 @@ class ScriptsClient:
         can_copy: typing.Optional[bool] = OMIT,
         version: str,
         display_name: str,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> CustomCodeResponse:
         """
         Add a script to a Site's Custom Code registry. Inline scripts can be between 1 and 2000 characters. </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. </br></br> Required scope | `custom_code:write`
@@ -154,6 +207,20 @@ class ScriptsClient:
             - version: str. A Semantic Version (SemVer) string, denoting the version of the script
 
             - display_name: str. User-facing name for the script
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
+        ---
+        from webflow.client import Webflow
+
+        client = Webflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+        client.scripts.register_inline(
+            site_id="site_id",
+            source_code="alert('hello world');",
+            version="0.0.1",
+            display_name="Alert",
+        )
         """
         _request: typing.Dict[str, typing.Any] = {
             "sourceCode": source_code,
@@ -167,11 +234,29 @@ class ScriptsClient:
         _response = self._client_wrapper.httpx_client.request(
             "POST",
             urllib.parse.urljoin(
-                f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/registered_scripts/inline"
+                f"{self._client_wrapper.get_base_url()}/",
+                f"sites/{jsonable_encoder(site_id)}/registered_scripts/inline",
             ),
-            json=jsonable_encoder(_request),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(_request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(_request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(CustomCodeResponse, _response.json())  # type: ignore
@@ -196,12 +281,16 @@ class AsyncScriptsClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def list(self, site_id: str) -> RegisteredScriptList:
+    async def list(
+        self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> RegisteredScriptList:
         """
         List of scripts registered to a Site. </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. Additionally, Scripts can be remotely hosted, or registered as inline snippets. </br></br> Required scope | `custom_code:read`
 
         Parameters:
             - site_id: str. Unique identifier for a Site
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import AsyncWebflow
 
@@ -209,14 +298,28 @@ class AsyncScriptsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.scripts.list(
-            site_id="site-id",
+            site_id="site_id",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/registered_scripts"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"sites/{jsonable_encoder(site_id)}/registered_scripts"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(RegisteredScriptList, _response.json())  # type: ignore
@@ -245,6 +348,7 @@ class AsyncScriptsClient:
         can_copy: typing.Optional[bool] = OMIT,
         version: str,
         display_name: str,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> CustomCodeResponse:
         """
         Add a script to a Site's Custom Code registry. </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. Additionally, Scripts can be remotely hosted, or registered as inline snippets. </br></br> Required scope | `custom_code:write`
@@ -261,6 +365,21 @@ class AsyncScriptsClient:
             - version: str. A Semantic Version (SemVer) string, denoting the version of the script
 
             - display_name: str. User-facing name for the script
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
+        ---
+        from webflow.client import AsyncWebflow
+
+        client = AsyncWebflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+        await client.scripts.register_hosted(
+            site_id="site_id",
+            hosted_location="hostedLocation",
+            integrity_hash="integrityHash",
+            version="version",
+            display_name="displayName",
+        )
         """
         _request: typing.Dict[str, typing.Any] = {
             "hostedLocation": hosted_location,
@@ -273,11 +392,29 @@ class AsyncScriptsClient:
         _response = await self._client_wrapper.httpx_client.request(
             "POST",
             urllib.parse.urljoin(
-                f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/registered_scripts/hosted"
+                f"{self._client_wrapper.get_base_url()}/",
+                f"sites/{jsonable_encoder(site_id)}/registered_scripts/hosted",
             ),
-            json=jsonable_encoder(_request),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(_request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(_request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(CustomCodeResponse, _response.json())  # type: ignore
@@ -306,6 +443,7 @@ class AsyncScriptsClient:
         can_copy: typing.Optional[bool] = OMIT,
         version: str,
         display_name: str,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> CustomCodeResponse:
         """
         Add a script to a Site's Custom Code registry. Inline scripts can be between 1 and 2000 characters. </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. </br></br> Required scope | `custom_code:write`
@@ -322,6 +460,20 @@ class AsyncScriptsClient:
             - version: str. A Semantic Version (SemVer) string, denoting the version of the script
 
             - display_name: str. User-facing name for the script
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
+        ---
+        from webflow.client import AsyncWebflow
+
+        client = AsyncWebflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+        await client.scripts.register_inline(
+            site_id="site_id",
+            source_code="alert('hello world');",
+            version="0.0.1",
+            display_name="Alert",
+        )
         """
         _request: typing.Dict[str, typing.Any] = {
             "sourceCode": source_code,
@@ -335,11 +487,29 @@ class AsyncScriptsClient:
         _response = await self._client_wrapper.httpx_client.request(
             "POST",
             urllib.parse.urljoin(
-                f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/registered_scripts/inline"
+                f"{self._client_wrapper.get_base_url()}/",
+                f"sites/{jsonable_encoder(site_id)}/registered_scripts/inline",
             ),
-            json=jsonable_encoder(_request),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(_request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(_request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(CustomCodeResponse, _response.json())  # type: ignore

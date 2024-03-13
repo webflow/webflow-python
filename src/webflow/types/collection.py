@@ -17,17 +17,20 @@ class Collection(pydantic.BaseModel):
     """
 
     id: str = pydantic.Field(description="Unique identifier for a Collection")
-    display_name: typing.Optional[str] = pydantic.Field(alias="displayName", description="Name given to the Collection")
+    display_name: typing.Optional[str] = pydantic.Field(
+        alias="displayName", default=None, description="Name given to the Collection"
+    )
     singular_name: typing.Optional[str] = pydantic.Field(
         alias="singularName",
+        default=None,
         description="The name of one Item in Collection (e.g. ”Blog Post” if the Collection is called “Blog Posts”)",
     )
-    slug: typing.Optional[str] = pydantic.Field(description="Slug of Collection in Site URL structure")
+    slug: typing.Optional[str] = pydantic.Field(default=None, description="Slug of Collection in Site URL structure")
     created_on: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="createdOn", description="The date the collection was created"
+        alias="createdOn", default=None, description="The date the collection was created"
     )
     last_updated: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="lastUpdated", description="The date the collection was last updated"
+        alias="lastUpdated", default=None, description="The date the collection was last updated"
     )
     fields: typing.Dict[str, typing.Any] = pydantic.Field(description="The list of fields in the Collection")
 

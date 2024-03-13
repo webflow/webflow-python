@@ -13,18 +13,20 @@ except ImportError:
 
 
 class OrderPurchasedItemVariantImageFile(pydantic.BaseModel):
-    size: typing.Optional[float] = pydantic.Field(description="The image size in bytes")
+    size: typing.Optional[float] = pydantic.Field(default=None, description="The image size in bytes")
     original_file_name: typing.Optional[str] = pydantic.Field(
-        alias="originalFileName", description="the original name of the image"
+        alias="originalFileName", default=None, description="the original name of the image"
     )
     created_on: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="createdOn", description="The creation timestamp of the image"
+        alias="createdOn", default=None, description="The creation timestamp of the image"
     )
-    content_type: typing.Optional[str] = pydantic.Field(alias="contentType", description="The MIME type of the image")
-    width: typing.Optional[int] = pydantic.Field(description="The image width in pixels")
-    height: typing.Optional[int] = pydantic.Field(description="The image height in pixels")
+    content_type: typing.Optional[str] = pydantic.Field(
+        alias="contentType", default=None, description="The MIME type of the image"
+    )
+    width: typing.Optional[int] = pydantic.Field(default=None, description="The image width in pixels")
+    height: typing.Optional[int] = pydantic.Field(default=None, description="The image height in pixels")
     variants: typing.Optional[typing.List[OrderPurchasedItemVariantImageFileVariantsItem]] = pydantic.Field(
-        description="Variants of the supplied image"
+        default=None, description="Variants of the supplied image"
     )
 
     def json(self, **kwargs: typing.Any) -> str:

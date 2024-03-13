@@ -16,10 +16,10 @@ class PageCreatedWebhook(pydantic.BaseModel):
     The Webhook payload for when a Page is created
     """
 
-    site_id: typing.Optional[str] = pydantic.Field(alias="siteId")
-    page_id: typing.Optional[str] = pydantic.Field(alias="pageId")
-    page_title: typing.Optional[str] = pydantic.Field(alias="pageTitle")
-    created_at: typing.Optional[dt.datetime] = pydantic.Field(alias="createdAt")
+    site_id: typing.Optional[str] = pydantic.Field(alias="siteId", default=None)
+    page_id: typing.Optional[str] = pydantic.Field(alias="pageId", default=None)
+    page_title: typing.Optional[str] = pydantic.Field(alias="pageTitle", default=None)
+    created_at: typing.Optional[dt.datetime] = pydantic.Field(alias="createdAt", default=None)
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

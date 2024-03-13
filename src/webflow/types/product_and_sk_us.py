@@ -18,8 +18,8 @@ class ProductAndSkUs(pydantic.BaseModel):
     A product and its SKUs.
     """
 
-    product: typing.Optional[Product]
-    skus: typing.Optional[typing.List[Sku]]
+    product: typing.Optional[Product] = None
+    skus: typing.Optional[typing.List[Sku]] = pydantic.Field(default=None, description="A list of SKU Objects")
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

@@ -17,29 +17,32 @@ class CustomCodeResponse(pydantic.BaseModel):
     """
 
     id: typing.Optional[str] = pydantic.Field(
-        description="Human readable id, derived from the user-specified display name"
+        default=None, description="Human readable id, derived from the user-specified display name"
     )
     created_on: typing.Optional[str] = pydantic.Field(
-        alias="createdOn", description="Timestamp when the script version was created"
+        alias="createdOn", default=None, description="Timestamp when the script version was created"
     )
     last_updated: typing.Optional[str] = pydantic.Field(
-        alias="lastUpdated", description="Timestamp when the script version was last updated"
+        alias="lastUpdated", default=None, description="Timestamp when the script version was last updated"
     )
     hosted_location: typing.Optional[str] = pydantic.Field(
-        alias="hostedLocation", description="URI for an externally hosted script location"
+        alias="hostedLocation", default=None, description="URI for an externally hosted script location"
     )
     integrity_hash: typing.Optional[str] = pydantic.Field(
         alias="integrityHash",
+        default=None,
         description="Sub-Resource Integrity Hash. Only required for externally hosted scripts (passed via hostedLocation)",
     )
     can_copy: typing.Optional[bool] = pydantic.Field(
-        alias="canCopy", description="Define whether the script can be copied on site duplication and transfer"
+        alias="canCopy",
+        default=None,
+        description="Define whether the script can be copied on site duplication and transfer",
     )
     version: typing.Optional[str] = pydantic.Field(
-        description="A Semantic Version (SemVer) string, denoting the version of the script"
+        default=None, description="A Semantic Version (SemVer) string, denoting the version of the script"
     )
     display_name: typing.Optional[str] = pydantic.Field(
-        alias="displayName", description="User-facing name for the script"
+        alias="displayName", default=None, description="User-facing name for the script"
     )
 
     def json(self, **kwargs: typing.Any) -> str:

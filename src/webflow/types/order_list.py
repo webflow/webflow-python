@@ -18,8 +18,8 @@ class OrderList(pydantic.BaseModel):
     Results from order list
     """
 
-    items: typing.Optional[typing.List[Order]] = pydantic.Field(description="List of orders")
-    pagination: typing.Optional[Pagination]
+    items: typing.Optional[typing.List[Order]] = pydantic.Field(default=None, description="List of orders")
+    pagination: typing.Optional[Pagination] = None
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

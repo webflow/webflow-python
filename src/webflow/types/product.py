@@ -17,23 +17,23 @@ class Product(pydantic.BaseModel):
     The Product object
     """
 
-    id: typing.Optional[str] = pydantic.Field(description="Unique identifier for the Product")
+    id: typing.Optional[str] = pydantic.Field(default=None, description="Unique identifier for the Product")
     last_published: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="lastPublished", description="The date the Product was last published"
+        alias="lastPublished", default=None, description="The date the Product was last published"
     )
     last_updated: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="lastUpdated", description="The date the Product was last updated"
+        alias="lastUpdated", default=None, description="The date the Product was last updated"
     )
     created_on: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="createdOn", description="The date the Product was created"
+        alias="createdOn", default=None, description="The date the Product was created"
     )
     is_archived: typing.Optional[bool] = pydantic.Field(
-        alias="isArchived", description="Boolean determining if the Product is set to archived"
+        alias="isArchived", default=None, description="Boolean determining if the Product is set to archived"
     )
     is_draft: typing.Optional[bool] = pydantic.Field(
-        alias="isDraft", description="Boolean determining if the Product is set to draft"
+        alias="isDraft", default=None, description="Boolean determining if the Product is set to draft"
     )
-    field_data: typing.Optional[ProductFieldData] = pydantic.Field(alias="fieldData")
+    field_data: typing.Optional[ProductFieldData] = pydantic.Field(alias="fieldData", default=None)
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

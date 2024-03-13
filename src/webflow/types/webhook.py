@@ -13,24 +13,29 @@ except ImportError:
 
 
 class Webhook(pydantic.BaseModel):
-    id: typing.Optional[str] = pydantic.Field(description="Unique identifier for the Webhook registration")
+    id: typing.Optional[str] = pydantic.Field(
+        default=None, description="Unique identifier for the Webhook registration"
+    )
     workspace_id: typing.Optional[str] = pydantic.Field(
-        alias="workspaceId", description="Unique identifier for the Workspace the Webhook is registered in"
+        alias="workspaceId",
+        default=None,
+        description="Unique identifier for the Workspace the Webhook is registered in",
     )
     site_id: typing.Optional[str] = pydantic.Field(
-        alias="siteId", description="Unique identifier for the Site the Webhook is registered in"
+        alias="siteId", default=None, description="Unique identifier for the Site the Webhook is registered in"
     )
-    trigger_type: typing.Optional[TriggerType] = pydantic.Field(alias="triggerType")
+    trigger_type: typing.Optional[TriggerType] = pydantic.Field(alias="triggerType", default=None)
     filter: typing.Optional[typing.Dict[str, typing.Any]] = pydantic.Field(
-        description="Filter for selecting which events you want Webhooks to be sent for. Only supported for form_submission trigger types."
+        default=None,
+        description="Filter for selecting which events you want Webhooks to be sent for. Only supported for form_submission trigger types.",
     )
     last_triggered: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="lastTriggered", description="Date the Webhook instance was last triggered"
+        alias="lastTriggered", default=None, description="Date the Webhook instance was last triggered"
     )
     created_on: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="createdOn", description="Date the Webhook registration was created"
+        alias="createdOn", default=None, description="Date the Webhook registration was created"
     )
-    url: typing.Optional[str] = pydantic.Field(description="URL to send the Webhook payload to")
+    url: typing.Optional[str] = pydantic.Field(default=None, description="URL to send the Webhook payload to")
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

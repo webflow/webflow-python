@@ -4,6 +4,9 @@ import datetime as dt
 import typing
 
 from ..core.datetime_utils import serialize_datetime
+from .sku_field_data_compare_at_price import SkuFieldDataCompareAtPrice
+from .sku_field_data_ec_sku_billing_method import SkuFieldDataEcSkuBillingMethod
+from .sku_field_data_ec_sku_subscription_plan import SkuFieldDataEcSkuSubscriptionPlan
 from .sku_field_data_price import SkuFieldDataPrice
 from .sku_value_list import SkuValueList
 
@@ -14,10 +17,31 @@ except ImportError:
 
 
 class SkuFieldData(pydantic.BaseModel):
-    name: typing.Optional[str] = pydantic.Field(description="Name of the Product")
-    slug: typing.Optional[str] = pydantic.Field(description="URL structure of the Product in your site.")
-    price: typing.Optional[SkuFieldDataPrice] = pydantic.Field(description="price of SKU")
-    sku_values: typing.Optional[SkuValueList] = pydantic.Field(alias="sku-values")
+    """
+    Standard and Custom fields for a SKU
+    """
+
+    sku_values: typing.Optional[SkuValueList] = pydantic.Field(alias="sku-values", default=None)
+    name: str = pydantic.Field(description="Name of the Product")
+    slug: str = pydantic.Field(description="URL structure of the Product in your site.")
+    price: SkuFieldDataPrice = pydantic.Field(description="price of SKU")
+    compare_at_price: typing.Optional[SkuFieldDataCompareAtPrice] = pydantic.Field(
+        alias="compare-at-price", default=None, description="comparison price of SKU"
+    )
+    ec_sku_billing_method: typing.Optional[SkuFieldDataEcSkuBillingMethod] = pydantic.Field(
+        alias="ec-sku-billing-method", default=None
+    )
+    ec_sku_subscription_plan: typing.Optional[SkuFieldDataEcSkuSubscriptionPlan] = pydantic.Field(
+        alias="ec-sku-subscription-plan", default=None
+    )
+    track_inventory: typing.Optional[bool] = pydantic.Field(
+        alias="track-inventory",
+        default=None,
+        description="A boolean indicating whether inventory for this product should be tracked.",
+    )
+    quantity: typing.Optional[float] = pydantic.Field(
+        default=None, description="Quantity of SKU that will be tracked as items are ordered."
+    )
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
