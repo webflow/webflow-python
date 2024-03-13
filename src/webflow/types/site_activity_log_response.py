@@ -14,8 +14,8 @@ except ImportError:
 
 
 class SiteActivityLogResponse(pydantic.BaseModel):
-    items: typing.Optional[typing.List[SiteActivityLogItem]]
-    pagination: typing.Optional[Pagination]
+    items: typing.Optional[typing.List[SiteActivityLogItem]] = None
+    pagination: typing.Optional[Pagination] = None
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

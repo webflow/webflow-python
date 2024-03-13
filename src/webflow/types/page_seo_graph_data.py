@@ -18,8 +18,8 @@ class PageSeoGraphData(pydantic.BaseModel):
     The SEO and/or OpenGraph information to include in the page's details
     """
 
-    seo: typing.Optional[PageSeoGraphDataSeo]
-    open_graph: typing.Optional[PageSeoGraphDataOpenGraph] = pydantic.Field(alias="openGraph")
+    seo: typing.Optional[PageSeoGraphDataSeo] = None
+    open_graph: typing.Optional[PageSeoGraphDataOpenGraph] = pydantic.Field(alias="openGraph", default=None)
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

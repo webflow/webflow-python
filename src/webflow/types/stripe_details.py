@@ -17,28 +17,28 @@ class StripeDetails(pydantic.BaseModel):
     """
 
     subscription_id: typing.Optional[str] = pydantic.Field(
-        alias="subscriptionId", description="Stripe-generated identifier for the Subscription"
+        alias="subscriptionId", default=None, description="Stripe-generated identifier for the Subscription"
     )
     payment_method: typing.Optional[str] = pydantic.Field(
-        alias="paymentMethod", description="Stripe-generated identifier for the PaymentMethod used"
+        alias="paymentMethod", default=None, description="Stripe-generated identifier for the PaymentMethod used"
     )
     payment_intent_id: typing.Optional[str] = pydantic.Field(
-        alias="paymentIntentId", description="Stripe-generated identifier for the PaymentIntent, or null"
+        alias="paymentIntentId", default=None, description="Stripe-generated identifier for the PaymentIntent, or null"
     )
     customer_id: typing.Optional[str] = pydantic.Field(
-        alias="customerId", description="Stripe-generated customer identifier, or null"
+        alias="customerId", default=None, description="Stripe-generated customer identifier, or null"
     )
     charge_id: typing.Optional[str] = pydantic.Field(
-        alias="chargeId", description="Stripe-generated charge identifier, or null"
+        alias="chargeId", default=None, description="Stripe-generated charge identifier, or null"
     )
     dispute_id: typing.Optional[str] = pydantic.Field(
-        alias="disputeId", description="Stripe-generated dispute identifier, or null"
+        alias="disputeId", default=None, description="Stripe-generated dispute identifier, or null"
     )
     refund_id: typing.Optional[str] = pydantic.Field(
-        alias="refundId", description="Stripe-generated refund identifier, or null"
+        alias="refundId", default=None, description="Stripe-generated refund identifier, or null"
     )
     refund_reason: typing.Optional[str] = pydantic.Field(
-        alias="refundReason", description="Stripe-generated refund reason, or null"
+        alias="refundReason", default=None, description="Stripe-generated refund reason, or null"
     )
 
     def json(self, **kwargs: typing.Any) -> str:

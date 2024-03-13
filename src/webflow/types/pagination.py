@@ -16,9 +16,9 @@ class Pagination(pydantic.BaseModel):
     Pagination object
     """
 
-    limit: typing.Optional[float] = pydantic.Field(description="The limit used for pagination")
-    offset: typing.Optional[float] = pydantic.Field(description="The offset used for pagination")
-    total: typing.Optional[float] = pydantic.Field(description="The total number of records")
+    limit: typing.Optional[float] = pydantic.Field(default=None, description="The limit used for pagination")
+    offset: typing.Optional[float] = pydantic.Field(default=None, description="The offset used for pagination")
+    total: typing.Optional[float] = pydantic.Field(default=None, description="The total number of records")
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

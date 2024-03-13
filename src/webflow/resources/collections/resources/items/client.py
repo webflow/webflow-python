@@ -8,6 +8,7 @@ from .....core.api_error import ApiError
 from .....core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from .....core.jsonable_encoder import jsonable_encoder
 from .....core.remove_none_from_dict import remove_none_from_dict
+from .....core.request_options import RequestOptions
 from .....errors.bad_request_error import BadRequestError
 from .....errors.internal_server_error import InternalServerError
 from .....errors.not_found_error import NotFoundError
@@ -15,6 +16,7 @@ from .....errors.too_many_requests_error import TooManyRequestsError
 from .....errors.unauthorized_error import UnauthorizedError
 from .....types.collection_item import CollectionItem
 from .....types.collection_item_list import CollectionItemList
+from .types.bulk_collection_item_field_data import BulkCollectionItemFieldData
 from .types.items_publish_item_response import ItemsPublishItemResponse
 
 try:
@@ -31,17 +33,27 @@ class ItemsClient:
         self._client_wrapper = client_wrapper
 
     def list_items(
-        self, collection_id: str, *, offset: typing.Optional[float] = None, limit: typing.Optional[float] = None
+        self,
+        collection_id: str,
+        *,
+        cms_locale_ids: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        offset: typing.Optional[float] = None,
+        limit: typing.Optional[float] = None,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> CollectionItemList:
         """
-        List of all Items within a Collection. </br></br> Required scope | `cms:read`
+        List of all Items within a Collection. </br></br> Required scope | `CMS:read`
 
         Parameters:
             - collection_id: str. Unique identifier for a Collection
 
+            - cms_locale_ids: typing.Optional[typing.Union[str, typing.Sequence[str]]]. Unique identifiers for CMS Locales. These UIDs are different from the Site locale identifier and are listed as `cmsLocaleId` in the Sites response. Applicable when using localization.
+
             - offset: typing.Optional[float]. Offset used for pagination if the results have more than limit records
 
             - limit: typing.Optional[float]. Maximum number of records to be returned (max limit: 100)
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import Webflow
 
@@ -49,15 +61,39 @@ class ItemsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.collections.items.list_items(
-            collection_id="collection-id",
+            collection_id="collection_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"collections/{collection_id}/items"),
-            params=remove_none_from_dict({"offset": offset, "limit": limit}),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"collections/{jsonable_encoder(collection_id)}/items"
+            ),
+            params=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        "cmsLocaleIds": cms_locale_ids,
+                        "offset": offset,
+                        "limit": limit,
+                        **(
+                            request_options.get("additional_query_parameters", {})
+                            if request_options is not None
+                            else {}
+                        ),
+                    }
+                )
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(CollectionItemList, _response.json())  # type: ignore
@@ -77,37 +113,65 @@ class ItemsClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def create_item(self, collection_id: str, *, request: CollectionItem) -> None:
+    def create_item(
+        self, collection_id: str, *, request: CollectionItem, request_options: typing.Optional[RequestOptions] = None
+    ) -> None:
         """
-        Create Item in a Collection. </br></br> Required scope | `cms:write`
+        Create Item in a Collection.</br></br> To create items across multiple locales, <a href="https://developers.webflow.com/data/reference/create-item-for-multiple-locales"> please use this endpoint.</a> </br></br> Required scope | `CMS:write`
 
         Parameters:
             - collection_id: str. Unique identifier for a Collection
 
             - request: CollectionItem.
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
-        from webflow import CollectionItem
+        from webflow import CollectionItem, CollectionItemFieldData
         from webflow.client import Webflow
 
         client = Webflow(
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.collections.items.create_item(
-            collection_id="collection-id",
+            collection_id="collection_id",
             request=CollectionItem(
                 id="580e64008c9a982ac9b8b754",
+                cms_locale_id="653ad57de882f528b32e810e",
                 last_published="2023-03-17T18:47:35.560Z",
                 last_updated="2023-03-17T18:47:35.560Z",
                 created_on="2023-03-17T18:47:35.560Z",
+                field_data=CollectionItemFieldData(
+                    name="My new item",
+                    slug="my-new-item",
+                ),
             ),
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             "POST",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"collections/{collection_id}/items"),
-            json=jsonable_encoder(request),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"collections/{jsonable_encoder(collection_id)}/items"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return
@@ -127,14 +191,218 @@ class ItemsClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get_item(self, collection_id: str, item_id: str) -> CollectionItem:
+    def create_item_live(
+        self, collection_id: str, *, request: CollectionItem, request_options: typing.Optional[RequestOptions] = None
+    ) -> None:
         """
-        Get details of a selected Collection Item. </br></br> Required scope | `cms:read`
+        Create live Item in a Collection. This Item will be published to the live site. </br></br> To create items across multiple locales, <a href="https://developers.webflow.com/data/reference/create-item-for-multiple-locales"> please use this endpoint.</a> </br></br> Required scope | `CMS:write`
+
+        Parameters:
+            - collection_id: str. Unique identifier for a Collection
+
+            - request: CollectionItem.
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
+        ---
+        from webflow import CollectionItem, CollectionItemFieldData
+        from webflow.client import Webflow
+
+        client = Webflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+        client.collections.items.create_item_live(
+            collection_id="collection_id",
+            request=CollectionItem(
+                id="580e64008c9a982ac9b8b754",
+                cms_locale_id="653ad57de882f528b32e810e",
+                last_published="2023-03-17T18:47:35.560Z",
+                last_updated="2023-03-17T18:47:35.560Z",
+                created_on="2023-03-17T18:47:35.560Z",
+                field_data=CollectionItemFieldData(
+                    name="My new item",
+                    slug="my-new-item",
+                ),
+            ),
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "POST",
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"collections/{jsonable_encoder(collection_id)}/items/live"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
+        )
+        if 200 <= _response.status_code < 300:
+            return
+        if _response.status_code == 400:
+            raise BadRequestError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 401:
+            raise UnauthorizedError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 404:
+            raise NotFoundError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 429:
+            raise TooManyRequestsError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 500:
+            raise InternalServerError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        try:
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    def create_item_for_multiple_locales(
+        self,
+        collection_id: str,
+        *,
+        id: str,
+        cms_locale_ids: typing.Optional[typing.Sequence[str]] = OMIT,
+        last_published: typing.Optional[str] = OMIT,
+        last_updated: typing.Optional[str] = OMIT,
+        created_on: typing.Optional[str] = OMIT,
+        is_archived: typing.Optional[bool] = OMIT,
+        is_draft: typing.Optional[bool] = OMIT,
+        field_data: typing.Optional[BulkCollectionItemFieldData] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> None:
+        """
+        Create single Item in a Collection with multiple corresponding locales. </br></br> Required scope | `CMS:write`
+
+        Parameters:
+            - collection_id: str. Unique identifier for a Collection
+
+            - id: str. Unique identifier for the Item
+
+            - cms_locale_ids: typing.Optional[typing.Sequence[str]]. Array of identifiers for the locales where the item will be crated
+
+            - last_published: typing.Optional[str]. The date the item was last published
+
+            - last_updated: typing.Optional[str]. The date the item was last updated
+
+            - created_on: typing.Optional[str]. The date the item was created
+
+            - is_archived: typing.Optional[bool]. Boolean determining if the Item is set to archived
+
+            - is_draft: typing.Optional[bool]. Boolean determining if the Item is set to draft
+
+            - field_data: typing.Optional[BulkCollectionItemFieldData].
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
+        ---
+        from webflow.client import Webflow
+        from webflow.resources.collections import BulkCollectionItemFieldData
+
+        client = Webflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+        client.collections.items.create_item_for_multiple_locales(
+            collection_id="collection_id",
+            id="580e64008c9a982ac9b8b754",
+            last_published="2023-03-17T18:47:35.560Z",
+            last_updated="2023-03-17T18:47:35.560Z",
+            created_on="2023-03-17T18:47:35.560Z",
+            field_data=BulkCollectionItemFieldData(
+                name="My new item",
+                slug="my-new-item",
+            ),
+        )
+        """
+        _request: typing.Dict[str, typing.Any] = {"id": id}
+        if cms_locale_ids is not OMIT:
+            _request["cmsLocaleIds"] = cms_locale_ids
+        if last_published is not OMIT:
+            _request["lastPublished"] = last_published
+        if last_updated is not OMIT:
+            _request["lastUpdated"] = last_updated
+        if created_on is not OMIT:
+            _request["createdOn"] = created_on
+        if is_archived is not OMIT:
+            _request["isArchived"] = is_archived
+        if is_draft is not OMIT:
+            _request["isDraft"] = is_draft
+        if field_data is not OMIT:
+            _request["fieldData"] = field_data
+        _response = self._client_wrapper.httpx_client.request(
+            "POST",
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"collections/{jsonable_encoder(collection_id)}/items/bulk"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(_request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(_request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
+        )
+        if 200 <= _response.status_code < 300:
+            return
+        if _response.status_code == 400:
+            raise BadRequestError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 401:
+            raise UnauthorizedError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 404:
+            raise NotFoundError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 429:
+            raise TooManyRequestsError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 500:
+            raise InternalServerError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        try:
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    def get_item(
+        self,
+        collection_id: str,
+        item_id: str,
+        *,
+        cms_locale_id: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> CollectionItem:
+        """
+        Get details of a selected Collection Item. </br></br> Required scope | `CMS:read`
 
         Parameters:
             - collection_id: str. Unique identifier for a Collection
 
             - item_id: str. Unique identifier for an Item
+
+            - cms_locale_id: typing.Optional[str]. Unique identifier for a CMS Locale. These UID is different from the Site locale identifier and is listed as `cmsLocaleId` in the Sites response. Applicable when using localization.
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import Webflow
 
@@ -142,17 +410,39 @@ class ItemsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.collections.items.get_item(
-            collection_id="collection-id",
-            item_id="item-id",
+            collection_id="collection_id",
+            item_id="item_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             "GET",
             urllib.parse.urljoin(
-                f"{self._client_wrapper.get_base_url()}/", f"collections/{collection_id}/items/{item_id}"
+                f"{self._client_wrapper.get_base_url()}/",
+                f"collections/{jsonable_encoder(collection_id)}/items/{jsonable_encoder(item_id)}",
             ),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            params=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        "cmsLocaleId": cms_locale_id,
+                        **(
+                            request_options.get("additional_query_parameters", {})
+                            if request_options is not None
+                            else {}
+                        ),
+                    }
+                )
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(CollectionItem, _response.json())  # type: ignore
@@ -172,14 +462,25 @@ class ItemsClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def delete_item(self, collection_id: str, item_id: str) -> None:
+    def delete_item(
+        self,
+        collection_id: str,
+        item_id: str,
+        *,
+        cms_locale_ids: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> None:
         """
-        Delete an Item from a Collection. This endpoint does not currently support bulk deletion. </br></br> Required scope | `cms:write`
+        Delete an Item from a Collection. This endpoint does not currently support bulk deletion. </br></br> Required scope | `CMS:write`
 
         Parameters:
             - collection_id: str. Unique identifier for a Collection
 
             - item_id: str. Unique identifier for an Item
+
+            - cms_locale_ids: typing.Optional[typing.Union[str, typing.Sequence[str]]]. Unique identifiers for CMS Locales. These UIDs are different from the Site locale identifier and are listed as `cmsLocaleId` in the Sites response. Applicable when using localization.
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import Webflow
 
@@ -187,17 +488,39 @@ class ItemsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.collections.items.delete_item(
-            collection_id="collection-id",
-            item_id="item-id",
+            collection_id="collection_id",
+            item_id="item_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             "DELETE",
             urllib.parse.urljoin(
-                f"{self._client_wrapper.get_base_url()}/", f"collections/{collection_id}/items/{item_id}"
+                f"{self._client_wrapper.get_base_url()}/",
+                f"collections/{jsonable_encoder(collection_id)}/items/{jsonable_encoder(item_id)}",
             ),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            params=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        "cmsLocaleIds": cms_locale_ids,
+                        **(
+                            request_options.get("additional_query_parameters", {})
+                            if request_options is not None
+                            else {}
+                        ),
+                    }
+                )
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return
@@ -217,9 +540,16 @@ class ItemsClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def update_item(self, collection_id: str, item_id: str, *, request: CollectionItem) -> CollectionItem:
+    def update_item(
+        self,
+        collection_id: str,
+        item_id: str,
+        *,
+        request: CollectionItem,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> CollectionItem:
         """
-        Update a selected Item in a Collection. </br></br> Required scope | `cms:write`
+        Update a selected Item in a Collection. </br></br> Required scope | `CMS:write`
 
         Parameters:
             - collection_id: str. Unique identifier for a Collection
@@ -227,32 +557,57 @@ class ItemsClient:
             - item_id: str. Unique identifier for an Item
 
             - request: CollectionItem.
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
-        from webflow import CollectionItem
+        from webflow import CollectionItem, CollectionItemFieldData
         from webflow.client import Webflow
 
         client = Webflow(
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.collections.items.update_item(
-            collection_id="collection-id",
-            item_id="item-id",
+            collection_id="collection_id",
+            item_id="item_id",
             request=CollectionItem(
                 id="580e64008c9a982ac9b8b754",
+                cms_locale_id="653ad57de882f528b32e810e",
                 last_published="2023-03-17T18:47:35.560Z",
                 last_updated="2023-03-17T18:47:35.560Z",
                 created_on="2023-03-17T18:47:35.560Z",
+                field_data=CollectionItemFieldData(
+                    name="My new item",
+                    slug="my-new-item",
+                ),
             ),
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             "PATCH",
             urllib.parse.urljoin(
-                f"{self._client_wrapper.get_base_url()}/", f"collections/{collection_id}/items/{item_id}"
+                f"{self._client_wrapper.get_base_url()}/",
+                f"collections/{jsonable_encoder(collection_id)}/items/{jsonable_encoder(item_id)}",
             ),
-            json=jsonable_encoder(request),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(CollectionItem, _response.json())  # type: ignore
@@ -272,14 +627,171 @@ class ItemsClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def publish_item(self, collection_id: str, *, item_ids: typing.List[str]) -> ItemsPublishItemResponse:
+    def delete_item_live(
+        self, collection_id: str, item_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> None:
+        """
+        Delete a live Item from a Collection. The Item will be unpublished from the live site. This endpoint does not currently support bulk deletion. </br></br> Required scope | `CMS:write`
+
+        Parameters:
+            - collection_id: str. Unique identifier for a Collection
+
+            - item_id: str. Unique identifier for an Item
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
+        ---
+        from webflow.client import Webflow
+
+        client = Webflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+        client.collections.items.delete_item_live(
+            collection_id="collection_id",
+            item_id="item_id",
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "DELETE",
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/",
+                f"collections/{jsonable_encoder(collection_id)}/items/{jsonable_encoder(item_id)}/live",
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
+        )
+        if 200 <= _response.status_code < 300:
+            return
+        if _response.status_code == 400:
+            raise BadRequestError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 401:
+            raise UnauthorizedError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 404:
+            raise NotFoundError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 429:
+            raise TooManyRequestsError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 500:
+            raise InternalServerError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        try:
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    def update_item_live(
+        self,
+        collection_id: str,
+        item_id: str,
+        *,
+        request: CollectionItem,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> CollectionItem:
+        """
+        Update a selected live Item in a Collection. The updates for this Item will be published to the live site. </br></br> Required scope | `CMS:write`
+
+        Parameters:
+            - collection_id: str. Unique identifier for a Collection
+
+            - item_id: str. Unique identifier for an Item
+
+            - request: CollectionItem.
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
+        ---
+        from webflow import CollectionItem, CollectionItemFieldData
+        from webflow.client import Webflow
+
+        client = Webflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+        client.collections.items.update_item_live(
+            collection_id="collection_id",
+            item_id="item_id",
+            request=CollectionItem(
+                id="580e64008c9a982ac9b8b754",
+                cms_locale_id="653ad57de882f528b32e810e",
+                last_published="2023-03-17T18:47:35.560Z",
+                last_updated="2023-03-17T18:47:35.560Z",
+                created_on="2023-03-17T18:47:35.560Z",
+                field_data=CollectionItemFieldData(
+                    name="My new item",
+                    slug="my-new-item",
+                ),
+            ),
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "PATCH",
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/",
+                f"collections/{jsonable_encoder(collection_id)}/items/{jsonable_encoder(item_id)}/live",
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
+        )
+        if 200 <= _response.status_code < 300:
+            return pydantic.parse_obj_as(CollectionItem, _response.json())  # type: ignore
+        if _response.status_code == 400:
+            raise BadRequestError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 401:
+            raise UnauthorizedError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 404:
+            raise NotFoundError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 429:
+            raise TooManyRequestsError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 500:
+            raise InternalServerError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        try:
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    def publish_item(
+        self,
+        collection_id: str,
+        *,
+        item_ids: typing.Sequence[str],
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> ItemsPublishItemResponse:
         """
         Publish an item or multiple items. </br></br> Required scope | `cms:write`
 
         Parameters:
             - collection_id: str. Unique identifier for a Collection
 
-            - item_ids: typing.List[str].
+            - item_ids: typing.Sequence[str].
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import Webflow
 
@@ -287,18 +799,36 @@ class ItemsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.collections.items.publish_item(
-            collection_id="collection-id",
-            item_ids=[],
+            collection_id="collection_id",
+            item_ids=["itemIds"],
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             "POST",
             urllib.parse.urljoin(
-                f"{self._client_wrapper.get_base_url()}/", f"collections/{collection_id}/items/publish"
+                f"{self._client_wrapper.get_base_url()}/",
+                f"collections/{jsonable_encoder(collection_id)}/items/publish",
             ),
-            json=jsonable_encoder({"itemIds": item_ids}),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder({"itemIds": item_ids})
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder({"itemIds": item_ids}),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(ItemsPublishItemResponse, _response.json())  # type: ignore
@@ -324,17 +854,27 @@ class AsyncItemsClient:
         self._client_wrapper = client_wrapper
 
     async def list_items(
-        self, collection_id: str, *, offset: typing.Optional[float] = None, limit: typing.Optional[float] = None
+        self,
+        collection_id: str,
+        *,
+        cms_locale_ids: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        offset: typing.Optional[float] = None,
+        limit: typing.Optional[float] = None,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> CollectionItemList:
         """
-        List of all Items within a Collection. </br></br> Required scope | `cms:read`
+        List of all Items within a Collection. </br></br> Required scope | `CMS:read`
 
         Parameters:
             - collection_id: str. Unique identifier for a Collection
 
+            - cms_locale_ids: typing.Optional[typing.Union[str, typing.Sequence[str]]]. Unique identifiers for CMS Locales. These UIDs are different from the Site locale identifier and are listed as `cmsLocaleId` in the Sites response. Applicable when using localization.
+
             - offset: typing.Optional[float]. Offset used for pagination if the results have more than limit records
 
             - limit: typing.Optional[float]. Maximum number of records to be returned (max limit: 100)
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import AsyncWebflow
 
@@ -342,15 +882,39 @@ class AsyncItemsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.collections.items.list_items(
-            collection_id="collection-id",
+            collection_id="collection_id",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"collections/{collection_id}/items"),
-            params=remove_none_from_dict({"offset": offset, "limit": limit}),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"collections/{jsonable_encoder(collection_id)}/items"
+            ),
+            params=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        "cmsLocaleIds": cms_locale_ids,
+                        "offset": offset,
+                        "limit": limit,
+                        **(
+                            request_options.get("additional_query_parameters", {})
+                            if request_options is not None
+                            else {}
+                        ),
+                    }
+                )
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(CollectionItemList, _response.json())  # type: ignore
@@ -370,37 +934,65 @@ class AsyncItemsClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def create_item(self, collection_id: str, *, request: CollectionItem) -> None:
+    async def create_item(
+        self, collection_id: str, *, request: CollectionItem, request_options: typing.Optional[RequestOptions] = None
+    ) -> None:
         """
-        Create Item in a Collection. </br></br> Required scope | `cms:write`
+        Create Item in a Collection.</br></br> To create items across multiple locales, <a href="https://developers.webflow.com/data/reference/create-item-for-multiple-locales"> please use this endpoint.</a> </br></br> Required scope | `CMS:write`
 
         Parameters:
             - collection_id: str. Unique identifier for a Collection
 
             - request: CollectionItem.
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
-        from webflow import CollectionItem
+        from webflow import CollectionItem, CollectionItemFieldData
         from webflow.client import AsyncWebflow
 
         client = AsyncWebflow(
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.collections.items.create_item(
-            collection_id="collection-id",
+            collection_id="collection_id",
             request=CollectionItem(
                 id="580e64008c9a982ac9b8b754",
+                cms_locale_id="653ad57de882f528b32e810e",
                 last_published="2023-03-17T18:47:35.560Z",
                 last_updated="2023-03-17T18:47:35.560Z",
                 created_on="2023-03-17T18:47:35.560Z",
+                field_data=CollectionItemFieldData(
+                    name="My new item",
+                    slug="my-new-item",
+                ),
             ),
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
             "POST",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"collections/{collection_id}/items"),
-            json=jsonable_encoder(request),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"collections/{jsonable_encoder(collection_id)}/items"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return
@@ -420,14 +1012,218 @@ class AsyncItemsClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def get_item(self, collection_id: str, item_id: str) -> CollectionItem:
+    async def create_item_live(
+        self, collection_id: str, *, request: CollectionItem, request_options: typing.Optional[RequestOptions] = None
+    ) -> None:
         """
-        Get details of a selected Collection Item. </br></br> Required scope | `cms:read`
+        Create live Item in a Collection. This Item will be published to the live site. </br></br> To create items across multiple locales, <a href="https://developers.webflow.com/data/reference/create-item-for-multiple-locales"> please use this endpoint.</a> </br></br> Required scope | `CMS:write`
+
+        Parameters:
+            - collection_id: str. Unique identifier for a Collection
+
+            - request: CollectionItem.
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
+        ---
+        from webflow import CollectionItem, CollectionItemFieldData
+        from webflow.client import AsyncWebflow
+
+        client = AsyncWebflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+        await client.collections.items.create_item_live(
+            collection_id="collection_id",
+            request=CollectionItem(
+                id="580e64008c9a982ac9b8b754",
+                cms_locale_id="653ad57de882f528b32e810e",
+                last_published="2023-03-17T18:47:35.560Z",
+                last_updated="2023-03-17T18:47:35.560Z",
+                created_on="2023-03-17T18:47:35.560Z",
+                field_data=CollectionItemFieldData(
+                    name="My new item",
+                    slug="my-new-item",
+                ),
+            ),
+        )
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "POST",
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"collections/{jsonable_encoder(collection_id)}/items/live"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
+        )
+        if 200 <= _response.status_code < 300:
+            return
+        if _response.status_code == 400:
+            raise BadRequestError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 401:
+            raise UnauthorizedError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 404:
+            raise NotFoundError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 429:
+            raise TooManyRequestsError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 500:
+            raise InternalServerError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        try:
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def create_item_for_multiple_locales(
+        self,
+        collection_id: str,
+        *,
+        id: str,
+        cms_locale_ids: typing.Optional[typing.Sequence[str]] = OMIT,
+        last_published: typing.Optional[str] = OMIT,
+        last_updated: typing.Optional[str] = OMIT,
+        created_on: typing.Optional[str] = OMIT,
+        is_archived: typing.Optional[bool] = OMIT,
+        is_draft: typing.Optional[bool] = OMIT,
+        field_data: typing.Optional[BulkCollectionItemFieldData] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> None:
+        """
+        Create single Item in a Collection with multiple corresponding locales. </br></br> Required scope | `CMS:write`
+
+        Parameters:
+            - collection_id: str. Unique identifier for a Collection
+
+            - id: str. Unique identifier for the Item
+
+            - cms_locale_ids: typing.Optional[typing.Sequence[str]]. Array of identifiers for the locales where the item will be crated
+
+            - last_published: typing.Optional[str]. The date the item was last published
+
+            - last_updated: typing.Optional[str]. The date the item was last updated
+
+            - created_on: typing.Optional[str]. The date the item was created
+
+            - is_archived: typing.Optional[bool]. Boolean determining if the Item is set to archived
+
+            - is_draft: typing.Optional[bool]. Boolean determining if the Item is set to draft
+
+            - field_data: typing.Optional[BulkCollectionItemFieldData].
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
+        ---
+        from webflow.client import AsyncWebflow
+        from webflow.resources.collections import BulkCollectionItemFieldData
+
+        client = AsyncWebflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+        await client.collections.items.create_item_for_multiple_locales(
+            collection_id="collection_id",
+            id="580e64008c9a982ac9b8b754",
+            last_published="2023-03-17T18:47:35.560Z",
+            last_updated="2023-03-17T18:47:35.560Z",
+            created_on="2023-03-17T18:47:35.560Z",
+            field_data=BulkCollectionItemFieldData(
+                name="My new item",
+                slug="my-new-item",
+            ),
+        )
+        """
+        _request: typing.Dict[str, typing.Any] = {"id": id}
+        if cms_locale_ids is not OMIT:
+            _request["cmsLocaleIds"] = cms_locale_ids
+        if last_published is not OMIT:
+            _request["lastPublished"] = last_published
+        if last_updated is not OMIT:
+            _request["lastUpdated"] = last_updated
+        if created_on is not OMIT:
+            _request["createdOn"] = created_on
+        if is_archived is not OMIT:
+            _request["isArchived"] = is_archived
+        if is_draft is not OMIT:
+            _request["isDraft"] = is_draft
+        if field_data is not OMIT:
+            _request["fieldData"] = field_data
+        _response = await self._client_wrapper.httpx_client.request(
+            "POST",
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"collections/{jsonable_encoder(collection_id)}/items/bulk"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(_request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(_request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
+        )
+        if 200 <= _response.status_code < 300:
+            return
+        if _response.status_code == 400:
+            raise BadRequestError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 401:
+            raise UnauthorizedError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 404:
+            raise NotFoundError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 429:
+            raise TooManyRequestsError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 500:
+            raise InternalServerError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        try:
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def get_item(
+        self,
+        collection_id: str,
+        item_id: str,
+        *,
+        cms_locale_id: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> CollectionItem:
+        """
+        Get details of a selected Collection Item. </br></br> Required scope | `CMS:read`
 
         Parameters:
             - collection_id: str. Unique identifier for a Collection
 
             - item_id: str. Unique identifier for an Item
+
+            - cms_locale_id: typing.Optional[str]. Unique identifier for a CMS Locale. These UID is different from the Site locale identifier and is listed as `cmsLocaleId` in the Sites response. Applicable when using localization.
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import AsyncWebflow
 
@@ -435,17 +1231,39 @@ class AsyncItemsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.collections.items.get_item(
-            collection_id="collection-id",
-            item_id="item-id",
+            collection_id="collection_id",
+            item_id="item_id",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
             "GET",
             urllib.parse.urljoin(
-                f"{self._client_wrapper.get_base_url()}/", f"collections/{collection_id}/items/{item_id}"
+                f"{self._client_wrapper.get_base_url()}/",
+                f"collections/{jsonable_encoder(collection_id)}/items/{jsonable_encoder(item_id)}",
             ),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            params=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        "cmsLocaleId": cms_locale_id,
+                        **(
+                            request_options.get("additional_query_parameters", {})
+                            if request_options is not None
+                            else {}
+                        ),
+                    }
+                )
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(CollectionItem, _response.json())  # type: ignore
@@ -465,14 +1283,25 @@ class AsyncItemsClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def delete_item(self, collection_id: str, item_id: str) -> None:
+    async def delete_item(
+        self,
+        collection_id: str,
+        item_id: str,
+        *,
+        cms_locale_ids: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> None:
         """
-        Delete an Item from a Collection. This endpoint does not currently support bulk deletion. </br></br> Required scope | `cms:write`
+        Delete an Item from a Collection. This endpoint does not currently support bulk deletion. </br></br> Required scope | `CMS:write`
 
         Parameters:
             - collection_id: str. Unique identifier for a Collection
 
             - item_id: str. Unique identifier for an Item
+
+            - cms_locale_ids: typing.Optional[typing.Union[str, typing.Sequence[str]]]. Unique identifiers for CMS Locales. These UIDs are different from the Site locale identifier and are listed as `cmsLocaleId` in the Sites response. Applicable when using localization.
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import AsyncWebflow
 
@@ -480,17 +1309,39 @@ class AsyncItemsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.collections.items.delete_item(
-            collection_id="collection-id",
-            item_id="item-id",
+            collection_id="collection_id",
+            item_id="item_id",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
             "DELETE",
             urllib.parse.urljoin(
-                f"{self._client_wrapper.get_base_url()}/", f"collections/{collection_id}/items/{item_id}"
+                f"{self._client_wrapper.get_base_url()}/",
+                f"collections/{jsonable_encoder(collection_id)}/items/{jsonable_encoder(item_id)}",
             ),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            params=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        "cmsLocaleIds": cms_locale_ids,
+                        **(
+                            request_options.get("additional_query_parameters", {})
+                            if request_options is not None
+                            else {}
+                        ),
+                    }
+                )
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return
@@ -510,9 +1361,16 @@ class AsyncItemsClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def update_item(self, collection_id: str, item_id: str, *, request: CollectionItem) -> CollectionItem:
+    async def update_item(
+        self,
+        collection_id: str,
+        item_id: str,
+        *,
+        request: CollectionItem,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> CollectionItem:
         """
-        Update a selected Item in a Collection. </br></br> Required scope | `cms:write`
+        Update a selected Item in a Collection. </br></br> Required scope | `CMS:write`
 
         Parameters:
             - collection_id: str. Unique identifier for a Collection
@@ -520,32 +1378,57 @@ class AsyncItemsClient:
             - item_id: str. Unique identifier for an Item
 
             - request: CollectionItem.
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
-        from webflow import CollectionItem
+        from webflow import CollectionItem, CollectionItemFieldData
         from webflow.client import AsyncWebflow
 
         client = AsyncWebflow(
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.collections.items.update_item(
-            collection_id="collection-id",
-            item_id="item-id",
+            collection_id="collection_id",
+            item_id="item_id",
             request=CollectionItem(
                 id="580e64008c9a982ac9b8b754",
+                cms_locale_id="653ad57de882f528b32e810e",
                 last_published="2023-03-17T18:47:35.560Z",
                 last_updated="2023-03-17T18:47:35.560Z",
                 created_on="2023-03-17T18:47:35.560Z",
+                field_data=CollectionItemFieldData(
+                    name="My new item",
+                    slug="my-new-item",
+                ),
             ),
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
             "PATCH",
             urllib.parse.urljoin(
-                f"{self._client_wrapper.get_base_url()}/", f"collections/{collection_id}/items/{item_id}"
+                f"{self._client_wrapper.get_base_url()}/",
+                f"collections/{jsonable_encoder(collection_id)}/items/{jsonable_encoder(item_id)}",
             ),
-            json=jsonable_encoder(request),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(CollectionItem, _response.json())  # type: ignore
@@ -565,14 +1448,171 @@ class AsyncItemsClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def publish_item(self, collection_id: str, *, item_ids: typing.List[str]) -> ItemsPublishItemResponse:
+    async def delete_item_live(
+        self, collection_id: str, item_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> None:
+        """
+        Delete a live Item from a Collection. The Item will be unpublished from the live site. This endpoint does not currently support bulk deletion. </br></br> Required scope | `CMS:write`
+
+        Parameters:
+            - collection_id: str. Unique identifier for a Collection
+
+            - item_id: str. Unique identifier for an Item
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
+        ---
+        from webflow.client import AsyncWebflow
+
+        client = AsyncWebflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+        await client.collections.items.delete_item_live(
+            collection_id="collection_id",
+            item_id="item_id",
+        )
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "DELETE",
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/",
+                f"collections/{jsonable_encoder(collection_id)}/items/{jsonable_encoder(item_id)}/live",
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
+        )
+        if 200 <= _response.status_code < 300:
+            return
+        if _response.status_code == 400:
+            raise BadRequestError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 401:
+            raise UnauthorizedError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 404:
+            raise NotFoundError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 429:
+            raise TooManyRequestsError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 500:
+            raise InternalServerError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        try:
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def update_item_live(
+        self,
+        collection_id: str,
+        item_id: str,
+        *,
+        request: CollectionItem,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> CollectionItem:
+        """
+        Update a selected live Item in a Collection. The updates for this Item will be published to the live site. </br></br> Required scope | `CMS:write`
+
+        Parameters:
+            - collection_id: str. Unique identifier for a Collection
+
+            - item_id: str. Unique identifier for an Item
+
+            - request: CollectionItem.
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
+        ---
+        from webflow import CollectionItem, CollectionItemFieldData
+        from webflow.client import AsyncWebflow
+
+        client = AsyncWebflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+        await client.collections.items.update_item_live(
+            collection_id="collection_id",
+            item_id="item_id",
+            request=CollectionItem(
+                id="580e64008c9a982ac9b8b754",
+                cms_locale_id="653ad57de882f528b32e810e",
+                last_published="2023-03-17T18:47:35.560Z",
+                last_updated="2023-03-17T18:47:35.560Z",
+                created_on="2023-03-17T18:47:35.560Z",
+                field_data=CollectionItemFieldData(
+                    name="My new item",
+                    slug="my-new-item",
+                ),
+            ),
+        )
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "PATCH",
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/",
+                f"collections/{jsonable_encoder(collection_id)}/items/{jsonable_encoder(item_id)}/live",
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
+        )
+        if 200 <= _response.status_code < 300:
+            return pydantic.parse_obj_as(CollectionItem, _response.json())  # type: ignore
+        if _response.status_code == 400:
+            raise BadRequestError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 401:
+            raise UnauthorizedError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 404:
+            raise NotFoundError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 429:
+            raise TooManyRequestsError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 500:
+            raise InternalServerError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        try:
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def publish_item(
+        self,
+        collection_id: str,
+        *,
+        item_ids: typing.Sequence[str],
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> ItemsPublishItemResponse:
         """
         Publish an item or multiple items. </br></br> Required scope | `cms:write`
 
         Parameters:
             - collection_id: str. Unique identifier for a Collection
 
-            - item_ids: typing.List[str].
+            - item_ids: typing.Sequence[str].
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import AsyncWebflow
 
@@ -580,18 +1620,36 @@ class AsyncItemsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.collections.items.publish_item(
-            collection_id="collection-id",
-            item_ids=[],
+            collection_id="collection_id",
+            item_ids=["itemIds"],
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
             "POST",
             urllib.parse.urljoin(
-                f"{self._client_wrapper.get_base_url()}/", f"collections/{collection_id}/items/publish"
+                f"{self._client_wrapper.get_base_url()}/",
+                f"collections/{jsonable_encoder(collection_id)}/items/publish",
             ),
-            json=jsonable_encoder({"itemIds": item_ids}),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder({"itemIds": item_ids})
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder({"itemIds": item_ids}),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(ItemsPublishItemResponse, _response.json())  # type: ignore

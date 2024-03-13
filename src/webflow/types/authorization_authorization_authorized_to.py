@@ -13,13 +13,13 @@ except ImportError:
 
 class AuthorizationAuthorizationAuthorizedTo(pydantic.BaseModel):
     site_ids: typing.Optional[typing.List[typing.Any]] = pydantic.Field(
-        alias="siteIds", description="Array of Sites this app is authorized to"
+        alias="siteIds", default=None, description="Array of Sites this app is authorized to"
     )
     workspace_ids: typing.Optional[typing.List[typing.Any]] = pydantic.Field(
-        alias="workspaceIds", description="Array of Workspaces this app is authorized to"
+        alias="workspaceIds", default=None, description="Array of Workspaces this app is authorized to"
     )
     user_ids: typing.Optional[typing.List[typing.Any]] = pydantic.Field(
-        alias="userIds", description="Array of Users this app is authorized to"
+        alias="userIds", default=None, description="Array of Users this app is authorized to"
     )
 
     def json(self, **kwargs: typing.Any) -> str:

@@ -14,12 +14,12 @@ except ImportError:
 
 class FormFieldValue(pydantic.BaseModel):
     display_name: typing.Optional[str] = pydantic.Field(
-        alias="displayName", description="The field name displayed on the site"
+        alias="displayName", default=None, description="The field name displayed on the site"
     )
-    type: typing.Optional[FormFieldValueType] = pydantic.Field(description="The field type")
-    placeholder: typing.Optional[str] = pydantic.Field(description="The placeholder text for the field")
+    type: typing.Optional[FormFieldValueType] = pydantic.Field(default=None, description="The field type")
+    placeholder: typing.Optional[str] = pydantic.Field(default=None, description="The placeholder text for the field")
     user_visible: typing.Optional[bool] = pydantic.Field(
-        alias="userVisible", description="Whether the field is visible to the user"
+        alias="userVisible", default=None, description="Whether the field is visible to the user"
     )
 
     def json(self, **kwargs: typing.Any) -> str:

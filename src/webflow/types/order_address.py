@@ -19,18 +19,24 @@ class OrderAddress(pydantic.BaseModel):
     """
 
     type: typing.Optional[OrderAddressType] = pydantic.Field(
-        description="The type of the order address (billing or shipping)"
+        default=None, description="The type of the order address (billing or shipping)"
     )
     japan_type: typing.Optional[OrderAddressJapanType] = pydantic.Field(
-        alias="japanType", description="Japan-only address format"
+        alias="japanType", default=None, description="Japan-only address format"
     )
-    addressee: typing.Optional[str] = pydantic.Field(description="Display name on the address")
-    line_1: typing.Optional[str] = pydantic.Field(alias="line1", description="The first line of the address")
-    line_2: typing.Optional[str] = pydantic.Field(alias="line2", description="The second line of the address")
-    city: typing.Optional[str] = pydantic.Field(description="The city of the address.")
-    state: typing.Optional[str] = pydantic.Field(description="The state or province of the address")
-    country: typing.Optional[str] = pydantic.Field(description="The country of the address")
-    postal_code: typing.Optional[str] = pydantic.Field(alias="postalCode", description="The postal code of the address")
+    addressee: typing.Optional[str] = pydantic.Field(default=None, description="Display name on the address")
+    line_1: typing.Optional[str] = pydantic.Field(
+        alias="line1", default=None, description="The first line of the address"
+    )
+    line_2: typing.Optional[str] = pydantic.Field(
+        alias="line2", default=None, description="The second line of the address"
+    )
+    city: typing.Optional[str] = pydantic.Field(default=None, description="The city of the address.")
+    state: typing.Optional[str] = pydantic.Field(default=None, description="The state or province of the address")
+    country: typing.Optional[str] = pydantic.Field(default=None, description="The country of the address")
+    postal_code: typing.Optional[str] = pydantic.Field(
+        alias="postalCode", default=None, description="The postal code of the address"
+    )
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

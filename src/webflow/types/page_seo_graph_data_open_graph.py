@@ -12,8 +12,8 @@ except ImportError:
 
 
 class PageSeoGraphDataOpenGraph(pydantic.BaseModel):
-    title: typing.Optional[str]
-    description: typing.Optional[str]
+    title: typing.Optional[str] = None
+    description: typing.Optional[str] = None
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

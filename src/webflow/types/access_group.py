@@ -12,17 +12,21 @@ except ImportError:
 
 
 class AccessGroup(pydantic.BaseModel):
-    id: typing.Optional[str] = pydantic.Field(alias="_id", description="Unique identifier for the Access Group")
-    name: typing.Optional[str] = pydantic.Field(description="Name of the the Access Group")
+    id: typing.Optional[str] = pydantic.Field(
+        alias="_id", default=None, description="Unique identifier for the Access Group"
+    )
+    name: typing.Optional[str] = pydantic.Field(default=None, description="Name of the the Access Group")
     short_id: typing.Optional[str] = pydantic.Field(
         alias="shortId",
+        default=None,
         description="Shortened unique identifier based on name, optimized for its use in the user’s JWT",
     )
     slug: typing.Optional[str] = pydantic.Field(
-        description="Shortened unique identifier based on name, optimized for human readability and public API use"
+        default=None,
+        description="Shortened unique identifier based on name, optimized for human readability and public API use",
     )
     created_on: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="createdOn", description="The date the Access Group was created"
+        alias="createdOn", default=None, description="The date the Access Group was created"
     )
 
     def json(self, **kwargs: typing.Any) -> str:

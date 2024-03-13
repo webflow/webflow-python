@@ -16,13 +16,15 @@ class SitePublishPayload(pydantic.BaseModel):
     The payload of data sent from Webflow
     """
 
-    site: typing.Optional[str] = pydantic.Field(description="The site id that was published")
+    site: typing.Optional[str] = pydantic.Field(default=None, description="The site id that was published")
     publish_time: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="publishTime", description="The timestamp of the publish event"
+        alias="publishTime", default=None, description="The timestamp of the publish event"
     )
-    domains: typing.Optional[typing.List[str]] = pydantic.Field(description="The domains that were published")
+    domains: typing.Optional[typing.List[str]] = pydantic.Field(
+        default=None, description="The domains that were published"
+    )
     published_by: typing.Optional[typing.Dict[str, typing.Any]] = pydantic.Field(
-        alias="publishedBy", description="The name and id of the user who published the site"
+        alias="publishedBy", default=None, description="The name and id of the user who published the site"
     )
 
     def json(self, **kwargs: typing.Any) -> str:

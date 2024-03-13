@@ -19,9 +19,9 @@ class CollectionItemList(pydantic.BaseModel):
     """
 
     items: typing.Optional[typing.List[CollectionItem]] = pydantic.Field(
-        description="List of Items within the collection"
+        default=None, description="List of Items within the collection"
     )
-    pagination: typing.Optional[CollectionItemListPagination]
+    pagination: typing.Optional[CollectionItemListPagination] = None
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

@@ -13,12 +13,14 @@ except ImportError:
 
 
 class Error(pydantic.BaseModel):
-    code: typing.Optional[str] = pydantic.Field(description="Error code")
-    message: typing.Optional[str] = pydantic.Field(description="Error message")
+    code: typing.Optional[str] = pydantic.Field(default=None, description="Error code")
+    message: typing.Optional[str] = pydantic.Field(default=None, description="Error message")
     external_reference: typing.Optional[str] = pydantic.Field(
-        alias="externalReference", description="Link to more information"
+        alias="externalReference", default=None, description="Link to more information"
     )
-    details: typing.Optional[typing.List[ErrorDetailsItem]] = pydantic.Field(description="Array of errors")
+    details: typing.Optional[typing.List[ErrorDetailsItem]] = pydantic.Field(
+        default=None, description="Array of errors"
+    )
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

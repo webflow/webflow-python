@@ -16,11 +16,9 @@ class SkuPropertyListEnumItem(pydantic.BaseModel):
     Enumerated Product variants/Options for the SKU
     """
 
-    id: typing.Optional[str] = pydantic.Field(description="Unique identifier for a Product variant/Option")
-    name: typing.Optional[str] = pydantic.Field(description="Name of the Product variant/Option")
-    slug: typing.Optional[str] = pydantic.Field(
-        description="Slug for the Product variant/Option in the Site URL structure"
-    )
+    id: str = pydantic.Field(description="Unique identifier for a Product variant/Option")
+    name: str = pydantic.Field(description="Name of the Product variant/Option")
+    slug: str = pydantic.Field(description="Slug for the Product variant/Option in the Site URL structure")
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

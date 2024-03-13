@@ -18,20 +18,25 @@ class CollectionItem(pydantic.BaseModel):
     """
 
     id: str = pydantic.Field(description="Unique identifier for the Item")
+    cms_locale_id: typing.Optional[str] = pydantic.Field(
+        alias="cmsLocaleId", default=None, description="Identifier for the locale of the CMS item"
+    )
     last_published: typing.Optional[str] = pydantic.Field(
-        alias="lastPublished", description="The date the item was last published"
+        alias="lastPublished", default=None, description="The date the item was last published"
     )
     last_updated: typing.Optional[str] = pydantic.Field(
-        alias="lastUpdated", description="The date the item was last updated"
+        alias="lastUpdated", default=None, description="The date the item was last updated"
     )
-    created_on: typing.Optional[str] = pydantic.Field(alias="createdOn", description="The date the item was created")
+    created_on: typing.Optional[str] = pydantic.Field(
+        alias="createdOn", default=None, description="The date the item was created"
+    )
     is_archived: typing.Optional[bool] = pydantic.Field(
-        alias="isArchived", description="Boolean determining if the Item is set to archived"
+        alias="isArchived", default=None, description="Boolean determining if the Item is set to archived"
     )
     is_draft: typing.Optional[bool] = pydantic.Field(
-        alias="isDraft", description="Boolean determining if the Item is set to draft"
+        alias="isDraft", default=None, description="Boolean determining if the Item is set to draft"
     )
-    field_data: typing.Optional[CollectionItemFieldData] = pydantic.Field(alias="fieldData")
+    field_data: typing.Optional[CollectionItemFieldData] = pydantic.Field(alias="fieldData", default=None)
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

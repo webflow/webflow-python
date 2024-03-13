@@ -12,9 +12,10 @@ except ImportError:
 
 
 class CollectionItemFieldData(pydantic.BaseModel):
-    name: typing.Optional[str] = pydantic.Field(description="Name of the Item")
+    name: typing.Optional[str] = pydantic.Field(default=None, description="Name of the Item")
     slug: typing.Optional[str] = pydantic.Field(
-        description="URL structure of the Item in your site. Note: Updates to an item slug will break all links referencing the old slug."
+        default=None,
+        description="URL structure of the Item in your site. Note: Updates to an item slug will break all links referencing the old slug.",
     )
 
     def json(self, **kwargs: typing.Any) -> str:

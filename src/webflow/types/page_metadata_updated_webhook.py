@@ -16,10 +16,10 @@ class PageMetadataUpdatedWebhook(pydantic.BaseModel):
     The Webhook payload for when a Page's metadata is updated
     """
 
-    site_id: typing.Optional[str] = pydantic.Field(alias="siteId")
-    page_id: typing.Optional[str] = pydantic.Field(alias="pageId")
-    page_title: typing.Optional[str] = pydantic.Field(alias="pageTitle")
-    last_updated: typing.Optional[dt.datetime] = pydantic.Field(alias="lastUpdated")
+    site_id: typing.Optional[str] = pydantic.Field(alias="siteId", default=None)
+    page_id: typing.Optional[str] = pydantic.Field(alias="pageId", default=None)
+    page_title: typing.Optional[str] = pydantic.Field(alias="pageTitle", default=None)
+    last_updated: typing.Optional[dt.datetime] = pydantic.Field(alias="lastUpdated", default=None)
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

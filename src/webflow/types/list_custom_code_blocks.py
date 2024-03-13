@@ -18,8 +18,8 @@ class ListCustomCodeBlocks(pydantic.BaseModel):
     Custom Code Blocks corresponding to where scripts were applied
     """
 
-    blocks: typing.Optional[typing.List[CustomCodeBlock]]
-    pagination: typing.Optional[Pagination]
+    blocks: typing.Optional[typing.List[CustomCodeBlock]] = None
+    pagination: typing.Optional[Pagination] = None
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

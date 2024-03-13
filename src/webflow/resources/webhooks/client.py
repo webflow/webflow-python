@@ -7,6 +7,8 @@ from json.decoder import JSONDecodeError
 from ...core.api_error import ApiError
 from ...core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ...core.jsonable_encoder import jsonable_encoder
+from ...core.remove_none_from_dict import remove_none_from_dict
+from ...core.request_options import RequestOptions
 from ...errors.bad_request_error import BadRequestError
 from ...errors.internal_server_error import InternalServerError
 from ...errors.not_found_error import NotFoundError
@@ -28,12 +30,14 @@ class WebhooksClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def list(self, site_id: str) -> typing.List[Webhook]:
+    def list(self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> typing.List[Webhook]:
         """
         List all App-created Webhooks registered for a given site
 
         Parameters:
             - site_id: str. Unique identifier for a Site
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import Webflow
 
@@ -41,14 +45,28 @@ class WebhooksClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.webhooks.list(
-            site_id="site-id",
+            site_id="site_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/webhooks"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"sites/{jsonable_encoder(site_id)}/webhooks"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(typing.List[Webhook], _response.json())  # type: ignore
@@ -75,6 +93,7 @@ class WebhooksClient:
         trigger_type: TriggerType,
         url: str,
         filter: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> Webhook:
         """
         Create a new Webhook, to be notified when Webflow resources change. Limit of 75 registrations per `triggerType`, per site.
@@ -88,7 +107,9 @@ class WebhooksClient:
 
             - filter: typing.Optional[typing.Dict[str, typing.Any]]. Filter for selecting which events you want Webhooks to be triggered for.
                                                                      ** Only available for `form_submission` trigger types. **
-                                                                     ---
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
+        ---
         from webflow import TriggerType
         from webflow.client import Webflow
 
@@ -96,7 +117,7 @@ class WebhooksClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.webhooks.create(
-            site_id="site-id",
+            site_id="site_id",
             trigger_type=TriggerType.FORM_SUBMISSION,
             url="https://api.mydomain.com/webhook",
         )
@@ -106,10 +127,29 @@ class WebhooksClient:
             _request["filter"] = filter
         _response = self._client_wrapper.httpx_client.request(
             "POST",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/webhooks"),
-            json=jsonable_encoder(_request),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"sites/{jsonable_encoder(site_id)}/webhooks"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(_request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(_request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(Webhook, _response.json())  # type: ignore
@@ -129,12 +169,14 @@ class WebhooksClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get(self, webhook_id: str) -> Webhook:
+    def get(self, webhook_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> Webhook:
         """
         Get a specific Webhook instance
 
         Parameters:
             - webhook_id: str. Unique identifier for a Webhook
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import Webflow
 
@@ -142,14 +184,26 @@ class WebhooksClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.webhooks.get(
-            webhook_id="webhook-id",
+            webhook_id="webhook_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"webhooks/{webhook_id}"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"webhooks/{jsonable_encoder(webhook_id)}"),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(Webhook, _response.json())  # type: ignore
@@ -169,12 +223,14 @@ class WebhooksClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def delete(self, webhook_id: str) -> None:
+    def delete(self, webhook_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
         """
         Remove a Webhook
 
         Parameters:
             - webhook_id: str. Unique identifier for a Webhook
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import Webflow
 
@@ -182,14 +238,26 @@ class WebhooksClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.webhooks.delete(
-            webhook_id="webhook-id",
+            webhook_id="webhook_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             "DELETE",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"webhooks/{webhook_id}"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"webhooks/{jsonable_encoder(webhook_id)}"),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return
@@ -214,12 +282,16 @@ class AsyncWebhooksClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def list(self, site_id: str) -> typing.List[Webhook]:
+    async def list(
+        self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> typing.List[Webhook]:
         """
         List all App-created Webhooks registered for a given site
 
         Parameters:
             - site_id: str. Unique identifier for a Site
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import AsyncWebflow
 
@@ -227,14 +299,28 @@ class AsyncWebhooksClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.webhooks.list(
-            site_id="site-id",
+            site_id="site_id",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/webhooks"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"sites/{jsonable_encoder(site_id)}/webhooks"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(typing.List[Webhook], _response.json())  # type: ignore
@@ -261,6 +347,7 @@ class AsyncWebhooksClient:
         trigger_type: TriggerType,
         url: str,
         filter: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> Webhook:
         """
         Create a new Webhook, to be notified when Webflow resources change. Limit of 75 registrations per `triggerType`, per site.
@@ -274,7 +361,9 @@ class AsyncWebhooksClient:
 
             - filter: typing.Optional[typing.Dict[str, typing.Any]]. Filter for selecting which events you want Webhooks to be triggered for.
                                                                      ** Only available for `form_submission` trigger types. **
-                                                                     ---
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
+        ---
         from webflow import TriggerType
         from webflow.client import AsyncWebflow
 
@@ -282,7 +371,7 @@ class AsyncWebhooksClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.webhooks.create(
-            site_id="site-id",
+            site_id="site_id",
             trigger_type=TriggerType.FORM_SUBMISSION,
             url="https://api.mydomain.com/webhook",
         )
@@ -292,10 +381,29 @@ class AsyncWebhooksClient:
             _request["filter"] = filter
         _response = await self._client_wrapper.httpx_client.request(
             "POST",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/webhooks"),
-            json=jsonable_encoder(_request),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"sites/{jsonable_encoder(site_id)}/webhooks"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(_request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(_request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(Webhook, _response.json())  # type: ignore
@@ -315,12 +423,14 @@ class AsyncWebhooksClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def get(self, webhook_id: str) -> Webhook:
+    async def get(self, webhook_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> Webhook:
         """
         Get a specific Webhook instance
 
         Parameters:
             - webhook_id: str. Unique identifier for a Webhook
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import AsyncWebflow
 
@@ -328,14 +438,26 @@ class AsyncWebhooksClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.webhooks.get(
-            webhook_id="webhook-id",
+            webhook_id="webhook_id",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"webhooks/{webhook_id}"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"webhooks/{jsonable_encoder(webhook_id)}"),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(Webhook, _response.json())  # type: ignore
@@ -355,12 +477,14 @@ class AsyncWebhooksClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def delete(self, webhook_id: str) -> None:
+    async def delete(self, webhook_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
         """
         Remove a Webhook
 
         Parameters:
             - webhook_id: str. Unique identifier for a Webhook
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import AsyncWebflow
 
@@ -368,14 +492,26 @@ class AsyncWebhooksClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.webhooks.delete(
-            webhook_id="webhook-id",
+            webhook_id="webhook_id",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
             "DELETE",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"webhooks/{webhook_id}"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"webhooks/{jsonable_encoder(webhook_id)}"),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return

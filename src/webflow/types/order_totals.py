@@ -18,11 +18,11 @@ class OrderTotals(pydantic.BaseModel):
     An object describing various pricing totals
     """
 
-    subtotal: typing.Optional[OrderPrice] = pydantic.Field(description="The subtotal price")
+    subtotal: typing.Optional[OrderPrice] = pydantic.Field(default=None, description="The subtotal price")
     extras: typing.Optional[typing.List[OrderTotalsExtrasItem]] = pydantic.Field(
-        description="An array of extra items, includes discounts, shipping, and taxes."
+        default=None, description="An array of extra items, includes discounts, shipping, and taxes."
     )
-    total: typing.Optional[OrderPrice] = pydantic.Field(description="The total price")
+    total: typing.Optional[OrderPrice] = pydantic.Field(default=None, description="The total price")
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

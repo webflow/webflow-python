@@ -6,19 +6,28 @@ from json.decoder import JSONDecodeError
 
 from ...core.api_error import ApiError
 from ...core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
+from ...core.jsonable_encoder import jsonable_encoder
+from ...core.remove_none_from_dict import remove_none_from_dict
+from ...core.request_options import RequestOptions
 from ...errors.bad_request_error import BadRequestError
+from ...errors.forbidden_error import ForbiddenError
 from ...errors.internal_server_error import InternalServerError
 from ...errors.not_found_error import NotFoundError
 from ...errors.too_many_requests_error import TooManyRequestsError
 from ...errors.unauthorized_error import UnauthorizedError
+from ...types.dom import Dom
 from ...types.page import Page
 from ...types.page_list import PageList
 from .resources.scripts.client import AsyncScriptsClient, ScriptsClient
+from .types.dom_write_nodes_item import DomWriteNodesItem
 
 try:
     import pydantic.v1 as pydantic  # type: ignore
 except ImportError:
     import pydantic  # type: ignore
+
+# this is used as the default value for optional parameters
+OMIT = typing.cast(typing.Any, ...)
 
 
 class PagesClient:
@@ -26,12 +35,28 @@ class PagesClient:
         self._client_wrapper = client_wrapper
         self.scripts = ScriptsClient(client_wrapper=self._client_wrapper)
 
-    def list(self, site_id: str) -> PageList:
+    def list(
+        self,
+        site_id: str,
+        *,
+        locale: typing.Optional[str] = None,
+        limit: typing.Optional[float] = None,
+        offset: typing.Optional[float] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> PageList:
         """
         List of all pages for a site </br></br> Required scope | `pages:read`
 
         Parameters:
             - site_id: str. Unique identifier for a Site
+
+            - locale: typing.Optional[str]. Unique identifier for a specific locale. Applicable, when using localization.
+
+            - limit: typing.Optional[float]. Maximum number of records to be returned (max limit: 100)
+
+            - offset: typing.Optional[float]. Offset used for pagination if the results have more than limit records
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import Webflow
 
@@ -39,14 +64,37 @@ class PagesClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.pages.list(
-            site_id="site-id",
+            site_id="site_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/pages"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{jsonable_encoder(site_id)}/pages"),
+            params=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        "locale": locale,
+                        "limit": limit,
+                        "offset": offset,
+                        **(
+                            request_options.get("additional_query_parameters", {})
+                            if request_options is not None
+                            else {}
+                        ),
+                    }
+                )
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(PageList, _response.json())  # type: ignore
@@ -66,12 +114,22 @@ class PagesClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get_metadata(self, page_id: str) -> Page:
+    def get_metadata(
+        self,
+        page_id: str,
+        *,
+        locale: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> Page:
         """
         Get metadata information for a single page </br></br> Required scope | `pages:read`
 
         Parameters:
             - page_id: str. Unique identifier for a Page
+
+            - locale: typing.Optional[str]. Unique identifier for a specific locale. Applicable, when using localization.
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import Webflow
 
@@ -79,14 +137,35 @@ class PagesClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.pages.get_metadata(
-            page_id="page-id",
+            page_id="page_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"pages/{page_id}"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"pages/{jsonable_encoder(page_id)}"),
+            params=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        "locale": locale,
+                        **(
+                            request_options.get("additional_query_parameters", {})
+                            if request_options is not None
+                            else {}
+                        ),
+                    }
+                )
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(Page, _response.json())  # type: ignore
@@ -94,6 +173,280 @@ class PagesClient:
             raise BadRequestError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 404:
+            raise NotFoundError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 429:
+            raise TooManyRequestsError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 500:
+            raise InternalServerError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        try:
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    def update_page_settings(
+        self,
+        page_id: str,
+        *,
+        locale: typing.Optional[str] = None,
+        request: Page,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> Page:
+        """
+        Update Page-level metadata, including SEO and Open Graph fields. </br></br> Required scope | `pages:write`
+
+        Parameters:
+            - page_id: str. Unique identifier for a Page
+
+            - locale: typing.Optional[str]. Unique identifier for a specific locale. Applicable, when using localization.
+
+            - request: Page.
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
+        ---
+        import datetime
+
+        from webflow import Page, PageOpenGraph, PageSeo
+        from webflow.client import Webflow
+
+        client = Webflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+        client.pages.update_page_settings(
+            page_id="page_id",
+            request=Page(
+                id="6390c49774a71f0e3c1a08ee",
+                site_id="6390c49674a71f84b51a08d8",
+                title="Blog Categories Template",
+                slug="detail_blog-category",
+                parent_id="6419db964a9c435aa3af6251",
+                collection_id="6390c49774a71f12831a08e3",
+                created_on=datetime.datetime.fromisoformat(
+                    "2018-10-14 21:55:49+00:00",
+                ),
+                last_updated=datetime.datetime.fromisoformat(
+                    "2022-12-07 16:51:37+00:00",
+                ),
+                archived=False,
+                draft=False,
+                can_branch=True,
+                is_members_only=False,
+                seo=PageSeo(
+                    title="CoffeeStyle eCommerce - Webflow HTML website template",
+                    description="This Webflow template offers a quick start into an e-commerce / memberships site",
+                ),
+                open_graph=PageOpenGraph(
+                    title="CoffeeStyle eCommerce - Webflow HTML website template",
+                    title_copied=True,
+                    description="This Webflow template offers a quick start into an e-commerce / memberships site",
+                    description_copied=True,
+                ),
+            ),
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "PUT",
+            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"pages/{jsonable_encoder(page_id)}"),
+            params=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        "locale": locale,
+                        **(
+                            request_options.get("additional_query_parameters", {})
+                            if request_options is not None
+                            else {}
+                        ),
+                    }
+                )
+            ),
+            json=jsonable_encoder(request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
+        )
+        if 200 <= _response.status_code < 300:
+            return pydantic.parse_obj_as(Page, _response.json())  # type: ignore
+        if _response.status_code == 400:
+            raise BadRequestError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 401:
+            raise UnauthorizedError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 404:
+            raise NotFoundError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 429:
+            raise TooManyRequestsError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 500:
+            raise InternalServerError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        try:
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    def get_content(
+        self,
+        page_id: str,
+        *,
+        locale: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> Dom:
+        """
+        Get static content from a static page. </br> If you do not provide a Locale ID in your request, the response will return any content that can be localized from the Primary locale</br></br> Required scope | `pages:read`
+
+        Parameters:
+            - page_id: str. Unique identifier for a Page
+
+            - locale: typing.Optional[str]. Unique identifier for a specific locale. Applicable, when using localization.
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
+        ---
+        from webflow.client import Webflow
+
+        client = Webflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+        client.pages.get_content(
+            page_id="page_id",
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "GET",
+            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"pages/{jsonable_encoder(page_id)}/dom"),
+            params=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        "locale": locale,
+                        **(
+                            request_options.get("additional_query_parameters", {})
+                            if request_options is not None
+                            else {}
+                        ),
+                    }
+                )
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
+        )
+        if 200 <= _response.status_code < 300:
+            return pydantic.parse_obj_as(Dom, _response.json())  # type: ignore
+        if _response.status_code == 400:
+            raise BadRequestError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 401:
+            raise UnauthorizedError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 403:
+            raise ForbiddenError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 404:
+            raise NotFoundError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 429:
+            raise TooManyRequestsError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 500:
+            raise InternalServerError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        try:
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    def update_static_content(
+        self,
+        page_id: str,
+        *,
+        locale: str,
+        nodes: typing.Sequence[DomWriteNodesItem],
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> Dom:
+        """
+        Update static content on a static page. This endpoint supports sending 1000 nodes per request. </br></br> Required scope | `pages:write`
+
+        Parameters:
+            - page_id: str. Unique identifier for a Page
+
+            - locale: str. The locale identifier.
+
+            - nodes: typing.Sequence[DomWriteNodesItem].
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
+        ---
+        from webflow import DomWriteNodesItem
+        from webflow.client import Webflow
+
+        client = Webflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+        client.pages.update_static_content(
+            page_id="page_id",
+            locale="locale",
+            nodes=[
+                DomWriteNodesItem(
+                    node_id="guide-title-id",
+                    text="<h1>Hello world</h1>",
+                )
+            ],
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "POST",
+            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"pages/{jsonable_encoder(page_id)}/dom"),
+            params=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        "locale": locale,
+                        **(
+                            request_options.get("additional_query_parameters", {})
+                            if request_options is not None
+                            else {}
+                        ),
+                    }
+                )
+            ),
+            json=jsonable_encoder({"nodes": nodes})
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder({"nodes": nodes}),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
+        )
+        if 200 <= _response.status_code < 300:
+            return pydantic.parse_obj_as(Dom, _response.json())  # type: ignore
+        if _response.status_code == 400:
+            raise BadRequestError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 401:
+            raise UnauthorizedError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 403:
+            raise ForbiddenError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
         if _response.status_code == 404:
             raise NotFoundError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
         if _response.status_code == 429:
@@ -112,12 +465,28 @@ class AsyncPagesClient:
         self._client_wrapper = client_wrapper
         self.scripts = AsyncScriptsClient(client_wrapper=self._client_wrapper)
 
-    async def list(self, site_id: str) -> PageList:
+    async def list(
+        self,
+        site_id: str,
+        *,
+        locale: typing.Optional[str] = None,
+        limit: typing.Optional[float] = None,
+        offset: typing.Optional[float] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> PageList:
         """
         List of all pages for a site </br></br> Required scope | `pages:read`
 
         Parameters:
             - site_id: str. Unique identifier for a Site
+
+            - locale: typing.Optional[str]. Unique identifier for a specific locale. Applicable, when using localization.
+
+            - limit: typing.Optional[float]. Maximum number of records to be returned (max limit: 100)
+
+            - offset: typing.Optional[float]. Offset used for pagination if the results have more than limit records
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import AsyncWebflow
 
@@ -125,14 +494,37 @@ class AsyncPagesClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.pages.list(
-            site_id="site-id",
+            site_id="site_id",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/pages"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{jsonable_encoder(site_id)}/pages"),
+            params=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        "locale": locale,
+                        "limit": limit,
+                        "offset": offset,
+                        **(
+                            request_options.get("additional_query_parameters", {})
+                            if request_options is not None
+                            else {}
+                        ),
+                    }
+                )
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(PageList, _response.json())  # type: ignore
@@ -152,12 +544,22 @@ class AsyncPagesClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def get_metadata(self, page_id: str) -> Page:
+    async def get_metadata(
+        self,
+        page_id: str,
+        *,
+        locale: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> Page:
         """
         Get metadata information for a single page </br></br> Required scope | `pages:read`
 
         Parameters:
             - page_id: str. Unique identifier for a Page
+
+            - locale: typing.Optional[str]. Unique identifier for a specific locale. Applicable, when using localization.
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import AsyncWebflow
 
@@ -165,14 +567,35 @@ class AsyncPagesClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.pages.get_metadata(
-            page_id="page-id",
+            page_id="page_id",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"pages/{page_id}"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"pages/{jsonable_encoder(page_id)}"),
+            params=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        "locale": locale,
+                        **(
+                            request_options.get("additional_query_parameters", {})
+                            if request_options is not None
+                            else {}
+                        ),
+                    }
+                )
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(Page, _response.json())  # type: ignore
@@ -180,6 +603,280 @@ class AsyncPagesClient:
             raise BadRequestError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 404:
+            raise NotFoundError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 429:
+            raise TooManyRequestsError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 500:
+            raise InternalServerError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        try:
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def update_page_settings(
+        self,
+        page_id: str,
+        *,
+        locale: typing.Optional[str] = None,
+        request: Page,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> Page:
+        """
+        Update Page-level metadata, including SEO and Open Graph fields. </br></br> Required scope | `pages:write`
+
+        Parameters:
+            - page_id: str. Unique identifier for a Page
+
+            - locale: typing.Optional[str]. Unique identifier for a specific locale. Applicable, when using localization.
+
+            - request: Page.
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
+        ---
+        import datetime
+
+        from webflow import Page, PageOpenGraph, PageSeo
+        from webflow.client import AsyncWebflow
+
+        client = AsyncWebflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+        await client.pages.update_page_settings(
+            page_id="page_id",
+            request=Page(
+                id="6390c49774a71f0e3c1a08ee",
+                site_id="6390c49674a71f84b51a08d8",
+                title="Blog Categories Template",
+                slug="detail_blog-category",
+                parent_id="6419db964a9c435aa3af6251",
+                collection_id="6390c49774a71f12831a08e3",
+                created_on=datetime.datetime.fromisoformat(
+                    "2018-10-14 21:55:49+00:00",
+                ),
+                last_updated=datetime.datetime.fromisoformat(
+                    "2022-12-07 16:51:37+00:00",
+                ),
+                archived=False,
+                draft=False,
+                can_branch=True,
+                is_members_only=False,
+                seo=PageSeo(
+                    title="CoffeeStyle eCommerce - Webflow HTML website template",
+                    description="This Webflow template offers a quick start into an e-commerce / memberships site",
+                ),
+                open_graph=PageOpenGraph(
+                    title="CoffeeStyle eCommerce - Webflow HTML website template",
+                    title_copied=True,
+                    description="This Webflow template offers a quick start into an e-commerce / memberships site",
+                    description_copied=True,
+                ),
+            ),
+        )
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "PUT",
+            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"pages/{jsonable_encoder(page_id)}"),
+            params=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        "locale": locale,
+                        **(
+                            request_options.get("additional_query_parameters", {})
+                            if request_options is not None
+                            else {}
+                        ),
+                    }
+                )
+            ),
+            json=jsonable_encoder(request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
+        )
+        if 200 <= _response.status_code < 300:
+            return pydantic.parse_obj_as(Page, _response.json())  # type: ignore
+        if _response.status_code == 400:
+            raise BadRequestError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 401:
+            raise UnauthorizedError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 404:
+            raise NotFoundError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 429:
+            raise TooManyRequestsError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 500:
+            raise InternalServerError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        try:
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def get_content(
+        self,
+        page_id: str,
+        *,
+        locale: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> Dom:
+        """
+        Get static content from a static page. </br> If you do not provide a Locale ID in your request, the response will return any content that can be localized from the Primary locale</br></br> Required scope | `pages:read`
+
+        Parameters:
+            - page_id: str. Unique identifier for a Page
+
+            - locale: typing.Optional[str]. Unique identifier for a specific locale. Applicable, when using localization.
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
+        ---
+        from webflow.client import AsyncWebflow
+
+        client = AsyncWebflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+        await client.pages.get_content(
+            page_id="page_id",
+        )
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "GET",
+            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"pages/{jsonable_encoder(page_id)}/dom"),
+            params=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        "locale": locale,
+                        **(
+                            request_options.get("additional_query_parameters", {})
+                            if request_options is not None
+                            else {}
+                        ),
+                    }
+                )
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
+        )
+        if 200 <= _response.status_code < 300:
+            return pydantic.parse_obj_as(Dom, _response.json())  # type: ignore
+        if _response.status_code == 400:
+            raise BadRequestError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 401:
+            raise UnauthorizedError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 403:
+            raise ForbiddenError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 404:
+            raise NotFoundError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 429:
+            raise TooManyRequestsError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 500:
+            raise InternalServerError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        try:
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def update_static_content(
+        self,
+        page_id: str,
+        *,
+        locale: str,
+        nodes: typing.Sequence[DomWriteNodesItem],
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> Dom:
+        """
+        Update static content on a static page. This endpoint supports sending 1000 nodes per request. </br></br> Required scope | `pages:write`
+
+        Parameters:
+            - page_id: str. Unique identifier for a Page
+
+            - locale: str. The locale identifier.
+
+            - nodes: typing.Sequence[DomWriteNodesItem].
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
+        ---
+        from webflow import DomWriteNodesItem
+        from webflow.client import AsyncWebflow
+
+        client = AsyncWebflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+        await client.pages.update_static_content(
+            page_id="page_id",
+            locale="locale",
+            nodes=[
+                DomWriteNodesItem(
+                    node_id="guide-title-id",
+                    text="<h1>Hello world</h1>",
+                )
+            ],
+        )
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "POST",
+            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"pages/{jsonable_encoder(page_id)}/dom"),
+            params=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        "locale": locale,
+                        **(
+                            request_options.get("additional_query_parameters", {})
+                            if request_options is not None
+                            else {}
+                        ),
+                    }
+                )
+            ),
+            json=jsonable_encoder({"nodes": nodes})
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder({"nodes": nodes}),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
+        )
+        if 200 <= _response.status_code < 300:
+            return pydantic.parse_obj_as(Dom, _response.json())  # type: ignore
+        if _response.status_code == 400:
+            raise BadRequestError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 401:
+            raise UnauthorizedError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+        if _response.status_code == 403:
+            raise ForbiddenError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
         if _response.status_code == 404:
             raise NotFoundError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
         if _response.status_code == 429:

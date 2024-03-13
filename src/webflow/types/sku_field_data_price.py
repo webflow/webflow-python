@@ -16,8 +16,8 @@ class SkuFieldDataPrice(pydantic.BaseModel):
     price of SKU
     """
 
-    value: typing.Optional[float] = pydantic.Field(description="Price of SKU")
-    unit: typing.Optional[str] = pydantic.Field(description="Currency of Item")
+    value: typing.Optional[float] = pydantic.Field(default=None, description="Price of SKU")
+    unit: typing.Optional[str] = pydantic.Field(default=None, description="Currency of Item")
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

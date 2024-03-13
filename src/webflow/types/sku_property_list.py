@@ -17,12 +17,10 @@ class SkuPropertyList(pydantic.BaseModel):
     A variant/option type for a SKU
     """
 
-    id: typing.Optional[str] = pydantic.Field(
-        description="Unique identifier for a collection of Product options/Variants"
-    )
-    name: typing.Optional[str] = pydantic.Field(description="Name of the collection of Product options/Variants")
-    enum: typing.Optional[typing.List[SkuPropertyListEnumItem]] = pydantic.Field(
-        description="The individual Product variants/Options that are contained within the collection"
+    id: str = pydantic.Field(description="Unique identifier for a collection of Product Variants")
+    name: str = pydantic.Field(description="Name of the collection of Product Variants")
+    enum: typing.List[SkuPropertyListEnumItem] = pydantic.Field(
+        description="The individual Product variants that are contained within the collection"
     )
 
     def json(self, **kwargs: typing.Any) -> str:

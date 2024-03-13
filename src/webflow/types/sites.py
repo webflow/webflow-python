@@ -13,7 +13,7 @@ except ImportError:
 
 
 class Sites(pydantic.BaseModel):
-    sites: typing.Optional[typing.List[Site]]
+    sites: typing.Optional[typing.List[Site]] = None
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

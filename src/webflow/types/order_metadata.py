@@ -12,7 +12,7 @@ except ImportError:
 
 
 class OrderMetadata(pydantic.BaseModel):
-    is_buy_now: typing.Optional[bool] = pydantic.Field(alias="isBuyNow")
+    is_buy_now: typing.Optional[bool] = pydantic.Field(alias="isBuyNow", default=None)
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

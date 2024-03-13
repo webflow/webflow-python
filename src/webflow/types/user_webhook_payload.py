@@ -15,9 +15,9 @@ except ImportError:
 
 class UserWebhookPayload(pydantic.BaseModel):
     trigger_type: typing.Optional[UserWebhookPayloadTriggerType] = pydantic.Field(
-        alias="triggerType", description="The type of event that triggered the request"
+        alias="triggerType", default=None, description="The type of event that triggered the request"
     )
-    payload: typing.Optional[User]
+    payload: typing.Optional[User] = None
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

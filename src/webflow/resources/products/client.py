@@ -8,6 +8,7 @@ from ...core.api_error import ApiError
 from ...core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ...core.jsonable_encoder import jsonable_encoder
 from ...core.remove_none_from_dict import remove_none_from_dict
+from ...core.request_options import RequestOptions
 from ...errors.bad_request_error import BadRequestError
 from ...errors.conflict_error import ConflictError
 from ...errors.forbidden_error import ForbiddenError
@@ -20,6 +21,8 @@ from ...types.product_and_sk_us import ProductAndSkUs
 from ...types.product_and_sk_us_list import ProductAndSkUsList
 from ...types.publish_status import PublishStatus
 from ...types.sku import Sku
+from .types.product_sku_create_product import ProductSkuCreateProduct
+from .types.product_sku_create_sku import ProductSkuCreateSku
 from .types.products_create_sku_response import ProductsCreateSkuResponse
 
 try:
@@ -36,7 +39,12 @@ class ProductsClient:
         self._client_wrapper = client_wrapper
 
     def list(
-        self, site_id: str, *, offset: typing.Optional[float] = None, limit: typing.Optional[float] = None
+        self,
+        site_id: str,
+        *,
+        offset: typing.Optional[float] = None,
+        limit: typing.Optional[float] = None,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> ProductAndSkUsList:
         """
         Retrieve all products for a site. Use `limit` and `offset` to page through all products with subsequent requests. All SKUs for each product will also be fetched and returned. The `limit`, `offset` and `total` values represent Products only and do not include any SKUs.
@@ -49,6 +57,8 @@ class ProductsClient:
             - offset: typing.Optional[float]. Offset used for pagination if the results have more than limit records
 
             - limit: typing.Optional[float]. Maximum number of records to be returned (max limit: 100)
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import Webflow
 
@@ -56,15 +66,38 @@ class ProductsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.products.list(
-            site_id="site-id",
+            site_id="site_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/products"),
-            params=remove_none_from_dict({"offset": offset, "limit": limit}),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"sites/{jsonable_encoder(site_id)}/products"
+            ),
+            params=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        "offset": offset,
+                        "limit": limit,
+                        **(
+                            request_options.get("additional_query_parameters", {})
+                            if request_options is not None
+                            else {}
+                        ),
+                    }
+                )
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(ProductAndSkUsList, _response.json())  # type: ignore
@@ -89,20 +122,22 @@ class ProductsClient:
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
     def create(
-        self, site_id: str, *, publish_status: typing.Optional[PublishStatus] = OMIT, product: Product, sku: Sku
+        self,
+        site_id: str,
+        *,
+        publish_status: typing.Optional[PublishStatus] = OMIT,
+        product: typing.Optional[ProductSkuCreateProduct] = OMIT,
+        sku: typing.Optional[ProductSkuCreateSku] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> ProductAndSkUs:
         """
-        Adding a new Product involves creating both a Product Item and a SKU Item, since a Product Item has to have, at minimum, a SKU Item.
+        Creating a new Product involves creating both a Product and a SKU, since a Product Item has to have, at minimum, a single SKU.
 
-        To create a new Product with multiple SKUs, you must:
+        In order to create a Product with multiple SKUs - for example a T-shirt in sizes small, medium and large - you'll need to create `sku-properties`. In our T-shirt example, a single `sku-property` would be Color. Within that property, we'll need to list out the various colors a T-shirt could be as an array of `enum` values: `royal-blue`, `crimson-red`, and `forrest-green`.
 
-        - Create the Product and Default SKU using this endpoint, making sure to add `sku-properties` in the product data.
-        - You can't add `sku-values` to the SKU yet, since there are no enum IDs created yet. When this endpoint returns, it will have IDs filled in for the `sku-properties` enums.
-        - With those IDs, update the default SKU with valid `sku-values` and create any additional SKUs (if needed), with valid `sku-values`.
-        - You can also create the Product without `sku-properties` and add them in later.
-        - If you add any `sku` properties, the default SKU will default to the first value of each option.
+        Once, you've created a Product and its `sku-properties` with `enum` values, you can create your default SKU, which will automatically be a combination of the first `sku-properties` you've created. In our example, the default SKU will be a Royal Blue T-Shirt, because our first `enum` of our Color `sku-property` is Royal Blue. After you've created your product, you can create additional SKUs using the <a href="https://developers.webflow.com/reference/create-skus">Create SKU endpoint</a>
 
-        Upon creation, the default product type will be `Advanced`. The product type is used to determine which Product and SKU fields are shown to users in the `Designer` and the `Editor`. Setting it to `Advanced` ensures that all Product and SKU fields will be shown. The product type can be edited in the `Designer` or the `Editor`.
+        Upon creation, the default product type will be `Advanced`. The product type is used to determine which Product and SKU fields are shown to users in the `Designer` and the `Editor`. Setting it to `Advanced` ensures that all Product and SKU fields will be shown.
 
         Required scope | `ecommerce:write`
 
@@ -111,92 +146,53 @@ class ProductsClient:
 
             - publish_status: typing.Optional[PublishStatus].
 
-            - product: Product.
+            - product: typing.Optional[ProductSkuCreateProduct]. The Product Object
 
-            - sku: Sku.
+            - sku: typing.Optional[ProductSkuCreateSku]. The SKU object
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
-        import datetime
-
-        from webflow import (
-            Product,
-            ProductFieldData,
-            PublishStatus,
-            Sku,
-            SkuFieldData,
-            SkuFieldDataPrice,
-            SkuPropertyList,
-            SkuPropertyListEnumItem,
-        )
         from webflow.client import Webflow
 
         client = Webflow(
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.products.create(
-            site_id="site-id",
-            publish_status=PublishStatus.STAGING,
-            product=Product(
-                id="580e63fc8c9a982ac9b8b745",
-                last_published=datetime.datetime.fromisoformat(
-                    "2023-03-17 18:47:35.560000+00:00",
-                ),
-                last_updated=datetime.datetime.fromisoformat(
-                    "2023-03-17 18:47:35.560000+00:00",
-                ),
-                created_on=datetime.datetime.fromisoformat(
-                    "2023-03-17 18:47:35.560000+00:00",
-                ),
-                is_archived=False,
-                is_draft=False,
-                field_data=ProductFieldData(
-                    name="My new item",
-                    slug="my-new-item",
-                    sku_properties=[
-                        SkuPropertyList(
-                            id="ff42fee0113744f693a764e3431a9cc2",
-                            name="Color",
-                            enum=[
-                                SkuPropertyListEnumItem(
-                                    id="64a74715c456e36762fc39a1",
-                                    name="Royal Blue",
-                                    slug="royal-blue",
-                                )
-                            ],
-                        )
-                    ],
-                ),
-            ),
-            sku=Sku(
-                id="580e63fc8c9a982ac9b8b745",
-                last_published=datetime.datetime.fromisoformat(
-                    "2023-03-17 18:47:35.560000+00:00",
-                ),
-                last_updated=datetime.datetime.fromisoformat(
-                    "2023-03-17 18:47:35.560000+00:00",
-                ),
-                created_on=datetime.datetime.fromisoformat(
-                    "2023-03-17 18:47:35.560000+00:00",
-                ),
-                field_data=SkuFieldData(
-                    name="My new item",
-                    slug="my-new-item",
-                    price=SkuFieldDataPrice(
-                        value=100.0,
-                        unit="USD",
-                    ),
-                ),
-            ),
+            site_id="site_id",
         )
         """
-        _request: typing.Dict[str, typing.Any] = {"product": product, "sku": sku}
+        _request: typing.Dict[str, typing.Any] = {}
         if publish_status is not OMIT:
-            _request["publishStatus"] = publish_status
+            _request["publishStatus"] = publish_status.value if publish_status is not None else None
+        if product is not OMIT:
+            _request["product"] = product
+        if sku is not OMIT:
+            _request["sku"] = sku
         _response = self._client_wrapper.httpx_client.request(
             "POST",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/products"),
-            json=jsonable_encoder(_request),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"sites/{jsonable_encoder(site_id)}/products"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(_request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(_request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(ProductAndSkUs, _response.json())  # type: ignore
@@ -220,7 +216,9 @@ class ProductsClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get(self, site_id: str, product_id: str) -> ProductAndSkUs:
+    def get(
+        self, site_id: str, product_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> ProductAndSkUs:
         """
         Retrieve a single product by its id. All of its SKUs will also be retrieved.
 
@@ -230,6 +228,8 @@ class ProductsClient:
             - site_id: str. Unique identifier for a Site
 
             - product_id: str. Unique identifier for a Product
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import Webflow
 
@@ -237,15 +237,30 @@ class ProductsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.products.get(
-            site_id="site-id",
-            product_id="product-id",
+            site_id="site_id",
+            product_id="product_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/products/{product_id}"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/",
+                f"sites/{jsonable_encoder(site_id)}/products/{jsonable_encoder(product_id)}",
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(ProductAndSkUs, _response.json())  # type: ignore
@@ -270,7 +285,13 @@ class ProductsClient:
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
     def update(
-        self, site_id: str, product_id: str, *, publish_status: typing.Optional[PublishStatus] = OMIT, product: Product
+        self,
+        site_id: str,
+        product_id: str,
+        *,
+        publish_status: typing.Optional[PublishStatus] = OMIT,
+        product: Product,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> Product:
         """
         Updating an existing Product will set the product type to `Advanced`. The product type is used to determine which Product and SKU fields are shown to users in the `Designer` and the `Editor`. Setting it to `Advanced` ensures that all Product and SKU fields will be shown. The product type can be edited in the `Designer` or the `Editor`.
@@ -285,13 +306,14 @@ class ProductsClient:
             - publish_status: typing.Optional[PublishStatus].
 
             - product: Product.
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         import datetime
 
         from webflow import (
             Product,
             ProductFieldData,
-            PublishStatus,
             SkuPropertyList,
             SkuPropertyListEnumItem,
         )
@@ -301,37 +323,64 @@ class ProductsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.products.update(
-            site_id="site-id",
-            product_id="product-id",
-            publish_status=PublishStatus.STAGING,
+            site_id="site_id",
+            product_id="product_id",
             product=Product(
                 id="580e63fc8c9a982ac9b8b745",
                 last_published=datetime.datetime.fromisoformat(
-                    "2023-03-17 18:47:35.560000+00:00",
+                    "2023-03-17 18:47:35+00:00",
                 ),
                 last_updated=datetime.datetime.fromisoformat(
-                    "2023-03-17 18:47:35.560000+00:00",
+                    "2023-03-17 18:47:35+00:00",
                 ),
                 created_on=datetime.datetime.fromisoformat(
-                    "2023-03-17 18:47:35.560000+00:00",
+                    "2023-03-17 18:47:35+00:00",
                 ),
                 is_archived=False,
                 is_draft=False,
                 field_data=ProductFieldData(
-                    name="My new item",
-                    slug="my-new-item",
+                    name="T-Shirt",
+                    slug="t-shirt",
+                    description="A plain cotton t-shirt.",
+                    shippable=True,
                     sku_properties=[
                         SkuPropertyList(
-                            id="ff42fee0113744f693a764e3431a9cc2",
+                            id="color",
                             name="Color",
                             enum=[
                                 SkuPropertyListEnumItem(
-                                    id="64a74715c456e36762fc39a1",
+                                    id="royal-blue",
                                     name="Royal Blue",
                                     slug="royal-blue",
+                                ),
+                                SkuPropertyListEnumItem(
+                                    id="crimson-red",
+                                    name="Crimson Red",
+                                    slug="crimson-red",
+                                ),
+                                SkuPropertyListEnumItem(
+                                    id="forrest-green",
+                                    name="Forrst Green",
+                                    slug="forrest-green",
+                                ),
+                                SkuPropertyListEnumItem(
+                                    id="id",
+                                    name="name",
+                                    slug="slug",
+                                ),
+                            ],
+                        ),
+                        SkuPropertyList(
+                            id="Color",
+                            name="Color",
+                            enum=[
+                                SkuPropertyListEnumItem(
+                                    id="id",
+                                    name="name",
+                                    slug="slug",
                                 )
                             ],
-                        )
+                        ),
                     ],
                 ),
             ),
@@ -339,13 +388,33 @@ class ProductsClient:
         """
         _request: typing.Dict[str, typing.Any] = {"product": product}
         if publish_status is not OMIT:
-            _request["publishStatus"] = publish_status
+            _request["publishStatus"] = publish_status.value if publish_status is not None else None
         _response = self._client_wrapper.httpx_client.request(
             "PATCH",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/products/{product_id}"),
-            json=jsonable_encoder(_request),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/",
+                f"sites/{jsonable_encoder(site_id)}/products/{jsonable_encoder(product_id)}",
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(_request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(_request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(Product, _response.json())  # type: ignore
@@ -375,7 +444,8 @@ class ProductsClient:
         product_id: str,
         *,
         publish_status: typing.Optional[PublishStatus] = OMIT,
-        skus: typing.List[Sku],
+        skus: typing.Sequence[Sku],
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> ProductsCreateSkuResponse:
         """
         Create additional SKUs to cover every variant of your Product. The Default SKU already counts as one of the variants.
@@ -391,39 +461,41 @@ class ProductsClient:
 
             - publish_status: typing.Optional[PublishStatus].
 
-            - skus: typing.List[Sku]. An array of the SKU data your are adding
+            - skus: typing.Sequence[Sku]. An array of the SKU data your are adding
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         import datetime
 
-        from webflow import PublishStatus, Sku, SkuFieldData, SkuFieldDataPrice
+        from webflow import Sku, SkuFieldData, SkuFieldDataPrice
         from webflow.client import Webflow
 
         client = Webflow(
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.products.create_sku(
-            site_id="site-id",
-            product_id="product-id",
-            publish_status=PublishStatus.STAGING,
+            site_id="site_id",
+            product_id="product_id",
             skus=[
                 Sku(
                     id="580e63fc8c9a982ac9b8b745",
                     last_published=datetime.datetime.fromisoformat(
-                        "2023-03-17 18:47:35.560000+00:00",
+                        "2023-03-17 18:47:35+00:00",
                     ),
                     last_updated=datetime.datetime.fromisoformat(
-                        "2023-03-17 18:47:35.560000+00:00",
+                        "2023-03-17 18:47:35+00:00",
                     ),
                     created_on=datetime.datetime.fromisoformat(
-                        "2023-03-17 18:47:35.560000+00:00",
+                        "2023-03-17 18:47:35+00:00",
                     ),
                     field_data=SkuFieldData(
-                        name="My new item",
-                        slug="my-new-item",
+                        name="Blue T-shirt",
+                        slug="t-shirt-blue",
                         price=SkuFieldDataPrice(
                             value=100.0,
                             unit="USD",
                         ),
+                        quantity=10.0,
                     ),
                 )
             ],
@@ -431,15 +503,33 @@ class ProductsClient:
         """
         _request: typing.Dict[str, typing.Any] = {"skus": skus}
         if publish_status is not OMIT:
-            _request["publishStatus"] = publish_status
+            _request["publishStatus"] = publish_status.value if publish_status is not None else None
         _response = self._client_wrapper.httpx_client.request(
             "POST",
             urllib.parse.urljoin(
-                f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/products/{product_id}/skus"
+                f"{self._client_wrapper.get_base_url()}/",
+                f"sites/{jsonable_encoder(site_id)}/products/{jsonable_encoder(product_id)}/skus",
             ),
-            json=jsonable_encoder(_request),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(_request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(_request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(ProductsCreateSkuResponse, _response.json())  # type: ignore
@@ -471,6 +561,7 @@ class ProductsClient:
         *,
         publish_status: typing.Optional[PublishStatus] = OMIT,
         sku: Sku,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> Sku:
         """
         Updating an existing SKU will set the product type to `Advanced` for the product associated with the SKU. The product type is used to determine which Product and SKU fields are shown to users in the `Designer` and the `Editor`. Setting it to `Advanced` ensures that all Product and SKU fields will be shown. The product type can be edited in the `Designer` or the `Editor`.
@@ -487,53 +578,73 @@ class ProductsClient:
             - publish_status: typing.Optional[PublishStatus].
 
             - sku: Sku.
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         import datetime
 
-        from webflow import PublishStatus, Sku, SkuFieldData, SkuFieldDataPrice
+        from webflow import Sku, SkuFieldData, SkuFieldDataPrice
         from webflow.client import Webflow
 
         client = Webflow(
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.products.update_sku(
-            site_id="site-id",
-            product_id="product-id",
-            sku_id="sku-id",
-            publish_status=PublishStatus.STAGING,
+            site_id="site_id",
+            product_id="product_id",
+            sku_id="sku_id",
             sku=Sku(
                 id="580e63fc8c9a982ac9b8b745",
                 last_published=datetime.datetime.fromisoformat(
-                    "2023-03-17 18:47:35.560000+00:00",
+                    "2023-03-17 18:47:35+00:00",
                 ),
                 last_updated=datetime.datetime.fromisoformat(
-                    "2023-03-17 18:47:35.560000+00:00",
+                    "2023-03-17 18:47:35+00:00",
                 ),
                 created_on=datetime.datetime.fromisoformat(
-                    "2023-03-17 18:47:35.560000+00:00",
+                    "2023-03-17 18:47:35+00:00",
                 ),
                 field_data=SkuFieldData(
-                    name="My new item",
-                    slug="my-new-item",
+                    name="Blue T-shirt",
+                    slug="t-shirt-blue",
                     price=SkuFieldDataPrice(
                         value=100.0,
                         unit="USD",
                     ),
+                    quantity=10.0,
                 ),
             ),
         )
         """
         _request: typing.Dict[str, typing.Any] = {"sku": sku}
         if publish_status is not OMIT:
-            _request["publishStatus"] = publish_status
+            _request["publishStatus"] = publish_status.value if publish_status is not None else None
         _response = self._client_wrapper.httpx_client.request(
             "PATCH",
             urllib.parse.urljoin(
-                f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/products/{product_id}/skus/{sku_id}"
+                f"{self._client_wrapper.get_base_url()}/",
+                f"sites/{jsonable_encoder(site_id)}/products/{jsonable_encoder(product_id)}/skus/{jsonable_encoder(sku_id)}",
             ),
-            json=jsonable_encoder(_request),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(_request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(_request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(Sku, _response.json())  # type: ignore
@@ -563,7 +674,12 @@ class AsyncProductsClient:
         self._client_wrapper = client_wrapper
 
     async def list(
-        self, site_id: str, *, offset: typing.Optional[float] = None, limit: typing.Optional[float] = None
+        self,
+        site_id: str,
+        *,
+        offset: typing.Optional[float] = None,
+        limit: typing.Optional[float] = None,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> ProductAndSkUsList:
         """
         Retrieve all products for a site. Use `limit` and `offset` to page through all products with subsequent requests. All SKUs for each product will also be fetched and returned. The `limit`, `offset` and `total` values represent Products only and do not include any SKUs.
@@ -576,6 +692,8 @@ class AsyncProductsClient:
             - offset: typing.Optional[float]. Offset used for pagination if the results have more than limit records
 
             - limit: typing.Optional[float]. Maximum number of records to be returned (max limit: 100)
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import AsyncWebflow
 
@@ -583,15 +701,38 @@ class AsyncProductsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.products.list(
-            site_id="site-id",
+            site_id="site_id",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/products"),
-            params=remove_none_from_dict({"offset": offset, "limit": limit}),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"sites/{jsonable_encoder(site_id)}/products"
+            ),
+            params=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        "offset": offset,
+                        "limit": limit,
+                        **(
+                            request_options.get("additional_query_parameters", {})
+                            if request_options is not None
+                            else {}
+                        ),
+                    }
+                )
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(ProductAndSkUsList, _response.json())  # type: ignore
@@ -616,20 +757,22 @@ class AsyncProductsClient:
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
     async def create(
-        self, site_id: str, *, publish_status: typing.Optional[PublishStatus] = OMIT, product: Product, sku: Sku
+        self,
+        site_id: str,
+        *,
+        publish_status: typing.Optional[PublishStatus] = OMIT,
+        product: typing.Optional[ProductSkuCreateProduct] = OMIT,
+        sku: typing.Optional[ProductSkuCreateSku] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> ProductAndSkUs:
         """
-        Adding a new Product involves creating both a Product Item and a SKU Item, since a Product Item has to have, at minimum, a SKU Item.
+        Creating a new Product involves creating both a Product and a SKU, since a Product Item has to have, at minimum, a single SKU.
 
-        To create a new Product with multiple SKUs, you must:
+        In order to create a Product with multiple SKUs - for example a T-shirt in sizes small, medium and large - you'll need to create `sku-properties`. In our T-shirt example, a single `sku-property` would be Color. Within that property, we'll need to list out the various colors a T-shirt could be as an array of `enum` values: `royal-blue`, `crimson-red`, and `forrest-green`.
 
-        - Create the Product and Default SKU using this endpoint, making sure to add `sku-properties` in the product data.
-        - You can't add `sku-values` to the SKU yet, since there are no enum IDs created yet. When this endpoint returns, it will have IDs filled in for the `sku-properties` enums.
-        - With those IDs, update the default SKU with valid `sku-values` and create any additional SKUs (if needed), with valid `sku-values`.
-        - You can also create the Product without `sku-properties` and add them in later.
-        - If you add any `sku` properties, the default SKU will default to the first value of each option.
+        Once, you've created a Product and its `sku-properties` with `enum` values, you can create your default SKU, which will automatically be a combination of the first `sku-properties` you've created. In our example, the default SKU will be a Royal Blue T-Shirt, because our first `enum` of our Color `sku-property` is Royal Blue. After you've created your product, you can create additional SKUs using the <a href="https://developers.webflow.com/reference/create-skus">Create SKU endpoint</a>
 
-        Upon creation, the default product type will be `Advanced`. The product type is used to determine which Product and SKU fields are shown to users in the `Designer` and the `Editor`. Setting it to `Advanced` ensures that all Product and SKU fields will be shown. The product type can be edited in the `Designer` or the `Editor`.
+        Upon creation, the default product type will be `Advanced`. The product type is used to determine which Product and SKU fields are shown to users in the `Designer` and the `Editor`. Setting it to `Advanced` ensures that all Product and SKU fields will be shown.
 
         Required scope | `ecommerce:write`
 
@@ -638,92 +781,53 @@ class AsyncProductsClient:
 
             - publish_status: typing.Optional[PublishStatus].
 
-            - product: Product.
+            - product: typing.Optional[ProductSkuCreateProduct]. The Product Object
 
-            - sku: Sku.
+            - sku: typing.Optional[ProductSkuCreateSku]. The SKU object
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
-        import datetime
-
-        from webflow import (
-            Product,
-            ProductFieldData,
-            PublishStatus,
-            Sku,
-            SkuFieldData,
-            SkuFieldDataPrice,
-            SkuPropertyList,
-            SkuPropertyListEnumItem,
-        )
         from webflow.client import AsyncWebflow
 
         client = AsyncWebflow(
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.products.create(
-            site_id="site-id",
-            publish_status=PublishStatus.STAGING,
-            product=Product(
-                id="580e63fc8c9a982ac9b8b745",
-                last_published=datetime.datetime.fromisoformat(
-                    "2023-03-17 18:47:35.560000+00:00",
-                ),
-                last_updated=datetime.datetime.fromisoformat(
-                    "2023-03-17 18:47:35.560000+00:00",
-                ),
-                created_on=datetime.datetime.fromisoformat(
-                    "2023-03-17 18:47:35.560000+00:00",
-                ),
-                is_archived=False,
-                is_draft=False,
-                field_data=ProductFieldData(
-                    name="My new item",
-                    slug="my-new-item",
-                    sku_properties=[
-                        SkuPropertyList(
-                            id="ff42fee0113744f693a764e3431a9cc2",
-                            name="Color",
-                            enum=[
-                                SkuPropertyListEnumItem(
-                                    id="64a74715c456e36762fc39a1",
-                                    name="Royal Blue",
-                                    slug="royal-blue",
-                                )
-                            ],
-                        )
-                    ],
-                ),
-            ),
-            sku=Sku(
-                id="580e63fc8c9a982ac9b8b745",
-                last_published=datetime.datetime.fromisoformat(
-                    "2023-03-17 18:47:35.560000+00:00",
-                ),
-                last_updated=datetime.datetime.fromisoformat(
-                    "2023-03-17 18:47:35.560000+00:00",
-                ),
-                created_on=datetime.datetime.fromisoformat(
-                    "2023-03-17 18:47:35.560000+00:00",
-                ),
-                field_data=SkuFieldData(
-                    name="My new item",
-                    slug="my-new-item",
-                    price=SkuFieldDataPrice(
-                        value=100.0,
-                        unit="USD",
-                    ),
-                ),
-            ),
+            site_id="site_id",
         )
         """
-        _request: typing.Dict[str, typing.Any] = {"product": product, "sku": sku}
+        _request: typing.Dict[str, typing.Any] = {}
         if publish_status is not OMIT:
-            _request["publishStatus"] = publish_status
+            _request["publishStatus"] = publish_status.value if publish_status is not None else None
+        if product is not OMIT:
+            _request["product"] = product
+        if sku is not OMIT:
+            _request["sku"] = sku
         _response = await self._client_wrapper.httpx_client.request(
             "POST",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/products"),
-            json=jsonable_encoder(_request),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"sites/{jsonable_encoder(site_id)}/products"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(_request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(_request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(ProductAndSkUs, _response.json())  # type: ignore
@@ -747,7 +851,9 @@ class AsyncProductsClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def get(self, site_id: str, product_id: str) -> ProductAndSkUs:
+    async def get(
+        self, site_id: str, product_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> ProductAndSkUs:
         """
         Retrieve a single product by its id. All of its SKUs will also be retrieved.
 
@@ -757,6 +863,8 @@ class AsyncProductsClient:
             - site_id: str. Unique identifier for a Site
 
             - product_id: str. Unique identifier for a Product
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import AsyncWebflow
 
@@ -764,15 +872,30 @@ class AsyncProductsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.products.get(
-            site_id="site-id",
-            product_id="product-id",
+            site_id="site_id",
+            product_id="product_id",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/products/{product_id}"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/",
+                f"sites/{jsonable_encoder(site_id)}/products/{jsonable_encoder(product_id)}",
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(ProductAndSkUs, _response.json())  # type: ignore
@@ -797,7 +920,13 @@ class AsyncProductsClient:
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
     async def update(
-        self, site_id: str, product_id: str, *, publish_status: typing.Optional[PublishStatus] = OMIT, product: Product
+        self,
+        site_id: str,
+        product_id: str,
+        *,
+        publish_status: typing.Optional[PublishStatus] = OMIT,
+        product: Product,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> Product:
         """
         Updating an existing Product will set the product type to `Advanced`. The product type is used to determine which Product and SKU fields are shown to users in the `Designer` and the `Editor`. Setting it to `Advanced` ensures that all Product and SKU fields will be shown. The product type can be edited in the `Designer` or the `Editor`.
@@ -812,13 +941,14 @@ class AsyncProductsClient:
             - publish_status: typing.Optional[PublishStatus].
 
             - product: Product.
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         import datetime
 
         from webflow import (
             Product,
             ProductFieldData,
-            PublishStatus,
             SkuPropertyList,
             SkuPropertyListEnumItem,
         )
@@ -828,37 +958,64 @@ class AsyncProductsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.products.update(
-            site_id="site-id",
-            product_id="product-id",
-            publish_status=PublishStatus.STAGING,
+            site_id="site_id",
+            product_id="product_id",
             product=Product(
                 id="580e63fc8c9a982ac9b8b745",
                 last_published=datetime.datetime.fromisoformat(
-                    "2023-03-17 18:47:35.560000+00:00",
+                    "2023-03-17 18:47:35+00:00",
                 ),
                 last_updated=datetime.datetime.fromisoformat(
-                    "2023-03-17 18:47:35.560000+00:00",
+                    "2023-03-17 18:47:35+00:00",
                 ),
                 created_on=datetime.datetime.fromisoformat(
-                    "2023-03-17 18:47:35.560000+00:00",
+                    "2023-03-17 18:47:35+00:00",
                 ),
                 is_archived=False,
                 is_draft=False,
                 field_data=ProductFieldData(
-                    name="My new item",
-                    slug="my-new-item",
+                    name="T-Shirt",
+                    slug="t-shirt",
+                    description="A plain cotton t-shirt.",
+                    shippable=True,
                     sku_properties=[
                         SkuPropertyList(
-                            id="ff42fee0113744f693a764e3431a9cc2",
+                            id="color",
                             name="Color",
                             enum=[
                                 SkuPropertyListEnumItem(
-                                    id="64a74715c456e36762fc39a1",
+                                    id="royal-blue",
                                     name="Royal Blue",
                                     slug="royal-blue",
+                                ),
+                                SkuPropertyListEnumItem(
+                                    id="crimson-red",
+                                    name="Crimson Red",
+                                    slug="crimson-red",
+                                ),
+                                SkuPropertyListEnumItem(
+                                    id="forrest-green",
+                                    name="Forrst Green",
+                                    slug="forrest-green",
+                                ),
+                                SkuPropertyListEnumItem(
+                                    id="id",
+                                    name="name",
+                                    slug="slug",
+                                ),
+                            ],
+                        ),
+                        SkuPropertyList(
+                            id="Color",
+                            name="Color",
+                            enum=[
+                                SkuPropertyListEnumItem(
+                                    id="id",
+                                    name="name",
+                                    slug="slug",
                                 )
                             ],
-                        )
+                        ),
                     ],
                 ),
             ),
@@ -866,13 +1023,33 @@ class AsyncProductsClient:
         """
         _request: typing.Dict[str, typing.Any] = {"product": product}
         if publish_status is not OMIT:
-            _request["publishStatus"] = publish_status
+            _request["publishStatus"] = publish_status.value if publish_status is not None else None
         _response = await self._client_wrapper.httpx_client.request(
             "PATCH",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/products/{product_id}"),
-            json=jsonable_encoder(_request),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/",
+                f"sites/{jsonable_encoder(site_id)}/products/{jsonable_encoder(product_id)}",
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(_request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(_request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(Product, _response.json())  # type: ignore
@@ -902,7 +1079,8 @@ class AsyncProductsClient:
         product_id: str,
         *,
         publish_status: typing.Optional[PublishStatus] = OMIT,
-        skus: typing.List[Sku],
+        skus: typing.Sequence[Sku],
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> ProductsCreateSkuResponse:
         """
         Create additional SKUs to cover every variant of your Product. The Default SKU already counts as one of the variants.
@@ -918,39 +1096,41 @@ class AsyncProductsClient:
 
             - publish_status: typing.Optional[PublishStatus].
 
-            - skus: typing.List[Sku]. An array of the SKU data your are adding
+            - skus: typing.Sequence[Sku]. An array of the SKU data your are adding
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         import datetime
 
-        from webflow import PublishStatus, Sku, SkuFieldData, SkuFieldDataPrice
+        from webflow import Sku, SkuFieldData, SkuFieldDataPrice
         from webflow.client import AsyncWebflow
 
         client = AsyncWebflow(
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.products.create_sku(
-            site_id="site-id",
-            product_id="product-id",
-            publish_status=PublishStatus.STAGING,
+            site_id="site_id",
+            product_id="product_id",
             skus=[
                 Sku(
                     id="580e63fc8c9a982ac9b8b745",
                     last_published=datetime.datetime.fromisoformat(
-                        "2023-03-17 18:47:35.560000+00:00",
+                        "2023-03-17 18:47:35+00:00",
                     ),
                     last_updated=datetime.datetime.fromisoformat(
-                        "2023-03-17 18:47:35.560000+00:00",
+                        "2023-03-17 18:47:35+00:00",
                     ),
                     created_on=datetime.datetime.fromisoformat(
-                        "2023-03-17 18:47:35.560000+00:00",
+                        "2023-03-17 18:47:35+00:00",
                     ),
                     field_data=SkuFieldData(
-                        name="My new item",
-                        slug="my-new-item",
+                        name="Blue T-shirt",
+                        slug="t-shirt-blue",
                         price=SkuFieldDataPrice(
                             value=100.0,
                             unit="USD",
                         ),
+                        quantity=10.0,
                     ),
                 )
             ],
@@ -958,15 +1138,33 @@ class AsyncProductsClient:
         """
         _request: typing.Dict[str, typing.Any] = {"skus": skus}
         if publish_status is not OMIT:
-            _request["publishStatus"] = publish_status
+            _request["publishStatus"] = publish_status.value if publish_status is not None else None
         _response = await self._client_wrapper.httpx_client.request(
             "POST",
             urllib.parse.urljoin(
-                f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/products/{product_id}/skus"
+                f"{self._client_wrapper.get_base_url()}/",
+                f"sites/{jsonable_encoder(site_id)}/products/{jsonable_encoder(product_id)}/skus",
             ),
-            json=jsonable_encoder(_request),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(_request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(_request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(ProductsCreateSkuResponse, _response.json())  # type: ignore
@@ -998,6 +1196,7 @@ class AsyncProductsClient:
         *,
         publish_status: typing.Optional[PublishStatus] = OMIT,
         sku: Sku,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> Sku:
         """
         Updating an existing SKU will set the product type to `Advanced` for the product associated with the SKU. The product type is used to determine which Product and SKU fields are shown to users in the `Designer` and the `Editor`. Setting it to `Advanced` ensures that all Product and SKU fields will be shown. The product type can be edited in the `Designer` or the `Editor`.
@@ -1014,53 +1213,73 @@ class AsyncProductsClient:
             - publish_status: typing.Optional[PublishStatus].
 
             - sku: Sku.
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         import datetime
 
-        from webflow import PublishStatus, Sku, SkuFieldData, SkuFieldDataPrice
+        from webflow import Sku, SkuFieldData, SkuFieldDataPrice
         from webflow.client import AsyncWebflow
 
         client = AsyncWebflow(
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.products.update_sku(
-            site_id="site-id",
-            product_id="product-id",
-            sku_id="sku-id",
-            publish_status=PublishStatus.STAGING,
+            site_id="site_id",
+            product_id="product_id",
+            sku_id="sku_id",
             sku=Sku(
                 id="580e63fc8c9a982ac9b8b745",
                 last_published=datetime.datetime.fromisoformat(
-                    "2023-03-17 18:47:35.560000+00:00",
+                    "2023-03-17 18:47:35+00:00",
                 ),
                 last_updated=datetime.datetime.fromisoformat(
-                    "2023-03-17 18:47:35.560000+00:00",
+                    "2023-03-17 18:47:35+00:00",
                 ),
                 created_on=datetime.datetime.fromisoformat(
-                    "2023-03-17 18:47:35.560000+00:00",
+                    "2023-03-17 18:47:35+00:00",
                 ),
                 field_data=SkuFieldData(
-                    name="My new item",
-                    slug="my-new-item",
+                    name="Blue T-shirt",
+                    slug="t-shirt-blue",
                     price=SkuFieldDataPrice(
                         value=100.0,
                         unit="USD",
                     ),
+                    quantity=10.0,
                 ),
             ),
         )
         """
         _request: typing.Dict[str, typing.Any] = {"sku": sku}
         if publish_status is not OMIT:
-            _request["publishStatus"] = publish_status
+            _request["publishStatus"] = publish_status.value if publish_status is not None else None
         _response = await self._client_wrapper.httpx_client.request(
             "PATCH",
             urllib.parse.urljoin(
-                f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/products/{product_id}/skus/{sku_id}"
+                f"{self._client_wrapper.get_base_url()}/",
+                f"sites/{jsonable_encoder(site_id)}/products/{jsonable_encoder(product_id)}/skus/{jsonable_encoder(sku_id)}",
             ),
-            json=jsonable_encoder(_request),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(_request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(_request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(Sku, _response.json())  # type: ignore

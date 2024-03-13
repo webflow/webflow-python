@@ -7,12 +7,15 @@ from json.decoder import JSONDecodeError
 from .....core.api_error import ApiError
 from .....core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from .....core.jsonable_encoder import jsonable_encoder
+from .....core.remove_none_from_dict import remove_none_from_dict
+from .....core.request_options import RequestOptions
 from .....errors.bad_request_error import BadRequestError
 from .....errors.internal_server_error import InternalServerError
 from .....errors.not_found_error import NotFoundError
 from .....errors.too_many_requests_error import TooManyRequestsError
 from .....errors.unauthorized_error import UnauthorizedError
 from .....types.field import Field
+from .types.field_create_type import FieldCreateType
 
 try:
     import pydantic.v1 as pydantic  # type: ignore
@@ -27,21 +30,76 @@ class FieldsClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def create(self, collection_id: str, *, request: Field) -> Field:
+    def create(
+        self,
+        collection_id: str,
+        *,
+        is_required: typing.Optional[bool] = OMIT,
+        type: FieldCreateType,
+        display_name: str,
+        help_text: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> Field:
         """
         Create a custom field in a collection. </br></br> Slugs must be all lowercase letters without spaces. If you pass a string with uppercase letters and/or spaces to the "Slug" property, Webflow will convert the slug to lowercase and replace spaces with "-." </br></br> Only some field types can be created through the API. This endpoint does not currently support bulk creation. </br></br> Required scope | `cms:write`
 
         Parameters:
             - collection_id: str. Unique identifier for a Collection
 
-            - request: Field.
+            - is_required: typing.Optional[bool]. define whether a field is required in a collection
+
+            - type: FieldCreateType. Choose these appropriate field type for your collection data
+
+            - display_name: str. The name of a field
+
+            - help_text: typing.Optional[str]. Additional text to help anyone filling out this field
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
+        ---
+        from webflow.client import Webflow
+        from webflow.resources.collections import FieldCreateType
+
+        client = Webflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+        client.collections.fields.create(
+            collection_id="collection_id",
+            is_required=False,
+            type=FieldCreateType.RICH_TEXT,
+            display_name="Post Body",
+            help_text="Add the body of your post here",
+        )
         """
+        _request: typing.Dict[str, typing.Any] = {"type": type, "displayName": display_name}
+        if is_required is not OMIT:
+            _request["isRequired"] = is_required
+        if help_text is not OMIT:
+            _request["helpText"] = help_text
         _response = self._client_wrapper.httpx_client.request(
             "POST",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"collections/{collection_id}/fields"),
-            json=jsonable_encoder(request),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"collections/{jsonable_encoder(collection_id)}/fields"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(_request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(_request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(Field, _response.json())  # type: ignore
@@ -69,6 +127,7 @@ class FieldsClient:
         is_required: typing.Optional[bool] = OMIT,
         display_name: typing.Optional[str] = OMIT,
         help_text: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> Field:
         """
         Update a custom field in a collection. </br></br> Required scope | `cms:write`
@@ -83,6 +142,21 @@ class FieldsClient:
             - display_name: typing.Optional[str]. The name of a field
 
             - help_text: typing.Optional[str]. Additional text to help anyone filling out this field
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
+        ---
+        from webflow.client import Webflow
+
+        client = Webflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+        client.collections.fields.update(
+            collection_id="collection_id",
+            field_id="field_id",
+            is_required=False,
+            display_name="Post Body",
+            help_text="Add the body of your post here",
+        )
         """
         _request: typing.Dict[str, typing.Any] = {}
         if is_required is not OMIT:
@@ -94,11 +168,29 @@ class FieldsClient:
         _response = self._client_wrapper.httpx_client.request(
             "PATCH",
             urllib.parse.urljoin(
-                f"{self._client_wrapper.get_base_url()}/", f"collections/{collection_id}/fields/{field_id}"
+                f"{self._client_wrapper.get_base_url()}/",
+                f"collections/{jsonable_encoder(collection_id)}/fields/{jsonable_encoder(field_id)}",
             ),
-            json=jsonable_encoder(_request),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(_request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(_request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(Field, _response.json())  # type: ignore
@@ -123,21 +215,76 @@ class AsyncFieldsClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def create(self, collection_id: str, *, request: Field) -> Field:
+    async def create(
+        self,
+        collection_id: str,
+        *,
+        is_required: typing.Optional[bool] = OMIT,
+        type: FieldCreateType,
+        display_name: str,
+        help_text: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> Field:
         """
         Create a custom field in a collection. </br></br> Slugs must be all lowercase letters without spaces. If you pass a string with uppercase letters and/or spaces to the "Slug" property, Webflow will convert the slug to lowercase and replace spaces with "-." </br></br> Only some field types can be created through the API. This endpoint does not currently support bulk creation. </br></br> Required scope | `cms:write`
 
         Parameters:
             - collection_id: str. Unique identifier for a Collection
 
-            - request: Field.
+            - is_required: typing.Optional[bool]. define whether a field is required in a collection
+
+            - type: FieldCreateType. Choose these appropriate field type for your collection data
+
+            - display_name: str. The name of a field
+
+            - help_text: typing.Optional[str]. Additional text to help anyone filling out this field
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
+        ---
+        from webflow.client import AsyncWebflow
+        from webflow.resources.collections import FieldCreateType
+
+        client = AsyncWebflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+        await client.collections.fields.create(
+            collection_id="collection_id",
+            is_required=False,
+            type=FieldCreateType.RICH_TEXT,
+            display_name="Post Body",
+            help_text="Add the body of your post here",
+        )
         """
+        _request: typing.Dict[str, typing.Any] = {"type": type, "displayName": display_name}
+        if is_required is not OMIT:
+            _request["isRequired"] = is_required
+        if help_text is not OMIT:
+            _request["helpText"] = help_text
         _response = await self._client_wrapper.httpx_client.request(
             "POST",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"collections/{collection_id}/fields"),
-            json=jsonable_encoder(request),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"collections/{jsonable_encoder(collection_id)}/fields"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(_request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(_request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(Field, _response.json())  # type: ignore
@@ -165,6 +312,7 @@ class AsyncFieldsClient:
         is_required: typing.Optional[bool] = OMIT,
         display_name: typing.Optional[str] = OMIT,
         help_text: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> Field:
         """
         Update a custom field in a collection. </br></br> Required scope | `cms:write`
@@ -179,6 +327,21 @@ class AsyncFieldsClient:
             - display_name: typing.Optional[str]. The name of a field
 
             - help_text: typing.Optional[str]. Additional text to help anyone filling out this field
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
+        ---
+        from webflow.client import AsyncWebflow
+
+        client = AsyncWebflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+        await client.collections.fields.update(
+            collection_id="collection_id",
+            field_id="field_id",
+            is_required=False,
+            display_name="Post Body",
+            help_text="Add the body of your post here",
+        )
         """
         _request: typing.Dict[str, typing.Any] = {}
         if is_required is not OMIT:
@@ -190,11 +353,29 @@ class AsyncFieldsClient:
         _response = await self._client_wrapper.httpx_client.request(
             "PATCH",
             urllib.parse.urljoin(
-                f"{self._client_wrapper.get_base_url()}/", f"collections/{collection_id}/fields/{field_id}"
+                f"{self._client_wrapper.get_base_url()}/",
+                f"collections/{jsonable_encoder(collection_id)}/fields/{jsonable_encoder(field_id)}",
             ),
-            json=jsonable_encoder(_request),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(_request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(_request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(Field, _response.json())  # type: ignore

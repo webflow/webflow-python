@@ -12,8 +12,8 @@ except ImportError:
 
 
 class ItemsPublishItemResponse(pydantic.BaseModel):
-    published_item_ids: typing.Optional[typing.List[str]] = pydantic.Field(alias="publishedItemIds")
-    errors: typing.Optional[typing.List[str]]
+    published_item_ids: typing.Optional[typing.List[str]] = pydantic.Field(alias="publishedItemIds", default=None)
+    errors: typing.Optional[typing.List[str]] = None
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

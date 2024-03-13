@@ -18,37 +18,43 @@ class OrderPurchasedItem(pydantic.BaseModel):
     An Item that was purchased
     """
 
-    count: typing.Optional[float] = pydantic.Field(description="Number of Item purchased.")
-    row_total: typing.Optional[OrderPrice] = pydantic.Field(alias="rowTotal", description="The total for the row")
+    count: typing.Optional[float] = pydantic.Field(default=None, description="Number of Item purchased.")
+    row_total: typing.Optional[OrderPrice] = pydantic.Field(
+        alias="rowTotal", default=None, description="The total for the row"
+    )
     product_id: typing.Optional[str] = pydantic.Field(
-        alias="productId", description="The unique identifier for the Product"
+        alias="productId", default=None, description="The unique identifier for the Product"
     )
     product_name: typing.Optional[str] = pydantic.Field(
-        alias="productName", description="User-facing name of the Product"
+        alias="productName", default=None, description="User-facing name of the Product"
     )
-    product_slug: typing.Optional[str] = pydantic.Field(alias="productSlug", description="Slug for the Product")
+    product_slug: typing.Optional[str] = pydantic.Field(
+        alias="productSlug", default=None, description="Slug for the Product"
+    )
     variant_id: typing.Optional[str] = pydantic.Field(
-        alias="variantId", description="Identifier for the Product Variant (SKU)"
+        alias="variantId", default=None, description="Identifier for the Product Variant (SKU)"
     )
     variant_name: typing.Optional[str] = pydantic.Field(
-        alias="variantName", description="User-facing name of the Product Variant (SKU)"
+        alias="variantName", default=None, description="User-facing name of the Product Variant (SKU)"
     )
     variant_slug: typing.Optional[str] = pydantic.Field(
-        alias="variantSlug", description="Slug for the Product Variant (SKU)"
+        alias="variantSlug", default=None, description="Slug for the Product Variant (SKU)"
     )
-    variant_image: typing.Optional[OrderPurchasedItemVariantImage] = pydantic.Field(alias="variantImage")
+    variant_image: typing.Optional[OrderPurchasedItemVariantImage] = pydantic.Field(alias="variantImage", default=None)
     variant_price: typing.Optional[OrderPrice] = pydantic.Field(
-        alias="variantPrice", description="The price corresponding to the variant"
+        alias="variantPrice", default=None, description="The price corresponding to the variant"
     )
     weight: typing.Optional[float] = pydantic.Field(
-        description="The physical weight of the variant if provided, or null"
+        default=None, description="The physical weight of the variant if provided, or null"
     )
-    width: typing.Optional[float] = pydantic.Field(description="The physical width of the variant if provided, or null")
+    width: typing.Optional[float] = pydantic.Field(
+        default=None, description="The physical width of the variant if provided, or null"
+    )
     height: typing.Optional[float] = pydantic.Field(
-        description="The physical height of the variant if provided, or null"
+        default=None, description="The physical height of the variant if provided, or null"
     )
     length: typing.Optional[float] = pydantic.Field(
-        description="The physical length of the variant if provided, or null"
+        default=None, description="The physical length of the variant if provided, or null"
     )
 
     def json(self, **kwargs: typing.Any) -> str:

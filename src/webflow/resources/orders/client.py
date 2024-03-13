@@ -8,6 +8,7 @@ from ...core.api_error import ApiError
 from ...core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ...core.jsonable_encoder import jsonable_encoder
 from ...core.remove_none_from_dict import remove_none_from_dict
+from ...core.request_options import RequestOptions
 from ...errors.bad_request_error import BadRequestError
 from ...errors.conflict_error import ConflictError
 from ...errors.forbidden_error import ForbiddenError
@@ -40,6 +41,7 @@ class OrdersClient:
         status: typing.Optional[OrdersListRequestStatus] = None,
         offset: typing.Optional[float] = None,
         limit: typing.Optional[float] = None,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> OrderList:
         """
         List all orders created for a given site.
@@ -54,24 +56,48 @@ class OrdersClient:
             - offset: typing.Optional[float]. Offset used for pagination if the results have more than limit records
 
             - limit: typing.Optional[float]. Maximum number of records to be returned (max limit: 100)
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
-        from webflow import OrdersListRequestStatus
         from webflow.client import Webflow
 
         client = Webflow(
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.orders.list(
-            site_id="site-id",
-            status=OrdersListRequestStatus.PENDING,
+            site_id="site_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/orders"),
-            params=remove_none_from_dict({"status": status, "offset": offset, "limit": limit}),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"sites/{jsonable_encoder(site_id)}/orders"
+            ),
+            params=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        "status": status,
+                        "offset": offset,
+                        "limit": limit,
+                        **(
+                            request_options.get("additional_query_parameters", {})
+                            if request_options is not None
+                            else {}
+                        ),
+                    }
+                )
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(OrderList, _response.json())  # type: ignore
@@ -95,7 +121,7 @@ class OrdersClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get(self, site_id: str, order_id: str) -> Order:
+    def get(self, site_id: str, order_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> Order:
         """
         Retrieve a single product by its id. All of its SKUs will also be retrieved.
 
@@ -105,6 +131,8 @@ class OrdersClient:
             - site_id: str. Unique identifier for a Site
 
             - order_id: str. Unique identifier for an Order
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import Webflow
 
@@ -112,15 +140,30 @@ class OrdersClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.orders.get(
-            site_id="site-id",
-            order_id="order-id",
+            site_id="site_id",
+            order_id="order_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/orders/{order_id}"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/",
+                f"sites/{jsonable_encoder(site_id)}/orders/{jsonable_encoder(order_id)}",
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(Order, _response.json())  # type: ignore
@@ -153,6 +196,7 @@ class OrdersClient:
         shipping_provider: typing.Optional[str] = OMIT,
         shipping_tracking: typing.Optional[str] = OMIT,
         shipping_tracking_url: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> Order:
         """
         This API lets you update the fields, `comment`, `shippingProvider`, and/or `shippingTracking` for a given order. All three fields can be updated simultaneously or independently.
@@ -171,6 +215,8 @@ class OrdersClient:
             - shipping_tracking: typing.Optional[str]. Tracking number for order shipment
 
             - shipping_tracking_url: typing.Optional[str]. URL to track order shipment
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import Webflow
 
@@ -178,8 +224,8 @@ class OrdersClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.orders.update(
-            site_id="site-id",
-            order_id="order-id",
+            site_id="site_id",
+            order_id="order_id",
             comment="Example comment to myself",
             shipping_provider="Shipping Company, Co.",
             shipping_tracking="tr00000000001",
@@ -197,10 +243,30 @@ class OrdersClient:
             _request["shippingTrackingURL"] = shipping_tracking_url
         _response = self._client_wrapper.httpx_client.request(
             "PATCH",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/orders/{order_id}"),
-            json=jsonable_encoder(_request),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/",
+                f"sites/{jsonable_encoder(site_id)}/orders/{jsonable_encoder(order_id)}",
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(_request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(_request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(Order, _response.json())  # type: ignore
@@ -225,7 +291,12 @@ class OrdersClient:
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
     def update_fulfill(
-        self, site_id: str, order_id: str, *, send_order_fulfilled_email: typing.Optional[bool] = OMIT
+        self,
+        site_id: str,
+        order_id: str,
+        *,
+        send_order_fulfilled_email: typing.Optional[bool] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> Order:
         """
         Updates an order's status to fulfilled
@@ -238,6 +309,8 @@ class OrdersClient:
             - order_id: str. Unique identifier for an Order
 
             - send_order_fulfilled_email: typing.Optional[bool]. Whether or not the Order Fulfilled email should be sent
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import Webflow
 
@@ -245,8 +318,8 @@ class OrdersClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.orders.update_fulfill(
-            site_id="site-id",
-            order_id="order-id",
+            site_id="site_id",
+            order_id="order_id",
         )
         """
         _request: typing.Dict[str, typing.Any] = {}
@@ -255,11 +328,29 @@ class OrdersClient:
         _response = self._client_wrapper.httpx_client.request(
             "POST",
             urllib.parse.urljoin(
-                f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/orders/{order_id}/fulfill"
+                f"{self._client_wrapper.get_base_url()}/",
+                f"sites/{jsonable_encoder(site_id)}/orders/{jsonable_encoder(order_id)}/fulfill",
             ),
-            json=jsonable_encoder(_request),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(_request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(_request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(Order, _response.json())  # type: ignore
@@ -283,7 +374,9 @@ class OrdersClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def update_unfulfill(self, site_id: str, order_id: str) -> Order:
+    def update_unfulfill(
+        self, site_id: str, order_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> Order:
         """
         Updates an order's status to unfulfilled
 
@@ -293,6 +386,8 @@ class OrdersClient:
             - site_id: str. Unique identifier for a Site
 
             - order_id: str. Unique identifier for an Order
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import Webflow
 
@@ -300,17 +395,33 @@ class OrdersClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.orders.update_unfulfill(
-            site_id="site-id",
-            order_id="order-id",
+            site_id="site_id",
+            order_id="order_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             "POST",
             urllib.parse.urljoin(
-                f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/orders/{order_id}/unfulfill"
+                f"{self._client_wrapper.get_base_url()}/",
+                f"sites/{jsonable_encoder(site_id)}/orders/{jsonable_encoder(order_id)}/unfulfill",
             ),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))
+            if request_options is not None
+            else None,
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(Order, _response.json())  # type: ignore
@@ -335,7 +446,12 @@ class OrdersClient:
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
     def refund(
-        self, site_id: str, order_id: str, *, reason: typing.Optional[OrdersRefundRequestReason] = OMIT
+        self,
+        site_id: str,
+        order_id: str,
+        *,
+        reason: typing.Optional[OrdersRefundRequestReason] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> Order:
         """
         This API will reverse a Stripe charge and refund an order back to a
@@ -349,30 +465,48 @@ class OrdersClient:
             - order_id: str. Unique identifier for an Order
 
             - reason: typing.Optional[OrdersRefundRequestReason]. The reason for the refund
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
-        from webflow import OrdersRefundRequestReason
         from webflow.client import Webflow
 
         client = Webflow(
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.orders.refund(
-            site_id="site-id",
-            order_id="order-id",
-            reason=OrdersRefundRequestReason.DUPLICATE,
+            site_id="site_id",
+            order_id="order_id",
         )
         """
         _request: typing.Dict[str, typing.Any] = {}
         if reason is not OMIT:
-            _request["reason"] = reason
+            _request["reason"] = reason.value if reason is not None else None
         _response = self._client_wrapper.httpx_client.request(
             "POST",
             urllib.parse.urljoin(
-                f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/orders/{order_id}/refund"
+                f"{self._client_wrapper.get_base_url()}/",
+                f"sites/{jsonable_encoder(site_id)}/orders/{jsonable_encoder(order_id)}/refund",
             ),
-            json=jsonable_encoder(_request),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(_request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(_request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(Order, _response.json())  # type: ignore
@@ -408,6 +542,7 @@ class AsyncOrdersClient:
         status: typing.Optional[OrdersListRequestStatus] = None,
         offset: typing.Optional[float] = None,
         limit: typing.Optional[float] = None,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> OrderList:
         """
         List all orders created for a given site.
@@ -422,24 +557,48 @@ class AsyncOrdersClient:
             - offset: typing.Optional[float]. Offset used for pagination if the results have more than limit records
 
             - limit: typing.Optional[float]. Maximum number of records to be returned (max limit: 100)
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
-        from webflow import OrdersListRequestStatus
         from webflow.client import AsyncWebflow
 
         client = AsyncWebflow(
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.orders.list(
-            site_id="site-id",
-            status=OrdersListRequestStatus.PENDING,
+            site_id="site_id",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/orders"),
-            params=remove_none_from_dict({"status": status, "offset": offset, "limit": limit}),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"sites/{jsonable_encoder(site_id)}/orders"
+            ),
+            params=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        "status": status,
+                        "offset": offset,
+                        "limit": limit,
+                        **(
+                            request_options.get("additional_query_parameters", {})
+                            if request_options is not None
+                            else {}
+                        ),
+                    }
+                )
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(OrderList, _response.json())  # type: ignore
@@ -463,7 +622,9 @@ class AsyncOrdersClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def get(self, site_id: str, order_id: str) -> Order:
+    async def get(
+        self, site_id: str, order_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> Order:
         """
         Retrieve a single product by its id. All of its SKUs will also be retrieved.
 
@@ -473,6 +634,8 @@ class AsyncOrdersClient:
             - site_id: str. Unique identifier for a Site
 
             - order_id: str. Unique identifier for an Order
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import AsyncWebflow
 
@@ -480,15 +643,30 @@ class AsyncOrdersClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.orders.get(
-            site_id="site-id",
-            order_id="order-id",
+            site_id="site_id",
+            order_id="order_id",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/orders/{order_id}"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/",
+                f"sites/{jsonable_encoder(site_id)}/orders/{jsonable_encoder(order_id)}",
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(Order, _response.json())  # type: ignore
@@ -521,6 +699,7 @@ class AsyncOrdersClient:
         shipping_provider: typing.Optional[str] = OMIT,
         shipping_tracking: typing.Optional[str] = OMIT,
         shipping_tracking_url: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> Order:
         """
         This API lets you update the fields, `comment`, `shippingProvider`, and/or `shippingTracking` for a given order. All three fields can be updated simultaneously or independently.
@@ -539,6 +718,8 @@ class AsyncOrdersClient:
             - shipping_tracking: typing.Optional[str]. Tracking number for order shipment
 
             - shipping_tracking_url: typing.Optional[str]. URL to track order shipment
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import AsyncWebflow
 
@@ -546,8 +727,8 @@ class AsyncOrdersClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.orders.update(
-            site_id="site-id",
-            order_id="order-id",
+            site_id="site_id",
+            order_id="order_id",
             comment="Example comment to myself",
             shipping_provider="Shipping Company, Co.",
             shipping_tracking="tr00000000001",
@@ -565,10 +746,30 @@ class AsyncOrdersClient:
             _request["shippingTrackingURL"] = shipping_tracking_url
         _response = await self._client_wrapper.httpx_client.request(
             "PATCH",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/orders/{order_id}"),
-            json=jsonable_encoder(_request),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/",
+                f"sites/{jsonable_encoder(site_id)}/orders/{jsonable_encoder(order_id)}",
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(_request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(_request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(Order, _response.json())  # type: ignore
@@ -593,7 +794,12 @@ class AsyncOrdersClient:
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
     async def update_fulfill(
-        self, site_id: str, order_id: str, *, send_order_fulfilled_email: typing.Optional[bool] = OMIT
+        self,
+        site_id: str,
+        order_id: str,
+        *,
+        send_order_fulfilled_email: typing.Optional[bool] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> Order:
         """
         Updates an order's status to fulfilled
@@ -606,6 +812,8 @@ class AsyncOrdersClient:
             - order_id: str. Unique identifier for an Order
 
             - send_order_fulfilled_email: typing.Optional[bool]. Whether or not the Order Fulfilled email should be sent
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import AsyncWebflow
 
@@ -613,8 +821,8 @@ class AsyncOrdersClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.orders.update_fulfill(
-            site_id="site-id",
-            order_id="order-id",
+            site_id="site_id",
+            order_id="order_id",
         )
         """
         _request: typing.Dict[str, typing.Any] = {}
@@ -623,11 +831,29 @@ class AsyncOrdersClient:
         _response = await self._client_wrapper.httpx_client.request(
             "POST",
             urllib.parse.urljoin(
-                f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/orders/{order_id}/fulfill"
+                f"{self._client_wrapper.get_base_url()}/",
+                f"sites/{jsonable_encoder(site_id)}/orders/{jsonable_encoder(order_id)}/fulfill",
             ),
-            json=jsonable_encoder(_request),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(_request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(_request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(Order, _response.json())  # type: ignore
@@ -651,7 +877,9 @@ class AsyncOrdersClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def update_unfulfill(self, site_id: str, order_id: str) -> Order:
+    async def update_unfulfill(
+        self, site_id: str, order_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> Order:
         """
         Updates an order's status to unfulfilled
 
@@ -661,6 +889,8 @@ class AsyncOrdersClient:
             - site_id: str. Unique identifier for a Site
 
             - order_id: str. Unique identifier for an Order
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import AsyncWebflow
 
@@ -668,17 +898,33 @@ class AsyncOrdersClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.orders.update_unfulfill(
-            site_id="site-id",
-            order_id="order-id",
+            site_id="site_id",
+            order_id="order_id",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
             "POST",
             urllib.parse.urljoin(
-                f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/orders/{order_id}/unfulfill"
+                f"{self._client_wrapper.get_base_url()}/",
+                f"sites/{jsonable_encoder(site_id)}/orders/{jsonable_encoder(order_id)}/unfulfill",
             ),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))
+            if request_options is not None
+            else None,
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(Order, _response.json())  # type: ignore
@@ -703,7 +949,12 @@ class AsyncOrdersClient:
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
     async def refund(
-        self, site_id: str, order_id: str, *, reason: typing.Optional[OrdersRefundRequestReason] = OMIT
+        self,
+        site_id: str,
+        order_id: str,
+        *,
+        reason: typing.Optional[OrdersRefundRequestReason] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> Order:
         """
         This API will reverse a Stripe charge and refund an order back to a
@@ -717,30 +968,48 @@ class AsyncOrdersClient:
             - order_id: str. Unique identifier for an Order
 
             - reason: typing.Optional[OrdersRefundRequestReason]. The reason for the refund
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
-        from webflow import OrdersRefundRequestReason
         from webflow.client import AsyncWebflow
 
         client = AsyncWebflow(
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.orders.refund(
-            site_id="site-id",
-            order_id="order-id",
-            reason=OrdersRefundRequestReason.DUPLICATE,
+            site_id="site_id",
+            order_id="order_id",
         )
         """
         _request: typing.Dict[str, typing.Any] = {}
         if reason is not OMIT:
-            _request["reason"] = reason
+            _request["reason"] = reason.value if reason is not None else None
         _response = await self._client_wrapper.httpx_client.request(
             "POST",
             urllib.parse.urljoin(
-                f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/orders/{order_id}/refund"
+                f"{self._client_wrapper.get_base_url()}/",
+                f"sites/{jsonable_encoder(site_id)}/orders/{jsonable_encoder(order_id)}/refund",
             ),
-            json=jsonable_encoder(_request),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(_request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(_request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(Order, _response.json())  # type: ignore

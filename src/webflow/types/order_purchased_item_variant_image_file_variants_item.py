@@ -12,11 +12,11 @@ except ImportError:
 
 
 class OrderPurchasedItemVariantImageFileVariantsItem(pydantic.BaseModel):
-    url: typing.Optional[str] = pydantic.Field(description="The hosted location for the Variant's image")
-    original_file_name: typing.Optional[str] = pydantic.Field(alias="originalFileName")
-    size: typing.Optional[float] = pydantic.Field(description="The image size in bytes")
-    width: typing.Optional[int] = pydantic.Field(description="The image width in pixels")
-    height: typing.Optional[int] = pydantic.Field(description="The image height in pixels")
+    url: typing.Optional[str] = pydantic.Field(default=None, description="The hosted location for the Variant's image")
+    original_file_name: typing.Optional[str] = pydantic.Field(alias="originalFileName", default=None)
+    size: typing.Optional[float] = pydantic.Field(default=None, description="The image size in bytes")
+    width: typing.Optional[int] = pydantic.Field(default=None, description="The image width in pixels")
+    height: typing.Optional[int] = pydantic.Field(default=None, description="The image height in pixels")
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

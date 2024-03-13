@@ -12,9 +12,9 @@ except ImportError:
 
 
 class CollectionItemRemoved(pydantic.BaseModel):
-    deleted: typing.Optional[float] = pydantic.Field(description="The number of items deleted")
+    deleted: typing.Optional[float] = pydantic.Field(default=None, description="The number of items deleted")
     item_id: typing.Optional[str] = pydantic.Field(
-        alias="itemId", description="The id of the collection item that was deleted"
+        alias="itemId", default=None, description="The id of the collection item that was deleted"
     )
 
     def json(self, **kwargs: typing.Any) -> str:

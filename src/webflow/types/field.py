@@ -22,15 +22,16 @@ class Field(pydantic.BaseModel):
         alias="isRequired", description="define whether a field is required in a collection"
     )
     is_editable: typing.Optional[bool] = pydantic.Field(
-        alias="isEditable", description="Define whether the field is editable"
+        alias="isEditable", default=None, description="Define whether the field is editable"
     )
     type: FieldType = pydantic.Field(description="Choose these appropriate field type for your collection data")
     slug: typing.Optional[str] = pydantic.Field(
-        description='Slug of Field in Site URL structure. Slugs should be all lowercase with no spaces. Any spaces will be converted to "-."'
+        default=None,
+        description='Slug of Field in Site URL structure. Slugs should be all lowercase with no spaces. Any spaces will be converted to "-."',
     )
     display_name: str = pydantic.Field(alias="displayName", description="The name of a field")
     help_text: typing.Optional[str] = pydantic.Field(
-        alias="helpText", description="Additional text to help anyone filling out this field"
+        alias="helpText", default=None, description="Additional text to help anyone filling out this field"
     )
 
     def json(self, **kwargs: typing.Any) -> str:

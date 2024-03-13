@@ -12,22 +12,28 @@ except ImportError:
 
 
 class AssetFolder(pydantic.BaseModel):
+    """
+    Asset Folder details
+    """
+
     display_name: typing.Optional[str] = pydantic.Field(
-        alias="displayName", description="User visible name for the Asset Folder"
+        alias="displayName", default=None, description="User visible name for the Asset Folder"
     )
-    id: typing.Optional[str] = pydantic.Field(description="Unique identifier for the Asset Folder")
+    id: typing.Optional[str] = pydantic.Field(default=None, description="Unique identifier for the Asset Folder")
     parent_folder: typing.Optional[str] = pydantic.Field(
-        alias="parentFolder", description="Pointer to parent Asset Folder (or null if root)"
+        alias="parentFolder", default=None, description="Pointer to parent Asset Folder (or null if root)"
     )
-    assets: typing.Optional[typing.List[str]] = pydantic.Field(description="Array of Asset instances in the folder")
+    assets: typing.Optional[typing.List[str]] = pydantic.Field(
+        default=None, description="Array of Asset instances in the folder"
+    )
     site_id: typing.Optional[str] = pydantic.Field(
-        alias="siteId", description="The unique id of the site the Asset Folder belongs to"
+        alias="siteId", default=None, description="The unique id of the site the Asset Folder belongs to"
     )
     created_on: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="createdOn", description="Date that the Asset Folder was created on"
+        alias="createdOn", default=None, description="Date that the Asset Folder was created on"
     )
     last_updated: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="lastUpdated", description="Date that the Asset Folder was last updated on"
+        alias="lastUpdated", default=None, description="Date that the Asset Folder was last updated on"
     )
 
     def json(self, **kwargs: typing.Any) -> str:

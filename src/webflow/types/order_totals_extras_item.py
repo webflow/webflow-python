@@ -18,14 +18,16 @@ class OrderTotalsExtrasItem(pydantic.BaseModel):
     Extra order items, includes discounts, shipping, and taxes.
     """
 
-    type: typing.Optional[OrderTotalsExtrasItemType] = pydantic.Field(description="The type of extra item this is.")
+    type: typing.Optional[OrderTotalsExtrasItemType] = pydantic.Field(
+        default=None, description="The type of extra item this is."
+    )
     name: typing.Optional[str] = pydantic.Field(
-        description="A human-readable (but English) name for this extra charge."
+        default=None, description="A human-readable (but English) name for this extra charge."
     )
     description: typing.Optional[str] = pydantic.Field(
-        description="A human-readable (but English) description of this extra charge."
+        default=None, description="A human-readable (but English) description of this extra charge."
     )
-    price: typing.Optional[OrderPrice] = pydantic.Field(description="The price for the item")
+    price: typing.Optional[OrderPrice] = pydantic.Field(default=None, description="The price for the item")
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

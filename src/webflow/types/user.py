@@ -19,27 +19,27 @@ class User(pydantic.BaseModel):
     The fields that define the schema for a given Item are based on the Collection that Item belongs to. Beyond the user defined fields, there are a handful of additional fields that are automatically created for all items
     """
 
-    id: typing.Optional[str] = pydantic.Field(description="Unique identifier for the User")
+    id: typing.Optional[str] = pydantic.Field(default=None, description="Unique identifier for the User")
     is_email_verified: typing.Optional[bool] = pydantic.Field(
-        alias="isEmailVerified", description="Shows whether the user has verified their email address"
+        alias="isEmailVerified", default=None, description="Shows whether the user has verified their email address"
     )
     last_updated: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="lastUpdated", description="The timestamp the user was updated"
+        alias="lastUpdated", default=None, description="The timestamp the user was updated"
     )
     invited_on: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="invitedOn", description="The timestamp the user was invited"
+        alias="invitedOn", default=None, description="The timestamp the user was invited"
     )
     created_on: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="createdOn", description="The timestamp the user was created"
+        alias="createdOn", default=None, description="The timestamp the user was created"
     )
     last_login: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="lastLogin", description="The timestamp the user was logged in"
+        alias="lastLogin", default=None, description="The timestamp the user was logged in"
     )
-    status: typing.Optional[UserStatus] = pydantic.Field(description="The status of the user")
+    status: typing.Optional[UserStatus] = pydantic.Field(default=None, description="The status of the user")
     access_groups: typing.Optional[typing.List[UserAccessGroupsItem]] = pydantic.Field(
-        alias="accessGroups", description="Access groups the user belongs to"
+        alias="accessGroups", default=None, description="Access groups the user belongs to"
     )
-    data: typing.Optional[UserData]
+    data: typing.Optional[UserData] = None
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

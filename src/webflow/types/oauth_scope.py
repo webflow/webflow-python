@@ -62,6 +62,11 @@ class OauthScope(str, enum.Enum):
     edit ecommerce data
     """
 
+    SITE_ACTIVITY_READ = "site_activity:read"
+    """
+    read site activity logs
+    """
+
     def visit(
         self,
         authorized_user_read: typing.Callable[[], T_Result],
@@ -75,6 +80,7 @@ class OauthScope(str, enum.Enum):
         users_write: typing.Callable[[], T_Result],
         ecommerce_read: typing.Callable[[], T_Result],
         ecommerce_write: typing.Callable[[], T_Result],
+        site_activity_read: typing.Callable[[], T_Result],
     ) -> T_Result:
         if self is OauthScope.AUTHORIZED_USER_READ:
             return authorized_user_read()
@@ -98,3 +104,5 @@ class OauthScope(str, enum.Enum):
             return ecommerce_read()
         if self is OauthScope.ECOMMERCE_WRITE:
             return ecommerce_write()
+        if self is OauthScope.SITE_ACTIVITY_READ:
+            return site_activity_read()

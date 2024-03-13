@@ -12,9 +12,15 @@ except ImportError:
 
 
 class OrderDownloadFilesItem(pydantic.BaseModel):
-    id: typing.Optional[str] = pydantic.Field(description="The unique identifier for the downloadable file")
-    name: typing.Optional[str] = pydantic.Field(description="The user-facing name for the downloadable file")
-    url: typing.Optional[str] = pydantic.Field(description="The hosted location for the downloadable file")
+    id: typing.Optional[str] = pydantic.Field(
+        default=None, description="The unique identifier for the downloadable file"
+    )
+    name: typing.Optional[str] = pydantic.Field(
+        default=None, description="The user-facing name for the downloadable file"
+    )
+    url: typing.Optional[str] = pydantic.Field(
+        default=None, description="The hosted location for the downloadable file"
+    )
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

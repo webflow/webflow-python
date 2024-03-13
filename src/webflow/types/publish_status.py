@@ -8,7 +8,7 @@ T_Result = typing.TypeVar("T_Result")
 
 class PublishStatus(str, enum.Enum):
     """
-    Publish target
+    Indicate whether your Product should be set as "staging" or "live"
     """
 
     STAGING = "staging"

@@ -12,14 +12,24 @@ except ImportError:
 
 
 class PaypalDetails(pydantic.BaseModel):
-    order_id: typing.Optional[str] = pydantic.Field(alias="orderId", description="PayPal order identifier")
-    payer_id: typing.Optional[str] = pydantic.Field(alias="payerId", description="PayPal payer identifier")
-    capture_id: typing.Optional[str] = pydantic.Field(alias="captureId", description="PayPal capture identifier")
-    refund_id: typing.Optional[str] = pydantic.Field(alias="refundId", description="PayPal refund identifier")
-    refund_reason: typing.Optional[str] = pydantic.Field(
-        alias="refundReason", description="PayPal-issued reason for the refund"
+    order_id: typing.Optional[str] = pydantic.Field(
+        alias="orderId", default=None, description="PayPal order identifier"
     )
-    dispute_id: typing.Optional[str] = pydantic.Field(alias="disputeId", description="PayPal dispute identifier")
+    payer_id: typing.Optional[str] = pydantic.Field(
+        alias="payerId", default=None, description="PayPal payer identifier"
+    )
+    capture_id: typing.Optional[str] = pydantic.Field(
+        alias="captureId", default=None, description="PayPal capture identifier"
+    )
+    refund_id: typing.Optional[str] = pydantic.Field(
+        alias="refundId", default=None, description="PayPal refund identifier"
+    )
+    refund_reason: typing.Optional[str] = pydantic.Field(
+        alias="refundReason", default=None, description="PayPal-issued reason for the refund"
+    )
+    dispute_id: typing.Optional[str] = pydantic.Field(
+        alias="disputeId", default=None, description="PayPal dispute identifier"
+    )
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

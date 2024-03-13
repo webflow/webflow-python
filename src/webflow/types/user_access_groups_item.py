@@ -17,14 +17,15 @@ class UserAccessGroupsItem(pydantic.BaseModel):
     Access group slugs and types
     """
 
-    slug: typing.Optional[str] = pydantic.Field(description="Access group identifier for APIs")
+    slug: typing.Optional[str] = pydantic.Field(default=None, description="Access group identifier for APIs")
     type: typing.Optional[UserAccessGroupsItemType] = pydantic.Field(
+        default=None,
         description=(
             "The type of access group based on how it was assigned to the user.\n"
             "\n"
             "- `admin` - Assigned to the user via API or in the designer\n"
             "- `ecommerce` - Assigned to the user via an ecommerce purchase\n"
-        )
+        ),
     )
 
     def json(self, **kwargs: typing.Any) -> str:

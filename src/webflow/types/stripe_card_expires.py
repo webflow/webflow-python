@@ -16,8 +16,8 @@ class StripeCardExpires(pydantic.BaseModel):
     The card's expiration date.
     """
 
-    year: typing.Optional[float] = pydantic.Field(description="Year that the card expires")
-    month: typing.Optional[float] = pydantic.Field(description="Month that the card expires")
+    year: typing.Optional[float] = pydantic.Field(default=None, description="Year that the card expires")
+    month: typing.Optional[float] = pydantic.Field(default=None, description="Month that the card expires")
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

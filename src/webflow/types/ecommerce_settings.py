@@ -16,12 +16,14 @@ class EcommerceSettings(pydantic.BaseModel):
     Ecommerce settings for a Webflow Site
     """
 
-    site_id: typing.Optional[str] = pydantic.Field(alias="siteId", description="The identifier of the Site")
+    site_id: typing.Optional[str] = pydantic.Field(
+        alias="siteId", default=None, description="The identifier of the Site"
+    )
     created_on: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="createdOn", description="Date that the Site was created on"
+        alias="createdOn", default=None, description="Date that the Site was created on"
     )
     default_currency: typing.Optional[str] = pydantic.Field(
-        alias="defaultCurrency", description="The three-letter ISO currency code for the Site"
+        alias="defaultCurrency", default=None, description="The three-letter ISO currency code for the Site"
     )
 
     def json(self, **kwargs: typing.Any) -> str:

@@ -8,6 +8,7 @@ from ...core.api_error import ApiError
 from ...core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ...core.jsonable_encoder import jsonable_encoder
 from ...core.remove_none_from_dict import remove_none_from_dict
+from ...core.request_options import RequestOptions
 from ...errors.bad_request_error import BadRequestError
 from ...errors.conflict_error import ConflictError
 from ...errors.forbidden_error import ForbiddenError
@@ -18,6 +19,7 @@ from ...errors.unauthorized_error import UnauthorizedError
 from ...types.user import User
 from ...types.user_list import UserList
 from .types.users_list_request_sort import UsersListRequestSort
+from .types.users_update_request_data import UsersUpdateRequestData
 
 try:
     import pydantic.v1 as pydantic  # type: ignore
@@ -39,6 +41,7 @@ class UsersClient:
         offset: typing.Optional[float] = None,
         limit: typing.Optional[float] = None,
         sort: typing.Optional[UsersListRequestSort] = None,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> UserList:
         """
         Get a list of users for a site <br><br> Required scope | `users:read`
@@ -54,24 +57,46 @@ class UsersClient:
 
                                                            Example(`CreatedOn`, `Email`, `Status`, `LastLogin`, `UpdatedOn`).
 
-                                                           Can be prefixed with a `-` to reverse the sort (ex. `-CreatedOn`)---
-        from webflow import UsersListRequestSort
+                                                           Can be prefixed with a `-` to reverse the sort (ex. `-CreatedOn`)
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
+        ---
         from webflow.client import Webflow
 
         client = Webflow(
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.users.list(
-            site_id="site-id",
-            sort=UsersListRequestSort.CREATED_ON_ASCENDING,
+            site_id="site_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/users"),
-            params=remove_none_from_dict({"offset": offset, "limit": limit, "sort": sort}),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{jsonable_encoder(site_id)}/users"),
+            params=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        "offset": offset,
+                        "limit": limit,
+                        "sort": sort,
+                        **(
+                            request_options.get("additional_query_parameters", {})
+                            if request_options is not None
+                            else {}
+                        ),
+                    }
+                )
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(UserList, _response.json())  # type: ignore
@@ -93,7 +118,7 @@ class UsersClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get(self, site_id: str, user_id: str) -> User:
+    def get(self, site_id: str, user_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> User:
         """
         Get a User by ID <br><br> Required scope | `users:read`
 
@@ -101,6 +126,8 @@ class UsersClient:
             - site_id: str. Unique identifier for a Site
 
             - user_id: str. Unique identifier for a User
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import Webflow
 
@@ -108,15 +135,30 @@ class UsersClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.users.get(
-            site_id="site-id",
-            user_id="user-id",
+            site_id="site_id",
+            user_id="user_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/users/{user_id}"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/",
+                f"sites/{jsonable_encoder(site_id)}/users/{jsonable_encoder(user_id)}",
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(User, _response.json())  # type: ignore
@@ -138,7 +180,7 @@ class UsersClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def delete(self, site_id: str, user_id: str) -> None:
+    def delete(self, site_id: str, user_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
         """
         Delete a User by ID <br><br> Required scope | `users:write`
 
@@ -146,6 +188,8 @@ class UsersClient:
             - site_id: str. Unique identifier for a Site
 
             - user_id: str. Unique identifier for a User
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import Webflow
 
@@ -153,15 +197,30 @@ class UsersClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.users.delete(
-            site_id="site-id",
-            user_id="user-id",
+            site_id="site_id",
+            user_id="user_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             "DELETE",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/users/{user_id}"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/",
+                f"sites/{jsonable_encoder(site_id)}/users/{jsonable_encoder(user_id)}",
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return
@@ -183,7 +242,15 @@ class UsersClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def update(self, site_id: str, user_id: str, *, request: User) -> User:
+    def update(
+        self,
+        site_id: str,
+        user_id: str,
+        *,
+        data: typing.Optional[UsersUpdateRequestData] = OMIT,
+        access_groups: typing.Optional[typing.Sequence[str]] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> User:
         """
         Update a User by ID <br><br> Required scope | `users:write`
 
@@ -194,53 +261,60 @@ class UsersClient:
 
             - user_id: str. Unique identifier for a User
 
-            - request: User.
-        ---
-        import datetime
+            - data: typing.Optional[UsersUpdateRequestData].
 
-        from webflow import (
-            User,
-            UserAccessGroupsItem,
-            UserAccessGroupsItemType,
-            UserStatus,
-        )
+            - access_groups: typing.Optional[typing.Sequence[str]]. An array of access group slugs. Access groups are assigned to the user as type `admin` and the user remains in the group until removed.
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
+        ---
+        from webflow import UsersUpdateRequestData
         from webflow.client import Webflow
 
         client = Webflow(
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.users.update(
-            site_id="site-id",
-            user_id="user-id",
-            request=User(
-                id="6287ec36a841b25637c663df",
-                last_updated=datetime.datetime.fromisoformat(
-                    "2016-10-24 19:41:29.156000+00:00",
-                ),
-                invited_on=datetime.datetime.fromisoformat(
-                    "2016-10-24 19:41:29.156000+00:00",
-                ),
-                created_on=datetime.datetime.fromisoformat(
-                    "2016-10-24 19:41:29.156000+00:00",
-                ),
-                last_login=datetime.datetime.fromisoformat(
-                    "2016-10-24 19:41:29.156000+00:00",
-                ),
-                status=UserStatus.INVITED,
-                access_groups=[
-                    UserAccessGroupsItem(
-                        type=UserAccessGroupsItemType.ADMIN,
-                    )
-                ],
+            site_id="site_id",
+            user_id="user_id",
+            data=UsersUpdateRequestData(
+                name="Some One",
+                accept_privacy=False,
+                accept_communications=False,
             ),
+            access_groups=["webflowers", "platinum", "free-tier", "accessGroups"],
         )
         """
+        _request: typing.Dict[str, typing.Any] = {}
+        if data is not OMIT:
+            _request["data"] = data
+        if access_groups is not OMIT:
+            _request["accessGroups"] = access_groups
         _response = self._client_wrapper.httpx_client.request(
             "PATCH",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/users/{user_id}"),
-            json=jsonable_encoder(request),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/",
+                f"sites/{jsonable_encoder(site_id)}/users/{jsonable_encoder(user_id)}",
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(_request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(_request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(User, _response.json())  # type: ignore
@@ -262,7 +336,14 @@ class UsersClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def invite(self, site_id: str, *, email: str, access_groups: typing.Optional[typing.List[str]] = OMIT) -> User:
+    def invite(
+        self,
+        site_id: str,
+        *,
+        email: str,
+        access_groups: typing.Optional[typing.Sequence[str]] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> User:
         """
         Create and invite a user with an email address. The user will be sent and invite via email, which they will need to accept in order to join paid Access Groups. <br><br> Required scope | `users:write`
 
@@ -271,16 +352,19 @@ class UsersClient:
 
             - email: str. Email address of user to send invite to
 
-            - access_groups: typing.Optional[typing.List[str]]. An array of access group slugs. Access groups are assigned to the user as type `admin` and the user remains in the group until removed.
-                                                                ---
+            - access_groups: typing.Optional[typing.Sequence[str]]. An array of access group slugs. Access groups are assigned to the user as type `admin` and the user remains in the group until removed.
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
+        ---
         from webflow.client import Webflow
 
         client = Webflow(
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.users.invite(
-            site_id="site-id",
+            site_id="site_id",
             email="some.one@home.com",
+            access_groups=["webflowers", "accessGroups"],
         )
         """
         _request: typing.Dict[str, typing.Any] = {"email": email}
@@ -288,10 +372,29 @@ class UsersClient:
             _request["accessGroups"] = access_groups
         _response = self._client_wrapper.httpx_client.request(
             "POST",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/users/invite"),
-            json=jsonable_encoder(_request),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"sites/{jsonable_encoder(site_id)}/users/invite"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(_request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(_request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(User, _response.json())  # type: ignore
@@ -327,6 +430,7 @@ class AsyncUsersClient:
         offset: typing.Optional[float] = None,
         limit: typing.Optional[float] = None,
         sort: typing.Optional[UsersListRequestSort] = None,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> UserList:
         """
         Get a list of users for a site <br><br> Required scope | `users:read`
@@ -342,24 +446,46 @@ class AsyncUsersClient:
 
                                                            Example(`CreatedOn`, `Email`, `Status`, `LastLogin`, `UpdatedOn`).
 
-                                                           Can be prefixed with a `-` to reverse the sort (ex. `-CreatedOn`)---
-        from webflow import UsersListRequestSort
+                                                           Can be prefixed with a `-` to reverse the sort (ex. `-CreatedOn`)
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
+        ---
         from webflow.client import AsyncWebflow
 
         client = AsyncWebflow(
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.users.list(
-            site_id="site-id",
-            sort=UsersListRequestSort.CREATED_ON_ASCENDING,
+            site_id="site_id",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/users"),
-            params=remove_none_from_dict({"offset": offset, "limit": limit, "sort": sort}),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{jsonable_encoder(site_id)}/users"),
+            params=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        "offset": offset,
+                        "limit": limit,
+                        "sort": sort,
+                        **(
+                            request_options.get("additional_query_parameters", {})
+                            if request_options is not None
+                            else {}
+                        ),
+                    }
+                )
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(UserList, _response.json())  # type: ignore
@@ -381,7 +507,7 @@ class AsyncUsersClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def get(self, site_id: str, user_id: str) -> User:
+    async def get(self, site_id: str, user_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> User:
         """
         Get a User by ID <br><br> Required scope | `users:read`
 
@@ -389,6 +515,8 @@ class AsyncUsersClient:
             - site_id: str. Unique identifier for a Site
 
             - user_id: str. Unique identifier for a User
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import AsyncWebflow
 
@@ -396,15 +524,30 @@ class AsyncUsersClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.users.get(
-            site_id="site-id",
-            user_id="user-id",
+            site_id="site_id",
+            user_id="user_id",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/users/{user_id}"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/",
+                f"sites/{jsonable_encoder(site_id)}/users/{jsonable_encoder(user_id)}",
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(User, _response.json())  # type: ignore
@@ -426,7 +569,9 @@ class AsyncUsersClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def delete(self, site_id: str, user_id: str) -> None:
+    async def delete(
+        self, site_id: str, user_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> None:
         """
         Delete a User by ID <br><br> Required scope | `users:write`
 
@@ -434,6 +579,8 @@ class AsyncUsersClient:
             - site_id: str. Unique identifier for a Site
 
             - user_id: str. Unique identifier for a User
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from webflow.client import AsyncWebflow
 
@@ -441,15 +588,30 @@ class AsyncUsersClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.users.delete(
-            site_id="site-id",
-            user_id="user-id",
+            site_id="site_id",
+            user_id="user_id",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
             "DELETE",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/users/{user_id}"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/",
+                f"sites/{jsonable_encoder(site_id)}/users/{jsonable_encoder(user_id)}",
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return
@@ -471,7 +633,15 @@ class AsyncUsersClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def update(self, site_id: str, user_id: str, *, request: User) -> User:
+    async def update(
+        self,
+        site_id: str,
+        user_id: str,
+        *,
+        data: typing.Optional[UsersUpdateRequestData] = OMIT,
+        access_groups: typing.Optional[typing.Sequence[str]] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> User:
         """
         Update a User by ID <br><br> Required scope | `users:write`
 
@@ -482,53 +652,60 @@ class AsyncUsersClient:
 
             - user_id: str. Unique identifier for a User
 
-            - request: User.
-        ---
-        import datetime
+            - data: typing.Optional[UsersUpdateRequestData].
 
-        from webflow import (
-            User,
-            UserAccessGroupsItem,
-            UserAccessGroupsItemType,
-            UserStatus,
-        )
+            - access_groups: typing.Optional[typing.Sequence[str]]. An array of access group slugs. Access groups are assigned to the user as type `admin` and the user remains in the group until removed.
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
+        ---
+        from webflow import UsersUpdateRequestData
         from webflow.client import AsyncWebflow
 
         client = AsyncWebflow(
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.users.update(
-            site_id="site-id",
-            user_id="user-id",
-            request=User(
-                id="6287ec36a841b25637c663df",
-                last_updated=datetime.datetime.fromisoformat(
-                    "2016-10-24 19:41:29.156000+00:00",
-                ),
-                invited_on=datetime.datetime.fromisoformat(
-                    "2016-10-24 19:41:29.156000+00:00",
-                ),
-                created_on=datetime.datetime.fromisoformat(
-                    "2016-10-24 19:41:29.156000+00:00",
-                ),
-                last_login=datetime.datetime.fromisoformat(
-                    "2016-10-24 19:41:29.156000+00:00",
-                ),
-                status=UserStatus.INVITED,
-                access_groups=[
-                    UserAccessGroupsItem(
-                        type=UserAccessGroupsItemType.ADMIN,
-                    )
-                ],
+            site_id="site_id",
+            user_id="user_id",
+            data=UsersUpdateRequestData(
+                name="Some One",
+                accept_privacy=False,
+                accept_communications=False,
             ),
+            access_groups=["webflowers", "platinum", "free-tier", "accessGroups"],
         )
         """
+        _request: typing.Dict[str, typing.Any] = {}
+        if data is not OMIT:
+            _request["data"] = data
+        if access_groups is not OMIT:
+            _request["accessGroups"] = access_groups
         _response = await self._client_wrapper.httpx_client.request(
             "PATCH",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/users/{user_id}"),
-            json=jsonable_encoder(request),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/",
+                f"sites/{jsonable_encoder(site_id)}/users/{jsonable_encoder(user_id)}",
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(_request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(_request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(User, _response.json())  # type: ignore
@@ -551,7 +728,12 @@ class AsyncUsersClient:
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
     async def invite(
-        self, site_id: str, *, email: str, access_groups: typing.Optional[typing.List[str]] = OMIT
+        self,
+        site_id: str,
+        *,
+        email: str,
+        access_groups: typing.Optional[typing.Sequence[str]] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> User:
         """
         Create and invite a user with an email address. The user will be sent and invite via email, which they will need to accept in order to join paid Access Groups. <br><br> Required scope | `users:write`
@@ -561,16 +743,19 @@ class AsyncUsersClient:
 
             - email: str. Email address of user to send invite to
 
-            - access_groups: typing.Optional[typing.List[str]]. An array of access group slugs. Access groups are assigned to the user as type `admin` and the user remains in the group until removed.
-                                                                ---
+            - access_groups: typing.Optional[typing.Sequence[str]]. An array of access group slugs. Access groups are assigned to the user as type `admin` and the user remains in the group until removed.
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
+        ---
         from webflow.client import AsyncWebflow
 
         client = AsyncWebflow(
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.users.invite(
-            site_id="site-id",
+            site_id="site_id",
             email="some.one@home.com",
+            access_groups=["webflowers", "accessGroups"],
         )
         """
         _request: typing.Dict[str, typing.Any] = {"email": email}
@@ -578,10 +763,29 @@ class AsyncUsersClient:
             _request["accessGroups"] = access_groups
         _response = await self._client_wrapper.httpx_client.request(
             "POST",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"sites/{site_id}/users/invite"),
-            json=jsonable_encoder(_request),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"sites/{jsonable_encoder(site_id)}/users/invite"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(_request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(_request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else 60,
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(User, _response.json())  # type: ignore

@@ -16,8 +16,10 @@ class OrderCustomerInfo(pydantic.BaseModel):
     An object with the keys `fullName` and `email`.
     """
 
-    full_name: typing.Optional[str] = pydantic.Field(alias="fullName", description="The full name of the Customer")
-    email: typing.Optional[str] = pydantic.Field(description="The Customer's email address")
+    full_name: typing.Optional[str] = pydantic.Field(
+        alias="fullName", default=None, description="The full name of the Customer"
+    )
+    email: typing.Optional[str] = pydantic.Field(default=None, description="The Customer's email address")
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

@@ -13,7 +13,9 @@ except ImportError:
 
 
 class RegisteredScriptList(pydantic.BaseModel):
-    registered_scripts: typing.Optional[typing.List[CustomCodeResponse]] = pydantic.Field(alias="registeredScripts")
+    registered_scripts: typing.Optional[typing.List[CustomCodeResponse]] = pydantic.Field(
+        alias="registeredScripts", default=None
+    )
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

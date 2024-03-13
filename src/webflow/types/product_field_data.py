@@ -4,6 +4,8 @@ import datetime as dt
 import typing
 
 from ..core.datetime_utils import serialize_datetime
+from .product_field_data_ec_product_type import ProductFieldDataEcProductType
+from .product_field_data_tax_category import ProductFieldDataTaxCategory
 from .sku_property_list import SkuPropertyList
 
 try:
@@ -13,10 +15,31 @@ except ImportError:
 
 
 class ProductFieldData(pydantic.BaseModel):
-    name: typing.Optional[str] = pydantic.Field(description="Name of the Product")
-    slug: typing.Optional[str] = pydantic.Field(description="URL structure of the Product in your site.")
+    name: str = pydantic.Field(description="Name of the Product")
+    slug: str = pydantic.Field(description="URL structure of the Product in your site.")
+    description: typing.Optional[str] = pydantic.Field(default=None, description="A description of your product")
+    shippable: typing.Optional[bool] = pydantic.Field(
+        default=None, description="Boolean determining if the Product is shippable"
+    )
     sku_properties: typing.Optional[typing.List[SkuPropertyList]] = pydantic.Field(
-        alias="sku-properties", description="Variant/Options types to include in SKUs"
+        alias="sku-properties", default=None, description="Variant types to include in SKUs"
+    )
+    categories: typing.Optional[typing.List[str]] = pydantic.Field(
+        default=None, description="The categories your product belongs to."
+    )
+    tax_category: typing.Optional[ProductFieldDataTaxCategory] = pydantic.Field(
+        alias="tax-category", default=None, description="Product tax class"
+    )
+    default_sku: typing.Optional[str] = pydantic.Field(
+        alias="default-sku", default=None, description="The default SKU associated with this product."
+    )
+    ec_product_type: typing.Optional[ProductFieldDataEcProductType] = pydantic.Field(
+        alias="ec-product-type",
+        default=None,
+        description='<a href="https://university.webflow.com/lesson/add-and-manage-products-and-categories?topics=ecommerce#how-to-understand-product-types">Product types.</a> Enums reflect the following values in order: Physical, Digital, Service, Advanced"',
+    )
+    additional_properties: typing.Optional[str] = pydantic.Field(
+        alias="additionalProperties", default=None, description="Custom fields for your product."
     )
 
     def json(self, **kwargs: typing.Any) -> str:

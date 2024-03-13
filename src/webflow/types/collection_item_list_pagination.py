@@ -12,9 +12,9 @@ except ImportError:
 
 
 class CollectionItemListPagination(pydantic.BaseModel):
-    limit: typing.Optional[float] = pydantic.Field(description="The limit specified in the request")
-    offset: typing.Optional[float] = pydantic.Field(description="The offset specified for pagination")
-    total: typing.Optional[float] = pydantic.Field(description="Total number of items in the collection")
+    limit: typing.Optional[float] = pydantic.Field(default=None, description="The limit specified in the request")
+    offset: typing.Optional[float] = pydantic.Field(default=None, description="The offset specified for pagination")
+    total: typing.Optional[float] = pydantic.Field(default=None, description="Total number of items in the collection")
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

@@ -12,9 +12,13 @@ except ImportError:
 
 
 class OrderPrice(pydantic.BaseModel):
-    unit: typing.Optional[str] = pydantic.Field(description="The three-letter ISO currency code")
-    value: typing.Optional[str] = pydantic.Field(description="The numeric value in the base unit of the currency")
-    string: typing.Optional[str] = pydantic.Field(description="The user-facing string representation of the amount")
+    unit: typing.Optional[str] = pydantic.Field(default=None, description="The three-letter ISO currency code")
+    value: typing.Optional[str] = pydantic.Field(
+        default=None, description="The numeric value in the base unit of the currency"
+    )
+    string: typing.Optional[str] = pydantic.Field(
+        default=None, description="The user-facing string representation of the amount"
+    )
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

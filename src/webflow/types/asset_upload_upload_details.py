@@ -16,21 +16,22 @@ class AssetUploadUploadDetails(pydantic.BaseModel):
     Metadata for uploading the asset binary
     """
 
-    acl: typing.Optional[str]
-    bucket: typing.Optional[str]
-    key: typing.Optional[str]
-    policy: typing.Optional[str] = pydantic.Field(alias="Policy")
-    x_amz_algorithm: typing.Optional[str] = pydantic.Field(alias="X-Amz-Algorithm")
-    x_amz_credential: typing.Optional[str] = pydantic.Field(alias="X-Amz-Credential")
-    x_amz_date: typing.Optional[str] = pydantic.Field(alias="X-Amz-Date")
+    acl: typing.Optional[str] = None
+    bucket: typing.Optional[str] = None
+    key: typing.Optional[str] = None
+    policy: typing.Optional[str] = pydantic.Field(alias="Policy", default=None)
+    x_amz_algorithm: typing.Optional[str] = pydantic.Field(alias="X-Amz-Algorithm", default=None)
+    x_amz_credential: typing.Optional[str] = pydantic.Field(alias="X-Amz-Credential", default=None)
+    x_amz_date: typing.Optional[str] = pydantic.Field(alias="X-Amz-Date", default=None)
     x_amz_security_token: typing.Optional[str] = pydantic.Field(
         alias="X-Amz-Security-Token",
+        default=None,
         description="(optional) Temporary security token obtained when authenticated through AWS STS",
     )
-    x_amz_signature: typing.Optional[str] = pydantic.Field(alias="X-Amz-Signature")
-    success_action_status: typing.Optional[str]
-    content_type: typing.Optional[str] = pydantic.Field(alias="content-type")
-    cache_control: typing.Optional[str] = pydantic.Field(alias="Cache-Control")
+    x_amz_signature: typing.Optional[str] = pydantic.Field(alias="X-Amz-Signature", default=None)
+    success_action_status: typing.Optional[str] = None
+    content_type: typing.Optional[str] = pydantic.Field(alias="content-type", default=None)
+    cache_control: typing.Optional[str] = pydantic.Field(alias="Cache-Control", default=None)
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

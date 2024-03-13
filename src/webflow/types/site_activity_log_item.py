@@ -5,6 +5,7 @@ import typing
 
 from ..core.datetime_utils import serialize_datetime
 from .site_activity_log_item_resource_operation import SiteActivityLogItemResourceOperation
+from .site_activity_log_item_user import SiteActivityLogItemUser
 
 try:
     import pydantic.v1 as pydantic  # type: ignore
@@ -13,19 +14,19 @@ except ImportError:
 
 
 class SiteActivityLogItem(pydantic.BaseModel):
-    id: typing.Optional[str]
-    created_on: typing.Optional[dt.datetime] = pydantic.Field(alias="createdOn")
-    last_updated: typing.Optional[dt.datetime] = pydantic.Field(alias="lastUpdated")
-    event: typing.Optional[str]
+    id: typing.Optional[str] = None
+    created_on: typing.Optional[dt.datetime] = pydantic.Field(alias="createdOn", default=None)
+    last_updated: typing.Optional[dt.datetime] = pydantic.Field(alias="lastUpdated", default=None)
+    event: typing.Optional[str] = None
     resource_operation: typing.Optional[SiteActivityLogItemResourceOperation] = pydantic.Field(
-        alias="resourceOperation"
+        alias="resourceOperation", default=None
     )
-    user: typing.Optional[str]
-    resource_id: typing.Optional[str] = pydantic.Field(alias="resourceId")
-    resource_name: typing.Optional[str] = pydantic.Field(alias="resourceName")
-    new_value: typing.Optional[str] = pydantic.Field(alias="newValue")
-    previous_value: typing.Optional[str] = pydantic.Field(alias="previousValue")
-    payload: typing.Optional[typing.Dict[str, typing.Any]]
+    user: typing.Optional[SiteActivityLogItemUser] = None
+    resource_id: typing.Optional[str] = pydantic.Field(alias="resourceId", default=None)
+    resource_name: typing.Optional[str] = pydantic.Field(alias="resourceName", default=None)
+    new_value: typing.Optional[str] = pydantic.Field(alias="newValue", default=None)
+    previous_value: typing.Optional[str] = pydantic.Field(alias="previousValue", default=None)
+    payload: typing.Optional[typing.Dict[str, typing.Any]] = None
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

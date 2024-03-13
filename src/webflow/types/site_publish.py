@@ -13,7 +13,9 @@ except ImportError:
 
 
 class SitePublish(pydantic.BaseModel):
-    payload: typing.Optional[SitePublishPayload] = pydantic.Field(description="The payload of data sent from Webflow")
+    payload: typing.Optional[SitePublishPayload] = pydantic.Field(
+        default=None, description="The payload of data sent from Webflow"
+    )
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
