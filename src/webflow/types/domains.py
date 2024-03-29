@@ -4,6 +4,7 @@ import datetime as dt
 import typing
 
 from ..core.datetime_utils import serialize_datetime
+from .domain import Domain
 
 try:
     import pydantic.v1 as pydantic  # type: ignore
@@ -11,9 +12,8 @@ except ImportError:
     import pydantic  # type: ignore
 
 
-class PageSeoGraphDataOpenGraph(pydantic.BaseModel):
-    title: typing.Optional[str] = None
-    description: typing.Optional[str] = None
+class Domains(pydantic.BaseModel):
+    custom_domains: typing.Optional[typing.List[Domain]] = pydantic.Field(alias="customDomains", default=None)
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
@@ -26,4 +26,5 @@ class PageSeoGraphDataOpenGraph(pydantic.BaseModel):
     class Config:
         frozen = True
         smart_union = True
+        allow_population_by_field_name = True
         json_encoders = {dt.datetime: serialize_datetime}

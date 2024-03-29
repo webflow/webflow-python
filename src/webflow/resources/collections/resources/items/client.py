@@ -135,14 +135,16 @@ class ItemsClient:
         client.collections.items.create_item(
             collection_id="collection_id",
             request=CollectionItem(
-                id="580e64008c9a982ac9b8b754",
+                id="42b720ef280c7a7a3be8cabe",
                 cms_locale_id="653ad57de882f528b32e810e",
-                last_published="2023-03-17T18:47:35.560Z",
-                last_updated="2023-03-17T18:47:35.560Z",
-                created_on="2023-03-17T18:47:35.560Z",
+                last_published="2022-11-29T16:22:43.159Z",
+                last_updated="2022-11-17T17:19:43.282Z",
+                created_on="2022-11-17T17:11:57.148Z",
+                is_archived=False,
+                is_draft=False,
                 field_data=CollectionItemFieldData(
-                    name="My new item",
-                    slug="my-new-item",
+                    name="Pan Galactic Gargle Blaster Recipe",
+                    slug="pan-galactic-gargle-blaster",
                 ),
             ),
         )
@@ -213,14 +215,16 @@ class ItemsClient:
         client.collections.items.create_item_live(
             collection_id="collection_id",
             request=CollectionItem(
-                id="580e64008c9a982ac9b8b754",
+                id="42b720ef280c7a7a3be8cabe",
                 cms_locale_id="653ad57de882f528b32e810e",
-                last_published="2023-03-17T18:47:35.560Z",
-                last_updated="2023-03-17T18:47:35.560Z",
-                created_on="2023-03-17T18:47:35.560Z",
+                last_published="2022-11-29T16:22:43.159Z",
+                last_updated="2022-11-17T17:19:43.282Z",
+                created_on="2022-11-17T17:11:57.148Z",
+                is_archived=False,
+                is_draft=False,
                 field_data=CollectionItemFieldData(
-                    name="My new item",
-                    slug="my-new-item",
+                    name="Pan Galactic Gargle Blaster Recipe",
+                    slug="pan-galactic-gargle-blaster",
                 ),
             ),
         )
@@ -291,7 +295,7 @@ class ItemsClient:
 
             - id: str. Unique identifier for the Item
 
-            - cms_locale_ids: typing.Optional[typing.Sequence[str]]. Array of identifiers for the locales where the item will be crated
+            - cms_locale_ids: typing.Optional[typing.Sequence[str]]. Array of identifiers for the locales where the item will be created
 
             - last_published: typing.Optional[str]. The date the item was last published
 
@@ -570,14 +574,16 @@ class ItemsClient:
             collection_id="collection_id",
             item_id="item_id",
             request=CollectionItem(
-                id="580e64008c9a982ac9b8b754",
+                id="42b720ef280c7a7a3be8cabe",
                 cms_locale_id="653ad57de882f528b32e810e",
-                last_published="2023-03-17T18:47:35.560Z",
-                last_updated="2023-03-17T18:47:35.560Z",
-                created_on="2023-03-17T18:47:35.560Z",
+                last_published="2022-11-29T16:22:43.159Z",
+                last_updated="2022-11-17T17:19:43.282Z",
+                created_on="2022-11-17T17:11:57.148Z",
+                is_archived=False,
+                is_draft=False,
                 field_data=CollectionItemFieldData(
-                    name="My new item",
-                    slug="my-new-item",
+                    name="Pan Galactic Gargle Blaster Recipe",
+                    slug="pan-galactic-gargle-blaster",
                 ),
             ),
         )
@@ -719,14 +725,16 @@ class ItemsClient:
             collection_id="collection_id",
             item_id="item_id",
             request=CollectionItem(
-                id="580e64008c9a982ac9b8b754",
+                id="42b720ef280c7a7a3be8cabe",
                 cms_locale_id="653ad57de882f528b32e810e",
-                last_published="2023-03-17T18:47:35.560Z",
-                last_updated="2023-03-17T18:47:35.560Z",
-                created_on="2023-03-17T18:47:35.560Z",
+                last_published="2022-11-29T16:22:43.159Z",
+                last_updated="2022-11-17T17:19:43.282Z",
+                created_on="2022-11-17T17:11:57.148Z",
+                is_archived=False,
+                is_draft=False,
                 field_data=CollectionItemFieldData(
-                    name="My new item",
-                    slug="my-new-item",
+                    name="Pan Galactic Gargle Blaster Recipe",
+                    slug="pan-galactic-gargle-blaster",
                 ),
             ),
         )
@@ -956,14 +964,16 @@ class AsyncItemsClient:
         await client.collections.items.create_item(
             collection_id="collection_id",
             request=CollectionItem(
-                id="580e64008c9a982ac9b8b754",
+                id="42b720ef280c7a7a3be8cabe",
                 cms_locale_id="653ad57de882f528b32e810e",
-                last_published="2023-03-17T18:47:35.560Z",
-                last_updated="2023-03-17T18:47:35.560Z",
-                created_on="2023-03-17T18:47:35.560Z",
+                last_published="2022-11-29T16:22:43.159Z",
+                last_updated="2022-11-17T17:19:43.282Z",
+                created_on="2022-11-17T17:11:57.148Z",
+                is_archived=False,
+                is_draft=False,
                 field_data=CollectionItemFieldData(
-                    name="My new item",
-                    slug="my-new-item",
+                    name="Pan Galactic Gargle Blaster Recipe",
+                    slug="pan-galactic-gargle-blaster",
                 ),
             ),
         )
@@ -1034,14 +1044,16 @@ class AsyncItemsClient:
         await client.collections.items.create_item_live(
             collection_id="collection_id",
             request=CollectionItem(
-                id="580e64008c9a982ac9b8b754",
+                id="42b720ef280c7a7a3be8cabe",
                 cms_locale_id="653ad57de882f528b32e810e",
-                last_published="2023-03-17T18:47:35.560Z",
-                last_updated="2023-03-17T18:47:35.560Z",
-                created_on="2023-03-17T18:47:35.560Z",
+                last_published="2022-11-29T16:22:43.159Z",
+                last_updated="2022-11-17T17:19:43.282Z",
+                created_on="2022-11-17T17:11:57.148Z",
+                is_archived=False,
+                is_draft=False,
                 field_data=CollectionItemFieldData(
-                    name="My new item",
-                    slug="my-new-item",
+                    name="Pan Galactic Gargle Blaster Recipe",
+                    slug="pan-galactic-gargle-blaster",
                 ),
             ),
         )
@@ -1112,7 +1124,7 @@ class AsyncItemsClient:
 
             - id: str. Unique identifier for the Item
 
-            - cms_locale_ids: typing.Optional[typing.Sequence[str]]. Array of identifiers for the locales where the item will be crated
+            - cms_locale_ids: typing.Optional[typing.Sequence[str]]. Array of identifiers for the locales where the item will be created
 
             - last_published: typing.Optional[str]. The date the item was last published
 
@@ -1391,14 +1403,16 @@ class AsyncItemsClient:
             collection_id="collection_id",
             item_id="item_id",
             request=CollectionItem(
-                id="580e64008c9a982ac9b8b754",
+                id="42b720ef280c7a7a3be8cabe",
                 cms_locale_id="653ad57de882f528b32e810e",
-                last_published="2023-03-17T18:47:35.560Z",
-                last_updated="2023-03-17T18:47:35.560Z",
-                created_on="2023-03-17T18:47:35.560Z",
+                last_published="2022-11-29T16:22:43.159Z",
+                last_updated="2022-11-17T17:19:43.282Z",
+                created_on="2022-11-17T17:11:57.148Z",
+                is_archived=False,
+                is_draft=False,
                 field_data=CollectionItemFieldData(
-                    name="My new item",
-                    slug="my-new-item",
+                    name="Pan Galactic Gargle Blaster Recipe",
+                    slug="pan-galactic-gargle-blaster",
                 ),
             ),
         )
@@ -1540,14 +1554,16 @@ class AsyncItemsClient:
             collection_id="collection_id",
             item_id="item_id",
             request=CollectionItem(
-                id="580e64008c9a982ac9b8b754",
+                id="42b720ef280c7a7a3be8cabe",
                 cms_locale_id="653ad57de882f528b32e810e",
-                last_published="2023-03-17T18:47:35.560Z",
-                last_updated="2023-03-17T18:47:35.560Z",
-                created_on="2023-03-17T18:47:35.560Z",
+                last_published="2022-11-29T16:22:43.159Z",
+                last_updated="2022-11-17T17:19:43.282Z",
+                created_on="2022-11-17T17:11:57.148Z",
+                is_archived=False,
+                is_draft=False,
                 field_data=CollectionItemFieldData(
-                    name="My new item",
-                    slug="my-new-item",
+                    name="Pan Galactic Gargle Blaster Recipe",
+                    slug="pan-galactic-gargle-blaster",
                 ),
             ),
         )

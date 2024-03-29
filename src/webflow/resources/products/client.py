@@ -360,8 +360,8 @@ class ProductsClient:
                                 ),
                                 SkuPropertyListEnumItem(
                                     id="forrest-green",
-                                    name="Forrst Green",
-                                    slug="forrest-green",
+                                    name="name",
+                                    slug="slug",
                                 ),
                                 SkuPropertyListEnumItem(
                                     id="id",
@@ -995,8 +995,8 @@ class AsyncProductsClient:
                                 ),
                                 SkuPropertyListEnumItem(
                                     id="forrest-green",
-                                    name="Forrst Green",
-                                    slug="forrest-green",
+                                    name="name",
+                                    slug="slug",
                                 ),
                                 SkuPropertyListEnumItem(
                                     id="id",

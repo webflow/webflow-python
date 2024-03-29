@@ -12,9 +12,7 @@ except ImportError:
 
 
 class AccessGroup(pydantic.BaseModel):
-    id: typing.Optional[str] = pydantic.Field(
-        alias="_id", default=None, description="Unique identifier for the Access Group"
-    )
+    id: typing.Optional[str] = pydantic.Field(default=None, description="Unique identifier for the Access Group")
     name: typing.Optional[str] = pydantic.Field(default=None, description="Name of the the Access Group")
     short_id: typing.Optional[str] = pydantic.Field(
         alias="shortId",

@@ -12,19 +12,24 @@ class OauthScope(str, enum.Enum):
     read details about the authorized user
     """
 
-    READ_PAGES = "read:pages"
+    ASSETS_READ = "assets:read"
     """
-    read pages on the site
-    """
-
-    SITES_READ = "sites:read"
-    """
-    read sites on the site
+    read assets on the site
     """
 
-    SITES_WRITE = "sites:write"
+    ASSETS_WRITE = "assets:write"
     """
-    modify pages on the site
+    write assets on a site
+    """
+
+    CMS_READ = "cms:read"
+    """
+    read collections and items for a site
+    """
+
+    CMS_WRITE = "cms:write"
+    """
+    write to collections and items for a site
     """
 
     CUSTOM_CODE_READ = "custom_code:read"
@@ -37,21 +42,6 @@ class OauthScope(str, enum.Enum):
     modify custom code on the site
     """
 
-    CUSTOM_CODE_DELETE = "custom_code:delete"
-    """
-    delete custom code on the site
-    """
-
-    USERS_READ = "users:read"
-    """
-    read users on the site
-    """
-
-    USERS_WRITE = "users:write"
-    """
-    modify users on the site
-    """
-
     ECOMMERCE_READ = "ecommerce:read"
     """
     read ecommerce data
@@ -62,47 +52,105 @@ class OauthScope(str, enum.Enum):
     edit ecommerce data
     """
 
+    FORMS_READ = "forms:read"
+    """
+    read form data
+    """
+
+    FORMS_WRITE = "forms:write"
+    """
+    write form data
+    """
+
+    PAGES_READ = "pages:read"
+    """
+    read pages on the site
+    """
+
+    PAGES_WRITE = "pages:write"
+    """
+    write to pages on the site
+    """
+
+    SITES_READ = "sites:read"
+    """
+    read sites on the site
+    """
+
+    SITES_WRITE = "sites:write"
+    """
+    modify pages on the site
+    """
+
+    USERS_READ = "users:read"
+    """
+    read users on the site
+    """
+
     SITE_ACTIVITY_READ = "site_activity:read"
     """
     read site activity logs
     """
 
+    USERS_WRITE = "users:write"
+    """
+    modify users on the site
+    """
+
     def visit(
         self,
         authorized_user_read: typing.Callable[[], T_Result],
-        read_pages: typing.Callable[[], T_Result],
-        sites_read: typing.Callable[[], T_Result],
-        sites_write: typing.Callable[[], T_Result],
+        assets_read: typing.Callable[[], T_Result],
+        assets_write: typing.Callable[[], T_Result],
+        cms_read: typing.Callable[[], T_Result],
+        cms_write: typing.Callable[[], T_Result],
         custom_code_read: typing.Callable[[], T_Result],
         custom_code_write: typing.Callable[[], T_Result],
-        custom_code_delete: typing.Callable[[], T_Result],
-        users_read: typing.Callable[[], T_Result],
-        users_write: typing.Callable[[], T_Result],
         ecommerce_read: typing.Callable[[], T_Result],
         ecommerce_write: typing.Callable[[], T_Result],
+        forms_read: typing.Callable[[], T_Result],
+        forms_write: typing.Callable[[], T_Result],
+        pages_read: typing.Callable[[], T_Result],
+        pages_write: typing.Callable[[], T_Result],
+        sites_read: typing.Callable[[], T_Result],
+        sites_write: typing.Callable[[], T_Result],
+        users_read: typing.Callable[[], T_Result],
         site_activity_read: typing.Callable[[], T_Result],
+        users_write: typing.Callable[[], T_Result],
     ) -> T_Result:
         if self is OauthScope.AUTHORIZED_USER_READ:
             return authorized_user_read()
-        if self is OauthScope.READ_PAGES:
-            return read_pages()
-        if self is OauthScope.SITES_READ:
-            return sites_read()
-        if self is OauthScope.SITES_WRITE:
-            return sites_write()
+        if self is OauthScope.ASSETS_READ:
+            return assets_read()
+        if self is OauthScope.ASSETS_WRITE:
+            return assets_write()
+        if self is OauthScope.CMS_READ:
+            return cms_read()
+        if self is OauthScope.CMS_WRITE:
+            return cms_write()
         if self is OauthScope.CUSTOM_CODE_READ:
             return custom_code_read()
         if self is OauthScope.CUSTOM_CODE_WRITE:
             return custom_code_write()
-        if self is OauthScope.CUSTOM_CODE_DELETE:
-            return custom_code_delete()
-        if self is OauthScope.USERS_READ:
-            return users_read()
-        if self is OauthScope.USERS_WRITE:
-            return users_write()
         if self is OauthScope.ECOMMERCE_READ:
             return ecommerce_read()
         if self is OauthScope.ECOMMERCE_WRITE:
             return ecommerce_write()
+        if self is OauthScope.FORMS_READ:
+            return forms_read()
+        if self is OauthScope.FORMS_WRITE:
+            return forms_write()
+        if self is OauthScope.PAGES_READ:
+            return pages_read()
+        if self is OauthScope.PAGES_WRITE:
+            return pages_write()
+        if self is OauthScope.SITES_READ:
+            return sites_read()
+        if self is OauthScope.SITES_WRITE:
+            return sites_write()
+        if self is OauthScope.USERS_READ:
+            return users_read()
         if self is OauthScope.SITE_ACTIVITY_READ:
             return site_activity_read()
+        if self is OauthScope.USERS_WRITE:
+            return users_write()

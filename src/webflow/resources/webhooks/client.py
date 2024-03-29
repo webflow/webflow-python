@@ -16,6 +16,7 @@ from ...errors.too_many_requests_error import TooManyRequestsError
 from ...errors.unauthorized_error import UnauthorizedError
 from ...types.trigger_type import TriggerType
 from ...types.webhook import Webhook
+from ...types.webhook_list import WebhookList
 
 try:
     import pydantic.v1 as pydantic  # type: ignore
@@ -30,9 +31,9 @@ class WebhooksClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def list(self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> typing.List[Webhook]:
+    def list(self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> WebhookList:
         """
-        List all App-created Webhooks registered for a given site
+        List all App-created Webhooks registered for a given site </br></br> Required scope | `sites:read`
 
         Parameters:
             - site_id: str. Unique identifier for a Site
@@ -69,7 +70,7 @@ class WebhooksClient:
             else 60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(typing.List[Webhook], _response.json())  # type: ignore
+            return pydantic.parse_obj_as(WebhookList, _response.json())  # type: ignore
         if _response.status_code == 400:
             raise BadRequestError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
         if _response.status_code == 401:
@@ -96,7 +97,7 @@ class WebhooksClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> Webhook:
         """
-        Create a new Webhook, to be notified when Webflow resources change. Limit of 75 registrations per `triggerType`, per site.
+        Create a new Webhook, to be notified when Webflow resources change. Limit of 75 registrations per `triggerType`, per site. </br></br> Access to this endpoint requires a bearer token from a Data Client App. The only exceptions are for creating webhooks with `site_publish` or `form_submission` triggers, which can be done with Site Tokens </br> Required scope | `sites:write`
 
         Parameters:
             - site_id: str. Unique identifier for a Site
@@ -282,11 +283,9 @@ class AsyncWebhooksClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def list(
-        self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> typing.List[Webhook]:
+    async def list(self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> WebhookList:
         """
-        List all App-created Webhooks registered for a given site
+        List all App-created Webhooks registered for a given site </br></br> Required scope | `sites:read`
 
         Parameters:
             - site_id: str. Unique identifier for a Site
@@ -323,7 +322,7 @@ class AsyncWebhooksClient:
             else 60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(typing.List[Webhook], _response.json())  # type: ignore
+            return pydantic.parse_obj_as(WebhookList, _response.json())  # type: ignore
         if _response.status_code == 400:
             raise BadRequestError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
         if _response.status_code == 401:
@@ -350,7 +349,7 @@ class AsyncWebhooksClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> Webhook:
         """
-        Create a new Webhook, to be notified when Webflow resources change. Limit of 75 registrations per `triggerType`, per site.
+        Create a new Webhook, to be notified when Webflow resources change. Limit of 75 registrations per `triggerType`, per site. </br></br> Access to this endpoint requires a bearer token from a Data Client App. The only exceptions are for creating webhooks with `site_publish` or `form_submission` triggers, which can be done with Site Tokens </br> Required scope | `sites:write`
 
         Parameters:
             - site_id: str. Unique identifier for a Site

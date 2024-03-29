@@ -13,7 +13,7 @@ except ImportError:
 
 
 class UserLimitReached(pydantic.BaseModel):
-    code: typing.Optional[typing.Literal["user_limit_reached"]] = None
+    code: typing.Optional[str] = pydantic.Field(default=None, description="Error code")
     message: typing.Optional[str] = pydantic.Field(default=None, description="Error message")
     external_reference: typing.Optional[str] = pydantic.Field(
         alias="externalReference", default=None, description="Link to more information"
