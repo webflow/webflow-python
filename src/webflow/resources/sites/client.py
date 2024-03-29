@@ -15,9 +15,8 @@ from ...errors.internal_server_error import InternalServerError
 from ...errors.not_found_error import NotFoundError
 from ...errors.too_many_requests_error import TooManyRequestsError
 from ...errors.unauthorized_error import UnauthorizedError
-from ...types.domain import Domain
+from ...types.domains import Domains
 from ...types.site import Site
-from ...types.sites import Sites
 from .resources.activity_logs.client import ActivityLogsClient, AsyncActivityLogsClient
 from .resources.scripts.client import AsyncScriptsClient, ScriptsClient
 
@@ -36,7 +35,7 @@ class SitesClient:
         self.activity_logs = ActivityLogsClient(client_wrapper=self._client_wrapper)
         self.scripts = ScriptsClient(client_wrapper=self._client_wrapper)
 
-    def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> Sites:
+    def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> Site:
         """
         List of all sites the provided access token is able to access. </br></br> Required scope | `sites:read`
 
@@ -69,7 +68,7 @@ class SitesClient:
             else 60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(Sites, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(Site, _response.json())  # type: ignore
         if _response.status_code == 400:
             raise BadRequestError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
         if _response.status_code == 401:
@@ -140,7 +139,7 @@ class SitesClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get_custom_domain(self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> Domain:
+    def get_custom_domain(self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> Domains:
         """
         Get a list of all custom domains related to site. </br></br> Required scope | `sites:read`
 
@@ -179,7 +178,7 @@ class SitesClient:
             else 60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(Domain, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(Domains, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
         if _response.status_code == 403:
@@ -282,7 +281,7 @@ class AsyncSitesClient:
         self.activity_logs = AsyncActivityLogsClient(client_wrapper=self._client_wrapper)
         self.scripts = AsyncScriptsClient(client_wrapper=self._client_wrapper)
 
-    async def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> Sites:
+    async def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> Site:
         """
         List of all sites the provided access token is able to access. </br></br> Required scope | `sites:read`
 
@@ -315,7 +314,7 @@ class AsyncSitesClient:
             else 60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(Sites, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(Site, _response.json())  # type: ignore
         if _response.status_code == 400:
             raise BadRequestError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
         if _response.status_code == 401:
@@ -388,7 +387,7 @@ class AsyncSitesClient:
 
     async def get_custom_domain(
         self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> Domain:
+    ) -> Domains:
         """
         Get a list of all custom domains related to site. </br></br> Required scope | `sites:read`
 
@@ -427,7 +426,7 @@ class AsyncSitesClient:
             else 60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(Domain, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(Domains, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
         if _response.status_code == 403:

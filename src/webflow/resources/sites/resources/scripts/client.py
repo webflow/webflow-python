@@ -34,7 +34,7 @@ class ScriptsClient:
         self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> ScriptApplyList:
         """
-        Get all registered scripts that have been applied to a specific Site. Required scope | `custom_code:read`
+        Get all registered scripts that have been applied to a specific Site. </br></br> Access to this endpoint requires a bearer token from a Data Client App. Required scope | `custom_code:read`
 
         Parameters:
             - site_id: str. Unique identifier for a Site
@@ -92,7 +92,7 @@ class ScriptsClient:
         self, site_id: str, *, request: ScriptApplyList, request_options: typing.Optional[RequestOptions] = None
     ) -> ScriptApplyList:
         """
-        Add a registered script to a Site. </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. </br></br> Required scope | `custom_code:write`
+        Add a registered script to a Site. </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. </br></br> Access to this endpoint requires a bearer token from a Data Client App. Required scope | `custom_code:write`
 
         Parameters:
             - site_id: str. Unique identifier for a Site
@@ -177,7 +177,7 @@ class ScriptsClient:
 
     def delete_custom_code(self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
         """
-        Delete the custom code block that an app created for a Site
+        Delete the custom code block that an app created for a Site </br></br> Access to this endpoint requires a bearer token from a Data Client App. Required scope | `custom_code:write`
 
         Parameters:
             - site_id: str. Unique identifier for a Site
@@ -240,7 +240,7 @@ class ScriptsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ListCustomCodeBlocks:
         """
-        Get all instances of Custom Code applied to a Site or Pages. Required scope | `custom_code:read`
+        Get all instances of Custom Code applied to a Site or Pages. </br></br> Access to this endpoint requires a bearer token from a Data Client App. Required scope | `custom_code:read`
 
         Parameters:
             - site_id: str. Unique identifier for a Site
@@ -317,7 +317,7 @@ class AsyncScriptsClient:
         self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> ScriptApplyList:
         """
-        Get all registered scripts that have been applied to a specific Site. Required scope | `custom_code:read`
+        Get all registered scripts that have been applied to a specific Site. </br></br> Access to this endpoint requires a bearer token from a Data Client App. Required scope | `custom_code:read`
 
         Parameters:
             - site_id: str. Unique identifier for a Site
@@ -375,7 +375,7 @@ class AsyncScriptsClient:
         self, site_id: str, *, request: ScriptApplyList, request_options: typing.Optional[RequestOptions] = None
     ) -> ScriptApplyList:
         """
-        Add a registered script to a Site. </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. </br></br> Required scope | `custom_code:write`
+        Add a registered script to a Site. </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. </br></br> Access to this endpoint requires a bearer token from a Data Client App. Required scope | `custom_code:write`
 
         Parameters:
             - site_id: str. Unique identifier for a Site
@@ -462,7 +462,7 @@ class AsyncScriptsClient:
         self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> None:
         """
-        Delete the custom code block that an app created for a Site
+        Delete the custom code block that an app created for a Site </br></br> Access to this endpoint requires a bearer token from a Data Client App. Required scope | `custom_code:write`
 
         Parameters:
             - site_id: str. Unique identifier for a Site
@@ -525,7 +525,7 @@ class AsyncScriptsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ListCustomCodeBlocks:
         """
-        Get all instances of Custom Code applied to a Site or Pages. Required scope | `custom_code:read`
+        Get all instances of Custom Code applied to a Site or Pages. </br></br> Access to this endpoint requires a bearer token from a Data Client App. Required scope | `custom_code:read`
 
         Parameters:
             - site_id: str. Unique identifier for a Site

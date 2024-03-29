@@ -32,7 +32,7 @@ class ScriptsClient:
 
     def list(self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> RegisteredScriptList:
         """
-        List of scripts registered to a Site. </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. Additionally, Scripts can be remotely hosted, or registered as inline snippets. </br></br> Required scope | `custom_code:read`
+        List of scripts registered to a Site. </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. Additionally, Scripts can be remotely hosted, or registered as inline snippets. Access to this endpoint requires a bearer token from a Data Client App. </br></br> Required scope | `custom_code:read`
 
         Parameters:
             - site_id: str. Unique identifier for a Site
@@ -98,7 +98,7 @@ class ScriptsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CustomCodeResponse:
         """
-        Add a script to a Site's Custom Code registry. </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. Additionally, Scripts can be remotely hosted, or registered as inline snippets. </br></br> Required scope | `custom_code:write`
+        Add a script to a Site's Custom Code registry. </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. Additionally, Scripts can be remotely hosted, or registered as inline snippets. Access to this endpoint requires a bearer token from a Data Client App. </br></br> Required scope | `custom_code:write`
 
         Parameters:
             - site_id: str. Unique identifier for a Site
@@ -193,7 +193,7 @@ class ScriptsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CustomCodeResponse:
         """
-        Add a script to a Site's Custom Code registry. Inline scripts can be between 1 and 2000 characters. </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. </br></br> Required scope | `custom_code:write`
+        Add a script to a Site's Custom Code registry. Inline scripts can be between 1 and 2000 characters. </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. </br></br> Access to this endpoint requires a bearer token from a Data Client App. Required scope | `custom_code:write`
 
         Parameters:
             - site_id: str. Unique identifier for a Site
@@ -285,7 +285,7 @@ class AsyncScriptsClient:
         self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> RegisteredScriptList:
         """
-        List of scripts registered to a Site. </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. Additionally, Scripts can be remotely hosted, or registered as inline snippets. </br></br> Required scope | `custom_code:read`
+        List of scripts registered to a Site. </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. Additionally, Scripts can be remotely hosted, or registered as inline snippets. Access to this endpoint requires a bearer token from a Data Client App. </br></br> Required scope | `custom_code:read`
 
         Parameters:
             - site_id: str. Unique identifier for a Site
@@ -351,7 +351,7 @@ class AsyncScriptsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CustomCodeResponse:
         """
-        Add a script to a Site's Custom Code registry. </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. Additionally, Scripts can be remotely hosted, or registered as inline snippets. </br></br> Required scope | `custom_code:write`
+        Add a script to a Site's Custom Code registry. </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. Additionally, Scripts can be remotely hosted, or registered as inline snippets. Access to this endpoint requires a bearer token from a Data Client App. </br></br> Required scope | `custom_code:write`
 
         Parameters:
             - site_id: str. Unique identifier for a Site
@@ -446,7 +446,7 @@ class AsyncScriptsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CustomCodeResponse:
         """
-        Add a script to a Site's Custom Code registry. Inline scripts can be between 1 and 2000 characters. </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. </br></br> Required scope | `custom_code:write`
+        Add a script to a Site's Custom Code registry. Inline scripts can be between 1 and 2000 characters. </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. </br></br> Access to this endpoint requires a bearer token from a Data Client App. Required scope | `custom_code:write`
 
         Parameters:
             - site_id: str. Unique identifier for a Site

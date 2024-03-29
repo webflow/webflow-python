@@ -70,7 +70,7 @@ class TokenClient:
 
     def introspect(self, *, request_options: typing.Optional[RequestOptions] = None) -> Authorization:
         """
-        Information about the authorization token
+        Information about the authorization token </br></br> Access to this endpoint requires a bearer token from a Data Client App.
 
         Parameters:
             - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
@@ -161,7 +161,7 @@ class AsyncTokenClient:
 
     async def introspect(self, *, request_options: typing.Optional[RequestOptions] = None) -> Authorization:
         """
-        Information about the authorization token
+        Information about the authorization token </br></br> Access to this endpoint requires a bearer token from a Data Client App.
 
         Parameters:
             - request_options: typing.Optional[RequestOptions]. Request-specific configuration.

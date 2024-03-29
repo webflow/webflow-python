@@ -14,7 +14,7 @@ class BaseClientWrapper:
         headers: typing.Dict[str, str] = {
             "X-Fern-Language": "Python",
             "X-Fern-SDK-Name": "webflow",
-            "X-Fern-SDK-Version": "v1.1.0",
+            "X-Fern-SDK-Version": "v1.2.0",
         }
         headers["Authorization"] = f"Bearer {self._get_access_token()}"
         return headers

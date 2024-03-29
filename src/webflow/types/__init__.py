@@ -19,7 +19,6 @@ from .collection_item import CollectionItem
 from .collection_item_field_data import CollectionItemFieldData
 from .collection_item_list import CollectionItemList
 from .collection_item_list_pagination import CollectionItemListPagination
-from .collection_item_removed import CollectionItemRemoved
 from .collection_list import CollectionList
 from .collection_list_array_item import CollectionListArrayItem
 from .custom_code_block import CustomCodeBlock
@@ -27,13 +26,13 @@ from .custom_code_block_type import CustomCodeBlockType
 from .custom_code_response import CustomCodeResponse
 from .dom import Dom
 from .domain import Domain
+from .domains import Domains
 from .duplicate_user_email import DuplicateUserEmail
 from .ecommerce_settings import EcommerceSettings
 from .error import Error
 from .error_details_item import ErrorDetailsItem
 from .field import Field
 from .field_type import FieldType
-from .fields import Fields
 from .form import Form
 from .form_field import FormField
 from .form_field_value import FormFieldValue
@@ -42,11 +41,8 @@ from .form_list import FormList
 from .form_response_settings import FormResponseSettings
 from .form_submission import FormSubmission
 from .form_submission_list import FormSubmissionList
-from .form_submission_trigger import FormSubmissionTrigger
-from .form_submission_trigger_payload import FormSubmissionTriggerPayload
 from .image_node import ImageNode
 from .invalid_domain import InvalidDomain
-from .invalid_scopes import InvalidScopes
 from .inventory_item import InventoryItem
 from .inventory_item_inventory_type import InventoryItemInventoryType
 from .list_custom_code_blocks import ListCustomCodeBlocks
@@ -75,15 +71,9 @@ from .order_totals import OrderTotals
 from .order_totals_extras_item import OrderTotalsExtrasItem
 from .order_totals_extras_item_type import OrderTotalsExtrasItemType
 from .page import Page
-from .page_created_webhook import PageCreatedWebhook
-from .page_deleted_webhook import PageDeletedWebhook
 from .page_list import PageList
-from .page_metadata_updated_webhook import PageMetadataUpdatedWebhook
 from .page_open_graph import PageOpenGraph
 from .page_seo import PageSeo
-from .page_seo_graph_data import PageSeoGraphData
-from .page_seo_graph_data_open_graph import PageSeoGraphDataOpenGraph
-from .page_seo_graph_data_seo import PageSeoGraphDataSeo
 from .pagination import Pagination
 from .paypal_details import PaypalDetails
 from .product import Product
@@ -93,21 +83,16 @@ from .product_field_data import ProductFieldData
 from .product_field_data_ec_product_type import ProductFieldDataEcProductType
 from .product_field_data_tax_category import ProductFieldDataTaxCategory
 from .publish_status import PublishStatus
-from .published_items import PublishedItems
-from .published_site import PublishedSite
 from .registered_script_list import RegisteredScriptList
-from .removed_items import RemovedItems
 from .script_apply import ScriptApply
 from .script_apply_list import ScriptApplyList
 from .script_apply_location import ScriptApplyLocation
+from .scripts import Scripts
 from .site import Site
 from .site_activity_log_item import SiteActivityLogItem
 from .site_activity_log_item_resource_operation import SiteActivityLogItemResourceOperation
 from .site_activity_log_item_user import SiteActivityLogItemUser
 from .site_activity_log_response import SiteActivityLogResponse
-from .site_publish import SitePublish
-from .site_publish_payload import SitePublishPayload
-from .sites import Sites
 from .sku import Sku
 from .sku_field_data import SkuFieldData
 from .sku_field_data_compare_at_price import SkuFieldDataCompareAtPrice
@@ -132,8 +117,6 @@ from .user_data_data import UserDataData
 from .user_limit_reached import UserLimitReached
 from .user_list import UserList
 from .user_status import UserStatus
-from .user_webhook_payload import UserWebhookPayload
-from .user_webhook_payload_trigger_type import UserWebhookPayloadTriggerType
 from .users_not_enabled import UsersNotEnabled
 from .webhook import Webhook
 from .webhook_list import WebhookList
@@ -158,7 +141,6 @@ __all__ = [
     "CollectionItemFieldData",
     "CollectionItemList",
     "CollectionItemListPagination",
-    "CollectionItemRemoved",
     "CollectionList",
     "CollectionListArrayItem",
     "CustomCodeBlock",
@@ -166,13 +148,13 @@ __all__ = [
     "CustomCodeResponse",
     "Dom",
     "Domain",
+    "Domains",
     "DuplicateUserEmail",
     "EcommerceSettings",
     "Error",
     "ErrorDetailsItem",
     "Field",
     "FieldType",
-    "Fields",
     "Form",
     "FormField",
     "FormFieldValue",
@@ -181,11 +163,8 @@ __all__ = [
     "FormResponseSettings",
     "FormSubmission",
     "FormSubmissionList",
-    "FormSubmissionTrigger",
-    "FormSubmissionTriggerPayload",
     "ImageNode",
     "InvalidDomain",
-    "InvalidScopes",
     "InventoryItem",
     "InventoryItemInventoryType",
     "ListCustomCodeBlocks",
@@ -214,15 +193,9 @@ __all__ = [
     "OrderTotalsExtrasItem",
     "OrderTotalsExtrasItemType",
     "Page",
-    "PageCreatedWebhook",
-    "PageDeletedWebhook",
     "PageList",
-    "PageMetadataUpdatedWebhook",
     "PageOpenGraph",
     "PageSeo",
-    "PageSeoGraphData",
-    "PageSeoGraphDataOpenGraph",
-    "PageSeoGraphDataSeo",
     "Pagination",
     "PaypalDetails",
     "Product",
@@ -232,21 +205,16 @@ __all__ = [
     "ProductFieldDataEcProductType",
     "ProductFieldDataTaxCategory",
     "PublishStatus",
-    "PublishedItems",
-    "PublishedSite",
     "RegisteredScriptList",
-    "RemovedItems",
     "ScriptApply",
     "ScriptApplyList",
     "ScriptApplyLocation",
+    "Scripts",
     "Site",
     "SiteActivityLogItem",
     "SiteActivityLogItemResourceOperation",
     "SiteActivityLogItemUser",
     "SiteActivityLogResponse",
-    "SitePublish",
-    "SitePublishPayload",
-    "Sites",
     "Sku",
     "SkuFieldData",
     "SkuFieldDataCompareAtPrice",
@@ -271,8 +239,6 @@ __all__ = [
     "UserLimitReached",
     "UserList",
     "UserStatus",
-    "UserWebhookPayload",
-    "UserWebhookPayloadTriggerType",
     "UsersNotEnabled",
     "Webhook",
     "WebhookList",

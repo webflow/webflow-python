@@ -18,7 +18,6 @@ from ...errors.too_many_requests_error import TooManyRequestsError
 from ...errors.unauthorized_error import UnauthorizedError
 from ...types.order import Order
 from ...types.order_list import OrderList
-from .types.orders_list_request_status import OrdersListRequestStatus
 from .types.orders_refund_request_reason import OrdersRefundRequestReason
 
 try:
@@ -38,7 +37,7 @@ class OrdersClient:
         self,
         site_id: str,
         *,
-        status: typing.Optional[OrdersListRequestStatus] = None,
+        status: typing.Optional[str] = None,
         offset: typing.Optional[float] = None,
         limit: typing.Optional[float] = None,
         request_options: typing.Optional[RequestOptions] = None,
@@ -51,7 +50,7 @@ class OrdersClient:
         Parameters:
             - site_id: str. Unique identifier for a Site
 
-            - status: typing.Optional[OrdersListRequestStatus]. Filter the orders by status
+            - status: typing.Optional[str]. Filter the orders by status
 
             - offset: typing.Optional[float]. Offset used for pagination if the results have more than limit records
 
@@ -539,7 +538,7 @@ class AsyncOrdersClient:
         self,
         site_id: str,
         *,
-        status: typing.Optional[OrdersListRequestStatus] = None,
+        status: typing.Optional[str] = None,
         offset: typing.Optional[float] = None,
         limit: typing.Optional[float] = None,
         request_options: typing.Optional[RequestOptions] = None,
@@ -552,7 +551,7 @@ class AsyncOrdersClient:
         Parameters:
             - site_id: str. Unique identifier for a Site
 
-            - status: typing.Optional[OrdersListRequestStatus]. Filter the orders by status
+            - status: typing.Optional[str]. Filter the orders by status
 
             - offset: typing.Optional[float]. Offset used for pagination if the results have more than limit records
 

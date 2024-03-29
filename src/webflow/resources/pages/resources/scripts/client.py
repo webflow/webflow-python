@@ -33,7 +33,7 @@ class ScriptsClient:
         self, page_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> ScriptApplyList:
         """
-        Get all registered scripts that have been applied to a specific Page. </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. </br></br> Required scope | `custom_code:read`
+        Get all registered scripts that have been applied to a specific Page. </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. </br></br> Access to this endpoint requires a bearer token from a Data Client App. Required scope | `custom_code:read`
 
         Parameters:
             - page_id: str. Unique identifier for a Page
@@ -91,7 +91,7 @@ class ScriptsClient:
         self, page_id: str, *, request: ScriptApplyList, request_options: typing.Optional[RequestOptions] = None
     ) -> ScriptApplyList:
         """
-        Add a registered script to a Page. </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. </br></br> Required scope | `custom_code:write`
+        Add a registered script to a Page. </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. </br></br> Access to this endpoint requires a bearer token from a Data Client App. Required scope | `custom_code:write`
 
         Parameters:
             - page_id: str. Unique identifier for a Page
@@ -176,7 +176,7 @@ class ScriptsClient:
 
     def delete_custom_code(self, page_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
         """
-        Delete the custom code block that an app has created for a page </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. </br></br> Required scope | `custom_code:write`
+        Delete the custom code block that an app has created for a page </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. </br></br> Access to this endpoint requires a bearer token from a Data Client App. Required scope | `custom_code:write`
 
         Parameters:
             - page_id: str. Unique identifier for a Page
@@ -239,7 +239,7 @@ class AsyncScriptsClient:
         self, page_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> ScriptApplyList:
         """
-        Get all registered scripts that have been applied to a specific Page. </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. </br></br> Required scope | `custom_code:read`
+        Get all registered scripts that have been applied to a specific Page. </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. </br></br> Access to this endpoint requires a bearer token from a Data Client App. Required scope | `custom_code:read`
 
         Parameters:
             - page_id: str. Unique identifier for a Page
@@ -297,7 +297,7 @@ class AsyncScriptsClient:
         self, page_id: str, *, request: ScriptApplyList, request_options: typing.Optional[RequestOptions] = None
     ) -> ScriptApplyList:
         """
-        Add a registered script to a Page. </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. </br></br> Required scope | `custom_code:write`
+        Add a registered script to a Page. </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. </br></br> Access to this endpoint requires a bearer token from a Data Client App. Required scope | `custom_code:write`
 
         Parameters:
             - page_id: str. Unique identifier for a Page
@@ -384,7 +384,7 @@ class AsyncScriptsClient:
         self, page_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> None:
         """
-        Delete the custom code block that an app has created for a page </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. </br></br> Required scope | `custom_code:write`
+        Delete the custom code block that an app has created for a page </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. </br></br> Access to this endpoint requires a bearer token from a Data Client App. Required scope | `custom_code:write`
 
         Parameters:
             - page_id: str. Unique identifier for a Page

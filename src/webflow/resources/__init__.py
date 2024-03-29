@@ -18,7 +18,7 @@ from . import (
 )
 from .access_groups import AccessGroupsListRequestSort
 from .inventory import InventoryUpdateRequestInventoryType
-from .orders import OrdersListRequestStatus, OrdersRefundRequestReason
+from .orders import OrdersRefundRequestReason
 from .pages import DomWriteNodesItem
 from .products import (
     ProductSkuCreateProduct,
@@ -40,7 +40,6 @@ __all__ = [
     "AccessGroupsListRequestSort",
     "DomWriteNodesItem",
     "InventoryUpdateRequestInventoryType",
-    "OrdersListRequestStatus",
     "OrdersRefundRequestReason",
     "ProductSkuCreateProduct",
     "ProductSkuCreateProductFieldData",

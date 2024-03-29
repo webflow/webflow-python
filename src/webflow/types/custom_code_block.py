@@ -5,7 +5,7 @@ import typing
 
 from ..core.datetime_utils import serialize_datetime
 from .custom_code_block_type import CustomCodeBlockType
-from .script_apply import ScriptApply
+from .scripts import Scripts
 
 try:
     import pydantic.v1 as pydantic  # type: ignore
@@ -27,7 +27,7 @@ class CustomCodeBlock(pydantic.BaseModel):
     type: typing.Optional[CustomCodeBlockType] = pydantic.Field(
         default=None, description="Whether the Custom Code script is applied at the Site-level or Page-level"
     )
-    scripts: typing.Optional[typing.List[ScriptApply]] = None
+    scripts: typing.Optional[Scripts] = None
     created_on: typing.Optional[dt.datetime] = pydantic.Field(
         alias="createdOn", default=None, description="The date the Block was created"
     )

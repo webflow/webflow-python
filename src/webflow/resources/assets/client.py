@@ -18,6 +18,7 @@ from ...types.asset import Asset
 from ...types.asset_folder import AssetFolder
 from ...types.asset_folder_list import AssetFolderList
 from ...types.asset_upload import AssetUpload
+from ...types.assets import Assets
 
 try:
     import pydantic.v1 as pydantic  # type: ignore
@@ -32,7 +33,7 @@ class AssetsClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def list(self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> typing.List[Asset]:
+    def list(self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> Assets:
         """
         List assets for a given site </br></br> Required scope | `assets:read`
 
@@ -71,7 +72,7 @@ class AssetsClient:
             else 60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(typing.List[Asset], _response.json())  # type: ignore
+            return pydantic.parse_obj_as(Assets, _response.json())  # type: ignore
         if _response.status_code == 400:
             raise BadRequestError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
         if _response.status_code == 401:
@@ -298,7 +299,7 @@ class AssetsClient:
         )
         client.assets.update(
             asset_id="asset_id",
-            display_name="file.png",
+            display_name="bulldoze.png",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -540,9 +541,7 @@ class AsyncAssetsClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def list(
-        self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> typing.List[Asset]:
+    async def list(self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> Assets:
         """
         List assets for a given site </br></br> Required scope | `assets:read`
 
@@ -581,7 +580,7 @@ class AsyncAssetsClient:
             else 60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(typing.List[Asset], _response.json())  # type: ignore
+            return pydantic.parse_obj_as(Assets, _response.json())  # type: ignore
         if _response.status_code == 400:
             raise BadRequestError(pydantic.parse_obj_as(typing.Any, _response.json()))  # type: ignore
         if _response.status_code == 401:
@@ -808,7 +807,7 @@ class AsyncAssetsClient:
         )
         await client.assets.update(
             asset_id="asset_id",
-            display_name="file.png",
+            display_name="bulldoze.png",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
