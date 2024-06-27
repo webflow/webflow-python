@@ -97,6 +97,16 @@ class OauthScope(str, enum.Enum):
     modify users on the site
     """
 
+    WORKSPACE_READ = "workspace:read"
+    """
+    read workspace resource data
+    """
+
+    WORKSPACE_WRITE = "workspace:write"
+    """
+    write workspace resource data
+    """
+
     def visit(
         self,
         authorized_user_read: typing.Callable[[], T_Result],
@@ -117,6 +127,8 @@ class OauthScope(str, enum.Enum):
         users_read: typing.Callable[[], T_Result],
         site_activity_read: typing.Callable[[], T_Result],
         users_write: typing.Callable[[], T_Result],
+        workspace_read: typing.Callable[[], T_Result],
+        workspace_write: typing.Callable[[], T_Result],
     ) -> T_Result:
         if self is OauthScope.AUTHORIZED_USER_READ:
             return authorized_user_read()
@@ -154,3 +166,7 @@ class OauthScope(str, enum.Enum):
             return site_activity_read()
         if self is OauthScope.USERS_WRITE:
             return users_write()
+        if self is OauthScope.WORKSPACE_READ:
+            return workspace_read()
+        if self is OauthScope.WORKSPACE_WRITE:
+            return workspace_write()

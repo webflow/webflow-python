@@ -4,54 +4,82 @@ import datetime as dt
 import typing
 
 from ..core.datetime_utils import serialize_datetime
+from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
 from .product_field_data_ec_product_type import ProductFieldDataEcProductType
 from .product_field_data_tax_category import ProductFieldDataTaxCategory
 from .sku_property_list import SkuPropertyList
 
-try:
-    import pydantic.v1 as pydantic  # type: ignore
-except ImportError:
-    import pydantic  # type: ignore
 
+class ProductFieldData(pydantic_v1.BaseModel):
+    """
+    Contains content-specific details for a product, covering both standard (e.g., title, description) and custom fields tailored to the product setup.
+    """
 
-class ProductFieldData(pydantic.BaseModel):
-    name: str = pydantic.Field(description="Name of the Product")
-    slug: str = pydantic.Field(description="URL structure of the Product in your site.")
-    description: typing.Optional[str] = pydantic.Field(default=None, description="A description of your product")
-    shippable: typing.Optional[bool] = pydantic.Field(
-        default=None, description="Boolean determining if the Product is shippable"
+    name: typing.Optional[str] = pydantic_v1.Field(default=None)
+    """
+    Name of the Product
+    """
+
+    slug: typing.Optional[str] = pydantic_v1.Field(default=None)
+    """
+    URL structure of the Product in your site.
+    """
+
+    description: typing.Optional[str] = pydantic_v1.Field(default=None)
+    """
+    A description of your product
+    """
+
+    shippable: typing.Optional[bool] = pydantic_v1.Field(default=None)
+    """
+    Boolean determining if the Product is shippable
+    """
+
+    sku_properties: typing.Optional[typing.List[SkuPropertyList]] = pydantic_v1.Field(
+        alias="sku-properties", default=None
     )
-    sku_properties: typing.Optional[typing.List[SkuPropertyList]] = pydantic.Field(
-        alias="sku-properties", default=None, description="Variant types to include in SKUs"
+    """
+    Variant types to include in SKUs
+    """
+
+    categories: typing.Optional[typing.List[str]] = pydantic_v1.Field(default=None)
+    """
+    The categories your product belongs to.
+    """
+
+    tax_category: typing.Optional[ProductFieldDataTaxCategory] = pydantic_v1.Field(alias="tax-category", default=None)
+    """
+    Product tax class
+    """
+
+    default_sku: typing.Optional[str] = pydantic_v1.Field(alias="default-sku", default=None)
+    """
+    The default SKU associated with this product.
+    """
+
+    ec_product_type: typing.Optional[ProductFieldDataEcProductType] = pydantic_v1.Field(
+        alias="ec-product-type", default=None
     )
-    categories: typing.Optional[typing.List[str]] = pydantic.Field(
-        default=None, description="The categories your product belongs to."
-    )
-    tax_category: typing.Optional[ProductFieldDataTaxCategory] = pydantic.Field(
-        alias="tax-category", default=None, description="Product tax class"
-    )
-    default_sku: typing.Optional[str] = pydantic.Field(
-        alias="default-sku", default=None, description="The default SKU associated with this product."
-    )
-    ec_product_type: typing.Optional[ProductFieldDataEcProductType] = pydantic.Field(
-        alias="ec-product-type",
-        default=None,
-        description='<a href="https://university.webflow.com/lesson/add-and-manage-products-and-categories?topics=ecommerce#how-to-understand-product-types">Product types.</a> Enums reflect the following values in order: Physical, Digital, Service, Advanced"',
-    )
-    additional_properties: typing.Optional[str] = pydantic.Field(
-        alias="additionalProperties", default=None, description="Custom fields for your product."
-    )
+    """
+    <a href="https://university.webflow.com/lesson/add-and-manage-products-and-categories?topics=ecommerce#how-to-understand-product-types">Product types.</a> Enums reflect the following values in order: Physical, Digital, Service, Advanced"
+    """
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
         return super().json(**kwargs_with_defaults)
 
     def dict(self, **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
-        kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
-        return super().dict(**kwargs_with_defaults)
+        kwargs_with_defaults_exclude_unset: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
+        kwargs_with_defaults_exclude_none: typing.Any = {"by_alias": True, "exclude_none": True, **kwargs}
+
+        return deep_union_pydantic_dicts(
+            super().dict(**kwargs_with_defaults_exclude_unset), super().dict(**kwargs_with_defaults_exclude_none)
+        )
 
     class Config:
         frozen = True
         smart_union = True
         allow_population_by_field_name = True
+        populate_by_name = True
+        extra = pydantic_v1.Extra.allow
         json_encoders = {dt.datetime: serialize_datetime}

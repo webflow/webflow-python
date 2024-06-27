@@ -24,21 +24,34 @@ from .resources.webhooks.client import AsyncWebhooksClient, WebhooksClient
 
 class Webflow:
     """
-    Use this class to access the different functions within the SDK. You can instantiate any number of clients with different configuration that will propogate to these functions.
+    Use this class to access the different functions within the SDK. You can instantiate any number of clients with different configuration that will propagate to these functions.
 
-    Parameters:
-        - base_url: typing.Optional[str]. The base url to use for requests from the client.
+    Parameters
+    ----------
+    base_url : typing.Optional[str]
+        The base url to use for requests from the client.
 
-        - environment: WebflowEnvironment. The environment to use for requests from the client. from .environment import WebflowEnvironment
+    environment : WebflowEnvironment
+        The environment to use for requests from the client. from .environment import WebflowEnvironment
 
-                                           Defaults to WebflowEnvironment.DEFAULT
 
-        - access_token: typing.Union[str, typing.Callable[[], str]].
 
-        - timeout: typing.Optional[float]. The timeout to be used, in seconds, for requests by default the timeout is 60 seconds.
+        Defaults to WebflowEnvironment.DEFAULT
 
-        - httpx_client: typing.Optional[httpx.Client]. The httpx client to use for making requests, a preconfigured client is used by default, however this is useful should you want to pass in any custom httpx configuration.
-    ---
+
+
+    access_token : typing.Union[str, typing.Callable[[], str]]
+    timeout : typing.Optional[float]
+        The timeout to be used, in seconds, for requests. By default the timeout is 60 seconds, unless a custom httpx client is used, in which case this default is not enforced.
+
+    follow_redirects : typing.Optional[bool]
+        Whether the default httpx client follows redirects or not, this is irrelevant if a custom httpx client is passed in.
+
+    httpx_client : typing.Optional[httpx.Client]
+        The httpx client to use for making requests, a preconfigured client is used by default, however this is useful should you want to pass in any custom httpx configuration.
+
+    Examples
+    --------
     from webflow.client import Webflow
 
     client = Webflow(
@@ -52,13 +65,20 @@ class Webflow:
         base_url: typing.Optional[str] = None,
         environment: WebflowEnvironment = WebflowEnvironment.DEFAULT,
         access_token: typing.Union[str, typing.Callable[[], str]],
-        timeout: typing.Optional[float] = 60,
+        timeout: typing.Optional[float] = None,
+        follow_redirects: typing.Optional[bool] = True,
         httpx_client: typing.Optional[httpx.Client] = None
     ):
+        _defaulted_timeout = timeout if timeout is not None else 60 if httpx_client is None else None
         self._client_wrapper = SyncClientWrapper(
             base_url=_get_base_url(base_url=base_url, environment=environment),
             access_token=access_token,
-            httpx_client=httpx.Client(timeout=timeout) if httpx_client is None else httpx_client,
+            httpx_client=httpx_client
+            if httpx_client is not None
+            else httpx.Client(timeout=_defaulted_timeout, follow_redirects=follow_redirects)
+            if follow_redirects is not None
+            else httpx.Client(timeout=_defaulted_timeout),
+            timeout=_defaulted_timeout,
         )
         self.token = TokenClient(client_wrapper=self._client_wrapper)
         self.sites = SitesClient(client_wrapper=self._client_wrapper)
@@ -78,21 +98,34 @@ class Webflow:
 
 class AsyncWebflow:
     """
-    Use this class to access the different functions within the SDK. You can instantiate any number of clients with different configuration that will propogate to these functions.
+    Use this class to access the different functions within the SDK. You can instantiate any number of clients with different configuration that will propagate to these functions.
 
-    Parameters:
-        - base_url: typing.Optional[str]. The base url to use for requests from the client.
+    Parameters
+    ----------
+    base_url : typing.Optional[str]
+        The base url to use for requests from the client.
 
-        - environment: WebflowEnvironment. The environment to use for requests from the client. from .environment import WebflowEnvironment
+    environment : WebflowEnvironment
+        The environment to use for requests from the client. from .environment import WebflowEnvironment
 
-                                           Defaults to WebflowEnvironment.DEFAULT
 
-        - access_token: typing.Union[str, typing.Callable[[], str]].
 
-        - timeout: typing.Optional[float]. The timeout to be used, in seconds, for requests by default the timeout is 60 seconds.
+        Defaults to WebflowEnvironment.DEFAULT
 
-        - httpx_client: typing.Optional[httpx.AsyncClient]. The httpx client to use for making requests, a preconfigured client is used by default, however this is useful should you want to pass in any custom httpx configuration.
-    ---
+
+
+    access_token : typing.Union[str, typing.Callable[[], str]]
+    timeout : typing.Optional[float]
+        The timeout to be used, in seconds, for requests. By default the timeout is 60 seconds, unless a custom httpx client is used, in which case this default is not enforced.
+
+    follow_redirects : typing.Optional[bool]
+        Whether the default httpx client follows redirects or not, this is irrelevant if a custom httpx client is passed in.
+
+    httpx_client : typing.Optional[httpx.AsyncClient]
+        The httpx client to use for making requests, a preconfigured client is used by default, however this is useful should you want to pass in any custom httpx configuration.
+
+    Examples
+    --------
     from webflow.client import AsyncWebflow
 
     client = AsyncWebflow(
@@ -106,13 +139,20 @@ class AsyncWebflow:
         base_url: typing.Optional[str] = None,
         environment: WebflowEnvironment = WebflowEnvironment.DEFAULT,
         access_token: typing.Union[str, typing.Callable[[], str]],
-        timeout: typing.Optional[float] = 60,
+        timeout: typing.Optional[float] = None,
+        follow_redirects: typing.Optional[bool] = True,
         httpx_client: typing.Optional[httpx.AsyncClient] = None
     ):
+        _defaulted_timeout = timeout if timeout is not None else 60 if httpx_client is None else None
         self._client_wrapper = AsyncClientWrapper(
             base_url=_get_base_url(base_url=base_url, environment=environment),
             access_token=access_token,
-            httpx_client=httpx.AsyncClient(timeout=timeout) if httpx_client is None else httpx_client,
+            httpx_client=httpx_client
+            if httpx_client is not None
+            else httpx.AsyncClient(timeout=_defaulted_timeout, follow_redirects=follow_redirects)
+            if follow_redirects is not None
+            else httpx.AsyncClient(timeout=_defaulted_timeout),
+            timeout=_defaulted_timeout,
         )
         self.token = AsyncTokenClient(client_wrapper=self._client_wrapper)
         self.sites = AsyncSitesClient(client_wrapper=self._client_wrapper)

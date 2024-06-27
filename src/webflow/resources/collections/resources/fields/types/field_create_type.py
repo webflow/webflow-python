@@ -21,7 +21,7 @@ class FieldCreateType(str, enum.Enum):
     PHONE = "Phone"
     NUMBER = "Number"
     DATE_TIME = "DateTime"
-    BOOLEAN = "Boolean"
+    SWITCH = "Switch"
     COLOR = "Color"
     FILE = "File"
 
@@ -37,7 +37,7 @@ class FieldCreateType(str, enum.Enum):
         phone: typing.Callable[[], T_Result],
         number: typing.Callable[[], T_Result],
         date_time: typing.Callable[[], T_Result],
-        boolean: typing.Callable[[], T_Result],
+        switch: typing.Callable[[], T_Result],
         color: typing.Callable[[], T_Result],
         file: typing.Callable[[], T_Result],
     ) -> T_Result:
@@ -61,8 +61,8 @@ class FieldCreateType(str, enum.Enum):
             return number()
         if self is FieldCreateType.DATE_TIME:
             return date_time()
-        if self is FieldCreateType.BOOLEAN:
-            return boolean()
+        if self is FieldCreateType.SWITCH:
+            return switch()
         if self is FieldCreateType.COLOR:
             return color()
         if self is FieldCreateType.FILE:

@@ -4,39 +4,50 @@ import datetime as dt
 import typing
 
 from ..core.datetime_utils import serialize_datetime
-
-try:
-    import pydantic.v1 as pydantic  # type: ignore
-except ImportError:
-    import pydantic  # type: ignore
+from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
 
 
-class FormResponseSettings(pydantic.BaseModel):
-    send_email_confirmation: typing.Optional[bool] = pydantic.Field(
-        alias="sendEmailConfirmation", default=None, description="Whether to send an email confirmation to the user"
-    )
-    redirect_url: typing.Optional[str] = pydantic.Field(
-        alias="redirectUrl", default=None, description="The url or path to redirect the user to after form submission"
-    )
-    redirect_method: typing.Optional[str] = pydantic.Field(
-        alias="redirectMethod",
-        default=None,
-        description="The HTTP request method to use for the redirectUrl (eg. POST or GET)",
-    )
-    redirect_action: typing.Optional[str] = pydantic.Field(
-        alias="redirectAction", default=None, description="The action to take after form submission"
-    )
+class FormResponseSettings(pydantic_v1.BaseModel):
+    """
+    Settings for form responses
+    """
+
+    redirect_url: typing.Optional[str] = pydantic_v1.Field(alias="redirectUrl", default=None)
+    """
+    The url or path to redirect the user to after form submission
+    """
+
+    redirect_method: typing.Optional[str] = pydantic_v1.Field(alias="redirectMethod", default=None)
+    """
+    The HTTP request method to use for the redirectUrl (eg. POST or GET)
+    """
+
+    redirect_action: typing.Optional[str] = pydantic_v1.Field(alias="redirectAction", default=None)
+    """
+    The action to take after form submission
+    """
+
+    send_email_confirmation: typing.Optional[bool] = pydantic_v1.Field(alias="sendEmailConfirmation", default=None)
+    """
+    Whether to send an email confirmation to the user
+    """
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
         return super().json(**kwargs_with_defaults)
 
     def dict(self, **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
-        kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
-        return super().dict(**kwargs_with_defaults)
+        kwargs_with_defaults_exclude_unset: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
+        kwargs_with_defaults_exclude_none: typing.Any = {"by_alias": True, "exclude_none": True, **kwargs}
+
+        return deep_union_pydantic_dicts(
+            super().dict(**kwargs_with_defaults_exclude_unset), super().dict(**kwargs_with_defaults_exclude_none)
+        )
 
     class Config:
         frozen = True
         smart_union = True
         allow_population_by_field_name = True
+        populate_by_name = True
+        extra = pydantic_v1.Extra.allow
         json_encoders = {dt.datetime: serialize_datetime}
