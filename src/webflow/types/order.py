@@ -4,6 +4,7 @@ import datetime as dt
 import typing
 
 from ..core.datetime_utils import serialize_datetime
+from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
 from .order_address import OrderAddress
 from .order_customer_info import OrderCustomerInfo
 from .order_dispute_last_status import OrderDisputeLastStatus
@@ -17,139 +18,177 @@ from .paypal_details import PaypalDetails
 from .stripe_card import StripeCard
 from .stripe_details import StripeDetails
 
-try:
-    import pydantic.v1 as pydantic  # type: ignore
-except ImportError:
-    import pydantic  # type: ignore
 
+class Order(pydantic_v1.BaseModel):
+    order_id: typing.Optional[str] = pydantic_v1.Field(alias="orderId", default=None)
+    """
+    The order id. Will usually be 6 hex characters, but can also be 9 hex characters if the site has a very large number of Orders. Randomly assigned.
+    """
 
-class Order(pydantic.BaseModel):
-    order_id: typing.Optional[str] = pydantic.Field(
-        alias="orderId",
-        default=None,
-        description="The order id. Will usually be 6 hex characters, but can also be 9 hex characters if the site has a very large number of Orders. Randomly assigned.",
+    status: typing.Optional[OrderStatus] = pydantic_v1.Field(default=None)
+    """
+    The status of the Order
+    """
+
+    comment: typing.Optional[str] = pydantic_v1.Field(default=None)
+    """
+    A comment string for this Order, which is editable by API user (not used by Webflow).
+    """
+
+    order_comment: typing.Optional[str] = pydantic_v1.Field(alias="orderComment", default=None)
+    """
+    A comment that the customer left when making their Order
+    """
+
+    accepted_on: typing.Optional[dt.datetime] = pydantic_v1.Field(alias="acceptedOn", default=None)
+    """
+    The ISO8601 timestamp that an Order was placed.
+    """
+
+    fulfilled_on: typing.Optional[dt.datetime] = pydantic_v1.Field(alias="fulfilledOn", default=None)
+    """
+    When an Order is marked as 'fulfilled', this field represents the timestamp of the fulfillment in ISO8601 format. Otherwise, it is null.
+    """
+
+    refunded_on: typing.Optional[dt.datetime] = pydantic_v1.Field(alias="refundedOn", default=None)
+    """
+    When an Order is marked as 'refunded', this field represents the timestamp of the fulfillment in ISO8601 format. Otherwise, it is null.
+    """
+
+    disputed_on: typing.Optional[dt.datetime] = pydantic_v1.Field(alias="disputedOn", default=None)
+    """
+    When an Order is marked as 'disputed', this field represents the timestamp of the fulfillment in ISO8601 format. Otherwise, it is null.
+    """
+
+    dispute_updated_on: typing.Optional[dt.datetime] = pydantic_v1.Field(alias="disputeUpdatedOn", default=None)
+    """
+    If an Order has been disputed by the customer, this key will be set to the ISO8601 timestamp of the last update received. If the Order is not disputed, the key will be null.
+    """
+
+    dispute_last_status: typing.Optional[OrderDisputeLastStatus] = pydantic_v1.Field(
+        alias="disputeLastStatus", default=None
     )
-    status: typing.Optional[OrderStatus] = pydantic.Field(default=None, description="The status of the Order")
-    comment: typing.Optional[str] = pydantic.Field(
-        default=None, description="A comment string for this Order editable by API user (not used by Webflow)."
+    """
+    If an order was disputed by the customer, then this key will be set with the [dispute's status](https://stripe.com/docs/api#dispute_object-status).
+    """
+
+    customer_paid: typing.Optional[OrderPrice] = pydantic_v1.Field(alias="customerPaid", default=None)
+    """
+    The total paid by the customer
+    """
+
+    net_amount: typing.Optional[OrderPrice] = pydantic_v1.Field(alias="netAmount", default=None)
+    """
+    The net amount after application fees
+    """
+
+    application_fee: typing.Optional[OrderPrice] = pydantic_v1.Field(alias="applicationFee", default=None)
+    """
+    The application fee assessed by the platform
+    """
+
+    all_addresses: typing.Optional[typing.List[OrderAddress]] = pydantic_v1.Field(alias="allAddresses", default=None)
+    """
+    All addresses provided by the customer during the ordering flow.
+    """
+
+    shipping_address: typing.Optional[OrderAddress] = pydantic_v1.Field(alias="shippingAddress", default=None)
+    """
+    The shipping address
+    """
+
+    billing_address: typing.Optional[OrderAddress] = pydantic_v1.Field(alias="billingAddress", default=None)
+    """
+    The billing address
+    """
+
+    shipping_provider: typing.Optional[str] = pydantic_v1.Field(alias="shippingProvider", default=None)
+    """
+    A string editable by the API user to note the shipping provider used (not used by Webflow).
+    """
+
+    shipping_tracking: typing.Optional[str] = pydantic_v1.Field(alias="shippingTracking", default=None)
+    """
+    A string editable by the API user to note the shipping tracking number for the order (not used by Webflow).
+    """
+
+    shipping_tracking_url: typing.Optional[str] = pydantic_v1.Field(alias="shippingTrackingURL", default=None)
+    customer_info: typing.Optional[OrderCustomerInfo] = pydantic_v1.Field(alias="customerInfo", default=None)
+    """
+    An object with the keys `fullName` and `email`.
+    """
+
+    purchased_items: typing.Optional[typing.List[OrderPurchasedItem]] = pydantic_v1.Field(
+        alias="purchasedItems", default=None
     )
-    order_comment: typing.Optional[str] = pydantic.Field(
-        alias="orderComment", default=None, description="A comment that the customer left when making their Order"
+    """
+    An array of all things that the Customer purchased.
+    """
+
+    purchased_items_count: typing.Optional[float] = pydantic_v1.Field(alias="purchasedItemsCount", default=None)
+    """
+    The sum of all 'count' fields in 'purchasedItems'.
+    """
+
+    stripe_details: typing.Optional[StripeDetails] = pydantic_v1.Field(alias="stripeDetails", default=None)
+    stripe_card: typing.Optional[StripeCard] = pydantic_v1.Field(alias="stripeCard", default=None)
+    paypal_details: typing.Optional[PaypalDetails] = pydantic_v1.Field(alias="paypalDetails", default=None)
+    custom_data: typing.Optional[typing.List[typing.Dict[str, typing.Any]]] = pydantic_v1.Field(
+        alias="customData", default=None
     )
-    accepted_on: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="acceptedOn", default=None, description="The ISO8601 timestamp that an Order was placed."
-    )
-    fulfilled_on: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="fulfilledOn",
-        default=None,
-        description="If an Order was marked as 'fulfilled', then this is the ISO8601 timestamp when that happened.",
-    )
-    refunded_on: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="refundedOn",
-        default=None,
-        description="If an Order was refunded, this is the ISO8601 of when that happened.",
-    )
-    disputed_on: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="disputedOn",
-        default=None,
-        description="If an Order was disputed by the customer, then this key will be set with the ISO8601 timestamp that Stripe notifies Webflow. Null if not disputed.",
-    )
-    dispute_updated_on: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="disputeUpdatedOn",
-        default=None,
-        description="If an Order was disputed by the customer, then this key will be set with the ISO8601 timestamp of the last time that we got an update. Null if not disputed.",
-    )
-    dispute_last_status: typing.Optional[OrderDisputeLastStatus] = pydantic.Field(
-        alias="disputeLastStatus",
-        default=None,
-        description="If an order was disputed by the customer, then this key will be set with the [dispute's status](https://stripe.com/docs/api#dispute_object-status).",
-    )
-    customer_paid: typing.Optional[OrderPrice] = pydantic.Field(
-        alias="customerPaid", default=None, description="The total paid by the customer"
-    )
-    net_amount: typing.Optional[OrderPrice] = pydantic.Field(
-        alias="netAmount", default=None, description="The net amount after application fees"
-    )
-    application_fee: typing.Optional[OrderPrice] = pydantic.Field(
-        alias="applicationFee", default=None, description="The application fee assessed by the platform"
-    )
-    all_addresses: typing.Optional[typing.List[OrderAddress]] = pydantic.Field(
-        alias="allAddresses",
-        default=None,
-        description="All addresses provided by the customer during the ordering flow.",
-    )
-    shipping_address: typing.Optional[OrderAddress] = pydantic.Field(
-        alias="shippingAddress", default=None, description="The shipping address"
-    )
-    billing_address: typing.Optional[OrderAddress] = pydantic.Field(
-        alias="billingAddress", default=None, description="The billing address"
-    )
-    shipping_provider: typing.Optional[str] = pydantic.Field(
-        alias="shippingProvider",
-        default=None,
-        description="A string editable by the API user to note the shipping provider used (not used by Webflow).",
-    )
-    shipping_tracking: typing.Optional[str] = pydantic.Field(
-        alias="shippingTracking",
-        default=None,
-        description="A string editable by the API user to note the shipping tracking number for the order (not used by Webflow).",
-    )
-    shipping_tracking_url: typing.Optional[str] = pydantic.Field(alias="shippingTrackingURL", default=None)
-    customer_info: typing.Optional[OrderCustomerInfo] = pydantic.Field(
-        alias="customerInfo", default=None, description="An object with the keys `fullName` and `email`."
-    )
-    purchased_items: typing.Optional[typing.List[OrderPurchasedItem]] = pydantic.Field(
-        alias="purchasedItems", default=None, description="An array of all things that the Customer purchased."
-    )
-    purchased_items_count: typing.Optional[float] = pydantic.Field(
-        alias="purchasedItemsCount", default=None, description="The sum of all 'count' fields in 'purchasedItems'."
-    )
-    stripe_details: typing.Optional[StripeDetails] = pydantic.Field(alias="stripeDetails", default=None)
-    stripe_card: typing.Optional[StripeCard] = pydantic.Field(alias="stripeCard", default=None)
-    paypal_details: typing.Optional[PaypalDetails] = pydantic.Field(alias="paypalDetails", default=None)
-    custom_data: typing.Optional[typing.List[typing.Dict[str, typing.Any]]] = pydantic.Field(
-        alias="customData",
-        default=None,
-        description="An array of additional inputs for custom order data gathering. Each object in the array represents an input with a name, and a textInput, textArea, or checkbox value.",
-    )
+    """
+    An array of additional inputs for custom order data gathering. Each object in the array represents an input with a name, and a textInput, textArea, or checkbox value.
+    """
+
     metadata: typing.Optional[OrderMetadata] = None
-    is_customer_deleted: typing.Optional[bool] = pydantic.Field(
-        alias="isCustomerDeleted",
-        default=None,
-        description="A boolean indicating whether the customer has been deleted from the site.",
+    is_customer_deleted: typing.Optional[bool] = pydantic_v1.Field(alias="isCustomerDeleted", default=None)
+    """
+    A boolean indicating whether the customer has been deleted from the site.
+    """
+
+    is_shipping_required: typing.Optional[bool] = pydantic_v1.Field(alias="isShippingRequired", default=None)
+    """
+    A boolean indicating whether the order contains one or more purchased items that require shipping.
+    """
+
+    has_downloads: typing.Optional[bool] = pydantic_v1.Field(alias="hasDownloads", default=None)
+    """
+    A boolean indicating whether the order contains one or more purchased items that are downloadable.
+    """
+
+    payment_processor: typing.Optional[str] = pydantic_v1.Field(alias="paymentProcessor", default=None)
+    """
+    A string indicating the payment processor used for this order.
+    """
+
+    totals: typing.Optional[OrderTotals] = pydantic_v1.Field(default=None)
+    """
+    An object describing various pricing totals
+    """
+
+    download_files: typing.Optional[typing.List[OrderDownloadFilesItem]] = pydantic_v1.Field(
+        alias="downloadFiles", default=None
     )
-    is_shipping_required: typing.Optional[bool] = pydantic.Field(
-        alias="isShippingRequired",
-        default=None,
-        description="A boolean indicating whether the order contains one or more purchased items that require shipping.",
-    )
-    has_downloads: typing.Optional[bool] = pydantic.Field(
-        alias="hasDownloads",
-        default=None,
-        description="A boolean indicating whether the order contains one or more purchased items that are downloadable.",
-    )
-    payment_processor: typing.Optional[str] = pydantic.Field(
-        alias="paymentProcessor",
-        default=None,
-        description="A string indicating the payment processor used for this order.",
-    )
-    totals: typing.Optional[OrderTotals] = pydantic.Field(
-        default=None, description="An object describing various pricing totals"
-    )
-    download_files: typing.Optional[typing.List[OrderDownloadFilesItem]] = pydantic.Field(
-        alias="downloadFiles", default=None, description="An array of downloadable file objects."
-    )
+    """
+    An array of downloadable file objects.
+    """
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
         return super().json(**kwargs_with_defaults)
 
     def dict(self, **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
-        kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
-        return super().dict(**kwargs_with_defaults)
+        kwargs_with_defaults_exclude_unset: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
+        kwargs_with_defaults_exclude_none: typing.Any = {"by_alias": True, "exclude_none": True, **kwargs}
+
+        return deep_union_pydantic_dicts(
+            super().dict(**kwargs_with_defaults_exclude_unset), super().dict(**kwargs_with_defaults_exclude_none)
+        )
 
     class Config:
         frozen = True
         smart_union = True
         allow_population_by_field_name = True
+        populate_by_name = True
+        extra = pydantic_v1.Extra.allow
         json_encoders = {dt.datetime: serialize_datetime}

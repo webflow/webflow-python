@@ -4,45 +4,42 @@ import datetime as dt
 import typing
 
 from ..core.datetime_utils import serialize_datetime
-
-try:
-    import pydantic.v1 as pydantic  # type: ignore
-except ImportError:
-    import pydantic  # type: ignore
+from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
 
 
-class AssetUploadUploadDetails(pydantic.BaseModel):
+class AssetUploadUploadDetails(pydantic_v1.BaseModel):
     """
     Metadata for uploading the asset binary
     """
 
     acl: typing.Optional[str] = None
     bucket: typing.Optional[str] = None
+    x_amz_algorithm: typing.Optional[str] = pydantic_v1.Field(alias="X-Amz-Algorithm", default=None)
+    x_amz_credential: typing.Optional[str] = pydantic_v1.Field(alias="X-Amz-Credential", default=None)
+    x_amz_date: typing.Optional[str] = pydantic_v1.Field(alias="X-Amz-Date", default=None)
     key: typing.Optional[str] = None
-    policy: typing.Optional[str] = pydantic.Field(alias="Policy", default=None)
-    x_amz_algorithm: typing.Optional[str] = pydantic.Field(alias="X-Amz-Algorithm", default=None)
-    x_amz_credential: typing.Optional[str] = pydantic.Field(alias="X-Amz-Credential", default=None)
-    x_amz_date: typing.Optional[str] = pydantic.Field(alias="X-Amz-Date", default=None)
-    x_amz_security_token: typing.Optional[str] = pydantic.Field(
-        alias="X-Amz-Security-Token",
-        default=None,
-        description="(optional) Temporary security token obtained when authenticated through AWS STS",
-    )
-    x_amz_signature: typing.Optional[str] = pydantic.Field(alias="X-Amz-Signature", default=None)
+    policy: typing.Optional[str] = pydantic_v1.Field(alias="Policy", default=None)
+    x_amz_signature: typing.Optional[str] = pydantic_v1.Field(alias="X-Amz-Signature", default=None)
     success_action_status: typing.Optional[str] = None
-    content_type: typing.Optional[str] = pydantic.Field(alias="content-type", default=None)
-    cache_control: typing.Optional[str] = pydantic.Field(alias="Cache-Control", default=None)
+    content_type: typing.Optional[str] = pydantic_v1.Field(alias="content-type", default=None)
+    cache_control: typing.Optional[str] = pydantic_v1.Field(alias="Cache-Control", default=None)
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
         return super().json(**kwargs_with_defaults)
 
     def dict(self, **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
-        kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
-        return super().dict(**kwargs_with_defaults)
+        kwargs_with_defaults_exclude_unset: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
+        kwargs_with_defaults_exclude_none: typing.Any = {"by_alias": True, "exclude_none": True, **kwargs}
+
+        return deep_union_pydantic_dicts(
+            super().dict(**kwargs_with_defaults_exclude_unset), super().dict(**kwargs_with_defaults_exclude_none)
+        )
 
     class Config:
         frozen = True
         smart_union = True
         allow_population_by_field_name = True
+        populate_by_name = True
+        extra = pydantic_v1.Extra.allow
         json_encoders = {dt.datetime: serialize_datetime}

@@ -4,43 +4,52 @@ import datetime as dt
 import typing
 
 from ..core.datetime_utils import serialize_datetime
+from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
 from .stripe_card_brand import StripeCardBrand
 from .stripe_card_expires import StripeCardExpires
 
-try:
-    import pydantic.v1 as pydantic  # type: ignore
-except ImportError:
-    import pydantic  # type: ignore
 
-
-class StripeCard(pydantic.BaseModel):
+class StripeCard(pydantic_v1.BaseModel):
     """
     Details on the card used to fulfill this order, if this order was finalized with Stripe.
     """
 
-    last_4: typing.Optional[str] = pydantic.Field(
-        alias="last4", default=None, description="The last 4 digits on the card as a string"
-    )
-    brand: typing.Optional[StripeCardBrand] = pydantic.Field(
-        default=None, description="The card's brand (ie. credit card network)"
-    )
-    owner_name: typing.Optional[str] = pydantic.Field(
-        alias="ownerName", default=None, description="The name on the card."
-    )
-    expires: typing.Optional[StripeCardExpires] = pydantic.Field(
-        default=None, description="The card's expiration date."
-    )
+    last_4: typing.Optional[str] = pydantic_v1.Field(alias="last4", default=None)
+    """
+    The last 4 digits on the card as a string
+    """
+
+    brand: typing.Optional[StripeCardBrand] = pydantic_v1.Field(default=None)
+    """
+    The card's brand (ie. credit card network)
+    """
+
+    owner_name: typing.Optional[str] = pydantic_v1.Field(alias="ownerName", default=None)
+    """
+    The name on the card.
+    """
+
+    expires: typing.Optional[StripeCardExpires] = pydantic_v1.Field(default=None)
+    """
+    The card's expiration date.
+    """
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
         return super().json(**kwargs_with_defaults)
 
     def dict(self, **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
-        kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
-        return super().dict(**kwargs_with_defaults)
+        kwargs_with_defaults_exclude_unset: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
+        kwargs_with_defaults_exclude_none: typing.Any = {"by_alias": True, "exclude_none": True, **kwargs}
+
+        return deep_union_pydantic_dicts(
+            super().dict(**kwargs_with_defaults_exclude_unset), super().dict(**kwargs_with_defaults_exclude_none)
+        )
 
     class Config:
         frozen = True
         smart_union = True
         allow_population_by_field_name = True
+        populate_by_name = True
+        extra = pydantic_v1.Extra.allow
         json_encoders = {dt.datetime: serialize_datetime}

@@ -4,36 +4,44 @@ import datetime as dt
 import typing
 
 from ..core.datetime_utils import serialize_datetime
+from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
 from .image_node import ImageNode
 from .node_type import NodeType
 from .text_node import TextNode
 
-try:
-    import pydantic.v1 as pydantic  # type: ignore
-except ImportError:
-    import pydantic  # type: ignore
 
-
-class Node(pydantic.BaseModel):
+class Node(pydantic_v1.BaseModel):
     """
     A generic representation of a content element within the Document Object Model (DOM). Each node has a unique identifier and a specific type that determines its content structure and attributes.
     """
 
-    id: typing.Optional[str] = pydantic.Field(default=None, description="Node UUID")
+    id: typing.Optional[str] = pydantic_v1.Field(default=None)
+    """
+    Node UUID
+    """
+
     type: typing.Optional[NodeType] = None
     text: typing.Optional[TextNode] = None
     image: typing.Optional[ImageNode] = None
-    attributes: typing.Optional[typing.Dict[str, str]] = None
+    attributes: typing.Optional[typing.Dict[str, str]] = pydantic_v1.Field(default=None)
+    """
+    The custom attributes of the node
+    """
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
         return super().json(**kwargs_with_defaults)
 
     def dict(self, **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
-        kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
-        return super().dict(**kwargs_with_defaults)
+        kwargs_with_defaults_exclude_unset: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
+        kwargs_with_defaults_exclude_none: typing.Any = {"by_alias": True, "exclude_none": True, **kwargs}
+
+        return deep_union_pydantic_dicts(
+            super().dict(**kwargs_with_defaults_exclude_unset), super().dict(**kwargs_with_defaults_exclude_none)
+        )
 
     class Config:
         frozen = True
         smart_union = True
+        extra = pydantic_v1.Extra.allow
         json_encoders = {dt.datetime: serialize_datetime}

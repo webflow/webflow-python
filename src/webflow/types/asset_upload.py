@@ -4,50 +4,65 @@ import datetime as dt
 import typing
 
 from ..core.datetime_utils import serialize_datetime
+from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
 from .asset_upload_upload_details import AssetUploadUploadDetails
 
-try:
-    import pydantic.v1 as pydantic  # type: ignore
-except ImportError:
-    import pydantic  # type: ignore
 
+class AssetUpload(pydantic_v1.BaseModel):
+    upload_details: typing.Optional[AssetUploadUploadDetails] = pydantic_v1.Field(alias="uploadDetails", default=None)
+    """
+    Metadata for uploading the asset binary
+    """
 
-class AssetUpload(pydantic.BaseModel):
-    upload_details: typing.Optional[AssetUploadUploadDetails] = pydantic.Field(
-        alias="uploadDetails", default=None, description="Metadata for uploading the asset binary"
-    )
+    content_type: typing.Optional[str] = pydantic_v1.Field(alias="contentType", default=None)
     id: typing.Optional[str] = None
-    content_type: typing.Optional[str] = pydantic.Field(alias="contentType", default=None)
-    parent_folder: typing.Optional[str] = pydantic.Field(
-        alias="parentFolder", default=None, description="Parent folder for the asset"
-    )
-    hosted_url: typing.Optional[str] = pydantic.Field(
-        alias="hostedUrl", default=None, description="Represents the link to the asset"
-    )
-    upload_url: typing.Optional[str] = pydantic.Field(alias="uploadUrl", default=None)
-    asset_url: typing.Optional[str] = pydantic.Field(alias="assetUrl", default=None, description="S3 link to the asset")
-    original_file_name: typing.Optional[str] = pydantic.Field(
-        alias="originalFileName",
-        default=None,
-        description="Original file name when uploaded. If not specified at time of upload, it may be extracted from the raw file name",
-    )
-    last_updated: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="lastUpdated", default=None, description="Date the asset metadata was last updated"
-    )
-    created_on: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="createdOn", default=None, description="Date the asset metadata was created"
-    )
+    parent_folder: typing.Optional[str] = pydantic_v1.Field(alias="parentFolder", default=None)
+    """
+    Parent folder for the asset
+    """
+
+    upload_url: typing.Optional[str] = pydantic_v1.Field(alias="uploadUrl", default=None)
+    asset_url: typing.Optional[str] = pydantic_v1.Field(alias="assetUrl", default=None)
+    """
+    S3 link to the asset
+    """
+
+    hosted_url: typing.Optional[str] = pydantic_v1.Field(alias="hostedUrl", default=None)
+    """
+    Represents the link to the asset
+    """
+
+    original_file_name: typing.Optional[str] = pydantic_v1.Field(alias="originalFileName", default=None)
+    """
+    Original file name when uploaded. If not specified at time of upload, it may be extracted from the raw file name
+    """
+
+    created_on: typing.Optional[dt.datetime] = pydantic_v1.Field(alias="createdOn", default=None)
+    """
+    Date the asset metadata was created
+    """
+
+    last_updated: typing.Optional[dt.datetime] = pydantic_v1.Field(alias="lastUpdated", default=None)
+    """
+    Date the asset metadata was last updated
+    """
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
         return super().json(**kwargs_with_defaults)
 
     def dict(self, **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
-        kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
-        return super().dict(**kwargs_with_defaults)
+        kwargs_with_defaults_exclude_unset: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
+        kwargs_with_defaults_exclude_none: typing.Any = {"by_alias": True, "exclude_none": True, **kwargs}
+
+        return deep_union_pydantic_dicts(
+            super().dict(**kwargs_with_defaults_exclude_unset), super().dict(**kwargs_with_defaults_exclude_none)
+        )
 
     class Config:
         frozen = True
         smart_union = True
         allow_population_by_field_name = True
+        populate_by_name = True
+        extra = pydantic_v1.Extra.allow
         json_encoders = {dt.datetime: serialize_datetime}

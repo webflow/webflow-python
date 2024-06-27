@@ -8,7 +8,7 @@ T_Result = typing.TypeVar("T_Result")
 
 class OrderAddressJapanType(str, enum.Enum):
     """
-    Japan-only address format
+    Represents a Japan-only address format. This field will only appear on orders placed from Japan.
     """
 
     KANA = "kana"

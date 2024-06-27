@@ -18,41 +18,19 @@ from . import (
 )
 from .access_groups import AccessGroupsListRequestSort
 from .inventory import InventoryUpdateRequestInventoryType
-from .orders import OrdersRefundRequestReason
-from .pages import DomWriteNodesItem
-from .products import (
-    ProductSkuCreateProduct,
-    ProductSkuCreateProductFieldData,
-    ProductSkuCreateProductFieldDataEcProductType,
-    ProductSkuCreateProductFieldDataTaxCategory,
-    ProductSkuCreateSku,
-    ProductSkuCreateSkuFieldData,
-    ProductSkuCreateSkuFieldDataCompareAtPrice,
-    ProductSkuCreateSkuFieldDataEcSkuBillingMethod,
-    ProductSkuCreateSkuFieldDataEcSkuSubscriptionPlan,
-    ProductSkuCreateSkuFieldDataEcSkuSubscriptionPlanInterval,
-    ProductSkuCreateSkuFieldDataPrice,
-    ProductsCreateSkuResponse,
-)
+from .orders import OrdersListRequestStatus, OrdersRefundRequestReason
+from .pages import DomWriteNodesItem, UpdateStaticContentResponse
+from .products import ProductsCreateSkuResponse
 from .users import UsersListRequestSort, UsersUpdateRequestData
 
 __all__ = [
     "AccessGroupsListRequestSort",
     "DomWriteNodesItem",
     "InventoryUpdateRequestInventoryType",
+    "OrdersListRequestStatus",
     "OrdersRefundRequestReason",
-    "ProductSkuCreateProduct",
-    "ProductSkuCreateProductFieldData",
-    "ProductSkuCreateProductFieldDataEcProductType",
-    "ProductSkuCreateProductFieldDataTaxCategory",
-    "ProductSkuCreateSku",
-    "ProductSkuCreateSkuFieldData",
-    "ProductSkuCreateSkuFieldDataCompareAtPrice",
-    "ProductSkuCreateSkuFieldDataEcSkuBillingMethod",
-    "ProductSkuCreateSkuFieldDataEcSkuSubscriptionPlan",
-    "ProductSkuCreateSkuFieldDataEcSkuSubscriptionPlanInterval",
-    "ProductSkuCreateSkuFieldDataPrice",
     "ProductsCreateSkuResponse",
+    "UpdateStaticContentResponse",
     "UsersListRequestSort",
     "UsersUpdateRequestData",
     "access_groups",

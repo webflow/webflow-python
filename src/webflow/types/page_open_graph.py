@@ -4,43 +4,50 @@ import datetime as dt
 import typing
 
 from ..core.datetime_utils import serialize_datetime
-
-try:
-    import pydantic.v1 as pydantic  # type: ignore
-except ImportError:
-    import pydantic  # type: ignore
+from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
 
 
-class PageOpenGraph(pydantic.BaseModel):
+class PageOpenGraph(pydantic_v1.BaseModel):
     """
     Open Graph fields for the Page
     """
 
-    title: typing.Optional[str] = pydantic.Field(
-        default=None, description="The title supplied to Open Graph annotations"
-    )
-    title_copied: typing.Optional[bool] = pydantic.Field(
-        alias="titleCopied", default=None, description="Indicates the Open Graph title was copied from the SEO title"
-    )
-    description: typing.Optional[str] = pydantic.Field(
-        default=None, description="The description supplied to Open Graph annotations"
-    )
-    description_copied: typing.Optional[bool] = pydantic.Field(
-        alias="descriptionCopied",
-        default=None,
-        description="Indicates the Open Graph description was copied from the SEO description",
-    )
+    title: typing.Optional[str] = pydantic_v1.Field(default=None)
+    """
+    The title supplied to Open Graph annotations
+    """
+
+    title_copied: typing.Optional[bool] = pydantic_v1.Field(alias="titleCopied", default=None)
+    """
+    Indicates the Open Graph title was copied from the SEO title
+    """
+
+    description: typing.Optional[str] = pydantic_v1.Field(default=None)
+    """
+    The description supplied to Open Graph annotations
+    """
+
+    description_copied: typing.Optional[bool] = pydantic_v1.Field(alias="descriptionCopied", default=None)
+    """
+    Indicates the Open Graph description was copied from the SEO description
+    """
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
         return super().json(**kwargs_with_defaults)
 
     def dict(self, **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
-        kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
-        return super().dict(**kwargs_with_defaults)
+        kwargs_with_defaults_exclude_unset: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
+        kwargs_with_defaults_exclude_none: typing.Any = {"by_alias": True, "exclude_none": True, **kwargs}
+
+        return deep_union_pydantic_dicts(
+            super().dict(**kwargs_with_defaults_exclude_unset), super().dict(**kwargs_with_defaults_exclude_none)
+        )
 
     class Config:
         frozen = True
         smart_union = True
         allow_population_by_field_name = True
+        populate_by_name = True
+        extra = pydantic_v1.Extra.allow
         json_encoders = {dt.datetime: serialize_datetime}

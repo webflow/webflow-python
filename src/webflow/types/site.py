@@ -4,52 +4,81 @@ import datetime as dt
 import typing
 
 from ..core.datetime_utils import serialize_datetime
+from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
 from .domain import Domain
-
-try:
-    import pydantic.v1 as pydantic  # type: ignore
-except ImportError:
-    import pydantic  # type: ignore
+from .locales import Locales
 
 
-class Site(pydantic.BaseModel):
-    id: str = pydantic.Field(description="Unique identifier for the Site")
-    workspace_id: typing.Optional[str] = pydantic.Field(
-        alias="workspaceId", default=None, description="Unique identifier for the Workspace"
-    )
-    created_on: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="createdOn", default=None, description="Date the Site was created"
-    )
-    display_name: typing.Optional[str] = pydantic.Field(
-        alias="displayName", default=None, description="Name given to Site"
-    )
-    short_name: typing.Optional[str] = pydantic.Field(
-        alias="shortName", default=None, description="Slugified version of name"
-    )
-    last_published: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="lastPublished", default=None, description="Date the Site was last published"
-    )
-    last_updated: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="lastUpdated", default=None, description="Date the Site was last updated"
-    )
-    preview_url: typing.Optional[str] = pydantic.Field(
-        alias="previewUrl", default=None, description="URL of a generated image for the given Site"
-    )
-    time_zone: typing.Optional[str] = pydantic.Field(
-        alias="timeZone", default=None, description="Site timezone set under Site Settings"
-    )
-    custom_domains: typing.Optional[typing.List[Domain]] = pydantic.Field(alias="customDomains", default=None)
+class Site(pydantic_v1.BaseModel):
+    id: str = pydantic_v1.Field()
+    """
+    Unique identifier for the Site
+    """
+
+    workspace_id: typing.Optional[str] = pydantic_v1.Field(alias="workspaceId", default=None)
+    """
+    Unique identifier for the Workspace
+    """
+
+    created_on: typing.Optional[dt.datetime] = pydantic_v1.Field(alias="createdOn", default=None)
+    """
+    Date the Site was created
+    """
+
+    display_name: typing.Optional[str] = pydantic_v1.Field(alias="displayName", default=None)
+    """
+    Name given to Site
+    """
+
+    short_name: typing.Optional[str] = pydantic_v1.Field(alias="shortName", default=None)
+    """
+    Slugified version of name
+    """
+
+    last_published: typing.Optional[dt.datetime] = pydantic_v1.Field(alias="lastPublished", default=None)
+    """
+    Date the Site was last published
+    """
+
+    last_updated: typing.Optional[dt.datetime] = pydantic_v1.Field(alias="lastUpdated", default=None)
+    """
+    Date the Site was last updated
+    """
+
+    preview_url: typing.Optional[str] = pydantic_v1.Field(alias="previewUrl", default=None)
+    """
+    URL of a generated image for the given Site
+    """
+
+    time_zone: typing.Optional[str] = pydantic_v1.Field(alias="timeZone", default=None)
+    """
+    Site timezone set under Site Settings
+    """
+
+    parent_folder_id: typing.Optional[str] = pydantic_v1.Field(alias="parentFolderId", default=None)
+    """
+    The ID of the parent folder the Site exists in
+    """
+
+    custom_domains: typing.Optional[typing.List[Domain]] = pydantic_v1.Field(alias="customDomains", default=None)
+    locales: typing.Optional[Locales] = None
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
         return super().json(**kwargs_with_defaults)
 
     def dict(self, **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
-        kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
-        return super().dict(**kwargs_with_defaults)
+        kwargs_with_defaults_exclude_unset: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
+        kwargs_with_defaults_exclude_none: typing.Any = {"by_alias": True, "exclude_none": True, **kwargs}
+
+        return deep_union_pydantic_dicts(
+            super().dict(**kwargs_with_defaults_exclude_unset), super().dict(**kwargs_with_defaults_exclude_none)
+        )
 
     class Config:
         frozen = True
         smart_union = True
         allow_population_by_field_name = True
+        populate_by_name = True
+        extra = pydantic_v1.Extra.allow
         json_encoders = {dt.datetime: serialize_datetime}

@@ -4,50 +4,77 @@ import datetime as dt
 import typing
 
 from ..core.datetime_utils import serialize_datetime
+from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
 from .order_address_japan_type import OrderAddressJapanType
 from .order_address_type import OrderAddressType
 
-try:
-    import pydantic.v1 as pydantic  # type: ignore
-except ImportError:
-    import pydantic  # type: ignore
 
-
-class OrderAddress(pydantic.BaseModel):
+class OrderAddress(pydantic_v1.BaseModel):
     """
     A customer address
     """
 
-    type: typing.Optional[OrderAddressType] = pydantic.Field(
-        default=None, description="The type of the order address (billing or shipping)"
-    )
-    japan_type: typing.Optional[OrderAddressJapanType] = pydantic.Field(
-        alias="japanType", default=None, description="Japan-only address format"
-    )
-    addressee: typing.Optional[str] = pydantic.Field(default=None, description="Display name on the address")
-    line_1: typing.Optional[str] = pydantic.Field(
-        alias="line1", default=None, description="The first line of the address"
-    )
-    line_2: typing.Optional[str] = pydantic.Field(
-        alias="line2", default=None, description="The second line of the address"
-    )
-    city: typing.Optional[str] = pydantic.Field(default=None, description="The city of the address.")
-    state: typing.Optional[str] = pydantic.Field(default=None, description="The state or province of the address")
-    country: typing.Optional[str] = pydantic.Field(default=None, description="The country of the address")
-    postal_code: typing.Optional[str] = pydantic.Field(
-        alias="postalCode", default=None, description="The postal code of the address"
-    )
+    type: typing.Optional[OrderAddressType] = pydantic_v1.Field(default=None)
+    """
+    The type of the order address (billing or shipping)
+    """
+
+    japan_type: typing.Optional[OrderAddressJapanType] = pydantic_v1.Field(alias="japanType", default=None)
+    """
+    Represents a Japan-only address format. This field will only appear on orders placed from Japan.
+    """
+
+    addressee: typing.Optional[str] = pydantic_v1.Field(default=None)
+    """
+    Display name on the address
+    """
+
+    line_1: typing.Optional[str] = pydantic_v1.Field(alias="line1", default=None)
+    """
+    The first line of the address
+    """
+
+    line_2: typing.Optional[str] = pydantic_v1.Field(alias="line2", default=None)
+    """
+    The second line of the address
+    """
+
+    city: typing.Optional[str] = pydantic_v1.Field(default=None)
+    """
+    The city of the address.
+    """
+
+    state: typing.Optional[str] = pydantic_v1.Field(default=None)
+    """
+    The state or province of the address
+    """
+
+    country: typing.Optional[str] = pydantic_v1.Field(default=None)
+    """
+    The country of the address
+    """
+
+    postal_code: typing.Optional[str] = pydantic_v1.Field(alias="postalCode", default=None)
+    """
+    The postal code of the address
+    """
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
         return super().json(**kwargs_with_defaults)
 
     def dict(self, **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
-        kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
-        return super().dict(**kwargs_with_defaults)
+        kwargs_with_defaults_exclude_unset: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
+        kwargs_with_defaults_exclude_none: typing.Any = {"by_alias": True, "exclude_none": True, **kwargs}
+
+        return deep_union_pydantic_dicts(
+            super().dict(**kwargs_with_defaults_exclude_unset), super().dict(**kwargs_with_defaults_exclude_none)
+        )
 
     class Config:
         frozen = True
         smart_union = True
         allow_population_by_field_name = True
+        populate_by_name = True
+        extra = pydantic_v1.Extra.allow
         json_encoders = {dt.datetime: serialize_datetime}

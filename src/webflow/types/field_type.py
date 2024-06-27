@@ -21,7 +21,7 @@ class FieldType(str, enum.Enum):
     PHONE = "Phone"
     NUMBER = "Number"
     DATE_TIME = "DateTime"
-    BOOLEAN = "Boolean"
+    SWITCH = "Switch"
     COLOR = "Color"
     EXT_FILE_REF = "ExtFileRef"
 
@@ -37,7 +37,7 @@ class FieldType(str, enum.Enum):
         phone: typing.Callable[[], T_Result],
         number: typing.Callable[[], T_Result],
         date_time: typing.Callable[[], T_Result],
-        boolean: typing.Callable[[], T_Result],
+        switch: typing.Callable[[], T_Result],
         color: typing.Callable[[], T_Result],
         ext_file_ref: typing.Callable[[], T_Result],
     ) -> T_Result:
@@ -61,8 +61,8 @@ class FieldType(str, enum.Enum):
             return number()
         if self is FieldType.DATE_TIME:
             return date_time()
-        if self is FieldType.BOOLEAN:
-            return boolean()
+        if self is FieldType.SWITCH:
+            return switch()
         if self is FieldType.COLOR:
             return color()
         if self is FieldType.EXT_FILE_REF:

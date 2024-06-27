@@ -4,50 +4,68 @@ import datetime as dt
 import typing
 
 from ..core.datetime_utils import serialize_datetime
+from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
 from .collection_item_field_data import CollectionItemFieldData
 
-try:
-    import pydantic.v1 as pydantic  # type: ignore
-except ImportError:
-    import pydantic  # type: ignore
 
-
-class CollectionItem(pydantic.BaseModel):
+class CollectionItem(pydantic_v1.BaseModel):
     """
     The fields that define the schema for a given Item are based on the Collection that Item belongs to. Beyond the user defined fields, there are a handful of additional fields that are automatically created for all items
     """
 
-    id: str = pydantic.Field(description="Unique identifier for the Item")
-    cms_locale_id: typing.Optional[str] = pydantic.Field(
-        alias="cmsLocaleId", default=None, description="Identifier for the locale of the CMS item"
-    )
-    last_published: typing.Optional[str] = pydantic.Field(
-        alias="lastPublished", default=None, description="The date the item was last published"
-    )
-    last_updated: typing.Optional[str] = pydantic.Field(
-        alias="lastUpdated", default=None, description="The date the item was last updated"
-    )
-    created_on: typing.Optional[str] = pydantic.Field(
-        alias="createdOn", default=None, description="The date the item was created"
-    )
-    is_archived: typing.Optional[bool] = pydantic.Field(
-        alias="isArchived", default=None, description="Boolean determining if the Item is set to archived"
-    )
-    is_draft: typing.Optional[bool] = pydantic.Field(
-        alias="isDraft", default=None, description="Boolean determining if the Item is set to draft"
-    )
-    field_data: typing.Optional[CollectionItemFieldData] = pydantic.Field(alias="fieldData", default=None)
+    id: str = pydantic_v1.Field()
+    """
+    Unique identifier for the Item
+    """
+
+    cms_locale_id: typing.Optional[str] = pydantic_v1.Field(alias="cmsLocaleId", default=None)
+    """
+    Identifier for the locale of the CMS item
+    """
+
+    last_published: typing.Optional[str] = pydantic_v1.Field(alias="lastPublished", default=None)
+    """
+    The date the item was last published
+    """
+
+    last_updated: typing.Optional[str] = pydantic_v1.Field(alias="lastUpdated", default=None)
+    """
+    The date the item was last updated
+    """
+
+    created_on: typing.Optional[str] = pydantic_v1.Field(alias="createdOn", default=None)
+    """
+    The date the item was created
+    """
+
+    is_archived: typing.Optional[bool] = pydantic_v1.Field(alias="isArchived", default=None)
+    """
+    Boolean determining if the Item is set to archived
+    """
+
+    is_draft: typing.Optional[bool] = pydantic_v1.Field(alias="isDraft", default=None)
+    """
+    Boolean determining if the Item is set to draft
+    """
+
+    field_data: typing.Optional[CollectionItemFieldData] = pydantic_v1.Field(alias="fieldData", default=None)
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
         return super().json(**kwargs_with_defaults)
 
     def dict(self, **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
-        kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
-        return super().dict(**kwargs_with_defaults)
+        kwargs_with_defaults_exclude_unset: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
+        kwargs_with_defaults_exclude_none: typing.Any = {"by_alias": True, "exclude_none": True, **kwargs}
+
+        return deep_union_pydantic_dicts(
+            super().dict(**kwargs_with_defaults_exclude_unset), super().dict(**kwargs_with_defaults_exclude_none)
+        )
 
     class Config:
         frozen = True
         smart_union = True
         allow_population_by_field_name = True
+        populate_by_name = True
+        extra = pydantic_v1.Extra.allow
         json_encoders = {dt.datetime: serialize_datetime}

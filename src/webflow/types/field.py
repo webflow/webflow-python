@@ -4,46 +4,66 @@ import datetime as dt
 import typing
 
 from ..core.datetime_utils import serialize_datetime
+from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
 from .field_type import FieldType
 
-try:
-    import pydantic.v1 as pydantic  # type: ignore
-except ImportError:
-    import pydantic  # type: ignore
 
-
-class Field(pydantic.BaseModel):
+class Field(pydantic_v1.BaseModel):
     """
     The details of a field in a collection
     """
 
-    id: str = pydantic.Field(description="Unique identifier for a Field")
-    is_required: bool = pydantic.Field(
-        alias="isRequired", description="define whether a field is required in a collection"
-    )
-    is_editable: typing.Optional[bool] = pydantic.Field(
-        alias="isEditable", default=None, description="Define whether the field is editable"
-    )
-    type: FieldType = pydantic.Field(description="Choose these appropriate field type for your collection data")
-    slug: typing.Optional[str] = pydantic.Field(
-        default=None,
-        description='Slug of Field in Site URL structure. Slugs should be all lowercase with no spaces. Any spaces will be converted to "-."',
-    )
-    display_name: str = pydantic.Field(alias="displayName", description="The name of a field")
-    help_text: typing.Optional[str] = pydantic.Field(
-        alias="helpText", default=None, description="Additional text to help anyone filling out this field"
-    )
+    id: str = pydantic_v1.Field()
+    """
+    Unique identifier for a Field
+    """
+
+    is_required: bool = pydantic_v1.Field(alias="isRequired")
+    """
+    define whether a field is required in a collection
+    """
+
+    is_editable: typing.Optional[bool] = pydantic_v1.Field(alias="isEditable", default=None)
+    """
+    Define whether the field is editable
+    """
+
+    type: FieldType = pydantic_v1.Field()
+    """
+    Choose these appropriate field type for your collection data
+    """
+
+    slug: typing.Optional[str] = pydantic_v1.Field(default=None)
+    """
+    Slug of Field in Site URL structure. Slugs should be all lowercase with no spaces. Any spaces will be converted to "-."
+    """
+
+    display_name: str = pydantic_v1.Field(alias="displayName")
+    """
+    The name of a field
+    """
+
+    help_text: typing.Optional[str] = pydantic_v1.Field(alias="helpText", default=None)
+    """
+    Additional text to help anyone filling out this field
+    """
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
         return super().json(**kwargs_with_defaults)
 
     def dict(self, **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
-        kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
-        return super().dict(**kwargs_with_defaults)
+        kwargs_with_defaults_exclude_unset: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
+        kwargs_with_defaults_exclude_none: typing.Any = {"by_alias": True, "exclude_none": True, **kwargs}
+
+        return deep_union_pydantic_dicts(
+            super().dict(**kwargs_with_defaults_exclude_unset), super().dict(**kwargs_with_defaults_exclude_none)
+        )
 
     class Config:
         frozen = True
         smart_union = True
         allow_population_by_field_name = True
+        populate_by_name = True
+        extra = pydantic_v1.Extra.allow
         json_encoders = {dt.datetime: serialize_datetime}

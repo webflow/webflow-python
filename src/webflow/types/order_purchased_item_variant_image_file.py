@@ -4,41 +4,64 @@ import datetime as dt
 import typing
 
 from ..core.datetime_utils import serialize_datetime
+from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
 from .order_purchased_item_variant_image_file_variants_item import OrderPurchasedItemVariantImageFileVariantsItem
 
-try:
-    import pydantic.v1 as pydantic  # type: ignore
-except ImportError:
-    import pydantic  # type: ignore
 
+class OrderPurchasedItemVariantImageFile(pydantic_v1.BaseModel):
+    size: typing.Optional[float] = pydantic_v1.Field(default=None)
+    """
+    The image size in bytes
+    """
 
-class OrderPurchasedItemVariantImageFile(pydantic.BaseModel):
-    size: typing.Optional[float] = pydantic.Field(default=None, description="The image size in bytes")
-    original_file_name: typing.Optional[str] = pydantic.Field(
-        alias="originalFileName", default=None, description="the original name of the image"
+    original_file_name: typing.Optional[str] = pydantic_v1.Field(alias="originalFileName", default=None)
+    """
+    the original name of the image
+    """
+
+    created_on: typing.Optional[dt.datetime] = pydantic_v1.Field(alias="createdOn", default=None)
+    """
+    The creation timestamp of the image
+    """
+
+    content_type: typing.Optional[str] = pydantic_v1.Field(alias="contentType", default=None)
+    """
+    The MIME type of the image
+    """
+
+    width: typing.Optional[int] = pydantic_v1.Field(default=None)
+    """
+    The image width in pixels
+    """
+
+    height: typing.Optional[int] = pydantic_v1.Field(default=None)
+    """
+    The image height in pixels
+    """
+
+    variants: typing.Optional[typing.List[OrderPurchasedItemVariantImageFileVariantsItem]] = pydantic_v1.Field(
+        default=None
     )
-    created_on: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="createdOn", default=None, description="The creation timestamp of the image"
-    )
-    content_type: typing.Optional[str] = pydantic.Field(
-        alias="contentType", default=None, description="The MIME type of the image"
-    )
-    width: typing.Optional[int] = pydantic.Field(default=None, description="The image width in pixels")
-    height: typing.Optional[int] = pydantic.Field(default=None, description="The image height in pixels")
-    variants: typing.Optional[typing.List[OrderPurchasedItemVariantImageFileVariantsItem]] = pydantic.Field(
-        default=None, description="Variants of the supplied image"
-    )
+    """
+    Variants of the supplied image
+    """
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
         return super().json(**kwargs_with_defaults)
 
     def dict(self, **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
-        kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
-        return super().dict(**kwargs_with_defaults)
+        kwargs_with_defaults_exclude_unset: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
+        kwargs_with_defaults_exclude_none: typing.Any = {"by_alias": True, "exclude_none": True, **kwargs}
+
+        return deep_union_pydantic_dicts(
+            super().dict(**kwargs_with_defaults_exclude_unset), super().dict(**kwargs_with_defaults_exclude_none)
+        )
 
     class Config:
         frozen = True
         smart_union = True
         allow_population_by_field_name = True
+        populate_by_name = True
+        extra = pydantic_v1.Extra.allow
         json_encoders = {dt.datetime: serialize_datetime}

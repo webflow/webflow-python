@@ -4,67 +4,102 @@ import datetime as dt
 import typing
 
 from ..core.datetime_utils import serialize_datetime
+from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
 from .page_open_graph import PageOpenGraph
 from .page_seo import PageSeo
 
-try:
-    import pydantic.v1 as pydantic  # type: ignore
-except ImportError:
-    import pydantic  # type: ignore
 
-
-class Page(pydantic.BaseModel):
+class Page(pydantic_v1.BaseModel):
     """
     The Page object
     """
 
-    id: typing.Optional[str] = pydantic.Field(default=None, description="Unique identifier for the Page")
-    site_id: typing.Optional[str] = pydantic.Field(
-        alias="siteId", default=None, description="Unique identifier for the Site"
-    )
-    title: typing.Optional[str] = pydantic.Field(default=None, description="Title of the Page")
-    slug: typing.Optional[str] = pydantic.Field(default=None, description="slug of the Page (derived from title)")
-    parent_id: typing.Optional[str] = pydantic.Field(
-        alias="parentId", default=None, description="Identifier of the parent folder"
-    )
-    collection_id: typing.Optional[str] = pydantic.Field(
-        alias="collectionId",
-        default=None,
-        description="Unique identifier for a linked Collection, value will be null if the Page is not part of a Collection.",
-    )
-    created_on: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="createdOn", default=None, description="The date the Page was created"
-    )
-    last_updated: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="lastUpdated", default=None, description="The date the Page was most recently updated"
-    )
-    archived: typing.Optional[bool] = pydantic.Field(default=None, description="Whether the Page has been archived")
-    draft: typing.Optional[bool] = pydantic.Field(default=None, description="Whether the Page is a draft")
-    can_branch: typing.Optional[bool] = pydantic.Field(
-        alias="canBranch",
-        default=None,
-        description="Indicates whether the Page supports [Page Branching](https://university.webflow.com/lesson/page-branching)",
-    )
-    is_members_only: typing.Optional[bool] = pydantic.Field(
-        alias="isMembersOnly",
-        default=None,
-        description="Indicates whether the Page is restricted by [Memberships Controls](https://university.webflow.com/lesson/webflow-memberships-overview#how-to-manage-page-restrictions)",
-    )
-    seo: typing.Optional[PageSeo] = pydantic.Field(default=None, description="SEO-related fields for the Page")
-    open_graph: typing.Optional[PageOpenGraph] = pydantic.Field(
-        alias="openGraph", default=None, description="Open Graph fields for the Page"
-    )
+    id: typing.Optional[str] = pydantic_v1.Field(default=None)
+    """
+    Unique identifier for the Page
+    """
+
+    site_id: typing.Optional[str] = pydantic_v1.Field(alias="siteId", default=None)
+    """
+    Unique identifier for the Site
+    """
+
+    title: typing.Optional[str] = pydantic_v1.Field(default=None)
+    """
+    Title of the Page
+    """
+
+    slug: typing.Optional[str] = pydantic_v1.Field(default=None)
+    """
+    slug of the Page (derived from title)
+    """
+
+    parent_id: typing.Optional[str] = pydantic_v1.Field(alias="parentId", default=None)
+    """
+    Identifier of the parent folder
+    """
+
+    collection_id: typing.Optional[str] = pydantic_v1.Field(alias="collectionId", default=None)
+    """
+    Unique identifier for a linked Collection, value will be null if the Page is not part of a Collection.
+    """
+
+    created_on: typing.Optional[dt.datetime] = pydantic_v1.Field(alias="createdOn", default=None)
+    """
+    The date the Page was created
+    """
+
+    last_updated: typing.Optional[dt.datetime] = pydantic_v1.Field(alias="lastUpdated", default=None)
+    """
+    The date the Page was most recently updated
+    """
+
+    archived: typing.Optional[bool] = pydantic_v1.Field(default=None)
+    """
+    Whether the Page has been archived
+    """
+
+    draft: typing.Optional[bool] = pydantic_v1.Field(default=None)
+    """
+    Whether the Page is a draft
+    """
+
+    can_branch: typing.Optional[bool] = pydantic_v1.Field(alias="canBranch", default=None)
+    """
+    Indicates whether the Page supports [Page Branching](https://university.webflow.com/lesson/page-branching)
+    """
+
+    is_members_only: typing.Optional[bool] = pydantic_v1.Field(alias="isMembersOnly", default=None)
+    """
+    Indicates whether the Page is restricted by [Memberships Controls](https://university.webflow.com/lesson/webflow-memberships-overview#how-to-manage-page-restrictions)
+    """
+
+    seo: typing.Optional[PageSeo] = pydantic_v1.Field(default=None)
+    """
+    SEO-related fields for the Page
+    """
+
+    open_graph: typing.Optional[PageOpenGraph] = pydantic_v1.Field(alias="openGraph", default=None)
+    """
+    Open Graph fields for the Page
+    """
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
         return super().json(**kwargs_with_defaults)
 
     def dict(self, **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
-        kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
-        return super().dict(**kwargs_with_defaults)
+        kwargs_with_defaults_exclude_unset: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
+        kwargs_with_defaults_exclude_none: typing.Any = {"by_alias": True, "exclude_none": True, **kwargs}
+
+        return deep_union_pydantic_dicts(
+            super().dict(**kwargs_with_defaults_exclude_unset), super().dict(**kwargs_with_defaults_exclude_none)
+        )
 
     class Config:
         frozen = True
         smart_union = True
         allow_population_by_field_name = True
+        populate_by_name = True
+        extra = pydantic_v1.Extra.allow
         json_encoders = {dt.datetime: serialize_datetime}

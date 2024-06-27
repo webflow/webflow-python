@@ -4,49 +4,63 @@ import datetime as dt
 import typing
 
 from ..core.datetime_utils import serialize_datetime
+from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
 from .trigger_type import TriggerType
 
-try:
-    import pydantic.v1 as pydantic  # type: ignore
-except ImportError:
-    import pydantic  # type: ignore
 
+class Webhook(pydantic_v1.BaseModel):
+    id: typing.Optional[str] = pydantic_v1.Field(default=None)
+    """
+    Unique identifier for the Webhook registration
+    """
 
-class Webhook(pydantic.BaseModel):
-    id: typing.Optional[str] = pydantic.Field(
-        default=None, description="Unique identifier for the Webhook registration"
-    )
-    workspace_id: typing.Optional[str] = pydantic.Field(
-        alias="workspaceId",
-        default=None,
-        description="Unique identifier for the Workspace the Webhook is registered in",
-    )
-    site_id: typing.Optional[str] = pydantic.Field(
-        alias="siteId", default=None, description="Unique identifier for the Site the Webhook is registered in"
-    )
-    trigger_type: typing.Optional[TriggerType] = pydantic.Field(alias="triggerType", default=None)
-    filter: typing.Optional[typing.Dict[str, typing.Any]] = pydantic.Field(
-        default=None,
-        description="Filter for selecting which events you want Webhooks to be sent for. Only supported for form_submission trigger types.",
-    )
-    last_triggered: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="lastTriggered", default=None, description="Date the Webhook instance was last triggered"
-    )
-    created_on: typing.Optional[dt.datetime] = pydantic.Field(
-        alias="createdOn", default=None, description="Date the Webhook registration was created"
-    )
-    url: typing.Optional[str] = pydantic.Field(default=None, description="URL to send the Webhook payload to")
+    workspace_id: typing.Optional[str] = pydantic_v1.Field(alias="workspaceId", default=None)
+    """
+    Unique identifier for the Workspace the Webhook is registered in
+    """
+
+    site_id: typing.Optional[str] = pydantic_v1.Field(alias="siteId", default=None)
+    """
+    Unique identifier for the Site the Webhook is registered in
+    """
+
+    trigger_type: typing.Optional[TriggerType] = pydantic_v1.Field(alias="triggerType", default=None)
+    filter: typing.Optional[typing.Dict[str, typing.Any]] = pydantic_v1.Field(default=None)
+    """
+    Filter for selecting which events you want Webhooks to be sent for. Only supported for form_submission trigger types.
+    """
+
+    last_triggered: typing.Optional[dt.datetime] = pydantic_v1.Field(alias="lastTriggered", default=None)
+    """
+    Date the Webhook instance was last triggered
+    """
+
+    created_on: typing.Optional[dt.datetime] = pydantic_v1.Field(alias="createdOn", default=None)
+    """
+    Date the Webhook registration was created
+    """
+
+    url: typing.Optional[str] = pydantic_v1.Field(default=None)
+    """
+    URL to send the Webhook payload to
+    """
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
         return super().json(**kwargs_with_defaults)
 
     def dict(self, **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
-        kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
-        return super().dict(**kwargs_with_defaults)
+        kwargs_with_defaults_exclude_unset: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
+        kwargs_with_defaults_exclude_none: typing.Any = {"by_alias": True, "exclude_none": True, **kwargs}
+
+        return deep_union_pydantic_dicts(
+            super().dict(**kwargs_with_defaults_exclude_unset), super().dict(**kwargs_with_defaults_exclude_none)
+        )
 
     class Config:
         frozen = True
         smart_union = True
         allow_population_by_field_name = True
+        populate_by_name = True
+        extra = pydantic_v1.Extra.allow
         json_encoders = {dt.datetime: serialize_datetime}
