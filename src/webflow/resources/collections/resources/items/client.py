@@ -9,18 +9,28 @@ from .....core.jsonable_encoder import jsonable_encoder
 from .....core.pydantic_utilities import pydantic_v1
 from .....core.request_options import RequestOptions
 from .....errors.bad_request_error import BadRequestError
+from .....errors.conflict_error import ConflictError
 from .....errors.internal_server_error import InternalServerError
 from .....errors.not_found_error import NotFoundError
 from .....errors.too_many_requests_error import TooManyRequestsError
 from .....errors.unauthorized_error import UnauthorizedError
+from .....types.bulk_collection_item import BulkCollectionItem
 from .....types.collection_item import CollectionItem
 from .....types.collection_item_field_data import CollectionItemFieldData
 from .....types.collection_item_list import CollectionItemList
-from .types.bulk_collection_item_field_data import BulkCollectionItemFieldData
+from .....types.collection_item_list_no_pagination import CollectionItemListNoPagination
+from .....types.collection_item_with_id_input import CollectionItemWithIdInput
+from .....types.error import Error
+from .types.create_bulk_collection_item_request_body_field_data import CreateBulkCollectionItemRequestBodyFieldData
+from .types.items_create_item_live_request import ItemsCreateItemLiveRequest
+from .types.items_create_item_request import ItemsCreateItemRequest
+from .types.items_delete_items_live_request_items_item import ItemsDeleteItemsLiveRequestItemsItem
+from .types.items_delete_items_request_items_item import ItemsDeleteItemsRequestItemsItem
 from .types.items_list_items_live_request_sort_by import ItemsListItemsLiveRequestSortBy
 from .types.items_list_items_live_request_sort_order import ItemsListItemsLiveRequestSortOrder
 from .types.items_list_items_request_sort_by import ItemsListItemsRequestSortBy
 from .types.items_list_items_request_sort_order import ItemsListItemsRequestSortOrder
+from .types.items_publish_item_response import ItemsPublishItemResponse
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
@@ -44,7 +54,9 @@ class ItemsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CollectionItemList:
         """
-        List of all Items within a Collection. </br></br> Required scope | `CMS:read`
+        List of all Items within a Collection.
+
+        Required scope | `CMS:read`
 
         Parameters
         ----------
@@ -88,7 +100,7 @@ class ItemsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.collections.items.list_items(
-            collection_id="collection_id",
+            collection_id="580e63fc8c9a982ac9b8b745",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -111,13 +123,13 @@ class ItemsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -127,46 +139,96 @@ class ItemsClient:
         self,
         collection_id: str,
         *,
-        id: str,
-        cms_locale_id: typing.Optional[str] = OMIT,
-        last_published: typing.Optional[str] = OMIT,
-        last_updated: typing.Optional[str] = OMIT,
-        created_on: typing.Optional[str] = OMIT,
-        is_archived: typing.Optional[bool] = OMIT,
-        is_draft: typing.Optional[bool] = OMIT,
-        field_data: typing.Optional[CollectionItemFieldData] = OMIT,
+        request: ItemsCreateItemRequest,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> None:
+    ) -> CollectionItem:
         """
-        Create Item in a Collection.</br></br> To create items across multiple locales, <a href="https://developers.webflow.com/data/reference/create-item-for-multiple-locales"> please use this endpoint.</a> </br></br> Required scope | `CMS:write`
+        Create Item(s) in a Collection.
+
+        To create items across multiple locales, please use [this endpoint.](/data/v2.0.0/reference/cms/collection-items/bulk-items/create-items)
+
+        Required scope | `CMS:write`
 
         Parameters
         ----------
         collection_id : str
             Unique identifier for a Collection
 
-        id : str
-            Unique identifier for the Item
+        request : ItemsCreateItemRequest
 
-        cms_locale_id : typing.Optional[str]
-            Identifier for the locale of the CMS item
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
 
-        last_published : typing.Optional[str]
-            The date the item was last published
+        Returns
+        -------
+        CollectionItem
+            Request was successful
 
-        last_updated : typing.Optional[str]
-            The date the item was last updated
+        Examples
+        --------
+        from webflow import CollectionItem, CollectionItemFieldData
+        from webflow.client import Webflow
 
-        created_on : typing.Optional[str]
-            The date the item was created
+        client = Webflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+        client.collections.items.create_item(
+            collection_id="580e63fc8c9a982ac9b8b745",
+            request=CollectionItem(
+                is_archived=False,
+                is_draft=False,
+                field_data=CollectionItemFieldData(
+                    name="Pan Galactic Gargle Blaster Recipe",
+                    slug="pan-galactic-gargle-blaster",
+                ),
+            ),
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"collections/{jsonable_encoder(collection_id)}/items",
+            method="POST",
+            json=request,
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return pydantic_v1.parse_obj_as(CollectionItem, _response.json())  # type: ignore
+            if _response.status_code == 400:
+                raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+            if _response.status_code == 401:
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            if _response.status_code == 404:
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            if _response.status_code == 429:
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            if _response.status_code == 500:
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
 
-        is_archived : typing.Optional[bool]
-            Boolean determining if the Item is set to archived
+    def delete_items(
+        self,
+        collection_id: str,
+        *,
+        items: typing.Optional[typing.Sequence[ItemsDeleteItemsRequestItemsItem]] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> None:
+        """
+        Delete Items from a Collection.
 
-        is_draft : typing.Optional[bool]
-            Boolean determining if the Item is set to draft
+        **Note:** If the `cmsLocaleId` parameter is undefined or empty and the items are localized, items will be deleted only in the primary locale.
 
-        field_data : typing.Optional[CollectionItemFieldData]
+        Required scope | `CMS:write`
+
+        Parameters
+        ----------
+        collection_id : str
+            Unique identifier for a Collection
+
+        items : typing.Optional[typing.Sequence[ItemsDeleteItemsRequestItemsItem]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -177,40 +239,19 @@ class ItemsClient:
 
         Examples
         --------
-        from webflow import CollectionItemFieldData
         from webflow.client import Webflow
 
         client = Webflow(
             access_token="YOUR_ACCESS_TOKEN",
         )
-        client.collections.items.create_item(
-            collection_id="collection_id",
-            id="42b720ef280c7a7a3be8cabe",
-            cms_locale_id="653ad57de882f528b32e810e",
-            last_published="2022-11-29T16:22:43.159Z",
-            last_updated="2022-11-17T17:19:43.282Z",
-            created_on="2022-11-17T17:11:57.148Z",
-            is_archived=False,
-            is_draft=False,
-            field_data=CollectionItemFieldData(
-                name="Pan Galactic Gargle Blaster Recipe",
-                slug="pan-galactic-gargle-blaster",
-            ),
+        client.collections.items.delete_items(
+            collection_id="580e63fc8c9a982ac9b8b745",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items",
-            method="POST",
-            json={
-                "id": id,
-                "cmsLocaleId": cms_locale_id,
-                "lastPublished": last_published,
-                "lastUpdated": last_updated,
-                "createdOn": created_on,
-                "isArchived": is_archived,
-                "isDraft": is_draft,
-                "fieldData": field_data,
-            },
+            method="DELETE",
+            json={"items": items},
             request_options=request_options,
             omit=OMIT,
         )
@@ -220,13 +261,116 @@ class ItemsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    def update_items(
+        self,
+        collection_id: str,
+        *,
+        items: typing.Optional[typing.Sequence[CollectionItemWithIdInput]] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> CollectionItem:
+        """
+        Update a single item or multiple items (up to 100) in a Collection.
+
+        **Note:** If the `cmsLocaleId` parameter is undefined or empty and the items are localized, items will be updated only in the primary locale.
+
+        Required scope | `CMS:write`
+
+        Parameters
+        ----------
+        collection_id : str
+            Unique identifier for a Collection
+
+        items : typing.Optional[typing.Sequence[CollectionItemWithIdInput]]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        CollectionItem
+            Request was successful
+
+        Examples
+        --------
+        from webflow import (
+            CollectionItemWithIdInput,
+            CollectionItemWithIdInputFieldData,
+        )
+        from webflow.client import Webflow
+
+        client = Webflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+        client.collections.items.update_items(
+            collection_id="580e63fc8c9a982ac9b8b745",
+            items=[
+                CollectionItemWithIdInput(
+                    id="66f6ed9576ddacf3149d5ea6",
+                    cms_locale_id="66f6e966c9e1dc700a857ca5",
+                    field_data=CollectionItemWithIdInputFieldData(
+                        name="Ne Paniquez Pas",
+                        slug="ne-paniquez-pas",
+                    ),
+                ),
+                CollectionItemWithIdInput(
+                    id="66f6ed9576ddacf3149d5ea6",
+                    cms_locale_id="66f6e966c9e1dc700a857ca4",
+                    field_data=CollectionItemWithIdInputFieldData(
+                        name="No Entrar en Pánico",
+                        slug="no-entrar-en-panico",
+                    ),
+                ),
+                CollectionItemWithIdInput(
+                    id="66f6ed9576ddacf3149d5eaa",
+                    cms_locale_id="66f6e966c9e1dc700a857ca5",
+                    field_data=CollectionItemWithIdInputFieldData(
+                        name="Au Revoir et Merci pour Tous les Poissons",
+                        slug="au-revoir-et-merci",
+                    ),
+                ),
+                CollectionItemWithIdInput(
+                    id="66f6ed9576ddacf3149d5eaa",
+                    cms_locale_id="66f6e966c9e1dc700a857ca4",
+                    field_data=CollectionItemWithIdInputFieldData(
+                        name="Hasta Luego y Gracias por Todo el Pescado",
+                        slug="hasta-luego-y-gracias",
+                    ),
+                ),
+            ],
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"collections/{jsonable_encoder(collection_id)}/items",
+            method="PATCH",
+            json={"items": items},
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return pydantic_v1.parse_obj_as(CollectionItem, _response.json())  # type: ignore
+            if _response.status_code == 400:
+                raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+            if _response.status_code == 401:
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            if _response.status_code == 404:
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            if _response.status_code == 429:
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            if _response.status_code == 500:
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -246,7 +390,9 @@ class ItemsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CollectionItemList:
         """
-        List of all live Items within a Collection. </br></br> Required scope | `CMS:read`
+        List of all live Items within a Collection.
+
+        Required scope | `CMS:read`
 
         Parameters
         ----------
@@ -290,7 +436,7 @@ class ItemsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.collections.items.list_items_live(
-            collection_id="collection_id",
+            collection_id="580e63fc8c9a982ac9b8b745",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -313,13 +459,13 @@ class ItemsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -329,155 +475,96 @@ class ItemsClient:
         self,
         collection_id: str,
         *,
-        id: str,
-        cms_locale_id: typing.Optional[str] = OMIT,
-        last_published: typing.Optional[str] = OMIT,
-        last_updated: typing.Optional[str] = OMIT,
-        created_on: typing.Optional[str] = OMIT,
-        is_archived: typing.Optional[bool] = OMIT,
-        is_draft: typing.Optional[bool] = OMIT,
-        field_data: typing.Optional[CollectionItemFieldData] = OMIT,
+        request: ItemsCreateItemLiveRequest,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> None:
+    ) -> CollectionItem:
         """
-        Create live Item in a Collection. This Item will be published to the live site. </br></br> To create items across multiple locales, <a href="https://developers.webflow.com/data/reference/create-item-for-multiple-locales"> please use this endpoint.</a> </br></br> Required scope | `CMS:write`
+        Create live Item(s) in a Collection. The Item(s) will be published to the live site.
+
+        To create items across multiple locales, [please use this endpoint.](/v2.0.0/data/reference/cms/collection-items/bulk-items/create-items)
+
+        Required scope | `CMS:write`
 
         Parameters
         ----------
         collection_id : str
             Unique identifier for a Collection
 
-        id : str
-            Unique identifier for the Item
-
-        cms_locale_id : typing.Optional[str]
-            Identifier for the locale of the CMS item
-
-        last_published : typing.Optional[str]
-            The date the item was last published
-
-        last_updated : typing.Optional[str]
-            The date the item was last updated
-
-        created_on : typing.Optional[str]
-            The date the item was created
-
-        is_archived : typing.Optional[bool]
-            Boolean determining if the Item is set to archived
-
-        is_draft : typing.Optional[bool]
-            Boolean determining if the Item is set to draft
-
-        field_data : typing.Optional[CollectionItemFieldData]
+        request : ItemsCreateItemLiveRequest
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        None
+        CollectionItem
+            Request was successful
 
         Examples
         --------
-        from webflow import CollectionItemFieldData
+        from webflow import CollectionItem, CollectionItemFieldData
         from webflow.client import Webflow
 
         client = Webflow(
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.collections.items.create_item_live(
-            collection_id="collection_id",
-            id="42b720ef280c7a7a3be8cabe",
-            cms_locale_id="653ad57de882f528b32e810e",
-            last_published="2022-11-29T16:22:43.159Z",
-            last_updated="2022-11-17T17:19:43.282Z",
-            created_on="2022-11-17T17:11:57.148Z",
-            is_archived=False,
-            is_draft=False,
-            field_data=CollectionItemFieldData(
-                name="Pan Galactic Gargle Blaster Recipe",
-                slug="pan-galactic-gargle-blaster",
+            collection_id="580e63fc8c9a982ac9b8b745",
+            request=CollectionItem(
+                is_archived=False,
+                is_draft=False,
+                field_data=CollectionItemFieldData(
+                    name="Pan Galactic Gargle Blaster Recipe",
+                    slug="pan-galactic-gargle-blaster",
+                ),
             ),
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/live",
             method="POST",
-            json={
-                "id": id,
-                "cmsLocaleId": cms_locale_id,
-                "lastPublished": last_published,
-                "lastUpdated": last_updated,
-                "createdOn": created_on,
-                "isArchived": is_archived,
-                "isDraft": is_draft,
-                "fieldData": field_data,
-            },
+            json=request,
             request_options=request_options,
             omit=OMIT,
         )
         try:
             if 200 <= _response.status_code < 300:
-                return
+                return pydantic_v1.parse_obj_as(CollectionItem, _response.json())  # type: ignore
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def create_item_for_multiple_locales(
+    def delete_items_live(
         self,
         collection_id: str,
         *,
-        id: str,
-        cms_locale_ids: typing.Optional[typing.Sequence[str]] = OMIT,
-        last_published: typing.Optional[str] = OMIT,
-        last_updated: typing.Optional[str] = OMIT,
-        created_on: typing.Optional[str] = OMIT,
-        is_archived: typing.Optional[bool] = OMIT,
-        is_draft: typing.Optional[bool] = OMIT,
-        field_data: typing.Optional[BulkCollectionItemFieldData] = OMIT,
+        items: typing.Optional[typing.Sequence[ItemsDeleteItemsLiveRequestItemsItem]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> None:
         """
-        Create single Item in a Collection with multiple corresponding locales. </br></br> Required scope | `CMS:write`
+        Remove an item or multiple items (up to 100 items) from the live site. Deleting published items will unpublish the items from the live site and set them to draft.
+
+        **Note:** If the `cmsLocaleId` parameter is undefined or empty and the items are localized, items will be unpublished only in the primary locale.
+
+        Required scope | `CMS:write`
 
         Parameters
         ----------
         collection_id : str
             Unique identifier for a Collection
 
-        id : str
-            Unique identifier for the Item
-
-        cms_locale_ids : typing.Optional[typing.Sequence[str]]
-            Array of identifiers for the locales where the item will be created
-
-        last_published : typing.Optional[str]
-            The date the item was last published
-
-        last_updated : typing.Optional[str]
-            The date the item was last updated
-
-        created_on : typing.Optional[str]
-            The date the item was created
-
-        is_archived : typing.Optional[bool]
-            Boolean determining if the Item is set to archived
-
-        is_draft : typing.Optional[bool]
-            Boolean determining if the Item is set to draft
-
-        field_data : typing.Optional[BulkCollectionItemFieldData]
+        items : typing.Optional[typing.Sequence[ItemsDeleteItemsLiveRequestItemsItem]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -493,24 +580,14 @@ class ItemsClient:
         client = Webflow(
             access_token="YOUR_ACCESS_TOKEN",
         )
-        client.collections.items.create_item_for_multiple_locales(
-            collection_id="collection_id",
-            id="580e64008c9a982ac9b8b754",
+        client.collections.items.delete_items_live(
+            collection_id="580e63fc8c9a982ac9b8b745",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"collections/{jsonable_encoder(collection_id)}/items/bulk",
-            method="POST",
-            json={
-                "id": id,
-                "cmsLocaleIds": cms_locale_ids,
-                "lastPublished": last_published,
-                "lastUpdated": last_updated,
-                "createdOn": created_on,
-                "isArchived": is_archived,
-                "isDraft": is_draft,
-                "fieldData": field_data,
-            },
+            f"collections/{jsonable_encoder(collection_id)}/items/live",
+            method="DELETE",
+            json={"items": items},
             request_options=request_options,
             omit=OMIT,
         )
@@ -520,13 +597,215 @@ class ItemsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    def update_items_live(
+        self,
+        collection_id: str,
+        *,
+        items: typing.Optional[typing.Sequence[CollectionItemWithIdInput]] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> CollectionItemListNoPagination:
+        """
+        Update a single live item or multiple live items (up to 100) in a Collection
+
+        **Note:** If the `cmsLocaleId` parameter is undefined or empty and the items are localized, items will be updated only in the primary locale.
+
+        Required scope | `CMS:write`
+
+        Parameters
+        ----------
+        collection_id : str
+            Unique identifier for a Collection
+
+        items : typing.Optional[typing.Sequence[CollectionItemWithIdInput]]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        CollectionItemListNoPagination
+            Request was successful
+
+        Examples
+        --------
+        from webflow import (
+            CollectionItemWithIdInput,
+            CollectionItemWithIdInputFieldData,
+        )
+        from webflow.client import Webflow
+
+        client = Webflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+        client.collections.items.update_items_live(
+            collection_id="580e63fc8c9a982ac9b8b745",
+            items=[
+                CollectionItemWithIdInput(
+                    id="66f6ed9576ddacf3149d5ea6",
+                    cms_locale_id="66f6e966c9e1dc700a857ca5",
+                    field_data=CollectionItemWithIdInputFieldData(
+                        name="Ne Paniquez Pas",
+                        slug="ne-paniquez-pas",
+                    ),
+                ),
+                CollectionItemWithIdInput(
+                    id="66f6ed9576ddacf3149d5ea6",
+                    cms_locale_id="66f6e966c9e1dc700a857ca4",
+                    field_data=CollectionItemWithIdInputFieldData(
+                        name="No Entrar en Pánico",
+                        slug="no-entrar-en-panico",
+                    ),
+                ),
+                CollectionItemWithIdInput(
+                    id="66f6ed9576ddacf3149d5eaa",
+                    cms_locale_id="66f6e966c9e1dc700a857ca5",
+                    field_data=CollectionItemWithIdInputFieldData(
+                        name="Au Revoir et Merci pour Tous les Poissons",
+                        slug="au-revoir-et-merci",
+                    ),
+                ),
+                CollectionItemWithIdInput(
+                    id="66f6ed9576ddacf3149d5eaa",
+                    cms_locale_id="66f6e966c9e1dc700a857ca4",
+                    field_data=CollectionItemWithIdInputFieldData(
+                        name="Hasta Luego y Gracias por Todo el Pescado",
+                        slug="hasta-luego-y-gracias",
+                    ),
+                ),
+            ],
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"collections/{jsonable_encoder(collection_id)}/items/live",
+            method="PATCH",
+            json={"items": items},
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return pydantic_v1.parse_obj_as(CollectionItemListNoPagination, _response.json())  # type: ignore
+            if _response.status_code == 400:
+                raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+            if _response.status_code == 401:
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            if _response.status_code == 404:
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            if _response.status_code == 429:
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            if _response.status_code == 500:
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    def create_items(
+        self,
+        collection_id: str,
+        *,
+        cms_locale_ids: typing.Optional[typing.Sequence[str]] = OMIT,
+        is_archived: typing.Optional[bool] = OMIT,
+        is_draft: typing.Optional[bool] = OMIT,
+        field_data: typing.Optional[CreateBulkCollectionItemRequestBodyFieldData] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> BulkCollectionItem:
+        """
+        Create an item or multiple items in a CMS Collection across multiple corresponding locales.
+
+        **Notes:**
+
+        - This endpoint can create up to 100 items in a request.
+        - If the `cmsLocaleIds` parameter is undefined or empty and localization is enabled, items will only be created in the primary locale.
+
+        Required scope | `CMS:write`
+
+        Parameters
+        ----------
+        collection_id : str
+            Unique identifier for a Collection
+
+        cms_locale_ids : typing.Optional[typing.Sequence[str]]
+            Array of identifiers for the locales where the item will be created
+
+        is_archived : typing.Optional[bool]
+            Indicates whether the item is archived.
+
+        is_draft : typing.Optional[bool]
+            Indicates whether the item is in draft state.
+
+        field_data : typing.Optional[CreateBulkCollectionItemRequestBodyFieldData]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        BulkCollectionItem
+            Request was successful
+
+        Examples
+        --------
+        from webflow.client import Webflow
+        from webflow.resources.collections import (
+            CreateBulkCollectionItemRequestBodyFieldDataName,
+        )
+
+        client = Webflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+        client.collections.items.create_items(
+            collection_id="580e63fc8c9a982ac9b8b745",
+            cms_locale_ids=[
+                "66f6e966c9e1dc700a857ca3",
+                "66f6e966c9e1dc700a857ca4",
+                "66f6e966c9e1dc700a857ca5",
+            ],
+            is_archived=False,
+            is_draft=False,
+            field_data=CreateBulkCollectionItemRequestBodyFieldDataName(
+                name="Don’t Panic",
+                slug="dont-panic",
+            ),
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"collections/{jsonable_encoder(collection_id)}/items/bulk",
+            method="POST",
+            json={
+                "cmsLocaleIds": cms_locale_ids,
+                "isArchived": is_archived,
+                "isDraft": is_draft,
+                "fieldData": field_data,
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return pydantic_v1.parse_obj_as(BulkCollectionItem, _response.json())  # type: ignore
+            if _response.status_code == 400:
+                raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+            if _response.status_code == 401:
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            if _response.status_code == 404:
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            if _response.status_code == 429:
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            if _response.status_code == 500:
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -541,7 +820,9 @@ class ItemsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CollectionItem:
         """
-        Get details of a selected Collection Item. </br></br> Required scope | `CMS:read`
+        Get details of a selected Collection Item.
+
+        Required scope | `CMS:read`
 
         Parameters
         ----------
@@ -570,8 +851,8 @@ class ItemsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.collections.items.get_item(
-            collection_id="collection_id",
-            item_id="item_id",
+            collection_id="580e63fc8c9a982ac9b8b745",
+            item_id="580e64008c9a982ac9b8b754",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -586,13 +867,13 @@ class ItemsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -607,7 +888,9 @@ class ItemsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> None:
         """
-        Delete an Item from a Collection. This endpoint does not currently support bulk deletion. </br></br> Required scope | `CMS:write`
+        Delete an Item from a Collection. This endpoint does not currently support bulk deletion.
+
+        Required scope | `CMS:write`
 
         Parameters
         ----------
@@ -635,8 +918,8 @@ class ItemsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.collections.items.delete_item(
-            collection_id="collection_id",
-            item_id="item_id",
+            collection_id="580e63fc8c9a982ac9b8b745",
+            item_id="580e64008c9a982ac9b8b754",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -651,13 +934,13 @@ class ItemsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -668,7 +951,7 @@ class ItemsClient:
         collection_id: str,
         item_id: str,
         *,
-        id: str,
+        id: typing.Optional[str] = OMIT,
         cms_locale_id: typing.Optional[str] = OMIT,
         last_published: typing.Optional[str] = OMIT,
         last_updated: typing.Optional[str] = OMIT,
@@ -679,7 +962,9 @@ class ItemsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CollectionItem:
         """
-        Update a selected Item in a Collection. </br></br> Required scope | `CMS:write`
+        Update a selected Item in a Collection.
+
+        Required scope | `CMS:write`
 
         Parameters
         ----------
@@ -689,7 +974,7 @@ class ItemsClient:
         item_id : str
             Unique identifier for an Item
 
-        id : str
+        id : typing.Optional[str]
             Unique identifier for the Item
 
         cms_locale_id : typing.Optional[str]
@@ -729,8 +1014,8 @@ class ItemsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.collections.items.update_item(
-            collection_id="collection_id",
-            item_id="item_id",
+            collection_id="580e63fc8c9a982ac9b8b745",
+            item_id="580e64008c9a982ac9b8b754",
             id="42b720ef280c7a7a3be8cabe",
             cms_locale_id="653ad57de882f528b32e810e",
             last_published="2022-11-29T16:22:43.159Z",
@@ -766,13 +1051,13 @@ class ItemsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -787,7 +1072,9 @@ class ItemsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CollectionItem:
         """
-        Get details of a selected Collection live Item. </br></br> Required scope | `CMS:read`
+        Get details of a selected Collection live Item.
+
+        Required scope | `CMS:read`
 
         Parameters
         ----------
@@ -816,8 +1103,8 @@ class ItemsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.collections.items.get_item_live(
-            collection_id="collection_id",
-            item_id="item_id",
+            collection_id="580e63fc8c9a982ac9b8b745",
+            item_id="580e64008c9a982ac9b8b754",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -832,13 +1119,13 @@ class ItemsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -853,7 +1140,11 @@ class ItemsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> None:
         """
-        Remove a live item from the site. Removing a published item will unpublish the item from the live site and set it to draft. This endpoint does not currently support bulk deletion. </br></br> Required scope | `CMS:write`
+        Remove a live item from the site. Removing a published item will unpublish the item from the live site and set it to draft.
+
+        This endpoint does not currently support bulk deletion.
+
+        Required scope | `CMS:write`
 
         Parameters
         ----------
@@ -881,8 +1172,8 @@ class ItemsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.collections.items.delete_item_live(
-            collection_id="collection_id",
-            item_id="item_id",
+            collection_id="580e63fc8c9a982ac9b8b745",
+            item_id="580e64008c9a982ac9b8b754",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -897,13 +1188,13 @@ class ItemsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -914,7 +1205,7 @@ class ItemsClient:
         collection_id: str,
         item_id: str,
         *,
-        id: str,
+        id: typing.Optional[str] = OMIT,
         cms_locale_id: typing.Optional[str] = OMIT,
         last_published: typing.Optional[str] = OMIT,
         last_updated: typing.Optional[str] = OMIT,
@@ -925,7 +1216,9 @@ class ItemsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CollectionItem:
         """
-        Update a selected live Item in a Collection. The updates for this Item will be published to the live site. </br></br> Required scope | `CMS:write`
+        Update a selected live Item in a Collection. The updates for this Item will be published to the live site.
+
+        Required scope | `CMS:write`
 
         Parameters
         ----------
@@ -935,7 +1228,7 @@ class ItemsClient:
         item_id : str
             Unique identifier for an Item
 
-        id : str
+        id : typing.Optional[str]
             Unique identifier for the Item
 
         cms_locale_id : typing.Optional[str]
@@ -975,8 +1268,8 @@ class ItemsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.collections.items.update_item_live(
-            collection_id="collection_id",
-            item_id="item_id",
+            collection_id="580e63fc8c9a982ac9b8b745",
+            item_id="580e64008c9a982ac9b8b754",
             id="42b720ef280c7a7a3be8cabe",
             cms_locale_id="653ad57de882f528b32e810e",
             last_published="2022-11-29T16:22:43.159Z",
@@ -1012,13 +1305,13 @@ class ItemsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -1030,9 +1323,11 @@ class ItemsClient:
         *,
         item_ids: typing.Sequence[str],
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> None:
+    ) -> ItemsPublishItemResponse:
         """
-        Publish an item or multiple items. </br></br> Required scope | `cms:write`
+        Publish an item or multiple items.
+
+        Required scope | `cms:write`
 
         Parameters
         ----------
@@ -1046,7 +1341,8 @@ class ItemsClient:
 
         Returns
         -------
-        None
+        ItemsPublishItemResponse
+            Request was successful
 
         Examples
         --------
@@ -1056,7 +1352,7 @@ class ItemsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.collections.items.publish_item(
-            collection_id="collection_id",
+            collection_id="580e63fc8c9a982ac9b8b745",
             item_ids=["itemIds"],
         )
         """
@@ -1069,17 +1365,19 @@ class ItemsClient:
         )
         try:
             if 200 <= _response.status_code < 300:
-                return
+                return pydantic_v1.parse_obj_as(ItemsPublishItemResponse, _response.json())  # type: ignore
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            if _response.status_code == 409:
+                raise ConflictError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -1104,7 +1402,9 @@ class AsyncItemsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CollectionItemList:
         """
-        List of all Items within a Collection. </br></br> Required scope | `CMS:read`
+        List of all Items within a Collection.
+
+        Required scope | `CMS:read`
 
         Parameters
         ----------
@@ -1148,7 +1448,7 @@ class AsyncItemsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.collections.items.list_items(
-            collection_id="collection_id",
+            collection_id="580e63fc8c9a982ac9b8b745",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -1171,13 +1471,13 @@ class AsyncItemsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -1187,46 +1487,96 @@ class AsyncItemsClient:
         self,
         collection_id: str,
         *,
-        id: str,
-        cms_locale_id: typing.Optional[str] = OMIT,
-        last_published: typing.Optional[str] = OMIT,
-        last_updated: typing.Optional[str] = OMIT,
-        created_on: typing.Optional[str] = OMIT,
-        is_archived: typing.Optional[bool] = OMIT,
-        is_draft: typing.Optional[bool] = OMIT,
-        field_data: typing.Optional[CollectionItemFieldData] = OMIT,
+        request: ItemsCreateItemRequest,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> None:
+    ) -> CollectionItem:
         """
-        Create Item in a Collection.</br></br> To create items across multiple locales, <a href="https://developers.webflow.com/data/reference/create-item-for-multiple-locales"> please use this endpoint.</a> </br></br> Required scope | `CMS:write`
+        Create Item(s) in a Collection.
+
+        To create items across multiple locales, please use [this endpoint.](/data/v2.0.0/reference/cms/collection-items/bulk-items/create-items)
+
+        Required scope | `CMS:write`
 
         Parameters
         ----------
         collection_id : str
             Unique identifier for a Collection
 
-        id : str
-            Unique identifier for the Item
+        request : ItemsCreateItemRequest
 
-        cms_locale_id : typing.Optional[str]
-            Identifier for the locale of the CMS item
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
 
-        last_published : typing.Optional[str]
-            The date the item was last published
+        Returns
+        -------
+        CollectionItem
+            Request was successful
 
-        last_updated : typing.Optional[str]
-            The date the item was last updated
+        Examples
+        --------
+        from webflow import CollectionItem, CollectionItemFieldData
+        from webflow.client import AsyncWebflow
 
-        created_on : typing.Optional[str]
-            The date the item was created
+        client = AsyncWebflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+        await client.collections.items.create_item(
+            collection_id="580e63fc8c9a982ac9b8b745",
+            request=CollectionItem(
+                is_archived=False,
+                is_draft=False,
+                field_data=CollectionItemFieldData(
+                    name="Pan Galactic Gargle Blaster Recipe",
+                    slug="pan-galactic-gargle-blaster",
+                ),
+            ),
+        )
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"collections/{jsonable_encoder(collection_id)}/items",
+            method="POST",
+            json=request,
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return pydantic_v1.parse_obj_as(CollectionItem, _response.json())  # type: ignore
+            if _response.status_code == 400:
+                raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+            if _response.status_code == 401:
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            if _response.status_code == 404:
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            if _response.status_code == 429:
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            if _response.status_code == 500:
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
 
-        is_archived : typing.Optional[bool]
-            Boolean determining if the Item is set to archived
+    async def delete_items(
+        self,
+        collection_id: str,
+        *,
+        items: typing.Optional[typing.Sequence[ItemsDeleteItemsRequestItemsItem]] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> None:
+        """
+        Delete Items from a Collection.
 
-        is_draft : typing.Optional[bool]
-            Boolean determining if the Item is set to draft
+        **Note:** If the `cmsLocaleId` parameter is undefined or empty and the items are localized, items will be deleted only in the primary locale.
 
-        field_data : typing.Optional[CollectionItemFieldData]
+        Required scope | `CMS:write`
+
+        Parameters
+        ----------
+        collection_id : str
+            Unique identifier for a Collection
+
+        items : typing.Optional[typing.Sequence[ItemsDeleteItemsRequestItemsItem]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1237,40 +1587,19 @@ class AsyncItemsClient:
 
         Examples
         --------
-        from webflow import CollectionItemFieldData
         from webflow.client import AsyncWebflow
 
         client = AsyncWebflow(
             access_token="YOUR_ACCESS_TOKEN",
         )
-        await client.collections.items.create_item(
-            collection_id="collection_id",
-            id="42b720ef280c7a7a3be8cabe",
-            cms_locale_id="653ad57de882f528b32e810e",
-            last_published="2022-11-29T16:22:43.159Z",
-            last_updated="2022-11-17T17:19:43.282Z",
-            created_on="2022-11-17T17:11:57.148Z",
-            is_archived=False,
-            is_draft=False,
-            field_data=CollectionItemFieldData(
-                name="Pan Galactic Gargle Blaster Recipe",
-                slug="pan-galactic-gargle-blaster",
-            ),
+        await client.collections.items.delete_items(
+            collection_id="580e63fc8c9a982ac9b8b745",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items",
-            method="POST",
-            json={
-                "id": id,
-                "cmsLocaleId": cms_locale_id,
-                "lastPublished": last_published,
-                "lastUpdated": last_updated,
-                "createdOn": created_on,
-                "isArchived": is_archived,
-                "isDraft": is_draft,
-                "fieldData": field_data,
-            },
+            method="DELETE",
+            json={"items": items},
             request_options=request_options,
             omit=OMIT,
         )
@@ -1280,13 +1609,116 @@ class AsyncItemsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def update_items(
+        self,
+        collection_id: str,
+        *,
+        items: typing.Optional[typing.Sequence[CollectionItemWithIdInput]] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> CollectionItem:
+        """
+        Update a single item or multiple items (up to 100) in a Collection.
+
+        **Note:** If the `cmsLocaleId` parameter is undefined or empty and the items are localized, items will be updated only in the primary locale.
+
+        Required scope | `CMS:write`
+
+        Parameters
+        ----------
+        collection_id : str
+            Unique identifier for a Collection
+
+        items : typing.Optional[typing.Sequence[CollectionItemWithIdInput]]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        CollectionItem
+            Request was successful
+
+        Examples
+        --------
+        from webflow import (
+            CollectionItemWithIdInput,
+            CollectionItemWithIdInputFieldData,
+        )
+        from webflow.client import AsyncWebflow
+
+        client = AsyncWebflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+        await client.collections.items.update_items(
+            collection_id="580e63fc8c9a982ac9b8b745",
+            items=[
+                CollectionItemWithIdInput(
+                    id="66f6ed9576ddacf3149d5ea6",
+                    cms_locale_id="66f6e966c9e1dc700a857ca5",
+                    field_data=CollectionItemWithIdInputFieldData(
+                        name="Ne Paniquez Pas",
+                        slug="ne-paniquez-pas",
+                    ),
+                ),
+                CollectionItemWithIdInput(
+                    id="66f6ed9576ddacf3149d5ea6",
+                    cms_locale_id="66f6e966c9e1dc700a857ca4",
+                    field_data=CollectionItemWithIdInputFieldData(
+                        name="No Entrar en Pánico",
+                        slug="no-entrar-en-panico",
+                    ),
+                ),
+                CollectionItemWithIdInput(
+                    id="66f6ed9576ddacf3149d5eaa",
+                    cms_locale_id="66f6e966c9e1dc700a857ca5",
+                    field_data=CollectionItemWithIdInputFieldData(
+                        name="Au Revoir et Merci pour Tous les Poissons",
+                        slug="au-revoir-et-merci",
+                    ),
+                ),
+                CollectionItemWithIdInput(
+                    id="66f6ed9576ddacf3149d5eaa",
+                    cms_locale_id="66f6e966c9e1dc700a857ca4",
+                    field_data=CollectionItemWithIdInputFieldData(
+                        name="Hasta Luego y Gracias por Todo el Pescado",
+                        slug="hasta-luego-y-gracias",
+                    ),
+                ),
+            ],
+        )
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"collections/{jsonable_encoder(collection_id)}/items",
+            method="PATCH",
+            json={"items": items},
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return pydantic_v1.parse_obj_as(CollectionItem, _response.json())  # type: ignore
+            if _response.status_code == 400:
+                raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+            if _response.status_code == 401:
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            if _response.status_code == 404:
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            if _response.status_code == 429:
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            if _response.status_code == 500:
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -1306,7 +1738,9 @@ class AsyncItemsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CollectionItemList:
         """
-        List of all live Items within a Collection. </br></br> Required scope | `CMS:read`
+        List of all live Items within a Collection.
+
+        Required scope | `CMS:read`
 
         Parameters
         ----------
@@ -1350,7 +1784,7 @@ class AsyncItemsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.collections.items.list_items_live(
-            collection_id="collection_id",
+            collection_id="580e63fc8c9a982ac9b8b745",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -1373,13 +1807,13 @@ class AsyncItemsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -1389,155 +1823,96 @@ class AsyncItemsClient:
         self,
         collection_id: str,
         *,
-        id: str,
-        cms_locale_id: typing.Optional[str] = OMIT,
-        last_published: typing.Optional[str] = OMIT,
-        last_updated: typing.Optional[str] = OMIT,
-        created_on: typing.Optional[str] = OMIT,
-        is_archived: typing.Optional[bool] = OMIT,
-        is_draft: typing.Optional[bool] = OMIT,
-        field_data: typing.Optional[CollectionItemFieldData] = OMIT,
+        request: ItemsCreateItemLiveRequest,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> None:
+    ) -> CollectionItem:
         """
-        Create live Item in a Collection. This Item will be published to the live site. </br></br> To create items across multiple locales, <a href="https://developers.webflow.com/data/reference/create-item-for-multiple-locales"> please use this endpoint.</a> </br></br> Required scope | `CMS:write`
+        Create live Item(s) in a Collection. The Item(s) will be published to the live site.
+
+        To create items across multiple locales, [please use this endpoint.](/v2.0.0/data/reference/cms/collection-items/bulk-items/create-items)
+
+        Required scope | `CMS:write`
 
         Parameters
         ----------
         collection_id : str
             Unique identifier for a Collection
 
-        id : str
-            Unique identifier for the Item
-
-        cms_locale_id : typing.Optional[str]
-            Identifier for the locale of the CMS item
-
-        last_published : typing.Optional[str]
-            The date the item was last published
-
-        last_updated : typing.Optional[str]
-            The date the item was last updated
-
-        created_on : typing.Optional[str]
-            The date the item was created
-
-        is_archived : typing.Optional[bool]
-            Boolean determining if the Item is set to archived
-
-        is_draft : typing.Optional[bool]
-            Boolean determining if the Item is set to draft
-
-        field_data : typing.Optional[CollectionItemFieldData]
+        request : ItemsCreateItemLiveRequest
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        None
+        CollectionItem
+            Request was successful
 
         Examples
         --------
-        from webflow import CollectionItemFieldData
+        from webflow import CollectionItem, CollectionItemFieldData
         from webflow.client import AsyncWebflow
 
         client = AsyncWebflow(
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.collections.items.create_item_live(
-            collection_id="collection_id",
-            id="42b720ef280c7a7a3be8cabe",
-            cms_locale_id="653ad57de882f528b32e810e",
-            last_published="2022-11-29T16:22:43.159Z",
-            last_updated="2022-11-17T17:19:43.282Z",
-            created_on="2022-11-17T17:11:57.148Z",
-            is_archived=False,
-            is_draft=False,
-            field_data=CollectionItemFieldData(
-                name="Pan Galactic Gargle Blaster Recipe",
-                slug="pan-galactic-gargle-blaster",
+            collection_id="580e63fc8c9a982ac9b8b745",
+            request=CollectionItem(
+                is_archived=False,
+                is_draft=False,
+                field_data=CollectionItemFieldData(
+                    name="Pan Galactic Gargle Blaster Recipe",
+                    slug="pan-galactic-gargle-blaster",
+                ),
             ),
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/live",
             method="POST",
-            json={
-                "id": id,
-                "cmsLocaleId": cms_locale_id,
-                "lastPublished": last_published,
-                "lastUpdated": last_updated,
-                "createdOn": created_on,
-                "isArchived": is_archived,
-                "isDraft": is_draft,
-                "fieldData": field_data,
-            },
+            json=request,
             request_options=request_options,
             omit=OMIT,
         )
         try:
             if 200 <= _response.status_code < 300:
-                return
+                return pydantic_v1.parse_obj_as(CollectionItem, _response.json())  # type: ignore
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def create_item_for_multiple_locales(
+    async def delete_items_live(
         self,
         collection_id: str,
         *,
-        id: str,
-        cms_locale_ids: typing.Optional[typing.Sequence[str]] = OMIT,
-        last_published: typing.Optional[str] = OMIT,
-        last_updated: typing.Optional[str] = OMIT,
-        created_on: typing.Optional[str] = OMIT,
-        is_archived: typing.Optional[bool] = OMIT,
-        is_draft: typing.Optional[bool] = OMIT,
-        field_data: typing.Optional[BulkCollectionItemFieldData] = OMIT,
+        items: typing.Optional[typing.Sequence[ItemsDeleteItemsLiveRequestItemsItem]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> None:
         """
-        Create single Item in a Collection with multiple corresponding locales. </br></br> Required scope | `CMS:write`
+        Remove an item or multiple items (up to 100 items) from the live site. Deleting published items will unpublish the items from the live site and set them to draft.
+
+        **Note:** If the `cmsLocaleId` parameter is undefined or empty and the items are localized, items will be unpublished only in the primary locale.
+
+        Required scope | `CMS:write`
 
         Parameters
         ----------
         collection_id : str
             Unique identifier for a Collection
 
-        id : str
-            Unique identifier for the Item
-
-        cms_locale_ids : typing.Optional[typing.Sequence[str]]
-            Array of identifiers for the locales where the item will be created
-
-        last_published : typing.Optional[str]
-            The date the item was last published
-
-        last_updated : typing.Optional[str]
-            The date the item was last updated
-
-        created_on : typing.Optional[str]
-            The date the item was created
-
-        is_archived : typing.Optional[bool]
-            Boolean determining if the Item is set to archived
-
-        is_draft : typing.Optional[bool]
-            Boolean determining if the Item is set to draft
-
-        field_data : typing.Optional[BulkCollectionItemFieldData]
+        items : typing.Optional[typing.Sequence[ItemsDeleteItemsLiveRequestItemsItem]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1553,24 +1928,14 @@ class AsyncItemsClient:
         client = AsyncWebflow(
             access_token="YOUR_ACCESS_TOKEN",
         )
-        await client.collections.items.create_item_for_multiple_locales(
-            collection_id="collection_id",
-            id="580e64008c9a982ac9b8b754",
+        await client.collections.items.delete_items_live(
+            collection_id="580e63fc8c9a982ac9b8b745",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"collections/{jsonable_encoder(collection_id)}/items/bulk",
-            method="POST",
-            json={
-                "id": id,
-                "cmsLocaleIds": cms_locale_ids,
-                "lastPublished": last_published,
-                "lastUpdated": last_updated,
-                "createdOn": created_on,
-                "isArchived": is_archived,
-                "isDraft": is_draft,
-                "fieldData": field_data,
-            },
+            f"collections/{jsonable_encoder(collection_id)}/items/live",
+            method="DELETE",
+            json={"items": items},
             request_options=request_options,
             omit=OMIT,
         )
@@ -1580,13 +1945,215 @@ class AsyncItemsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def update_items_live(
+        self,
+        collection_id: str,
+        *,
+        items: typing.Optional[typing.Sequence[CollectionItemWithIdInput]] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> CollectionItemListNoPagination:
+        """
+        Update a single live item or multiple live items (up to 100) in a Collection
+
+        **Note:** If the `cmsLocaleId` parameter is undefined or empty and the items are localized, items will be updated only in the primary locale.
+
+        Required scope | `CMS:write`
+
+        Parameters
+        ----------
+        collection_id : str
+            Unique identifier for a Collection
+
+        items : typing.Optional[typing.Sequence[CollectionItemWithIdInput]]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        CollectionItemListNoPagination
+            Request was successful
+
+        Examples
+        --------
+        from webflow import (
+            CollectionItemWithIdInput,
+            CollectionItemWithIdInputFieldData,
+        )
+        from webflow.client import AsyncWebflow
+
+        client = AsyncWebflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+        await client.collections.items.update_items_live(
+            collection_id="580e63fc8c9a982ac9b8b745",
+            items=[
+                CollectionItemWithIdInput(
+                    id="66f6ed9576ddacf3149d5ea6",
+                    cms_locale_id="66f6e966c9e1dc700a857ca5",
+                    field_data=CollectionItemWithIdInputFieldData(
+                        name="Ne Paniquez Pas",
+                        slug="ne-paniquez-pas",
+                    ),
+                ),
+                CollectionItemWithIdInput(
+                    id="66f6ed9576ddacf3149d5ea6",
+                    cms_locale_id="66f6e966c9e1dc700a857ca4",
+                    field_data=CollectionItemWithIdInputFieldData(
+                        name="No Entrar en Pánico",
+                        slug="no-entrar-en-panico",
+                    ),
+                ),
+                CollectionItemWithIdInput(
+                    id="66f6ed9576ddacf3149d5eaa",
+                    cms_locale_id="66f6e966c9e1dc700a857ca5",
+                    field_data=CollectionItemWithIdInputFieldData(
+                        name="Au Revoir et Merci pour Tous les Poissons",
+                        slug="au-revoir-et-merci",
+                    ),
+                ),
+                CollectionItemWithIdInput(
+                    id="66f6ed9576ddacf3149d5eaa",
+                    cms_locale_id="66f6e966c9e1dc700a857ca4",
+                    field_data=CollectionItemWithIdInputFieldData(
+                        name="Hasta Luego y Gracias por Todo el Pescado",
+                        slug="hasta-luego-y-gracias",
+                    ),
+                ),
+            ],
+        )
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"collections/{jsonable_encoder(collection_id)}/items/live",
+            method="PATCH",
+            json={"items": items},
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return pydantic_v1.parse_obj_as(CollectionItemListNoPagination, _response.json())  # type: ignore
+            if _response.status_code == 400:
+                raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+            if _response.status_code == 401:
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            if _response.status_code == 404:
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            if _response.status_code == 429:
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            if _response.status_code == 500:
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def create_items(
+        self,
+        collection_id: str,
+        *,
+        cms_locale_ids: typing.Optional[typing.Sequence[str]] = OMIT,
+        is_archived: typing.Optional[bool] = OMIT,
+        is_draft: typing.Optional[bool] = OMIT,
+        field_data: typing.Optional[CreateBulkCollectionItemRequestBodyFieldData] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> BulkCollectionItem:
+        """
+        Create an item or multiple items in a CMS Collection across multiple corresponding locales.
+
+        **Notes:**
+
+        - This endpoint can create up to 100 items in a request.
+        - If the `cmsLocaleIds` parameter is undefined or empty and localization is enabled, items will only be created in the primary locale.
+
+        Required scope | `CMS:write`
+
+        Parameters
+        ----------
+        collection_id : str
+            Unique identifier for a Collection
+
+        cms_locale_ids : typing.Optional[typing.Sequence[str]]
+            Array of identifiers for the locales where the item will be created
+
+        is_archived : typing.Optional[bool]
+            Indicates whether the item is archived.
+
+        is_draft : typing.Optional[bool]
+            Indicates whether the item is in draft state.
+
+        field_data : typing.Optional[CreateBulkCollectionItemRequestBodyFieldData]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        BulkCollectionItem
+            Request was successful
+
+        Examples
+        --------
+        from webflow.client import AsyncWebflow
+        from webflow.resources.collections import (
+            CreateBulkCollectionItemRequestBodyFieldDataName,
+        )
+
+        client = AsyncWebflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+        await client.collections.items.create_items(
+            collection_id="580e63fc8c9a982ac9b8b745",
+            cms_locale_ids=[
+                "66f6e966c9e1dc700a857ca3",
+                "66f6e966c9e1dc700a857ca4",
+                "66f6e966c9e1dc700a857ca5",
+            ],
+            is_archived=False,
+            is_draft=False,
+            field_data=CreateBulkCollectionItemRequestBodyFieldDataName(
+                name="Don’t Panic",
+                slug="dont-panic",
+            ),
+        )
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"collections/{jsonable_encoder(collection_id)}/items/bulk",
+            method="POST",
+            json={
+                "cmsLocaleIds": cms_locale_ids,
+                "isArchived": is_archived,
+                "isDraft": is_draft,
+                "fieldData": field_data,
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return pydantic_v1.parse_obj_as(BulkCollectionItem, _response.json())  # type: ignore
+            if _response.status_code == 400:
+                raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+            if _response.status_code == 401:
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            if _response.status_code == 404:
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            if _response.status_code == 429:
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            if _response.status_code == 500:
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -1601,7 +2168,9 @@ class AsyncItemsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CollectionItem:
         """
-        Get details of a selected Collection Item. </br></br> Required scope | `CMS:read`
+        Get details of a selected Collection Item.
+
+        Required scope | `CMS:read`
 
         Parameters
         ----------
@@ -1630,8 +2199,8 @@ class AsyncItemsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.collections.items.get_item(
-            collection_id="collection_id",
-            item_id="item_id",
+            collection_id="580e63fc8c9a982ac9b8b745",
+            item_id="580e64008c9a982ac9b8b754",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -1646,13 +2215,13 @@ class AsyncItemsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -1667,7 +2236,9 @@ class AsyncItemsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> None:
         """
-        Delete an Item from a Collection. This endpoint does not currently support bulk deletion. </br></br> Required scope | `CMS:write`
+        Delete an Item from a Collection. This endpoint does not currently support bulk deletion.
+
+        Required scope | `CMS:write`
 
         Parameters
         ----------
@@ -1695,8 +2266,8 @@ class AsyncItemsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.collections.items.delete_item(
-            collection_id="collection_id",
-            item_id="item_id",
+            collection_id="580e63fc8c9a982ac9b8b745",
+            item_id="580e64008c9a982ac9b8b754",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -1711,13 +2282,13 @@ class AsyncItemsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -1728,7 +2299,7 @@ class AsyncItemsClient:
         collection_id: str,
         item_id: str,
         *,
-        id: str,
+        id: typing.Optional[str] = OMIT,
         cms_locale_id: typing.Optional[str] = OMIT,
         last_published: typing.Optional[str] = OMIT,
         last_updated: typing.Optional[str] = OMIT,
@@ -1739,7 +2310,9 @@ class AsyncItemsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CollectionItem:
         """
-        Update a selected Item in a Collection. </br></br> Required scope | `CMS:write`
+        Update a selected Item in a Collection.
+
+        Required scope | `CMS:write`
 
         Parameters
         ----------
@@ -1749,7 +2322,7 @@ class AsyncItemsClient:
         item_id : str
             Unique identifier for an Item
 
-        id : str
+        id : typing.Optional[str]
             Unique identifier for the Item
 
         cms_locale_id : typing.Optional[str]
@@ -1789,8 +2362,8 @@ class AsyncItemsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.collections.items.update_item(
-            collection_id="collection_id",
-            item_id="item_id",
+            collection_id="580e63fc8c9a982ac9b8b745",
+            item_id="580e64008c9a982ac9b8b754",
             id="42b720ef280c7a7a3be8cabe",
             cms_locale_id="653ad57de882f528b32e810e",
             last_published="2022-11-29T16:22:43.159Z",
@@ -1826,13 +2399,13 @@ class AsyncItemsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -1847,7 +2420,9 @@ class AsyncItemsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CollectionItem:
         """
-        Get details of a selected Collection live Item. </br></br> Required scope | `CMS:read`
+        Get details of a selected Collection live Item.
+
+        Required scope | `CMS:read`
 
         Parameters
         ----------
@@ -1876,8 +2451,8 @@ class AsyncItemsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.collections.items.get_item_live(
-            collection_id="collection_id",
-            item_id="item_id",
+            collection_id="580e63fc8c9a982ac9b8b745",
+            item_id="580e64008c9a982ac9b8b754",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -1892,13 +2467,13 @@ class AsyncItemsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -1913,7 +2488,11 @@ class AsyncItemsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> None:
         """
-        Remove a live item from the site. Removing a published item will unpublish the item from the live site and set it to draft. This endpoint does not currently support bulk deletion. </br></br> Required scope | `CMS:write`
+        Remove a live item from the site. Removing a published item will unpublish the item from the live site and set it to draft.
+
+        This endpoint does not currently support bulk deletion.
+
+        Required scope | `CMS:write`
 
         Parameters
         ----------
@@ -1941,8 +2520,8 @@ class AsyncItemsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.collections.items.delete_item_live(
-            collection_id="collection_id",
-            item_id="item_id",
+            collection_id="580e63fc8c9a982ac9b8b745",
+            item_id="580e64008c9a982ac9b8b754",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -1957,13 +2536,13 @@ class AsyncItemsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -1974,7 +2553,7 @@ class AsyncItemsClient:
         collection_id: str,
         item_id: str,
         *,
-        id: str,
+        id: typing.Optional[str] = OMIT,
         cms_locale_id: typing.Optional[str] = OMIT,
         last_published: typing.Optional[str] = OMIT,
         last_updated: typing.Optional[str] = OMIT,
@@ -1985,7 +2564,9 @@ class AsyncItemsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CollectionItem:
         """
-        Update a selected live Item in a Collection. The updates for this Item will be published to the live site. </br></br> Required scope | `CMS:write`
+        Update a selected live Item in a Collection. The updates for this Item will be published to the live site.
+
+        Required scope | `CMS:write`
 
         Parameters
         ----------
@@ -1995,7 +2576,7 @@ class AsyncItemsClient:
         item_id : str
             Unique identifier for an Item
 
-        id : str
+        id : typing.Optional[str]
             Unique identifier for the Item
 
         cms_locale_id : typing.Optional[str]
@@ -2035,8 +2616,8 @@ class AsyncItemsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.collections.items.update_item_live(
-            collection_id="collection_id",
-            item_id="item_id",
+            collection_id="580e63fc8c9a982ac9b8b745",
+            item_id="580e64008c9a982ac9b8b754",
             id="42b720ef280c7a7a3be8cabe",
             cms_locale_id="653ad57de882f528b32e810e",
             last_published="2022-11-29T16:22:43.159Z",
@@ -2072,13 +2653,13 @@ class AsyncItemsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -2090,9 +2671,11 @@ class AsyncItemsClient:
         *,
         item_ids: typing.Sequence[str],
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> None:
+    ) -> ItemsPublishItemResponse:
         """
-        Publish an item or multiple items. </br></br> Required scope | `cms:write`
+        Publish an item or multiple items.
+
+        Required scope | `cms:write`
 
         Parameters
         ----------
@@ -2106,7 +2689,8 @@ class AsyncItemsClient:
 
         Returns
         -------
-        None
+        ItemsPublishItemResponse
+            Request was successful
 
         Examples
         --------
@@ -2116,7 +2700,7 @@ class AsyncItemsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.collections.items.publish_item(
-            collection_id="collection_id",
+            collection_id="580e63fc8c9a982ac9b8b745",
             item_ids=["itemIds"],
         )
         """
@@ -2129,17 +2713,19 @@ class AsyncItemsClient:
         )
         try:
             if 200 <= _response.status_code < 300:
-                return
+                return pydantic_v1.parse_obj_as(ItemsPublishItemResponse, _response.json())  # type: ignore
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            if _response.status_code == 409:
+                raise ConflictError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
