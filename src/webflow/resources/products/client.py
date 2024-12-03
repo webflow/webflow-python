@@ -15,6 +15,7 @@ from ...errors.internal_server_error import InternalServerError
 from ...errors.not_found_error import NotFoundError
 from ...errors.too_many_requests_error import TooManyRequestsError
 from ...errors.unauthorized_error import UnauthorizedError
+from ...types.error import Error
 from ...types.product import Product
 from ...types.product_and_sk_us import ProductAndSkUs
 from ...types.product_and_sk_us_list import ProductAndSkUsList
@@ -39,7 +40,10 @@ class ProductsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ProductAndSkUsList:
         """
-        Retrieve all products for a site. Use `limit` and `offset` to page through all products with subsequent requests. All SKUs for each product will also be fetched and returned. The `limit`, `offset` and `total` values represent Products only and do not include any SKUs.
+        Retrieve all products for a site.
+
+        Use `limit` and `offset` to page through all products with subsequent requests. All SKUs for each product
+        will also be fetched and returned. The `limit`, `offset` and `total` values represent Products only and do not include any SKUs.
 
         Required scope | `ecommerce:read`
 
@@ -70,7 +74,7 @@ class ProductsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.products.list(
-            site_id="site_id",
+            site_id="580e63e98c9a982ac9b8b741",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -85,17 +89,17 @@ class ProductsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 409:
                 raise ConflictError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -111,13 +115,19 @@ class ProductsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ProductAndSkUs:
         """
-        Creating a new Product involves creating both a Product and a SKU, since a Product Item has to have, at minimum, a single SKU.
+        Create a new product and SKU.
 
-        In order to create a Product with multiple SKUs - for example a T-shirt in sizes small, medium and large - you'll need to create `sku-properties`. In our T-shirt example, a single `sku-property` would be Color. Within that property, we'll need to list out the various colors a T-shirt could be as an array of `enum` values: `royal-blue`, `crimson-red`, and `forrest-green`.
+        When you create a product, you will always create a SKU, since a Product Item must have, at minimum, a single SKU.
 
-        Once, you've created a Product and its `sku-properties` with `enum` values, you can create your default SKU, which will automatically be a combination of the first `sku-properties` you've created. In our example, the default SKU will be a Royal Blue T-Shirt, because our first `enum` of our Color `sku-property` is Royal Blue. After you've created your product, you can create additional SKUs using the <a href="https://developers.webflow.com/reference/create-skus">Create SKU endpoint</a>
+        To create a Product with multiple SKUs - for example a T-shirt in sizes small, medium and large:
 
-        Upon creation, the default product type will be `Advanced`. The product type is used to determine which Product and SKU fields are shown to users in the `Designer` and the `Editor`. Setting it to `Advanced` ensures that all Product and SKU fields will be shown.
+        - Create parameters in `sku-properties`, also known as [product options and variants.](https://help.webflow.com/hc/en-us/articles/33961334531347-Create-product-options-and-variants).
+        - A single `sku-property` would be `color`. Within the `color` property, list the various colors of T-shirts as an array of `enum` values: `royal-blue`, `crimson-red`, and `forrest-green`.
+        - Once, you've created a Product and its `sku-properties` with `enum` values, Webflow will create a **default SKU**, which will automatically be a combination of the first `sku-properties` you've created.
+        - In our example, the default SKU will be a Royal Blue T-Shirt, because our first `enum` of our Color `sku-property` is Royal Blue.
+        - After you've created your product, you can create additional SKUs using the [Create SKU endpoint.](/data/reference/ecommerce/products-sk-us/create-sku)
+
+        Upon creation, the default product type will be `Advanced`, which ensures all Product and SKU fields will be shown to users in the Designer.
 
         Required scope | `ecommerce:write`
 
@@ -148,7 +158,7 @@ class ProductsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.products.create(
-            site_id="site_id",
+            site_id="580e63e98c9a982ac9b8b741",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -164,17 +174,17 @@ class ProductsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 409:
                 raise ConflictError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -184,7 +194,8 @@ class ProductsClient:
         self, site_id: str, product_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> ProductAndSkUs:
         """
-        Retrieve a single product by its id. All of its SKUs will also be retrieved.
+        Retrieve a single product by its ID. All of its SKUs will also be
+        retrieved.
 
         Required scope | `ecommerce:read`
 
@@ -212,8 +223,8 @@ class ProductsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.products.get(
-            site_id="site_id",
-            product_id="product_id",
+            site_id="580e63e98c9a982ac9b8b741",
+            product_id="580e63fc8c9a982ac9b8b745",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -227,17 +238,17 @@ class ProductsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 409:
                 raise ConflictError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -254,7 +265,9 @@ class ProductsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> Product:
         """
-        Updating an existing Product will set the product type to `Advanced`. The product type is used to determine which Product and SKU fields are shown to users in the `Designer` and the `Editor`. Setting it to `Advanced` ensures that all Product and SKU fields will be shown. The product type can be edited in the `Designer` or the `Editor`.
+        Update an existing Product.
+
+        Updating an existing Product will set the product type to `Advanced`, which ensures all Product and SKU fields will be shown to users in the Designer.
 
         Required scope | `ecommerce:write`
 
@@ -288,8 +301,8 @@ class ProductsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.products.update(
-            site_id="site_id",
-            product_id="product_id",
+            site_id="580e63e98c9a982ac9b8b741",
+            product_id="580e63fc8c9a982ac9b8b745",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -305,17 +318,17 @@ class ProductsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 409:
                 raise ConflictError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -331,9 +344,9 @@ class ProductsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ProductsCreateSkuResponse:
         """
-        Create additional SKUs to cover every variant of your Product. The Default SKU already counts as one of the variants.
+        Create additional SKUs to manage every [option and variant of your Product.](https://help.webflow.com/hc/en-us/articles/33961334531347-Create-product-options-and-variants)
 
-        Creating additional SKUs will set the product type to `Advanced` for the product associated with the SKUs. The product type is used to determine which Product and SKU fields are shown to users in the `Designer` and the `Editor`. Setting it to `Advanced` ensures that all Product and SKU fields will be shown. The product type can be edited in the `Designer` or the `Editor`.
+        Creating SKUs through the API will set the product type to `Advanced`, which ensures all Product and SKU fields will be shown to users in the Designer.
 
         Required scope | `ecommerce:write`
 
@@ -367,8 +380,8 @@ class ProductsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.products.create_sku(
-            site_id="site_id",
-            product_id="product_id",
+            site_id="580e63e98c9a982ac9b8b741",
+            product_id="580e63fc8c9a982ac9b8b745",
             skus=[Sku()],
         )
         """
@@ -385,17 +398,17 @@ class ProductsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 409:
                 raise ConflictError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -412,7 +425,9 @@ class ProductsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> Sku:
         """
-        Updating an existing SKU will set the product type to `Advanced` for the product associated with the SKU. The product type is used to determine which Product and SKU fields are shown to users in the `Designer` and the `Editor`. Setting it to `Advanced` ensures that all Product and SKU fields will be shown. The product type can be edited in the `Designer` or the `Editor`.
+        Update a specified SKU.
+
+        Updating an existing SKU will set the Product type to `Advanced`, which ensures all Product and SKU fields will be shown to users in the Designer.
 
         Required scope | `ecommerce:write`
 
@@ -448,9 +463,9 @@ class ProductsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.products.update_sku(
-            site_id="site_id",
-            product_id="product_id",
-            sku_id="sku_id",
+            site_id="580e63e98c9a982ac9b8b741",
+            product_id="580e63fc8c9a982ac9b8b745",
+            sku_id="5e8518516e147040726cc415",
             sku=Sku(),
         )
         """
@@ -467,17 +482,17 @@ class ProductsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 409:
                 raise ConflictError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -497,7 +512,10 @@ class AsyncProductsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ProductAndSkUsList:
         """
-        Retrieve all products for a site. Use `limit` and `offset` to page through all products with subsequent requests. All SKUs for each product will also be fetched and returned. The `limit`, `offset` and `total` values represent Products only and do not include any SKUs.
+        Retrieve all products for a site.
+
+        Use `limit` and `offset` to page through all products with subsequent requests. All SKUs for each product
+        will also be fetched and returned. The `limit`, `offset` and `total` values represent Products only and do not include any SKUs.
 
         Required scope | `ecommerce:read`
 
@@ -528,7 +546,7 @@ class AsyncProductsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.products.list(
-            site_id="site_id",
+            site_id="580e63e98c9a982ac9b8b741",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -543,17 +561,17 @@ class AsyncProductsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 409:
                 raise ConflictError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -569,13 +587,19 @@ class AsyncProductsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ProductAndSkUs:
         """
-        Creating a new Product involves creating both a Product and a SKU, since a Product Item has to have, at minimum, a single SKU.
+        Create a new product and SKU.
 
-        In order to create a Product with multiple SKUs - for example a T-shirt in sizes small, medium and large - you'll need to create `sku-properties`. In our T-shirt example, a single `sku-property` would be Color. Within that property, we'll need to list out the various colors a T-shirt could be as an array of `enum` values: `royal-blue`, `crimson-red`, and `forrest-green`.
+        When you create a product, you will always create a SKU, since a Product Item must have, at minimum, a single SKU.
 
-        Once, you've created a Product and its `sku-properties` with `enum` values, you can create your default SKU, which will automatically be a combination of the first `sku-properties` you've created. In our example, the default SKU will be a Royal Blue T-Shirt, because our first `enum` of our Color `sku-property` is Royal Blue. After you've created your product, you can create additional SKUs using the <a href="https://developers.webflow.com/reference/create-skus">Create SKU endpoint</a>
+        To create a Product with multiple SKUs - for example a T-shirt in sizes small, medium and large:
 
-        Upon creation, the default product type will be `Advanced`. The product type is used to determine which Product and SKU fields are shown to users in the `Designer` and the `Editor`. Setting it to `Advanced` ensures that all Product and SKU fields will be shown.
+        - Create parameters in `sku-properties`, also known as [product options and variants.](https://help.webflow.com/hc/en-us/articles/33961334531347-Create-product-options-and-variants).
+        - A single `sku-property` would be `color`. Within the `color` property, list the various colors of T-shirts as an array of `enum` values: `royal-blue`, `crimson-red`, and `forrest-green`.
+        - Once, you've created a Product and its `sku-properties` with `enum` values, Webflow will create a **default SKU**, which will automatically be a combination of the first `sku-properties` you've created.
+        - In our example, the default SKU will be a Royal Blue T-Shirt, because our first `enum` of our Color `sku-property` is Royal Blue.
+        - After you've created your product, you can create additional SKUs using the [Create SKU endpoint.](/data/reference/ecommerce/products-sk-us/create-sku)
+
+        Upon creation, the default product type will be `Advanced`, which ensures all Product and SKU fields will be shown to users in the Designer.
 
         Required scope | `ecommerce:write`
 
@@ -606,7 +630,7 @@ class AsyncProductsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.products.create(
-            site_id="site_id",
+            site_id="580e63e98c9a982ac9b8b741",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -622,17 +646,17 @@ class AsyncProductsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 409:
                 raise ConflictError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -642,7 +666,8 @@ class AsyncProductsClient:
         self, site_id: str, product_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> ProductAndSkUs:
         """
-        Retrieve a single product by its id. All of its SKUs will also be retrieved.
+        Retrieve a single product by its ID. All of its SKUs will also be
+        retrieved.
 
         Required scope | `ecommerce:read`
 
@@ -670,8 +695,8 @@ class AsyncProductsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.products.get(
-            site_id="site_id",
-            product_id="product_id",
+            site_id="580e63e98c9a982ac9b8b741",
+            product_id="580e63fc8c9a982ac9b8b745",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -685,17 +710,17 @@ class AsyncProductsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 409:
                 raise ConflictError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -712,7 +737,9 @@ class AsyncProductsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> Product:
         """
-        Updating an existing Product will set the product type to `Advanced`. The product type is used to determine which Product and SKU fields are shown to users in the `Designer` and the `Editor`. Setting it to `Advanced` ensures that all Product and SKU fields will be shown. The product type can be edited in the `Designer` or the `Editor`.
+        Update an existing Product.
+
+        Updating an existing Product will set the product type to `Advanced`, which ensures all Product and SKU fields will be shown to users in the Designer.
 
         Required scope | `ecommerce:write`
 
@@ -746,8 +773,8 @@ class AsyncProductsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.products.update(
-            site_id="site_id",
-            product_id="product_id",
+            site_id="580e63e98c9a982ac9b8b741",
+            product_id="580e63fc8c9a982ac9b8b745",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -763,17 +790,17 @@ class AsyncProductsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 409:
                 raise ConflictError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -789,9 +816,9 @@ class AsyncProductsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ProductsCreateSkuResponse:
         """
-        Create additional SKUs to cover every variant of your Product. The Default SKU already counts as one of the variants.
+        Create additional SKUs to manage every [option and variant of your Product.](https://help.webflow.com/hc/en-us/articles/33961334531347-Create-product-options-and-variants)
 
-        Creating additional SKUs will set the product type to `Advanced` for the product associated with the SKUs. The product type is used to determine which Product and SKU fields are shown to users in the `Designer` and the `Editor`. Setting it to `Advanced` ensures that all Product and SKU fields will be shown. The product type can be edited in the `Designer` or the `Editor`.
+        Creating SKUs through the API will set the product type to `Advanced`, which ensures all Product and SKU fields will be shown to users in the Designer.
 
         Required scope | `ecommerce:write`
 
@@ -825,8 +852,8 @@ class AsyncProductsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.products.create_sku(
-            site_id="site_id",
-            product_id="product_id",
+            site_id="580e63e98c9a982ac9b8b741",
+            product_id="580e63fc8c9a982ac9b8b745",
             skus=[Sku()],
         )
         """
@@ -843,17 +870,17 @@ class AsyncProductsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 409:
                 raise ConflictError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -870,7 +897,9 @@ class AsyncProductsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> Sku:
         """
-        Updating an existing SKU will set the product type to `Advanced` for the product associated with the SKU. The product type is used to determine which Product and SKU fields are shown to users in the `Designer` and the `Editor`. Setting it to `Advanced` ensures that all Product and SKU fields will be shown. The product type can be edited in the `Designer` or the `Editor`.
+        Update a specified SKU.
+
+        Updating an existing SKU will set the Product type to `Advanced`, which ensures all Product and SKU fields will be shown to users in the Designer.
 
         Required scope | `ecommerce:write`
 
@@ -906,9 +935,9 @@ class AsyncProductsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.products.update_sku(
-            site_id="site_id",
-            product_id="product_id",
-            sku_id="sku_id",
+            site_id="580e63e98c9a982ac9b8b741",
+            product_id="580e63fc8c9a982ac9b8b745",
+            sku_id="5e8518516e147040726cc415",
             sku=Sku(),
         )
         """
@@ -925,17 +954,17 @@ class AsyncProductsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 409:
                 raise ConflictError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
