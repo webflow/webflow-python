@@ -5,6 +5,7 @@ import typing
 
 from ..core.datetime_utils import serialize_datetime
 from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
+from .site_activity_log_item_event import SiteActivityLogItemEvent
 from .site_activity_log_item_resource_operation import SiteActivityLogItemResourceOperation
 from .site_activity_log_item_user import SiteActivityLogItemUser
 
@@ -13,7 +14,7 @@ class SiteActivityLogItem(pydantic_v1.BaseModel):
     id: typing.Optional[str] = None
     created_on: typing.Optional[dt.datetime] = pydantic_v1.Field(alias="createdOn", default=None)
     last_updated: typing.Optional[dt.datetime] = pydantic_v1.Field(alias="lastUpdated", default=None)
-    event: typing.Optional[str] = None
+    event: typing.Optional[SiteActivityLogItemEvent] = None
     resource_operation: typing.Optional[SiteActivityLogItemResourceOperation] = pydantic_v1.Field(
         alias="resourceOperation", default=None
     )
