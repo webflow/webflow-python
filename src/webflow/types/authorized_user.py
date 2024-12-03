@@ -10,7 +10,7 @@ from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
 class AuthorizedUser(pydantic_v1.BaseModel):
     id: typing.Optional[str] = pydantic_v1.Field(default=None)
     """
-    The unique id of the user
+    The unique ID of the user
     """
 
     email: typing.Optional[str] = pydantic_v1.Field(default=None)
