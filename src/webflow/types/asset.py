@@ -14,16 +14,6 @@ class Asset(pydantic_v1.BaseModel):
     Unique identifier for this asset
     """
 
-    original_file_name: typing.Optional[str] = pydantic_v1.Field(alias="originalFileName", default=None)
-    """
-    Original file name at the time of upload
-    """
-
-    display_name: typing.Optional[str] = pydantic_v1.Field(alias="displayName", default=None)
-    """
-    Display name of the asset
-    """
-
     content_type: typing.Optional[str] = pydantic_v1.Field(alias="contentType", default=None)
     """
     File format type
@@ -39,9 +29,19 @@ class Asset(pydantic_v1.BaseModel):
     Unique identifier for the site that hosts this asset
     """
 
-    created_on: typing.Optional[dt.datetime] = pydantic_v1.Field(alias="createdOn", default=None)
+    hosted_url: typing.Optional[str] = pydantic_v1.Field(alias="hostedUrl", default=None)
     """
-    Date the asset metadata was created
+    Link to the asset
+    """
+
+    original_file_name: typing.Optional[str] = pydantic_v1.Field(alias="originalFileName", default=None)
+    """
+    Original file name at the time of upload
+    """
+
+    display_name: typing.Optional[str] = pydantic_v1.Field(alias="displayName", default=None)
+    """
+    Display name of the asset
     """
 
     last_updated: typing.Optional[dt.datetime] = pydantic_v1.Field(alias="lastUpdated", default=None)
@@ -49,12 +49,16 @@ class Asset(pydantic_v1.BaseModel):
     Date the asset metadata was last updated
     """
 
-    hosted_url: typing.Optional[str] = pydantic_v1.Field(alias="hostedUrl", default=None)
+    created_on: typing.Optional[dt.datetime] = pydantic_v1.Field(alias="createdOn", default=None)
     """
-    Link to the asset
+    Date the asset metadata was created
     """
 
     variants: typing.Optional[typing.List[AssetVariant]] = None
+    alt_text: typing.Optional[str] = pydantic_v1.Field(alias="altText", default=None)
+    """
+    The visual description of the asset
+    """
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
