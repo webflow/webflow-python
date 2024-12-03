@@ -3,23 +3,20 @@
 import datetime as dt
 import typing
 
-from ..core.datetime_utils import serialize_datetime
-from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
+from ......core.datetime_utils import serialize_datetime
+from ......core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
 
 
-class PageDetailsSeo(pydantic_v1.BaseModel):
+class CreateBulkCollectionItemRequestBodyFieldDataName(pydantic_v1.BaseModel):
+    name: str = pydantic_v1.Field()
     """
-    SEO-related fields for the Page
-    """
-
-    title: typing.Optional[str] = pydantic_v1.Field(default=None)
-    """
-    The Page title shown in search engine results
+    The name of the item.
     """
 
-    description: typing.Optional[str] = pydantic_v1.Field(default=None)
+    slug: str = pydantic_v1.Field()
     """
-    The Page description shown in search engine results
+    URL slug for the item in your site.
+    Note: Updating the item slug will break all links referencing the old slug.
     """
 
     def json(self, **kwargs: typing.Any) -> str:

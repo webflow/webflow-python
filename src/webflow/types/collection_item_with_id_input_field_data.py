@@ -3,11 +3,11 @@
 import datetime as dt
 import typing
 
-from ......core.datetime_utils import serialize_datetime
-from ......core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
+from ..core.datetime_utils import serialize_datetime
+from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
 
 
-class BulkCollectionItemFieldData(pydantic_v1.BaseModel):
+class CollectionItemWithIdInputFieldData(pydantic_v1.BaseModel):
     name: typing.Optional[str] = pydantic_v1.Field(default=None)
     """
     Name of the Item
