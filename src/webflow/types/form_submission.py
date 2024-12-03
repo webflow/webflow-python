@@ -10,7 +10,7 @@ from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
 class FormSubmission(pydantic_v1.BaseModel):
     id: typing.Optional[str] = pydantic_v1.Field(default=None)
     """
-    The unique id of the Form submission
+    The unique ID of the Form submission
     """
 
     display_name: typing.Optional[str] = pydantic_v1.Field(alias="displayName", default=None)
@@ -20,12 +20,12 @@ class FormSubmission(pydantic_v1.BaseModel):
 
     site_id: typing.Optional[str] = pydantic_v1.Field(alias="siteId", default=None)
     """
-    The unique id of the Site the Form belongs to
+    The unique ID of the Site the Form belongs to
     """
 
     workspace_id: typing.Optional[str] = pydantic_v1.Field(alias="workspaceId", default=None)
     """
-    The unique id of the Workspace the Site belongs to
+    The unique ID of the Workspace the Site belongs to
     """
 
     date_submitted: typing.Optional[dt.datetime] = pydantic_v1.Field(alias="dateSubmitted", default=None)
