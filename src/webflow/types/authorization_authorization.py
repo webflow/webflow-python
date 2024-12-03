@@ -15,7 +15,7 @@ class AuthorizationAuthorization(pydantic_v1.BaseModel):
 
     id: typing.Optional[str] = pydantic_v1.Field(default=None)
     """
-    The unique id of the Authorization instance
+    The unique ID of the Authorization instance
     """
 
     created_on: typing.Optional[dt.datetime] = pydantic_v1.Field(alias="createdOn", default=None)
