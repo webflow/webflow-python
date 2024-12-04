@@ -11,6 +11,7 @@ from ...errors.forbidden_error import ForbiddenError
 from ...errors.unauthorized_error import UnauthorizedError
 from ...types.authorization import Authorization
 from ...types.authorized_user import AuthorizedUser
+from ...types.error import Error
 
 
 class TokenClient:
@@ -19,7 +20,9 @@ class TokenClient:
 
     def authorized_by(self, *, request_options: typing.Optional[RequestOptions] = None) -> AuthorizedUser:
         """
-        Information about the Authorized User <br><br> Required Scope | `authorized_user:read`
+        Information about the Authorized User
+
+        Required Scope | `authorized_user:read`
 
         Parameters
         ----------
@@ -47,7 +50,7 @@ class TokenClient:
             if 200 <= _response.status_code < 300:
                 return pydantic_v1.parse_obj_as(AuthorizedUser, _response.json())  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             _response_json = _response.json()
@@ -57,7 +60,8 @@ class TokenClient:
 
     def introspect(self, *, request_options: typing.Optional[RequestOptions] = None) -> Authorization:
         """
-        Information about the authorization token <blockquote class="callout callout_info" theme="📘">Access to this endpoint requires a bearer token from a <a href="https://developers.webflow.com/data/docs/getting-started-data-clients">Data Client App</a>.</blockquote>
+        Information about the authorization token
+        <Note>Access to this endpoint requires a bearer token from a []>Data Client App](/data/docs/getting-started-data-clients).</Note>
 
         Parameters
         ----------
@@ -85,7 +89,7 @@ class TokenClient:
             if 200 <= _response.status_code < 300:
                 return pydantic_v1.parse_obj_as(Authorization, _response.json())  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -98,7 +102,9 @@ class AsyncTokenClient:
 
     async def authorized_by(self, *, request_options: typing.Optional[RequestOptions] = None) -> AuthorizedUser:
         """
-        Information about the Authorized User <br><br> Required Scope | `authorized_user:read`
+        Information about the Authorized User
+
+        Required Scope | `authorized_user:read`
 
         Parameters
         ----------
@@ -126,7 +132,7 @@ class AsyncTokenClient:
             if 200 <= _response.status_code < 300:
                 return pydantic_v1.parse_obj_as(AuthorizedUser, _response.json())  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             _response_json = _response.json()
@@ -136,7 +142,8 @@ class AsyncTokenClient:
 
     async def introspect(self, *, request_options: typing.Optional[RequestOptions] = None) -> Authorization:
         """
-        Information about the authorization token <blockquote class="callout callout_info" theme="📘">Access to this endpoint requires a bearer token from a <a href="https://developers.webflow.com/data/docs/getting-started-data-clients">Data Client App</a>.</blockquote>
+        Information about the authorization token
+        <Note>Access to this endpoint requires a bearer token from a []>Data Client App](/data/docs/getting-started-data-clients).</Note>
 
         Parameters
         ----------
@@ -164,7 +171,7 @@ class AsyncTokenClient:
             if 200 <= _response.status_code < 300:
                 return pydantic_v1.parse_obj_as(Authorization, _response.json())  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
