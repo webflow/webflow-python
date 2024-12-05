@@ -13,7 +13,7 @@ class CollectionItem(pydantic_v1.BaseModel):
     The fields that define the schema for a given Item are based on the Collection that Item belongs to. Beyond the user defined fields, there are a handful of additional fields that are automatically created for all items
     """
 
-    id: str = pydantic_v1.Field()
+    id: typing.Optional[str] = pydantic_v1.Field(default=None)
     """
     Unique identifier for the Item
     """

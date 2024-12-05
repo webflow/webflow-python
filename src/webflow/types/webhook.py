@@ -6,12 +6,19 @@ import typing
 from ..core.datetime_utils import serialize_datetime
 from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
 from .trigger_type import TriggerType
+from .webhook_filter import WebhookFilter
 
 
 class Webhook(pydantic_v1.BaseModel):
     id: typing.Optional[str] = pydantic_v1.Field(default=None)
     """
     Unique identifier for the Webhook registration
+    """
+
+    trigger_type: typing.Optional[TriggerType] = pydantic_v1.Field(alias="triggerType", default=None)
+    url: typing.Optional[str] = pydantic_v1.Field(default=None)
+    """
+    URL to send the Webhook payload to
     """
 
     workspace_id: typing.Optional[str] = pydantic_v1.Field(alias="workspaceId", default=None)
@@ -24,10 +31,9 @@ class Webhook(pydantic_v1.BaseModel):
     Unique identifier for the Site the Webhook is registered in
     """
 
-    trigger_type: typing.Optional[TriggerType] = pydantic_v1.Field(alias="triggerType", default=None)
-    filter: typing.Optional[typing.Dict[str, typing.Any]] = pydantic_v1.Field(default=None)
+    filter: typing.Optional[WebhookFilter] = pydantic_v1.Field(default=None)
     """
-    Filter for selecting which events you want Webhooks to be sent for. Only supported for form_submission trigger types.
+    Only supported for the `form_submission` trigger type. Filter for the form you want Webhooks to be sent for.
     """
 
     last_triggered: typing.Optional[dt.datetime] = pydantic_v1.Field(alias="lastTriggered", default=None)
@@ -38,11 +44,6 @@ class Webhook(pydantic_v1.BaseModel):
     created_on: typing.Optional[dt.datetime] = pydantic_v1.Field(alias="createdOn", default=None)
     """
     Date the Webhook registration was created
-    """
-
-    url: typing.Optional[str] = pydantic_v1.Field(default=None)
-    """
-    URL to send the Webhook payload to
     """
 
     def json(self, **kwargs: typing.Any) -> str:
