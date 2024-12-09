@@ -13,7 +13,7 @@ class CollectionItem(pydantic_v1.BaseModel):
     The fields that define the schema for a given Item are based on the Collection that Item belongs to. Beyond the user defined fields, there are a handful of additional fields that are automatically created for all items
     """
 
-    id: str = pydantic_v1.Field()
+    id: typing.Optional[str] = pydantic_v1.Field(default=None)
     """
     Unique identifier for the Item
     """
@@ -48,7 +48,7 @@ class CollectionItem(pydantic_v1.BaseModel):
     Boolean determining if the Item is set to draft
     """
 
-    field_data: typing.Optional[CollectionItemFieldData] = pydantic_v1.Field(alias="fieldData", default=None)
+    field_data: CollectionItemFieldData = pydantic_v1.Field(alias="fieldData")
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
