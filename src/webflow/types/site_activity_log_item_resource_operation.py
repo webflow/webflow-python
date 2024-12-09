@@ -12,6 +12,10 @@ class SiteActivityLogItemResourceOperation(str, enum.Enum):
     PUBLISHED = "PUBLISHED"
     UNPUBLISHED = "UNPUBLISHED"
     DELETED = "DELETED"
+    GROUP_REORDERED = "GROUP_REORDERED"
+    GROUP_CREATED = "GROUP_CREATED"
+    GROUP_DELETED = "GROUP_DELETED"
+    REORDERED = "REORDERED"
 
     def visit(
         self,
@@ -20,6 +24,10 @@ class SiteActivityLogItemResourceOperation(str, enum.Enum):
         published: typing.Callable[[], T_Result],
         unpublished: typing.Callable[[], T_Result],
         deleted: typing.Callable[[], T_Result],
+        group_reordered: typing.Callable[[], T_Result],
+        group_created: typing.Callable[[], T_Result],
+        group_deleted: typing.Callable[[], T_Result],
+        reordered: typing.Callable[[], T_Result],
     ) -> T_Result:
         if self is SiteActivityLogItemResourceOperation.CREATED:
             return created()
@@ -31,3 +39,11 @@ class SiteActivityLogItemResourceOperation(str, enum.Enum):
             return unpublished()
         if self is SiteActivityLogItemResourceOperation.DELETED:
             return deleted()
+        if self is SiteActivityLogItemResourceOperation.GROUP_REORDERED:
+            return group_reordered()
+        if self is SiteActivityLogItemResourceOperation.GROUP_CREATED:
+            return group_created()
+        if self is SiteActivityLogItemResourceOperation.GROUP_DELETED:
+            return group_deleted()
+        if self is SiteActivityLogItemResourceOperation.REORDERED:
+            return reordered()

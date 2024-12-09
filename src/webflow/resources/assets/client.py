@@ -18,6 +18,7 @@ from ...types.asset_folder import AssetFolder
 from ...types.asset_folder_list import AssetFolderList
 from ...types.asset_upload import AssetUpload
 from ...types.assets import Assets
+from ...types.error import Error
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
@@ -29,7 +30,9 @@ class AssetsClient:
 
     def list(self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> Assets:
         """
-        List assets for a given site </br></br> Required scope | `assets:read`
+        List assets for a given site
+
+        Required scope | `assets:read`
 
         Parameters
         ----------
@@ -52,7 +55,7 @@ class AssetsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.assets.list(
-            site_id="site_id",
+            site_id="580e63e98c9a982ac9b8b741",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -64,13 +67,13 @@ class AssetsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -86,7 +89,13 @@ class AssetsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AssetUpload:
         """
-        Create a new asset entry. </br></br> This endpoint generates a response with the following information: `uploadUrl` and `uploadDetails`. You can use these two properties to [upload the file to Amazon s3 by making a POST](https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPOST.html) request to the `uploadUrl` with the `uploadDetails` object as your header information in the request. </br></br> Required scope | `assets:write`
+        Create a new asset entry.
+
+        This endpoint generates a response with the following information: `uploadUrl` and `uploadDetails`.
+        You can use these two properties to [upload the file to Amazon s3 by making a POST](https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPOST.html)
+        request to the `uploadUrl` with the `uploadDetails` object as your header information in the request.
+
+        Required scope | `assets:write`
 
         Parameters
         ----------
@@ -94,13 +103,13 @@ class AssetsClient:
             Unique identifier for a Site
 
         file_name : str
-            file name including file extension
+            File name including file extension. File names must be less than 100 characters.
 
         file_hash : str
             MD5 hash of the file
 
         parent_folder : typing.Optional[str]
-            id of the Asset folder (optional)
+            ID of the Asset folder (optional)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -118,7 +127,7 @@ class AssetsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.assets.create(
-            site_id="site_id",
+            site_id="580e63e98c9a982ac9b8b741",
             file_name="file.png",
             file_hash="3c7d87c9575702bc3b1e991f4d3c638e",
         )
@@ -136,13 +145,13 @@ class AssetsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -150,7 +159,9 @@ class AssetsClient:
 
     def get(self, asset_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> Asset:
         """
-        Get an Asset </br></br> Required scope | `assets:read`
+        Get an Asset
+
+        Required scope | `assets:read`
 
         Parameters
         ----------
@@ -173,7 +184,7 @@ class AssetsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.assets.get(
-            asset_id="asset_id",
+            asset_id="580e63fc8c9a982ac9b8b745",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -185,13 +196,13 @@ class AssetsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -200,6 +211,8 @@ class AssetsClient:
     def delete(self, asset_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
         """
         Delete an Asset
+
+        Required Scope: `assets: write`
 
         Parameters
         ----------
@@ -221,7 +234,7 @@ class AssetsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.assets.delete(
-            asset_id="asset_id",
+            asset_id="580e63fc8c9a982ac9b8b745",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -233,31 +246,41 @@ class AssetsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
     def update(
-        self, asset_id: str, *, display_name: str, request_options: typing.Optional[RequestOptions] = None
+        self,
+        asset_id: str,
+        *,
+        locale_id: typing.Optional[str] = OMIT,
+        display_name: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> Asset:
         """
-        Update an Asset </br></br> Required scope | `assets:write`
+        Update an Asset
+
+        Required scope | `assets:write`
 
         Parameters
         ----------
         asset_id : str
             Unique identifier for an Asset on a site
 
-        display_name : str
-            file name including file extension
+        locale_id : typing.Optional[str]
+            Unique identifier for a specific locale. Applicable, when using localization.
+
+        display_name : typing.Optional[str]
+            A human readable name for the asset
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -275,14 +298,13 @@ class AssetsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.assets.update(
-            asset_id="asset_id",
-            display_name="bulldoze.png",
+            asset_id="580e63fc8c9a982ac9b8b745",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             f"assets/{jsonable_encoder(asset_id)}",
             method="PATCH",
-            json={"displayName": display_name},
+            json={"localeId": locale_id, "displayName": display_name},
             request_options=request_options,
             omit=OMIT,
         )
@@ -292,13 +314,13 @@ class AssetsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -306,7 +328,9 @@ class AssetsClient:
 
     def list_folders(self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> AssetFolderList:
         """
-        List Asset Folders within a given site <br><br> Required scope | `assets:read`
+        List Asset Folders within a given site
+
+        Required scope | `assets:read`
 
         Parameters
         ----------
@@ -329,7 +353,7 @@ class AssetsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.assets.list_folders(
-            site_id="site_id",
+            site_id="580e63e98c9a982ac9b8b741",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -341,13 +365,13 @@ class AssetsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -362,7 +386,9 @@ class AssetsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AssetFolder:
         """
-        Create an Asset Folder within a given site <br><br> Required scope | `assets:write`
+        Create an Asset Folder within a given site
+
+        Required scope | `assets:write`
 
         Parameters
         ----------
@@ -391,7 +417,7 @@ class AssetsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.assets.create_folder(
-            site_id="site_id",
+            site_id="580e63e98c9a982ac9b8b741",
             display_name="my asset folder",
         )
         """
@@ -408,13 +434,13 @@ class AssetsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -424,7 +450,9 @@ class AssetsClient:
         self, asset_folder_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> AssetFolder:
         """
-        Get details about a specific Asset Folder <br><br> Required scope | `assets:read`
+        Get details about a specific Asset Folder
+
+        Required scope | `assets:read`
 
         Parameters
         ----------
@@ -447,7 +475,7 @@ class AssetsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.assets.get_folder(
-            asset_folder_id="asset_folder_id",
+            asset_folder_id="6390c49774a71f0e3c1a08ee",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -459,13 +487,13 @@ class AssetsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -478,7 +506,9 @@ class AsyncAssetsClient:
 
     async def list(self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> Assets:
         """
-        List assets for a given site </br></br> Required scope | `assets:read`
+        List assets for a given site
+
+        Required scope | `assets:read`
 
         Parameters
         ----------
@@ -501,7 +531,7 @@ class AsyncAssetsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.assets.list(
-            site_id="site_id",
+            site_id="580e63e98c9a982ac9b8b741",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -513,13 +543,13 @@ class AsyncAssetsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -535,7 +565,13 @@ class AsyncAssetsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AssetUpload:
         """
-        Create a new asset entry. </br></br> This endpoint generates a response with the following information: `uploadUrl` and `uploadDetails`. You can use these two properties to [upload the file to Amazon s3 by making a POST](https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPOST.html) request to the `uploadUrl` with the `uploadDetails` object as your header information in the request. </br></br> Required scope | `assets:write`
+        Create a new asset entry.
+
+        This endpoint generates a response with the following information: `uploadUrl` and `uploadDetails`.
+        You can use these two properties to [upload the file to Amazon s3 by making a POST](https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPOST.html)
+        request to the `uploadUrl` with the `uploadDetails` object as your header information in the request.
+
+        Required scope | `assets:write`
 
         Parameters
         ----------
@@ -543,13 +579,13 @@ class AsyncAssetsClient:
             Unique identifier for a Site
 
         file_name : str
-            file name including file extension
+            File name including file extension. File names must be less than 100 characters.
 
         file_hash : str
             MD5 hash of the file
 
         parent_folder : typing.Optional[str]
-            id of the Asset folder (optional)
+            ID of the Asset folder (optional)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -567,7 +603,7 @@ class AsyncAssetsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.assets.create(
-            site_id="site_id",
+            site_id="580e63e98c9a982ac9b8b741",
             file_name="file.png",
             file_hash="3c7d87c9575702bc3b1e991f4d3c638e",
         )
@@ -585,13 +621,13 @@ class AsyncAssetsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -599,7 +635,9 @@ class AsyncAssetsClient:
 
     async def get(self, asset_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> Asset:
         """
-        Get an Asset </br></br> Required scope | `assets:read`
+        Get an Asset
+
+        Required scope | `assets:read`
 
         Parameters
         ----------
@@ -622,7 +660,7 @@ class AsyncAssetsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.assets.get(
-            asset_id="asset_id",
+            asset_id="580e63fc8c9a982ac9b8b745",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -634,13 +672,13 @@ class AsyncAssetsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -649,6 +687,8 @@ class AsyncAssetsClient:
     async def delete(self, asset_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
         """
         Delete an Asset
+
+        Required Scope: `assets: write`
 
         Parameters
         ----------
@@ -670,7 +710,7 @@ class AsyncAssetsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.assets.delete(
-            asset_id="asset_id",
+            asset_id="580e63fc8c9a982ac9b8b745",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -682,31 +722,41 @@ class AsyncAssetsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
     async def update(
-        self, asset_id: str, *, display_name: str, request_options: typing.Optional[RequestOptions] = None
+        self,
+        asset_id: str,
+        *,
+        locale_id: typing.Optional[str] = OMIT,
+        display_name: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> Asset:
         """
-        Update an Asset </br></br> Required scope | `assets:write`
+        Update an Asset
+
+        Required scope | `assets:write`
 
         Parameters
         ----------
         asset_id : str
             Unique identifier for an Asset on a site
 
-        display_name : str
-            file name including file extension
+        locale_id : typing.Optional[str]
+            Unique identifier for a specific locale. Applicable, when using localization.
+
+        display_name : typing.Optional[str]
+            A human readable name for the asset
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -724,14 +774,13 @@ class AsyncAssetsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.assets.update(
-            asset_id="asset_id",
-            display_name="bulldoze.png",
+            asset_id="580e63fc8c9a982ac9b8b745",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"assets/{jsonable_encoder(asset_id)}",
             method="PATCH",
-            json={"displayName": display_name},
+            json={"localeId": locale_id, "displayName": display_name},
             request_options=request_options,
             omit=OMIT,
         )
@@ -741,13 +790,13 @@ class AsyncAssetsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -757,7 +806,9 @@ class AsyncAssetsClient:
         self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> AssetFolderList:
         """
-        List Asset Folders within a given site <br><br> Required scope | `assets:read`
+        List Asset Folders within a given site
+
+        Required scope | `assets:read`
 
         Parameters
         ----------
@@ -780,7 +831,7 @@ class AsyncAssetsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.assets.list_folders(
-            site_id="site_id",
+            site_id="580e63e98c9a982ac9b8b741",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -792,13 +843,13 @@ class AsyncAssetsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -813,7 +864,9 @@ class AsyncAssetsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AssetFolder:
         """
-        Create an Asset Folder within a given site <br><br> Required scope | `assets:write`
+        Create an Asset Folder within a given site
+
+        Required scope | `assets:write`
 
         Parameters
         ----------
@@ -842,7 +895,7 @@ class AsyncAssetsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.assets.create_folder(
-            site_id="site_id",
+            site_id="580e63e98c9a982ac9b8b741",
             display_name="my asset folder",
         )
         """
@@ -859,13 +912,13 @@ class AsyncAssetsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -875,7 +928,9 @@ class AsyncAssetsClient:
         self, asset_folder_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> AssetFolder:
         """
-        Get details about a specific Asset Folder <br><br> Required scope | `assets:read`
+        Get details about a specific Asset Folder
+
+        Required scope | `assets:read`
 
         Parameters
         ----------
@@ -898,7 +953,7 @@ class AsyncAssetsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.assets.get_folder(
-            asset_folder_id="asset_folder_id",
+            asset_folder_id="6390c49774a71f0e3c1a08ee",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -910,13 +965,13 @@ class AsyncAssetsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
