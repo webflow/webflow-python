@@ -3,33 +3,24 @@
 import datetime as dt
 import typing
 
-from ..core.datetime_utils import serialize_datetime
-from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
+from ......core.datetime_utils import serialize_datetime
+from ......core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
 
 
-class PageDetailsOpenGraph(pydantic_v1.BaseModel):
+class CreateBulkCollectionItemRequestBodyFieldDataItem(pydantic_v1.BaseModel):
     """
-    Open Graph fields for the Page
-    """
-
-    title: typing.Optional[str] = pydantic_v1.Field(default=None)
-    """
-    The title supplied to Open Graph annotations
+    A single CMS item to create
     """
 
-    title_copied: typing.Optional[bool] = pydantic_v1.Field(alias="titleCopied", default=None)
+    name: str = pydantic_v1.Field()
     """
-    Indicates the Open Graph title was copied from the SEO title
-    """
-
-    description: typing.Optional[str] = pydantic_v1.Field(default=None)
-    """
-    The description supplied to Open Graph annotations
+    The name of the item.
     """
 
-    description_copied: typing.Optional[bool] = pydantic_v1.Field(alias="descriptionCopied", default=None)
+    slug: str = pydantic_v1.Field()
     """
-    Indicates the Open Graph description was copied from the SEO description
+    URL slug for the item in your site.
+    Note: Updating the item slug will break all links referencing the old slug.
     """
 
     def json(self, **kwargs: typing.Any) -> str:
@@ -47,7 +38,5 @@ class PageDetailsOpenGraph(pydantic_v1.BaseModel):
     class Config:
         frozen = True
         smart_union = True
-        allow_population_by_field_name = True
-        populate_by_name = True
         extra = pydantic_v1.Extra.allow
         json_encoders = {dt.datetime: serialize_datetime}
