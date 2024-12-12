@@ -12,7 +12,9 @@
 <dl>
 <dd>
 
-Information about the Authorized User <br><br> Required Scope | `authorized_user:read`
+Information about the Authorized User
+
+Required Scope | `authorized_user:read`
 </dd>
 </dl>
 </dd>
@@ -72,7 +74,8 @@ client.token.authorized_by()
 <dl>
 <dd>
 
-Information about the authorization token <blockquote class="callout callout_info" theme="📘">Access to this endpoint requires a bearer token from a <a href="https://developers.webflow.com/data/docs/getting-started-data-clients">Data Client App</a>.</blockquote>
+Information about the authorization token
+<Note>Access to this endpoint requires a bearer token from a []>Data Client App](/data/docs/getting-started-data-clients).</Note>
 </dd>
 </dl>
 </dd>
@@ -133,7 +136,9 @@ client.token.introspect()
 <dl>
 <dd>
 
-List of all sites the provided access token is able to access. </br></br> Required scope | `sites:read`
+List of all sites the provided access token is able to access.
+
+Required scope | `sites:read`
 </dd>
 </dl>
 </dd>
@@ -193,7 +198,9 @@ client.sites.list()
 <dl>
 <dd>
 
-Get a site by site id </br></br> Required scope | `sites:read`
+Get details of a site.
+
+Required scope | `sites:read`
 </dd>
 </dl>
 </dd>
@@ -214,7 +221,7 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.sites.get(
-    site_id="site_id",
+    site_id="580e63e98c9a982ac9b8b741",
 )
 
 ```
@@ -263,7 +270,9 @@ client.sites.get(
 <dl>
 <dd>
 
-Get a list of all custom domains related to site. </br></br> Required scope | `sites:read`
+Get a list of all custom domains related to site.
+
+Required scope | `sites:read`
 </dd>
 </dl>
 </dd>
@@ -284,7 +293,7 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.sites.get_custom_domain(
-    site_id="site_id",
+    site_id="580e63e98c9a982ac9b8b741",
 )
 
 ```
@@ -333,7 +342,11 @@ client.sites.get_custom_domain(
 <dl>
 <dd>
 
-Publish a site to one more more domains. </br></br> Required scope | `sites:write`
+Publishes a site to one or more more domains.
+
+<Note title="Endpoint-specific rate limit">This endpoint has a limit of one successful publish queue per minute.</Note>
+
+Required scope | `sites:write`
 </dd>
 </dl>
 </dd>
@@ -354,7 +367,7 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.sites.publish(
-    site_id="site_id",
+    site_id="580e63e98c9a982ac9b8b741",
 )
 
 ```
@@ -379,7 +392,7 @@ client.sites.publish(
 <dl>
 <dd>
 
-**custom_domains:** `typing.Optional[typing.Sequence[str]]` — Array of Custom Domain ids to publish
+**custom_domains:** `typing.Optional[typing.Sequence[str]]` — Array of Custom Domain IDs to publish
     
 </dd>
 </dl>
@@ -388,93 +401,6 @@ client.sites.publish(
 <dd>
 
 **publish_to_webflow_subdomain:** `typing.Optional[bool]` — Choice of whether to publish to the default Webflow Subdomain
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-## Sites ActivityLogs
-<details><summary><code>client.sites.activity_logs.<a href="src/webflow/resources/sites/resources/activity_logs/client.py">list</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Retrieve Activity Logs for a specific Site. Requires Site to be on an Enterprise plan. </br></br> Required scope | `site_activity:read`
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from webflow.client import Webflow
-
-client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
-)
-client.sites.activity_logs.list(
-    site_id="site_id",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**site_id:** `str` — Unique identifier for a Site
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**limit:** `typing.Optional[float]` — Maximum number of records to be returned (max limit: 100)
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**offset:** `typing.Optional[float]` — Offset used for pagination if the results have more than limit records
     
 </dd>
 </dl>
@@ -507,7 +433,9 @@ client.sites.activity_logs.list(
 <dl>
 <dd>
 
-List of all Collections within a Site. </br></br> Required scope | `cms:read`
+List of all Collections within a Site.
+
+Required scope | `cms:read`
 </dd>
 </dl>
 </dd>
@@ -528,7 +456,7 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.collections.list(
-    site_id="site_id",
+    site_id="580e63e98c9a982ac9b8b741",
 )
 
 ```
@@ -577,7 +505,9 @@ client.collections.list(
 <dl>
 <dd>
 
-Create a Collection for a site. </br></br> Required scope | `cms:write`
+Create a Collection for a site.
+
+Required scope | `cms:write`
 </dd>
 </dl>
 </dd>
@@ -598,7 +528,7 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.collections.create(
-    site_id="site_id",
+    site_id="580e63e98c9a982ac9b8b741",
     display_name="Blog Posts",
     singular_name="Blog Post",
     slug="posts",
@@ -674,7 +604,9 @@ client.collections.create(
 <dl>
 <dd>
 
-Get the full details of a collection from its ID. </br></br> Required scope | `cms:read`
+Get the full details of a collection from its ID.
+
+Required scope | `cms:read`
 </dd>
 </dl>
 </dd>
@@ -695,77 +627,7 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.collections.get(
-    collection_id="collection_id",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**collection_id:** `str` — Unique identifier for a Collection
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.collections.<a href="src/webflow/resources/collections/client.py">delete_collection</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Delete a collection using its ID. </br></br> Required scope | `cms:write`
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from webflow.client import Webflow
-
-client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
-)
-client.collections.delete_collection(
-    collection_id="collection_id",
+    collection_id="580e63fc8c9a982ac9b8b745",
 )
 
 ```
@@ -814,7 +676,9 @@ client.collections.delete_collection(
 <dl>
 <dd>
 
-Delete a custom field in a collection. This endpoint does not currently support bulk deletion. </br></br> Required scope | `cms:write`
+Delete a collection using its ID.
+
+Required scope | `cms:write`
 </dd>
 </dl>
 </dd>
@@ -835,8 +699,7 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.collections.delete(
-    collection_id="collection_id",
-    field_id="field_id",
+    collection_id="580e63fc8c9a982ac9b8b745",
 )
 
 ```
@@ -854,1645 +717,6 @@ client.collections.delete(
 <dd>
 
 **collection_id:** `str` — Unique identifier for a Collection
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**field_id:** `str` — Unique identifier for a Field in a collection
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-## Collections Fields
-<details><summary><code>client.collections.fields.<a href="src/webflow/resources/collections/resources/fields/client.py">create</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Create a custom field in a collection. </br></br> Slugs must be all lowercase letters without spaces. If you pass a string with uppercase letters and/or spaces to the "Slug" property, Webflow will convert the slug to lowercase and replace spaces with "-." </br></br> Only some field types can be created through the API. This endpoint does not currently support bulk creation. </br></br> Required scope | `cms:write`
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from webflow.client import Webflow
-from webflow.resources.collections import FieldCreateType
-
-client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
-)
-client.collections.fields.create(
-    collection_id="collection_id",
-    is_required=False,
-    type=FieldCreateType.RICH_TEXT,
-    display_name="Post Body",
-    help_text="Add the body of your post here",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**collection_id:** `str` — Unique identifier for a Collection
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**type:** `FieldCreateType` — Choose these appropriate field type for your collection data
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**display_name:** `str` — The name of a field
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**is_required:** `typing.Optional[bool]` — define whether a field is required in a collection
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**help_text:** `typing.Optional[str]` — Additional text to help anyone filling out this field
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.collections.fields.<a href="src/webflow/resources/collections/resources/fields/client.py">update</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Update a custom field in a collection. </br></br> Required scope | `cms:write`
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from webflow.client import Webflow
-
-client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
-)
-client.collections.fields.update(
-    collection_id="collection_id",
-    field_id="field_id",
-    is_required=False,
-    display_name="Post Body",
-    help_text="Add the body of your post here",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**collection_id:** `str` — Unique identifier for a Collection
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**field_id:** `str` — Unique identifier for a Field in a collection
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**is_required:** `typing.Optional[bool]` — Define whether a field is required in a collection
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**display_name:** `typing.Optional[str]` — The name of a field
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**help_text:** `typing.Optional[str]` — Additional text to help anyone filling out this field
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-## Collections Items
-<details><summary><code>client.collections.items.<a href="src/webflow/resources/collections/resources/items/client.py">list_items</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-List of all Items within a Collection. </br></br> Required scope | `CMS:read`
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from webflow.client import Webflow
-
-client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
-)
-client.collections.items.list_items(
-    collection_id="collection_id",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**collection_id:** `str` — Unique identifier for a Collection
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**cms_locale_id:** `typing.Optional[str]` — Unique identifier for a CMS Locale. This UID is different from the Site locale identifier and is listed as `cmsLocaleId` in the Sites response. To query multiple locales, input a comma separated string.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**offset:** `typing.Optional[float]` — Offset used for pagination if the results have more than limit records
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**limit:** `typing.Optional[float]` — Maximum number of records to be returned (max limit: 100)
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**name:** `typing.Optional[str]` — The name of the item(s)
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**slug:** `typing.Optional[str]` — The slug of the item
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**sort_by:** `typing.Optional[ItemsListItemsRequestSortBy]` — Sort results by the provided value
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**sort_order:** `typing.Optional[ItemsListItemsRequestSortOrder]` — Sorts the results by asc or desc
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.collections.items.<a href="src/webflow/resources/collections/resources/items/client.py">create_item</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Create Item in a Collection.</br></br> To create items across multiple locales, <a href="https://developers.webflow.com/data/reference/create-item-for-multiple-locales"> please use this endpoint.</a> </br></br> Required scope | `CMS:write`
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from webflow import CollectionItemFieldData
-from webflow.client import Webflow
-
-client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
-)
-client.collections.items.create_item(
-    collection_id="collection_id",
-    id="42b720ef280c7a7a3be8cabe",
-    cms_locale_id="653ad57de882f528b32e810e",
-    last_published="2022-11-29T16:22:43.159Z",
-    last_updated="2022-11-17T17:19:43.282Z",
-    created_on="2022-11-17T17:11:57.148Z",
-    is_archived=False,
-    is_draft=False,
-    field_data=CollectionItemFieldData(
-        name="Pan Galactic Gargle Blaster Recipe",
-        slug="pan-galactic-gargle-blaster",
-    ),
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**collection_id:** `str` — Unique identifier for a Collection
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**id:** `str` — Unique identifier for the Item
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**cms_locale_id:** `typing.Optional[str]` — Identifier for the locale of the CMS item
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**last_published:** `typing.Optional[str]` — The date the item was last published
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**last_updated:** `typing.Optional[str]` — The date the item was last updated
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**created_on:** `typing.Optional[str]` — The date the item was created
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**is_archived:** `typing.Optional[bool]` — Boolean determining if the Item is set to archived
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**is_draft:** `typing.Optional[bool]` — Boolean determining if the Item is set to draft
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**field_data:** `typing.Optional[CollectionItemFieldData]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.collections.items.<a href="src/webflow/resources/collections/resources/items/client.py">list_items_live</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-List of all live Items within a Collection. </br></br> Required scope | `CMS:read`
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from webflow.client import Webflow
-
-client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
-)
-client.collections.items.list_items_live(
-    collection_id="collection_id",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**collection_id:** `str` — Unique identifier for a Collection
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**cms_locale_id:** `typing.Optional[str]` — Unique identifier for a CMS Locale. This UID is different from the Site locale identifier and is listed as `cmsLocaleId` in the Sites response. To query multiple locales, input a comma separated string.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**offset:** `typing.Optional[float]` — Offset used for pagination if the results have more than limit records
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**limit:** `typing.Optional[float]` — Maximum number of records to be returned (max limit: 100)
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**name:** `typing.Optional[str]` — The name of the item(s)
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**slug:** `typing.Optional[str]` — The slug of the item
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**sort_by:** `typing.Optional[ItemsListItemsLiveRequestSortBy]` — Sort results by the provided value
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**sort_order:** `typing.Optional[ItemsListItemsLiveRequestSortOrder]` — Sorts the results by asc or desc
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.collections.items.<a href="src/webflow/resources/collections/resources/items/client.py">create_item_live</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Create live Item in a Collection. This Item will be published to the live site. </br></br> To create items across multiple locales, <a href="https://developers.webflow.com/data/reference/create-item-for-multiple-locales"> please use this endpoint.</a> </br></br> Required scope | `CMS:write`
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from webflow import CollectionItemFieldData
-from webflow.client import Webflow
-
-client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
-)
-client.collections.items.create_item_live(
-    collection_id="collection_id",
-    id="42b720ef280c7a7a3be8cabe",
-    cms_locale_id="653ad57de882f528b32e810e",
-    last_published="2022-11-29T16:22:43.159Z",
-    last_updated="2022-11-17T17:19:43.282Z",
-    created_on="2022-11-17T17:11:57.148Z",
-    is_archived=False,
-    is_draft=False,
-    field_data=CollectionItemFieldData(
-        name="Pan Galactic Gargle Blaster Recipe",
-        slug="pan-galactic-gargle-blaster",
-    ),
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**collection_id:** `str` — Unique identifier for a Collection
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**id:** `str` — Unique identifier for the Item
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**cms_locale_id:** `typing.Optional[str]` — Identifier for the locale of the CMS item
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**last_published:** `typing.Optional[str]` — The date the item was last published
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**last_updated:** `typing.Optional[str]` — The date the item was last updated
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**created_on:** `typing.Optional[str]` — The date the item was created
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**is_archived:** `typing.Optional[bool]` — Boolean determining if the Item is set to archived
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**is_draft:** `typing.Optional[bool]` — Boolean determining if the Item is set to draft
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**field_data:** `typing.Optional[CollectionItemFieldData]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.collections.items.<a href="src/webflow/resources/collections/resources/items/client.py">create_item_for_multiple_locales</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Create single Item in a Collection with multiple corresponding locales. </br></br> Required scope | `CMS:write`
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from webflow.client import Webflow
-
-client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
-)
-client.collections.items.create_item_for_multiple_locales(
-    collection_id="collection_id",
-    id="580e64008c9a982ac9b8b754",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**collection_id:** `str` — Unique identifier for a Collection
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**id:** `str` — Unique identifier for the Item
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**cms_locale_ids:** `typing.Optional[typing.Sequence[str]]` — Array of identifiers for the locales where the item will be created
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**last_published:** `typing.Optional[str]` — The date the item was last published
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**last_updated:** `typing.Optional[str]` — The date the item was last updated
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**created_on:** `typing.Optional[str]` — The date the item was created
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**is_archived:** `typing.Optional[bool]` — Boolean determining if the Item is set to archived
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**is_draft:** `typing.Optional[bool]` — Boolean determining if the Item is set to draft
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**field_data:** `typing.Optional[BulkCollectionItemFieldData]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.collections.items.<a href="src/webflow/resources/collections/resources/items/client.py">get_item</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Get details of a selected Collection Item. </br></br> Required scope | `CMS:read`
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from webflow.client import Webflow
-
-client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
-)
-client.collections.items.get_item(
-    collection_id="collection_id",
-    item_id="item_id",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**collection_id:** `str` — Unique identifier for a Collection
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**item_id:** `str` — Unique identifier for an Item
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**cms_locale_id:** `typing.Optional[str]` — Unique identifier for a CMS Locale. This UID is different from the Site locale identifier and is listed as `cmsLocaleId` in the Sites response. To query multiple locales, input a comma separated string.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.collections.items.<a href="src/webflow/resources/collections/resources/items/client.py">delete_item</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Delete an Item from a Collection. This endpoint does not currently support bulk deletion. </br></br> Required scope | `CMS:write`
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from webflow.client import Webflow
-
-client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
-)
-client.collections.items.delete_item(
-    collection_id="collection_id",
-    item_id="item_id",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**collection_id:** `str` — Unique identifier for a Collection
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**item_id:** `str` — Unique identifier for an Item
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**cms_locale_id:** `typing.Optional[str]` — Unique identifier for a CMS Locale. This UID is different from the Site locale identifier and is listed as `cmsLocaleId` in the Sites response. To query multiple locales, input a comma separated string.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.collections.items.<a href="src/webflow/resources/collections/resources/items/client.py">update_item</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Update a selected Item in a Collection. </br></br> Required scope | `CMS:write`
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from webflow import CollectionItemFieldData
-from webflow.client import Webflow
-
-client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
-)
-client.collections.items.update_item(
-    collection_id="collection_id",
-    item_id="item_id",
-    id="42b720ef280c7a7a3be8cabe",
-    cms_locale_id="653ad57de882f528b32e810e",
-    last_published="2022-11-29T16:22:43.159Z",
-    last_updated="2022-11-17T17:19:43.282Z",
-    created_on="2022-11-17T17:11:57.148Z",
-    is_archived=False,
-    is_draft=False,
-    field_data=CollectionItemFieldData(
-        name="Pan Galactic Gargle Blaster Recipe",
-        slug="pan-galactic-gargle-blaster",
-    ),
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**collection_id:** `str` — Unique identifier for a Collection
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**item_id:** `str` — Unique identifier for an Item
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**id:** `str` — Unique identifier for the Item
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**cms_locale_id:** `typing.Optional[str]` — Identifier for the locale of the CMS item
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**last_published:** `typing.Optional[str]` — The date the item was last published
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**last_updated:** `typing.Optional[str]` — The date the item was last updated
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**created_on:** `typing.Optional[str]` — The date the item was created
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**is_archived:** `typing.Optional[bool]` — Boolean determining if the Item is set to archived
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**is_draft:** `typing.Optional[bool]` — Boolean determining if the Item is set to draft
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**field_data:** `typing.Optional[CollectionItemFieldData]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.collections.items.<a href="src/webflow/resources/collections/resources/items/client.py">get_item_live</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Get details of a selected Collection live Item. </br></br> Required scope | `CMS:read`
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from webflow.client import Webflow
-
-client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
-)
-client.collections.items.get_item_live(
-    collection_id="collection_id",
-    item_id="item_id",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**collection_id:** `str` — Unique identifier for a Collection
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**item_id:** `str` — Unique identifier for an Item
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**cms_locale_id:** `typing.Optional[str]` — Unique identifier for a CMS Locale. This UID is different from the Site locale identifier and is listed as `cmsLocaleId` in the Sites response. To query multiple locales, input a comma separated string.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.collections.items.<a href="src/webflow/resources/collections/resources/items/client.py">delete_item_live</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Remove a live item from the site. Removing a published item will unpublish the item from the live site and set it to draft. This endpoint does not currently support bulk deletion. </br></br> Required scope | `CMS:write`
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from webflow.client import Webflow
-
-client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
-)
-client.collections.items.delete_item_live(
-    collection_id="collection_id",
-    item_id="item_id",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**collection_id:** `str` — Unique identifier for a Collection
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**item_id:** `str` — Unique identifier for an Item
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**cms_locale_id:** `typing.Optional[str]` — Unique identifier for a CMS Locale. This UID is different from the Site locale identifier and is listed as `cmsLocaleId` in the Sites response. To query multiple locales, input a comma separated string.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.collections.items.<a href="src/webflow/resources/collections/resources/items/client.py">update_item_live</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Update a selected live Item in a Collection. The updates for this Item will be published to the live site. </br></br> Required scope | `CMS:write`
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from webflow import CollectionItemFieldData
-from webflow.client import Webflow
-
-client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
-)
-client.collections.items.update_item_live(
-    collection_id="collection_id",
-    item_id="item_id",
-    id="42b720ef280c7a7a3be8cabe",
-    cms_locale_id="653ad57de882f528b32e810e",
-    last_published="2022-11-29T16:22:43.159Z",
-    last_updated="2022-11-17T17:19:43.282Z",
-    created_on="2022-11-17T17:11:57.148Z",
-    is_archived=False,
-    is_draft=False,
-    field_data=CollectionItemFieldData(
-        name="Pan Galactic Gargle Blaster Recipe",
-        slug="pan-galactic-gargle-blaster",
-    ),
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**collection_id:** `str` — Unique identifier for a Collection
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**item_id:** `str` — Unique identifier for an Item
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**id:** `str` — Unique identifier for the Item
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**cms_locale_id:** `typing.Optional[str]` — Identifier for the locale of the CMS item
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**last_published:** `typing.Optional[str]` — The date the item was last published
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**last_updated:** `typing.Optional[str]` — The date the item was last updated
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**created_on:** `typing.Optional[str]` — The date the item was created
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**is_archived:** `typing.Optional[bool]` — Boolean determining if the Item is set to archived
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**is_draft:** `typing.Optional[bool]` — Boolean determining if the Item is set to draft
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**field_data:** `typing.Optional[CollectionItemFieldData]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.collections.items.<a href="src/webflow/resources/collections/resources/items/client.py">publish_item</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Publish an item or multiple items. </br></br> Required scope | `cms:write`
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from webflow.client import Webflow
-
-client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
-)
-client.collections.items.publish_item(
-    collection_id="collection_id",
-    item_ids=["itemIds"],
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**collection_id:** `str` — Unique identifier for a Collection
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**item_ids:** `typing.Sequence[str]` 
     
 </dd>
 </dl>
@@ -2525,7 +749,9 @@ client.collections.items.publish_item(
 <dl>
 <dd>
 
-List of all pages for a site </br></br> Required scope | `pages:read`
+List of all pages for a site.
+
+Required scope | `pages:read`
 </dd>
 </dl>
 </dd>
@@ -2546,7 +772,8 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.pages.list(
-    site_id="site_id",
+    site_id="580e63e98c9a982ac9b8b741",
+    locale_id="65427cf400e02b306eaa04a0",
 )
 
 ```
@@ -2571,7 +798,7 @@ client.pages.list(
 <dl>
 <dd>
 
-**locale:** `typing.Optional[str]` — Unique identifier for a specific locale. Applicable, when using localization.
+**locale_id:** `typing.Optional[str]` — Unique identifier for a specific locale. Applicable, when using localization.
     
 </dd>
 </dl>
@@ -2619,7 +846,9 @@ client.pages.list(
 <dl>
 <dd>
 
-Get metadata information for a single page </br></br> Required scope | `pages:read`
+Get metadata information for a single page.
+
+Required scope | `pages:read`
 </dd>
 </dl>
 </dd>
@@ -2640,7 +869,8 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.pages.get_metadata(
-    page_id="page_id",
+    page_id="63c720f9347c2139b248e552",
+    locale_id="65427cf400e02b306eaa04a0",
 )
 
 ```
@@ -2665,7 +895,7 @@ client.pages.get_metadata(
 <dl>
 <dd>
 
-**locale:** `typing.Optional[str]` — Unique identifier for a specific locale. Applicable, when using localization.
+**locale_id:** `typing.Optional[str]` — Unique identifier for a specific locale. Applicable, when using localization.
     
 </dd>
 </dl>
@@ -2697,7 +927,9 @@ client.pages.get_metadata(
 <dl>
 <dd>
 
-Update Page-level metadata, including SEO and Open Graph fields. </br></br> Required scope | `pages:write`
+Update Page-level metadata, including SEO and Open Graph fields.
+
+Required scope | `pages:write`
 </dd>
 </dl>
 </dd>
@@ -2721,13 +953,12 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.pages.update_page_settings(
-    page_id="page_id",
+    page_id="63c720f9347c2139b248e552",
+    locale_id="65427cf400e02b306eaa04a0",
     id="6596da6045e56dee495bcbba",
     site_id="6258612d1ee792848f805dcf",
     title="Guide to the Galaxy",
     slug="guide-to-the-galaxy",
-    parent_id="6419db964a9c435aa3af6251",
-    collection_id="6390c49774a71f12831a08e3",
     created_on=datetime.datetime.fromisoformat(
         "2024-03-11 10:42:00+00:00",
     ),
@@ -2737,6 +968,7 @@ client.pages.update_page_settings(
     archived=False,
     draft=False,
     can_branch=True,
+    is_branch=False,
     seo=PageSeo(
         title="The Ultimate Hitchhiker's Guide to the Galaxy",
         description="Everything you need to know about the galaxy, from avoiding Vogon poetry to the importance of towels.",
@@ -2747,6 +979,8 @@ client.pages.update_page_settings(
         description="Dive deep into the mysteries of the universe with your guide to everything galactic.",
         description_copied=False,
     ),
+    page_locale_id="653fd9af6a07fc9cfd7a5e57",
+    published_path="/en-us/guide-to-the-galaxy",
 )
 
 ```
@@ -2771,7 +1005,7 @@ client.pages.update_page_settings(
 <dl>
 <dd>
 
-**locale:** `typing.Optional[str]` — Unique identifier for a specific locale. Applicable, when using localization.
+**id:** `str` — Unique identifier for the Page
     
 </dd>
 </dl>
@@ -2779,7 +1013,7 @@ client.pages.update_page_settings(
 <dl>
 <dd>
 
-**id:** `typing.Optional[str]` — Unique identifier for the Page
+**locale_id:** `typing.Optional[str]` — Unique identifier for a specific locale. Applicable, when using localization.
     
 </dd>
 </dl>
@@ -2867,6 +1101,14 @@ client.pages.update_page_settings(
 <dl>
 <dd>
 
+**is_branch:** `typing.Optional[bool]` — Indicates whether the Page is a Branch of another Page [Page Branching](https://university.webflow.com/lesson/page-branching)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **is_members_only:** `typing.Optional[bool]` — Indicates whether the Page is restricted by [Memberships Controls](https://university.webflow.com/lesson/webflow-memberships-overview#how-to-manage-page-restrictions)
     
 </dd>
@@ -2884,6 +1126,22 @@ client.pages.update_page_settings(
 <dd>
 
 **open_graph:** `typing.Optional[PageOpenGraph]` — Open Graph fields for the Page
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**page_locale_id:** `typing.Optional[str]` — Unique ID of the page locale
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**published_path:** `typing.Optional[str]` — Relative path of the published page URL
     
 </dd>
 </dl>
@@ -2915,7 +1173,11 @@ client.pages.update_page_settings(
 <dl>
 <dd>
 
-Get static content from a static page. </br> If you do not provide a Locale ID in your request, the response will return any content that can be localized from the Primary locale</br></br> Required scope | `pages:read`
+Get static content from a static page.
+
+If you do not provide a Locale ID in your request, the response will return any content that can be localized from the Primary locale.
+
+Required scope | `pages:read`
 </dd>
 </dl>
 </dd>
@@ -2936,7 +1198,8 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.pages.get_content(
-    page_id="page_id",
+    page_id="63c720f9347c2139b248e552",
+    locale_id="65427cf400e02b306eaa04a0",
 )
 
 ```
@@ -2961,7 +1224,7 @@ client.pages.get_content(
 <dl>
 <dd>
 
-**locale:** `typing.Optional[str]` — Unique identifier for a specific locale. Applicable, when using localization.
+**locale_id:** `typing.Optional[str]` — Unique identifier for a specific locale. Applicable, when using localization.
     
 </dd>
 </dl>
@@ -3009,7 +1272,11 @@ client.pages.get_content(
 <dl>
 <dd>
 
-Update static content on a static page. This endpoint supports sending 1000 nodes per request. </br></br> Required scope | `pages:write`
+This endpoint allows for updating static content on a static page within a secondary locale. It is designed specifically for localized pages and can handle up to 1000 nodes per request.
+
+<blockquote class="callout callout_info"><p><strong>Note:</strong>This endpoint is specifically for localized pages. Ensure that the locale specified is a valid secondary locale for the site.</p></blockquote>
+
+Required scope | `pages:write`
 </dd>
 </dl>
 </dd>
@@ -3031,20 +1298,20 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.pages.update_static_content(
-    page_id="page_id",
-    locale="locale",
+    page_id="63c720f9347c2139b248e552",
+    locale_id="65427cf400e02b306eaa04a0",
     nodes=[
         DomWriteNodesItem(
             node_id="a245c12d-995b-55ee-5ec7-aa36a6cad623",
-            text="<h1>The Hitchhiker's Guide to the Galaxy</h1>",
+            text="<h1>The Hitchhiker’s Guide to the Galaxy</h1>",
         ),
         DomWriteNodesItem(
             node_id="a245c12d-995b-55ee-5ec7-aa36a6cad627",
-            text="<div><h3>Don't Panic!</h3><p>Always know where your towel is.</p></div>",
+            text="<div><h3>Don’t Panic!</h3><p>Always know where your towel is.</p></div>",
         ),
         DomWriteNodesItem(
             node_id="a245c12d-995b-55ee-5ec7-aa36a6cad629",
-            text="<img alt='Marvin, the Paranoid Android' src='path/to/image/with/assetId/659595234426a9fcbad57043'/>",
+            text='<img alt="Marvin, the Paranoid Android" src="path/to/image/with/assetId/659595234426a9fcbad57043"/>',
         ),
     ],
 )
@@ -3064,14 +1331,6 @@ client.pages.update_static_content(
 <dd>
 
 **page_id:** `str` — Unique identifier for a Page
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**locale:** `str` — The locale identifier.
     
 </dd>
 </dl>
@@ -3087,583 +1346,7 @@ client.pages.update_static_content(
 <dl>
 <dd>
 
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-## Pages Scripts
-<details><summary><code>client.pages.scripts.<a href="src/webflow/resources/pages/resources/scripts/client.py">get_custom_code</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Get all registered scripts that have been applied to a specific Page. </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. <blockquote class="callout callout_info" theme="📘">Access to this endpoint requires a bearer token from a <a href="https://developers.webflow.com/data/docs/getting-started-data-clients">Data Client App</a>.</blockquote> Required scope | `custom_code:read`
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from webflow.client import Webflow
-
-client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
-)
-client.pages.scripts.get_custom_code(
-    page_id="page_id",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**page_id:** `str` — Unique identifier for a Page
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.pages.scripts.<a href="src/webflow/resources/pages/resources/scripts/client.py">upsert_custom_code</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Add a registered script to a Page. </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. <blockquote class="callout callout_info" theme="📘">Access to this endpoint requires a bearer token from a <a href="https://developers.webflow.com/data/docs/getting-started-data-clients">Data Client App</a>.</blockquote> Required scope | `custom_code:write`
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from webflow import ScriptApply, ScriptApplyLocation
-from webflow.client import Webflow
-
-client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
-)
-client.pages.scripts.upsert_custom_code(
-    page_id="page_id",
-    scripts=[
-        ScriptApply(
-            id="cms_slider",
-            location=ScriptApplyLocation.HEADER,
-            version="1.0.0",
-            attributes={"my-attribute": "some-value"},
-        ),
-        ScriptApply(
-            id="alert",
-            location=ScriptApplyLocation.HEADER,
-            version="0.0.1",
-        ),
-    ],
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**page_id:** `str` — Unique identifier for a Page
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**scripts:** `typing.Optional[typing.Sequence[ScriptApply]]` — A list of scripts applied to a Site or a Page
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**last_updated:** `typing.Optional[str]` — Date when the Site's scripts were last updated
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**created_on:** `typing.Optional[str]` — Date when the Site's scripts were created
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.pages.scripts.<a href="src/webflow/resources/pages/resources/scripts/client.py">delete_custom_code</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Delete the custom code block that an app has created for a page </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. <blockquote class="callout callout_info" theme="📘">Access to this endpoint requires a bearer token from a <a href="https://developers.webflow.com/data/docs/getting-started-data-clients">Data Client App</a>.</blockquote> Required scope | `custom_code:write`
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from webflow.client import Webflow
-
-client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
-)
-client.pages.scripts.delete_custom_code(
-    page_id="page_id",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**page_id:** `str` — Unique identifier for a Page
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-## Sites Scripts
-<details><summary><code>client.sites.scripts.<a href="src/webflow/resources/sites/resources/scripts/client.py">get_custom_code</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Get all registered scripts that have been applied to a specific Site. <blockquote class="callout callout_info" theme="📘">Access to this endpoint requires a bearer token from a <a href="https://developers.webflow.com/data/docs/getting-started-data-clients">Data Client App</a>.</blockquote> Required scope | `custom_code:read`
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from webflow.client import Webflow
-
-client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
-)
-client.sites.scripts.get_custom_code(
-    site_id="site_id",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**site_id:** `str` — Unique identifier for a Site
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.sites.scripts.<a href="src/webflow/resources/sites/resources/scripts/client.py">upsert_custom_code</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Add a registered script to a Site. </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. <blockquote class="callout callout_info" theme="📘">Access to this endpoint requires a bearer token from a <a href="https://developers.webflow.com/data/docs/getting-started-data-clients">Data Client App</a>.</blockquote> Required scope | `custom_code:write`
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from webflow import ScriptApply, ScriptApplyLocation
-from webflow.client import Webflow
-
-client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
-)
-client.sites.scripts.upsert_custom_code(
-    site_id="site_id",
-    scripts=[
-        ScriptApply(
-            id="cms_slider",
-            location=ScriptApplyLocation.HEADER,
-            version="1.0.0",
-            attributes={"my-attribute": "some-value"},
-        ),
-        ScriptApply(
-            id="alert",
-            location=ScriptApplyLocation.HEADER,
-            version="0.0.1",
-        ),
-    ],
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**site_id:** `str` — Unique identifier for a Site
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**scripts:** `typing.Optional[typing.Sequence[ScriptApply]]` — A list of scripts applied to a Site or a Page
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**last_updated:** `typing.Optional[str]` — Date when the Site's scripts were last updated
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**created_on:** `typing.Optional[str]` — Date when the Site's scripts were created
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.sites.scripts.<a href="src/webflow/resources/sites/resources/scripts/client.py">delete_custom_code</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Delete the custom code block that an app created for a Site </br></br> <blockquote class="callout callout_info" theme="📘">Access to this endpoint requires a bearer token from a <a href="https://developers.webflow.com/data/docs/getting-started-data-clients">Data Client App</a>.</blockquote> Required scope | `custom_code:write`
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from webflow.client import Webflow
-
-client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
-)
-client.sites.scripts.delete_custom_code(
-    site_id="site_id",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**site_id:** `str` — Unique identifier for a Site
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.sites.scripts.<a href="src/webflow/resources/sites/resources/scripts/client.py">list_custom_code_blocks</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Get all instances of Custom Code applied to a Site or Pages. <blockquote class="callout callout_info" theme="📘">Access to this endpoint requires a bearer token from a <a href="https://developers.webflow.com/data/docs/getting-started-data-clients">Data Client App</a>.</blockquote> Required scope | `custom_code:read`
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from webflow.client import Webflow
-
-client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
-)
-client.sites.scripts.list_custom_code_blocks(
-    site_id="site_id",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**site_id:** `str` — Unique identifier for a Site
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**offset:** `typing.Optional[float]` — Offset used for pagination if the results have more than limit records
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**limit:** `typing.Optional[float]` — Maximum number of records to be returned (max limit: 100)
+**locale_id:** `typing.Optional[str]` — Unique identifier for a specific locale. Applicable, when using localization.
     
 </dd>
 </dl>
@@ -3696,7 +1379,16 @@ client.sites.scripts.list_custom_code_blocks(
 <dl>
 <dd>
 
-List of scripts registered to a Site. </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. Additionally, Scripts can be remotely hosted, or registered as inline snippets. <blockquote class="callout callout_info" theme="📘">Access to this endpoint requires a bearer token from a <a href="https://developers.webflow.com/data/docs/getting-started-data-clients">Data Client App</a>.</blockquote> Required scope | `custom_code:read`
+List of scripts registered to a Site.
+
+In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered
+to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate
+`custom_code` endpoints.
+Additionally, Scripts can be remotely hosted, or registered as inline snippets.
+
+<blockquote class="callout callout_info" theme="📘">Access to this endpoint requires a bearer token from a <a href="https://developers.webflow.com/data/docs/getting-started-data-clients">Data Client App</a>.</blockquote>
+
+Required scope | `custom_code:read`
 </dd>
 </dl>
 </dd>
@@ -3717,7 +1409,7 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.scripts.list(
-    site_id="site_id",
+    site_id="580e63e98c9a982ac9b8b741",
 )
 
 ```
@@ -3766,7 +1458,16 @@ client.scripts.list(
 <dl>
 <dd>
 
-Add a script to a Site's Custom Code registry. </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. Additionally, Scripts can be remotely hosted, or registered as inline snippets. <blockquote class="callout callout_info" theme="📘">Access to this endpoint requires a bearer token from a <a href="https://developers.webflow.com/data/docs/getting-started-data-clients">Data Client App</a>.</blockquote> </br></br> Required scope | `custom_code:write`
+Add a script to a Site's Custom Code registry.
+
+In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered
+to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate
+`custom_code` endpoints.
+Additionally, Scripts can be remotely hosted, or registered as inline snippets.
+
+<blockquote class="callout callout_info" theme="📘">Access to this endpoint requires a bearer token from a <a href="https://developers.webflow.com/data/docs/getting-started-data-clients">Data Client App</a>.</blockquote>
+
+Required scope | `custom_code:write`
 </dd>
 </dl>
 </dd>
@@ -3787,7 +1488,7 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.scripts.register_hosted(
-    site_id="site_id",
+    site_id="580e63e98c9a982ac9b8b741",
     hosted_location="hostedLocation",
     integrity_hash="integrityHash",
     version="version",
@@ -3880,7 +1581,15 @@ client.scripts.register_hosted(
 <dl>
 <dd>
 
-Add a script to a Site's Custom Code registry. Inline scripts can be between 1 and 2000 characters. </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. </br></br> <blockquote class="callout callout_info" theme="📘">Access to this endpoint requires a bearer token from a <a href="https://developers.webflow.com/data/docs/getting-started-data-clients">Data Client App</a>.</blockquote> Required scope | `custom_code:write`
+Add a script to a Site's Custom Code registry. Inline scripts can be between 1 and 2000 characters.
+
+In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered
+to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate
+`custom_code` endpoints.
+
+<blockquote class="callout callout_info" theme="📘">Access to this endpoint requires a bearer token from a <a href="https://developers.webflow.com/data/docs/getting-started-data-clients">Data Client App</a>.</blockquote>
+
+Required scope | `custom_code:write`
 </dd>
 </dl>
 </dd>
@@ -3901,7 +1610,7 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.scripts.register_inline(
-    site_id="site_id",
+    site_id="580e63e98c9a982ac9b8b741",
     source_code="alert('hello world');",
     version="0.0.1",
     display_name="Alert",
@@ -3994,7 +1703,9 @@ client.scripts.register_inline(
 <dl>
 <dd>
 
-List assets for a given site </br></br> Required scope | `assets:read`
+List assets for a given site
+
+Required scope | `assets:read`
 </dd>
 </dl>
 </dd>
@@ -4015,7 +1726,7 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.assets.list(
-    site_id="site_id",
+    site_id="580e63e98c9a982ac9b8b741",
 )
 
 ```
@@ -4064,7 +1775,13 @@ client.assets.list(
 <dl>
 <dd>
 
-Create a new asset entry. </br></br> This endpoint generates a response with the following information: `uploadUrl` and `uploadDetails`. You can use these two properties to [upload the file to Amazon s3 by making a POST](https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPOST.html) request to the `uploadUrl` with the `uploadDetails` object as your header information in the request. </br></br> Required scope | `assets:write`
+Create a new asset entry.
+
+This endpoint generates a response with the following information: `uploadUrl` and `uploadDetails`.
+You can use these two properties to [upload the file to Amazon s3 by making a POST](https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPOST.html)
+request to the `uploadUrl` with the `uploadDetails` object as your header information in the request.
+
+Required scope | `assets:write`
 </dd>
 </dl>
 </dd>
@@ -4085,7 +1802,7 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.assets.create(
-    site_id="site_id",
+    site_id="580e63e98c9a982ac9b8b741",
     file_name="file.png",
     file_hash="3c7d87c9575702bc3b1e991f4d3c638e",
 )
@@ -4112,7 +1829,7 @@ client.assets.create(
 <dl>
 <dd>
 
-**file_name:** `str` — file name including file extension
+**file_name:** `str` — File name including file extension. File names must be less than 100 characters.
     
 </dd>
 </dl>
@@ -4128,7 +1845,7 @@ client.assets.create(
 <dl>
 <dd>
 
-**parent_folder:** `typing.Optional[str]` — id of the Asset folder (optional)
+**parent_folder:** `typing.Optional[str]` — ID of the Asset folder (optional)
     
 </dd>
 </dl>
@@ -4160,7 +1877,9 @@ client.assets.create(
 <dl>
 <dd>
 
-Get an Asset </br></br> Required scope | `assets:read`
+Get an Asset
+
+Required scope | `assets:read`
 </dd>
 </dl>
 </dd>
@@ -4181,7 +1900,7 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.assets.get(
-    asset_id="asset_id",
+    asset_id="580e63fc8c9a982ac9b8b745",
 )
 
 ```
@@ -4231,6 +1950,8 @@ client.assets.get(
 <dd>
 
 Delete an Asset
+
+Required Scope: `assets: write`
 </dd>
 </dl>
 </dd>
@@ -4251,7 +1972,7 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.assets.delete(
-    asset_id="asset_id",
+    asset_id="580e63fc8c9a982ac9b8b745",
 )
 
 ```
@@ -4300,7 +2021,9 @@ client.assets.delete(
 <dl>
 <dd>
 
-Update an Asset </br></br> Required scope | `assets:write`
+Update an Asset
+
+Required scope | `assets:write`
 </dd>
 </dl>
 </dd>
@@ -4321,8 +2044,7 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.assets.update(
-    asset_id="asset_id",
-    display_name="bulldoze.png",
+    asset_id="580e63fc8c9a982ac9b8b745",
 )
 
 ```
@@ -4347,7 +2069,15 @@ client.assets.update(
 <dl>
 <dd>
 
-**display_name:** `str` — file name including file extension
+**locale_id:** `typing.Optional[str]` — Unique identifier for a specific locale. Applicable, when using localization.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**display_name:** `typing.Optional[str]` — A human readable name for the asset
     
 </dd>
 </dl>
@@ -4379,7 +2109,9 @@ client.assets.update(
 <dl>
 <dd>
 
-List Asset Folders within a given site <br><br> Required scope | `assets:read`
+List Asset Folders within a given site
+
+Required scope | `assets:read`
 </dd>
 </dl>
 </dd>
@@ -4400,7 +2132,7 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.assets.list_folders(
-    site_id="site_id",
+    site_id="580e63e98c9a982ac9b8b741",
 )
 
 ```
@@ -4449,7 +2181,9 @@ client.assets.list_folders(
 <dl>
 <dd>
 
-Create an Asset Folder within a given site <br><br> Required scope | `assets:write`
+Create an Asset Folder within a given site
+
+Required scope | `assets:write`
 </dd>
 </dl>
 </dd>
@@ -4470,7 +2204,7 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.assets.create_folder(
-    site_id="site_id",
+    site_id="580e63e98c9a982ac9b8b741",
     display_name="my asset folder",
 )
 
@@ -4536,7 +2270,9 @@ client.assets.create_folder(
 <dl>
 <dd>
 
-Get details about a specific Asset Folder <br><br> Required scope | `assets:read`
+Get details about a specific Asset Folder
+
+Required scope | `assets:read`
 </dd>
 </dl>
 </dd>
@@ -4557,7 +2293,7 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.assets.get_folder(
-    asset_folder_id="asset_folder_id",
+    asset_folder_id="6390c49774a71f0e3c1a08ee",
 )
 
 ```
@@ -4607,7 +2343,9 @@ client.assets.get_folder(
 <dl>
 <dd>
 
-List all App-created Webhooks registered for a given site </br></br> Required scope | `sites:read`
+List all App-created Webhooks registered for a given site
+
+Required scope | `sites:read`
 </dd>
 </dl>
 </dd>
@@ -4628,7 +2366,7 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.webhooks.list(
-    site_id="site_id",
+    site_id="580e63e98c9a982ac9b8b741",
 )
 
 ```
@@ -4677,7 +2415,12 @@ client.webhooks.list(
 <dl>
 <dd>
 
-Create a new Webhook, to be notified when Webflow resources change. Limit of 75 registrations per `triggerType`, per site. <blockquote class="callout callout_info" theme="📘">Access to this endpoint requires a bearer token from a <a href="https://developers.webflow.com/data/docs/getting-started-data-clients">Data Client App</a>.</blockquote> Required scope | `sites:write`
+Create a new Webhook.
+
+Limit of 75 registrations per `triggerType`, per site.
+
+<blockquote class="callout callout_info" theme="📘">Access to this endpoint requires a bearer token from a <a href="https://developers.webflow.com/data/docs/getting-started-data-clients">Data Client App</a>.</blockquote>    
+Required scope | `sites:write`
 </dd>
 </dl>
 </dd>
@@ -4692,6 +2435,8 @@ Create a new Webhook, to be notified when Webflow resources change. Limit of 75 
 <dd>
 
 ```python
+import datetime
+
 from webflow import TriggerType
 from webflow.client import Webflow
 
@@ -4699,9 +2444,18 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.webhooks.create(
-    site_id="site_id",
+    site_id_="580e63e98c9a982ac9b8b741",
+    id="582266e0cd48de0f0e3c6d8b",
     trigger_type=TriggerType.FORM_SUBMISSION,
-    url="https://api.mydomain.com/webhook",
+    url="https://webhook.site/7f7f7f7f-7f7f-7f7f-7f7f-7f7f7f7f7f7f",
+    workspace_id="4f4e46fd476ea8c507000001",
+    site_id="562ac0395358780a1f5e6fbd",
+    last_triggered=datetime.datetime.fromisoformat(
+        "2023-02-08 23:59:28+00:00",
+    ),
+    created_on=datetime.datetime.fromisoformat(
+        "2022-11-08 23:59:28+00:00",
+    ),
 )
 
 ```
@@ -4718,7 +2472,7 @@ client.webhooks.create(
 <dl>
 <dd>
 
-**site_id:** `str` — Unique identifier for a Site
+**site_id_:** `str` — Unique identifier for a Site
     
 </dd>
 </dl>
@@ -4726,7 +2480,7 @@ client.webhooks.create(
 <dl>
 <dd>
 
-**trigger_type:** `TriggerType` 
+**id:** `typing.Optional[str]` — Unique identifier for the Webhook registration
     
 </dd>
 </dl>
@@ -4734,8 +2488,7 @@ client.webhooks.create(
 <dl>
 <dd>
 
-**url:** `str` — The server URI that Webflow will call when your Webhook is triggered
-
+**trigger_type:** `typing.Optional[TriggerType]` 
     
 </dd>
 </dl>
@@ -4743,11 +2496,47 @@ client.webhooks.create(
 <dl>
 <dd>
 
-**filter:** `typing.Optional[typing.Dict[str, typing.Any]]` 
+**url:** `typing.Optional[str]` — URL to send the Webhook payload to
+    
+</dd>
+</dl>
 
-Filter for selecting which events you want Webhooks to be triggered for.
-** Only available for `form_submission` trigger types. **
+<dl>
+<dd>
 
+**workspace_id:** `typing.Optional[str]` — Unique identifier for the Workspace the Webhook is registered in
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**site_id:** `typing.Optional[str]` — Unique identifier for the Site the Webhook is registered in
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**filter:** `typing.Optional[WebhookFilter]` — Only supported for the `form_submission` trigger type. Filter for the form you want Webhooks to be sent for.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**last_triggered:** `typing.Optional[dt.datetime]` — Date the Webhook instance was last triggered
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**created_on:** `typing.Optional[dt.datetime]` — Date the Webhook registration was created
     
 </dd>
 </dl>
@@ -4780,6 +2569,8 @@ Filter for selecting which events you want Webhooks to be triggered for.
 <dd>
 
 Get a specific Webhook instance
+
+Required scope: `sites:read`
 </dd>
 </dl>
 </dd>
@@ -4800,7 +2591,7 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.webhooks.get(
-    webhook_id="webhook_id",
+    webhook_id="580e64008c9a982ac9b8b754",
 )
 
 ```
@@ -4850,6 +2641,8 @@ client.webhooks.get(
 <dd>
 
 Remove a Webhook
+
+Required scope: `sites:read`
 </dd>
 </dl>
 </dd>
@@ -4870,7 +2663,7 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.webhooks.delete(
-    webhook_id="webhook_id",
+    webhook_id="580e64008c9a982ac9b8b754",
 )
 
 ```
@@ -4920,7 +2713,9 @@ client.webhooks.delete(
 <dl>
 <dd>
 
-List forms for a given site </br></br> Required scope | `forms:read`
+List forms for a given site.
+
+Required scope | `forms:read`
 </dd>
 </dl>
 </dd>
@@ -4941,7 +2736,7 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.forms.list(
-    site_id="site_id",
+    site_id="580e63e98c9a982ac9b8b741",
 )
 
 ```
@@ -5006,7 +2801,9 @@ client.forms.list(
 <dl>
 <dd>
 
-Get information about a given form</br></br> Required scope | `forms:read`
+Get information about a given form.
+
+Required scope | `forms:read`
 </dd>
 </dl>
 </dd>
@@ -5027,7 +2824,7 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.forms.get(
-    form_id="form_id",
+    form_id="580e63e98c9a982ac9b8b741",
 )
 
 ```
@@ -5076,7 +2873,9 @@ client.forms.get(
 <dl>
 <dd>
 
-List form submissions for a given form </br></br> Required scope | `forms:read`
+List form submissions for a given form
+
+Required scope | `forms:read`
 </dd>
 </dl>
 </dd>
@@ -5097,7 +2896,7 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.forms.list_submissions(
-    form_id="form_id",
+    form_id="580e63e98c9a982ac9b8b741",
 )
 
 ```
@@ -5115,6 +2914,22 @@ client.forms.list_submissions(
 <dd>
 
 **form_id:** `str` — Unique identifier for a Form
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**offset:** `typing.Optional[float]` — Offset used for pagination if the results have more than limit records
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[float]` — Maximum number of records to be returned (max limit: 100)
     
 </dd>
 </dl>
@@ -5146,7 +2961,9 @@ client.forms.list_submissions(
 <dl>
 <dd>
 
-Get information about a given form submission</br></br> Required scope | `forms:read`
+Get information about a given form submissio.
+
+Required scope | `forms:read`
 </dd>
 </dl>
 </dd>
@@ -5167,7 +2984,7 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.forms.get_submission(
-    form_submission_id="form_submission_id",
+    form_submission_id="580e63e98c9a982ac9b8b741",
 )
 
 ```
@@ -5216,7 +3033,9 @@ client.forms.get_submission(
 <dl>
 <dd>
 
-Update hidden fields on a form submission</br></br> Required scope | `forms:write`
+Update hidden fields on a form submission
+
+Required scope | `forms:write`
 </dd>
 </dl>
 </dd>
@@ -5237,7 +3056,7 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.forms.update_submission(
-    form_submission_id="form_submission_id",
+    form_submission_id="580e63e98c9a982ac9b8b741",
 )
 
 ```
@@ -5295,7 +3114,9 @@ client.forms.update_submission(
 <dl>
 <dd>
 
-Get a list of users for a site <br><br> Required scope | `users:read`
+Get a list of users for a site
+
+Required scope | `users:read`
 </dd>
 </dl>
 </dd>
@@ -5316,7 +3137,7 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.users.list(
-    site_id="site_id",
+    site_id="580e63e98c9a982ac9b8b741",
 )
 
 ```
@@ -5395,7 +3216,9 @@ Can be prefixed with a `-` to reverse the sort (ex. `-CreatedOn`)
 <dl>
 <dd>
 
-Get a User by ID <br><br> Required scope | `users:read`
+Get a User by ID
+
+Required scope | `users:read`
 </dd>
 </dl>
 </dd>
@@ -5416,8 +3239,8 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.users.get(
-    site_id="site_id",
-    user_id="user_id",
+    site_id="580e63e98c9a982ac9b8b741",
+    user_id="580e63e98c9a982ac9b8b741",
 )
 
 ```
@@ -5474,7 +3297,9 @@ client.users.get(
 <dl>
 <dd>
 
-Delete a User by ID <br><br> Required scope | `users:write`
+Delete a User by ID
+
+Required scope | `users:write`
 </dd>
 </dl>
 </dd>
@@ -5495,8 +3320,8 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.users.delete(
-    site_id="site_id",
-    user_id="user_id",
+    site_id="580e63e98c9a982ac9b8b741",
+    user_id="580e63e98c9a982ac9b8b741",
 )
 
 ```
@@ -5553,9 +3378,12 @@ client.users.delete(
 <dl>
 <dd>
 
-Update a User by ID <br><br> Required scope | `users:write`
+Update a User by ID
 
-<aside class="notice">The <code>email</code> and <code>password</code> fields cannot be updated using this endpoint</aside>
+Required scope | `users:write`
+
+<Note class="notice">The <code>email</code> and <code>password</code>
+fields cannot be updated using this endpoint</Note>
 </dd>
 </dl>
 </dd>
@@ -5577,8 +3405,8 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.users.update(
-    site_id="site_id",
-    user_id="user_id",
+    site_id="580e63e98c9a982ac9b8b741",
+    user_id="580e63e98c9a982ac9b8b741",
     data=UsersUpdateRequestData(
         name="Some One",
         accept_privacy=False,
@@ -5658,7 +3486,11 @@ client.users.update(
 <dl>
 <dd>
 
-Create and invite a user with an email address. The user will be sent and invite via email, which they will need to accept in order to join paid Access Groups. <br><br> Required scope | `users:write`
+Create and invite a user with an email address.
+
+The user will be sent and invite via email, which they will need to accept in order to join paid any paid access group.
+
+Required scope | `users:write`
 </dd>
 </dl>
 </dd>
@@ -5679,7 +3511,7 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.users.invite(
-    site_id="site_id",
+    site_id="580e63e98c9a982ac9b8b741",
     email="some.one@home.com",
     access_groups=["webflowers"],
 )
@@ -5748,7 +3580,9 @@ client.users.invite(
 <dl>
 <dd>
 
-Get a list of access groups for a site <br><br> Required scope | `users:read`
+Get a list of access groups for a site
+
+Required scope | `users:read`
 </dd>
 </dl>
 </dd>
@@ -5769,7 +3603,7 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.access_groups.list(
-    site_id="site_id",
+    site_id="580e63e98c9a982ac9b8b741",
 )
 
 ```
@@ -5846,7 +3680,10 @@ Can be prefixed with a `-` to reverse the sort (ex. `-CreatedOn`)
 <dl>
 <dd>
 
-Retrieve all products for a site. Use `limit` and `offset` to page through all products with subsequent requests. All SKUs for each product will also be fetched and returned. The `limit`, `offset` and `total` values represent Products only and do not include any SKUs.
+Retrieve all products for a site.
+
+Use `limit` and `offset` to page through all products with subsequent requests. All SKUs for each product
+will also be fetched and returned. The `limit`, `offset` and `total` values represent Products only and do not include any SKUs.
 
 Required scope | `ecommerce:read`
 </dd>
@@ -5869,7 +3706,7 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.products.list(
-    site_id="site_id",
+    site_id="580e63e98c9a982ac9b8b741",
 )
 
 ```
@@ -5934,13 +3771,19 @@ client.products.list(
 <dl>
 <dd>
 
-Creating a new Product involves creating both a Product and a SKU, since a Product Item has to have, at minimum, a single SKU.
+Create a new product and SKU.
 
-In order to create a Product with multiple SKUs - for example a T-shirt in sizes small, medium and large - you'll need to create `sku-properties`. In our T-shirt example, a single `sku-property` would be Color. Within that property, we'll need to list out the various colors a T-shirt could be as an array of `enum` values: `royal-blue`, `crimson-red`, and `forrest-green`.
+When you create a product, you will always create a SKU, since a Product Item must have, at minimum, a single SKU.
 
-Once, you've created a Product and its `sku-properties` with `enum` values, you can create your default SKU, which will automatically be a combination of the first `sku-properties` you've created. In our example, the default SKU will be a Royal Blue T-Shirt, because our first `enum` of our Color `sku-property` is Royal Blue. After you've created your product, you can create additional SKUs using the <a href="https://developers.webflow.com/reference/create-skus">Create SKU endpoint</a>
+To create a Product with multiple SKUs - for example a T-shirt in sizes small, medium and large:
 
-Upon creation, the default product type will be `Advanced`. The product type is used to determine which Product and SKU fields are shown to users in the `Designer` and the `Editor`. Setting it to `Advanced` ensures that all Product and SKU fields will be shown.
+- Create parameters in `sku-properties`, also known as [product options and variants.](https://help.webflow.com/hc/en-us/articles/33961334531347-Create-product-options-and-variants).
+- A single `sku-property` would be `color`. Within the `color` property, list the various colors of T-shirts as an array of `enum` values: `royal-blue`, `crimson-red`, and `forrest-green`.
+- Once, you've created a Product and its `sku-properties` with `enum` values, Webflow will create a **default SKU**, which will automatically be a combination of the first `sku-properties` you've created.
+- In our example, the default SKU will be a Royal Blue T-Shirt, because our first `enum` of our Color `sku-property` is Royal Blue.
+- After you've created your product, you can create additional SKUs using the [Create SKU endpoint.](/data/reference/ecommerce/products-sk-us/create-sku)
+
+Upon creation, the default product type will be `Advanced`, which ensures all Product and SKU fields will be shown to users in the Designer.
 
 Required scope | `ecommerce:write`
 </dd>
@@ -5963,7 +3806,7 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.products.create(
-    site_id="site_id",
+    site_id="580e63e98c9a982ac9b8b741",
 )
 
 ```
@@ -6036,7 +3879,8 @@ client.products.create(
 <dl>
 <dd>
 
-Retrieve a single product by its id. All of its SKUs will also be retrieved.
+Retrieve a single product by its ID. All of its SKUs will also be
+retrieved.
 
 Required scope | `ecommerce:read`
 </dd>
@@ -6059,8 +3903,8 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.products.get(
-    site_id="site_id",
-    product_id="product_id",
+    site_id="580e63e98c9a982ac9b8b741",
+    product_id="580e63fc8c9a982ac9b8b745",
 )
 
 ```
@@ -6117,7 +3961,9 @@ client.products.get(
 <dl>
 <dd>
 
-Updating an existing Product will set the product type to `Advanced`. The product type is used to determine which Product and SKU fields are shown to users in the `Designer` and the `Editor`. Setting it to `Advanced` ensures that all Product and SKU fields will be shown. The product type can be edited in the `Designer` or the `Editor`.
+Update an existing Product.
+
+Updating an existing Product will set the product type to `Advanced`, which ensures all Product and SKU fields will be shown to users in the Designer.
 
 Required scope | `ecommerce:write`
 </dd>
@@ -6140,8 +3986,8 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.products.update(
-    site_id="site_id",
-    product_id="product_id",
+    site_id="580e63e98c9a982ac9b8b741",
+    product_id="580e63fc8c9a982ac9b8b745",
 )
 
 ```
@@ -6222,9 +4068,9 @@ client.products.update(
 <dl>
 <dd>
 
-Create additional SKUs to cover every variant of your Product. The Default SKU already counts as one of the variants.
+Create additional SKUs to manage every [option and variant of your Product.](https://help.webflow.com/hc/en-us/articles/33961334531347-Create-product-options-and-variants)
 
-Creating additional SKUs will set the product type to `Advanced` for the product associated with the SKUs. The product type is used to determine which Product and SKU fields are shown to users in the `Designer` and the `Editor`. Setting it to `Advanced` ensures that all Product and SKU fields will be shown. The product type can be edited in the `Designer` or the `Editor`.
+Creating SKUs through the API will set the product type to `Advanced`, which ensures all Product and SKU fields will be shown to users in the Designer.
 
 Required scope | `ecommerce:write`
 </dd>
@@ -6248,8 +4094,8 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.products.create_sku(
-    site_id="site_id",
-    product_id="product_id",
+    site_id="580e63e98c9a982ac9b8b741",
+    product_id="580e63fc8c9a982ac9b8b745",
     skus=[Sku()],
 )
 
@@ -6323,7 +4169,9 @@ client.products.create_sku(
 <dl>
 <dd>
 
-Updating an existing SKU will set the product type to `Advanced` for the product associated with the SKU. The product type is used to determine which Product and SKU fields are shown to users in the `Designer` and the `Editor`. Setting it to `Advanced` ensures that all Product and SKU fields will be shown. The product type can be edited in the `Designer` or the `Editor`.
+Update a specified SKU.
+
+Updating an existing SKU will set the Product type to `Advanced`, which ensures all Product and SKU fields will be shown to users in the Designer.
 
 Required scope | `ecommerce:write`
 </dd>
@@ -6347,9 +4195,9 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.products.update_sku(
-    site_id="site_id",
-    product_id="product_id",
-    sku_id="sku_id",
+    site_id="580e63e98c9a982ac9b8b741",
+    product_id="580e63fc8c9a982ac9b8b745",
+    sku_id="5e8518516e147040726cc415",
     sku=Sku(),
 )
 
@@ -6455,7 +4303,7 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.orders.list(
-    site_id="site_id",
+    site_id="580e63e98c9a982ac9b8b741",
 )
 
 ```
@@ -6528,7 +4376,8 @@ client.orders.list(
 <dl>
 <dd>
 
-Retrieve a single product by its id. All of its SKUs will also be retrieved.
+Retrieve a single product by its ID. All of its SKUs will also be
+retrieved.
 
 Required scope | `ecommerce:read`
 </dd>
@@ -6551,8 +4400,8 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.orders.get(
-    site_id="site_id",
-    order_id="order_id",
+    site_id="580e63e98c9a982ac9b8b741",
+    order_id="5e8518516e147040726cc415",
 )
 
 ```
@@ -6609,7 +4458,9 @@ client.orders.get(
 <dl>
 <dd>
 
-This API lets you update the fields, `comment`, `shippingProvider`, and/or `shippingTracking` for a given order. All three fields can be updated simultaneously or independently.
+This API lets you update the fields, `comment`, `shippingProvider`,
+and/or `shippingTracking` for a given order. All three fields can be
+updated simultaneously or independently.
 
 Required scope | `ecommerce:write`
 </dd>
@@ -6632,8 +4483,8 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.orders.update(
-    site_id="site_id",
-    order_id="order_id",
+    site_id="580e63e98c9a982ac9b8b741",
+    order_id="5e8518516e147040726cc415",
 )
 
 ```
@@ -6745,8 +4596,8 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.orders.update_fulfill(
-    site_id="site_id",
-    order_id="order_id",
+    site_id="580e63e98c9a982ac9b8b741",
+    order_id="5e8518516e147040726cc415",
 )
 
 ```
@@ -6834,8 +4685,8 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.orders.update_unfulfill(
-    site_id="site_id",
-    order_id="order_id",
+    site_id="580e63e98c9a982ac9b8b741",
+    order_id="5e8518516e147040726cc415",
 )
 
 ```
@@ -6916,8 +4767,8 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.orders.refund(
-    site_id="site_id",
-    order_id="order_id",
+    site_id="580e63e98c9a982ac9b8b741",
+    order_id="5e8518516e147040726cc415",
 )
 
 ```
@@ -7006,8 +4857,8 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.inventory.list(
-    collection_id="collection_id",
-    item_id="item_id",
+    collection_id="580e63fc8c9a982ac9b8b745",
+    item_id="580e64008c9a982ac9b8b754",
 )
 
 ```
@@ -7064,7 +4915,12 @@ client.inventory.list(
 <dl>
 <dd>
 
-Updates the current inventory levels for a particular SKU item. Updates may be given in one or two methods, absolutely or incrementally. Absolute updates are done by setting `quantity` directly. Incremental updates are by specifying the inventory delta in `updateQuantity` which is then added to the `quantity` stored on the server.
+Updates the current inventory levels for a particular SKU item.
+
+Updates may be given in one or two methods, absolutely or incrementally.
+
+- Absolute updates are done by setting `quantity` directly.
+- Incremental updates are by specifying the inventory delta in `updateQuantity` which is then added to the `quantity` stored on the server.
 
 Required scope | `ecommerce:write`
 </dd>
@@ -7088,8 +4944,8 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.inventory.update(
-    collection_id="collection_id",
-    item_id="item_id",
+    collection_id="580e63fc8c9a982ac9b8b745",
+    item_id="580e64008c9a982ac9b8b754",
     inventory_type=InventoryUpdateRequestInventoryType.INFINITE,
 )
 
@@ -7195,7 +5051,7 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.ecommerce.get_settings(
-    site_id="site_id",
+    site_id="580e63e98c9a982ac9b8b741",
 )
 
 ```
@@ -7213,6 +5069,2760 @@ client.ecommerce.get_settings(
 <dd>
 
 **site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## Collections Fields
+<details><summary><code>client.collections.fields.<a href="src/webflow/resources/collections/resources/fields/client.py">create</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Create a custom field in a collection.
+
+Slugs must be all lowercase letters without spaces.
+If you pass a string with uppercase letters and/or spaces to the "Slug" property, Webflow will
+convert the slug to lowercase and replace spaces with "-."
+
+Only some field types can be created through the API.
+This endpoint does not currently support bulk creation.
+
+Required scope | `cms:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow.client import Webflow
+from webflow.resources.collections import FieldCreateType
+
+client = Webflow(
+    access_token="YOUR_ACCESS_TOKEN",
+)
+client.collections.fields.create(
+    collection_id="580e63fc8c9a982ac9b8b745",
+    is_required=False,
+    type=FieldCreateType.RICH_TEXT,
+    display_name="Post Body",
+    help_text="Add the body of your post here",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**collection_id:** `str` — Unique identifier for a Collection
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**type:** `FieldCreateType` — Choose these appropriate field type for your collection data
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**display_name:** `str` — The name of a field
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**is_required:** `typing.Optional[bool]` — define whether a field is required in a collection
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**help_text:** `typing.Optional[str]` — Additional text to help anyone filling out this field
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.collections.fields.<a href="src/webflow/resources/collections/resources/fields/client.py">delete</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Delete a custom field in a collection. This endpoint does not currently support bulk deletion.
+
+Required scope | `cms:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow.client import Webflow
+
+client = Webflow(
+    access_token="YOUR_ACCESS_TOKEN",
+)
+client.collections.fields.delete(
+    collection_id="580e63fc8c9a982ac9b8b745",
+    field_id="580e63fc8c9a982ac9b8b745",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**collection_id:** `str` — Unique identifier for a Collection
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**field_id:** `str` — Unique identifier for a Field in a collection
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.collections.fields.<a href="src/webflow/resources/collections/resources/fields/client.py">update</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Update a custom field in a collection.
+
+Required scope | `cms:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow.client import Webflow
+
+client = Webflow(
+    access_token="YOUR_ACCESS_TOKEN",
+)
+client.collections.fields.update(
+    collection_id="580e63fc8c9a982ac9b8b745",
+    field_id="580e63fc8c9a982ac9b8b745",
+    is_required=False,
+    display_name="Post Body",
+    help_text="Add the body of your post here",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**collection_id:** `str` — Unique identifier for a Collection
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**field_id:** `str` — Unique identifier for a Field in a collection
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**is_required:** `typing.Optional[bool]` — Define whether a field is required in a collection
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**display_name:** `typing.Optional[str]` — The name of a field
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**help_text:** `typing.Optional[str]` — Additional text to help anyone filling out this field
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## Collections Items
+<details><summary><code>client.collections.items.<a href="src/webflow/resources/collections/resources/items/client.py">list_items</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+List of all Items within a Collection.
+
+Required scope | `CMS:read`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow.client import Webflow
+
+client = Webflow(
+    access_token="YOUR_ACCESS_TOKEN",
+)
+client.collections.items.list_items(
+    collection_id="580e63fc8c9a982ac9b8b745",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**collection_id:** `str` — Unique identifier for a Collection
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cms_locale_id:** `typing.Optional[str]` — Unique identifier for a CMS Locale. This UID is different from the Site locale identifier and is listed as `cmsLocaleId` in the Sites response. To query multiple locales, input a comma separated string.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**offset:** `typing.Optional[float]` — Offset used for pagination if the results have more than limit records
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[float]` — Maximum number of records to be returned (max limit: 100)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `typing.Optional[str]` — The name of the item(s)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**slug:** `typing.Optional[str]` — The slug of the item
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sort_by:** `typing.Optional[ItemsListItemsRequestSortBy]` — Sort results by the provided value
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sort_order:** `typing.Optional[ItemsListItemsRequestSortOrder]` — Sorts the results by asc or desc
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.collections.items.<a href="src/webflow/resources/collections/resources/items/client.py">create_item</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Create Item(s) in a Collection.
+
+To create items across multiple locales, please use [this endpoint.](/data/v2.0.0/reference/cms/collection-items/bulk-items/create-items)
+
+Required scope | `CMS:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import CollectionItemPostSingle, CollectionItemPostSingleFieldData
+from webflow.client import Webflow
+from webflow.resources.collections import MultipleItems
+
+client = Webflow(
+    access_token="YOUR_ACCESS_TOKEN",
+)
+client.collections.items.create_item(
+    collection_id="580e63fc8c9a982ac9b8b745",
+    request=MultipleItems(
+        items=[
+            CollectionItemPostSingle(
+                is_archived=False,
+                is_draft=False,
+                field_data=CollectionItemPostSingleFieldData(
+                    name="Senior Data Analyst",
+                    slug="senior-data-analyst",
+                ),
+            ),
+            CollectionItemPostSingle(
+                is_archived=False,
+                is_draft=False,
+                field_data=CollectionItemPostSingleFieldData(
+                    name="Product Manager",
+                    slug="product-manager",
+                ),
+            ),
+        ],
+    ),
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**collection_id:** `str` — Unique identifier for a Collection
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `ItemsCreateItemRequest` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.collections.items.<a href="src/webflow/resources/collections/resources/items/client.py">delete_items</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Delete Items from a Collection.
+
+**Note:** If the `cmsLocaleId` parameter is undefined or empty and the items are localized, items will be deleted only in the primary locale.
+
+Required scope | `CMS:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow.client import Webflow
+
+client = Webflow(
+    access_token="YOUR_ACCESS_TOKEN",
+)
+client.collections.items.delete_items(
+    collection_id="580e63fc8c9a982ac9b8b745",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**collection_id:** `str` — Unique identifier for a Collection
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**items:** `typing.Optional[typing.Sequence[ItemsDeleteItemsRequestItemsItem]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.collections.items.<a href="src/webflow/resources/collections/resources/items/client.py">update_items</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Update a single item or multiple items (up to 100) in a Collection.
+
+**Note:** If the `cmsLocaleId` parameter is undefined or empty and the items are localized, items will be updated only in the primary locale.
+
+Required scope | `CMS:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import (
+    CollectionItemWithIdInput,
+    CollectionItemWithIdInputFieldData,
+)
+from webflow.client import Webflow
+
+client = Webflow(
+    access_token="YOUR_ACCESS_TOKEN",
+)
+client.collections.items.update_items(
+    collection_id="580e63fc8c9a982ac9b8b745",
+    items=[
+        CollectionItemWithIdInput(
+            id="66f6ed9576ddacf3149d5ea6",
+            cms_locale_id="66f6e966c9e1dc700a857ca5",
+            field_data=CollectionItemWithIdInputFieldData(
+                name="Ne Paniquez Pas",
+                slug="ne-paniquez-pas",
+            ),
+        ),
+        CollectionItemWithIdInput(
+            id="66f6ed9576ddacf3149d5ea6",
+            cms_locale_id="66f6e966c9e1dc700a857ca4",
+            field_data=CollectionItemWithIdInputFieldData(
+                name="No Entrar en Pánico",
+                slug="no-entrar-en-panico",
+            ),
+        ),
+        CollectionItemWithIdInput(
+            id="66f6ed9576ddacf3149d5eaa",
+            cms_locale_id="66f6e966c9e1dc700a857ca5",
+            field_data=CollectionItemWithIdInputFieldData(
+                name="Au Revoir et Merci pour Tous les Poissons",
+                slug="au-revoir-et-merci",
+            ),
+        ),
+        CollectionItemWithIdInput(
+            id="66f6ed9576ddacf3149d5eaa",
+            cms_locale_id="66f6e966c9e1dc700a857ca4",
+            field_data=CollectionItemWithIdInputFieldData(
+                name="Hasta Luego y Gracias por Todo el Pescado",
+                slug="hasta-luego-y-gracias",
+            ),
+        ),
+    ],
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**collection_id:** `str` — Unique identifier for a Collection
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**items:** `typing.Optional[typing.Sequence[CollectionItemWithIdInput]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.collections.items.<a href="src/webflow/resources/collections/resources/items/client.py">list_items_live</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+List of all live Items within a Collection.
+
+Required scope | `CMS:read`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow.client import Webflow
+
+client = Webflow(
+    access_token="YOUR_ACCESS_TOKEN",
+)
+client.collections.items.list_items_live(
+    collection_id="580e63fc8c9a982ac9b8b745",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**collection_id:** `str` — Unique identifier for a Collection
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cms_locale_id:** `typing.Optional[str]` — Unique identifier for a CMS Locale. This UID is different from the Site locale identifier and is listed as `cmsLocaleId` in the Sites response. To query multiple locales, input a comma separated string.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**offset:** `typing.Optional[float]` — Offset used for pagination if the results have more than limit records
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[float]` — Maximum number of records to be returned (max limit: 100)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `typing.Optional[str]` — The name of the item(s)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**slug:** `typing.Optional[str]` — The slug of the item
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sort_by:** `typing.Optional[ItemsListItemsLiveRequestSortBy]` — Sort results by the provided value
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sort_order:** `typing.Optional[ItemsListItemsLiveRequestSortOrder]` — Sorts the results by asc or desc
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.collections.items.<a href="src/webflow/resources/collections/resources/items/client.py">create_item_live</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Create live Item(s) in a Collection. The Item(s) will be published to the live site.
+
+To create items across multiple locales, [please use this endpoint.](/v2.0.0/data/reference/cms/collection-items/bulk-items/create-items)
+
+Required scope | `CMS:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import CollectionItem, CollectionItemFieldData
+from webflow.client import Webflow
+from webflow.resources.collections import MultipleLiveItems
+
+client = Webflow(
+    access_token="YOUR_ACCESS_TOKEN",
+)
+client.collections.items.create_item_live(
+    collection_id="580e63fc8c9a982ac9b8b745",
+    request=MultipleLiveItems(
+        items=[
+            CollectionItem(
+                is_archived=False,
+                is_draft=False,
+                field_data=CollectionItemFieldData(
+                    name="Senior Data Analyst",
+                    slug="senior-data-analyst",
+                ),
+            ),
+            CollectionItem(
+                is_archived=False,
+                is_draft=False,
+                field_data=CollectionItemFieldData(
+                    name="Product Manager",
+                    slug="product-manager",
+                ),
+            ),
+        ],
+    ),
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**collection_id:** `str` — Unique identifier for a Collection
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `ItemsCreateItemLiveRequest` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.collections.items.<a href="src/webflow/resources/collections/resources/items/client.py">delete_items_live</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Remove an item or multiple items (up to 100 items) from the live site. Deleting published items will unpublish the items from the live site and set them to draft.
+
+**Note:** If the `cmsLocaleId` parameter is undefined or empty and the items are localized, items will be unpublished only in the primary locale.
+
+Required scope | `CMS:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow.client import Webflow
+
+client = Webflow(
+    access_token="YOUR_ACCESS_TOKEN",
+)
+client.collections.items.delete_items_live(
+    collection_id="580e63fc8c9a982ac9b8b745",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**collection_id:** `str` — Unique identifier for a Collection
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**items:** `typing.Optional[typing.Sequence[ItemsDeleteItemsLiveRequestItemsItem]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.collections.items.<a href="src/webflow/resources/collections/resources/items/client.py">update_items_live</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Update a single live item or multiple live items (up to 100) in a Collection
+
+**Note:** If the `cmsLocaleId` parameter is undefined or empty and the items are localized, items will be updated only in the primary locale.
+
+Required scope | `CMS:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import (
+    CollectionItemWithIdInput,
+    CollectionItemWithIdInputFieldData,
+)
+from webflow.client import Webflow
+
+client = Webflow(
+    access_token="YOUR_ACCESS_TOKEN",
+)
+client.collections.items.update_items_live(
+    collection_id="580e63fc8c9a982ac9b8b745",
+    items=[
+        CollectionItemWithIdInput(
+            id="66f6ed9576ddacf3149d5ea6",
+            cms_locale_id="66f6e966c9e1dc700a857ca5",
+            field_data=CollectionItemWithIdInputFieldData(
+                name="Ne Paniquez Pas",
+                slug="ne-paniquez-pas",
+            ),
+        ),
+        CollectionItemWithIdInput(
+            id="66f6ed9576ddacf3149d5ea6",
+            cms_locale_id="66f6e966c9e1dc700a857ca4",
+            field_data=CollectionItemWithIdInputFieldData(
+                name="No Entrar en Pánico",
+                slug="no-entrar-en-panico",
+            ),
+        ),
+        CollectionItemWithIdInput(
+            id="66f6ed9576ddacf3149d5eaa",
+            cms_locale_id="66f6e966c9e1dc700a857ca5",
+            field_data=CollectionItemWithIdInputFieldData(
+                name="Au Revoir et Merci pour Tous les Poissons",
+                slug="au-revoir-et-merci",
+            ),
+        ),
+        CollectionItemWithIdInput(
+            id="66f6ed9576ddacf3149d5eaa",
+            cms_locale_id="66f6e966c9e1dc700a857ca4",
+            field_data=CollectionItemWithIdInputFieldData(
+                name="Hasta Luego y Gracias por Todo el Pescado",
+                slug="hasta-luego-y-gracias",
+            ),
+        ),
+    ],
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**collection_id:** `str` — Unique identifier for a Collection
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**items:** `typing.Optional[typing.Sequence[CollectionItemWithIdInput]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.collections.items.<a href="src/webflow/resources/collections/resources/items/client.py">create_items</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Create an item or multiple items in a CMS Collection across multiple corresponding locales.
+
+**Notes:**
+
+- This endpoint can create up to 100 items in a request.
+- If the `cmsLocaleIds` parameter is undefined or empty and localization is enabled, items will only be created in the primary locale.
+
+Required scope | `CMS:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow.client import Webflow
+from webflow.resources.collections import SingleCmsItem
+
+client = Webflow(
+    access_token="YOUR_ACCESS_TOKEN",
+)
+client.collections.items.create_items(
+    collection_id="580e63fc8c9a982ac9b8b745",
+    cms_locale_ids=[
+        "66f6e966c9e1dc700a857ca3",
+        "66f6e966c9e1dc700a857ca4",
+        "66f6e966c9e1dc700a857ca5",
+    ],
+    is_archived=False,
+    is_draft=False,
+    field_data=SingleCmsItem(
+        name="Don’t Panic",
+        slug="dont-panic",
+    ),
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**collection_id:** `str` — Unique identifier for a Collection
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**field_data:** `CreateBulkCollectionItemRequestBodyFieldData` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cms_locale_ids:** `typing.Optional[typing.Sequence[str]]` — Array of identifiers for the locales where the item will be created
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**is_archived:** `typing.Optional[bool]` — Indicates whether the item is archived.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**is_draft:** `typing.Optional[bool]` — Indicates whether the item is in draft state.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.collections.items.<a href="src/webflow/resources/collections/resources/items/client.py">get_item</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Get details of a selected Collection Item.
+
+Required scope | `CMS:read`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow.client import Webflow
+
+client = Webflow(
+    access_token="YOUR_ACCESS_TOKEN",
+)
+client.collections.items.get_item(
+    collection_id="580e63fc8c9a982ac9b8b745",
+    item_id="580e64008c9a982ac9b8b754",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**collection_id:** `str` — Unique identifier for a Collection
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**item_id:** `str` — Unique identifier for an Item
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cms_locale_id:** `typing.Optional[str]` — Unique identifier for a CMS Locale. This UID is different from the Site locale identifier and is listed as `cmsLocaleId` in the Sites response. To query multiple locales, input a comma separated string.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.collections.items.<a href="src/webflow/resources/collections/resources/items/client.py">delete_item</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Delete an Item from a Collection. This endpoint does not currently support bulk deletion.
+
+Required scope | `CMS:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow.client import Webflow
+
+client = Webflow(
+    access_token="YOUR_ACCESS_TOKEN",
+)
+client.collections.items.delete_item(
+    collection_id="580e63fc8c9a982ac9b8b745",
+    item_id="580e64008c9a982ac9b8b754",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**collection_id:** `str` — Unique identifier for a Collection
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**item_id:** `str` — Unique identifier for an Item
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cms_locale_id:** `typing.Optional[str]` — Unique identifier for a CMS Locale. This UID is different from the Site locale identifier and is listed as `cmsLocaleId` in the Sites response. To query multiple locales, input a comma separated string.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.collections.items.<a href="src/webflow/resources/collections/resources/items/client.py">update_item</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Update a selected Item in a Collection.
+
+Required scope | `CMS:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import CollectionItemPatchSingleFieldData
+from webflow.client import Webflow
+
+client = Webflow(
+    access_token="YOUR_ACCESS_TOKEN",
+)
+client.collections.items.update_item(
+    collection_id="580e63fc8c9a982ac9b8b745",
+    item_id="580e64008c9a982ac9b8b754",
+    is_archived=False,
+    is_draft=False,
+    field_data=CollectionItemPatchSingleFieldData(
+        name="Pan Galactic Gargle Blaster Recipe",
+        slug="pan-galactic-gargle-blaster",
+    ),
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**collection_id:** `str` — Unique identifier for a Collection
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**item_id:** `str` — Unique identifier for an Item
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**id:** `typing.Optional[str]` — Unique identifier for the Item
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cms_locale_id:** `typing.Optional[str]` — Identifier for the locale of the CMS item
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**last_published:** `typing.Optional[str]` — The date the item was last published
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**last_updated:** `typing.Optional[str]` — The date the item was last updated
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**created_on:** `typing.Optional[str]` — The date the item was created
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**is_archived:** `typing.Optional[bool]` — Boolean determining if the Item is set to archived
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**is_draft:** `typing.Optional[bool]` — Boolean determining if the Item is set to draft
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**field_data:** `typing.Optional[CollectionItemPatchSingleFieldData]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.collections.items.<a href="src/webflow/resources/collections/resources/items/client.py">get_item_live</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Get details of a selected Collection live Item.
+
+Required scope | `CMS:read`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow.client import Webflow
+
+client = Webflow(
+    access_token="YOUR_ACCESS_TOKEN",
+)
+client.collections.items.get_item_live(
+    collection_id="580e63fc8c9a982ac9b8b745",
+    item_id="580e64008c9a982ac9b8b754",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**collection_id:** `str` — Unique identifier for a Collection
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**item_id:** `str` — Unique identifier for an Item
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cms_locale_id:** `typing.Optional[str]` — Unique identifier for a CMS Locale. This UID is different from the Site locale identifier and is listed as `cmsLocaleId` in the Sites response. To query multiple locales, input a comma separated string.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.collections.items.<a href="src/webflow/resources/collections/resources/items/client.py">delete_item_live</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Remove a live item from the site. Removing a published item will unpublish the item from the live site and set it to draft.
+
+This endpoint does not currently support bulk deletion.
+
+Required scope | `CMS:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow.client import Webflow
+
+client = Webflow(
+    access_token="YOUR_ACCESS_TOKEN",
+)
+client.collections.items.delete_item_live(
+    collection_id="580e63fc8c9a982ac9b8b745",
+    item_id="580e64008c9a982ac9b8b754",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**collection_id:** `str` — Unique identifier for a Collection
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**item_id:** `str` — Unique identifier for an Item
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cms_locale_id:** `typing.Optional[str]` — Unique identifier for a CMS Locale. This UID is different from the Site locale identifier and is listed as `cmsLocaleId` in the Sites response. To query multiple locales, input a comma separated string.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.collections.items.<a href="src/webflow/resources/collections/resources/items/client.py">update_item_live</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Update a selected live Item in a Collection. The updates for this Item will be published to the live site.
+
+Required scope | `CMS:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import CollectionItemPatchSingleFieldData
+from webflow.client import Webflow
+
+client = Webflow(
+    access_token="YOUR_ACCESS_TOKEN",
+)
+client.collections.items.update_item_live(
+    collection_id="580e63fc8c9a982ac9b8b745",
+    item_id="580e64008c9a982ac9b8b754",
+    is_archived=False,
+    is_draft=False,
+    field_data=CollectionItemPatchSingleFieldData(
+        name="Pan Galactic Gargle Blaster Recipe",
+        slug="pan-galactic-gargle-blaster",
+    ),
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**collection_id:** `str` — Unique identifier for a Collection
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**item_id:** `str` — Unique identifier for an Item
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**id:** `typing.Optional[str]` — Unique identifier for the Item
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cms_locale_id:** `typing.Optional[str]` — Identifier for the locale of the CMS item
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**last_published:** `typing.Optional[str]` — The date the item was last published
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**last_updated:** `typing.Optional[str]` — The date the item was last updated
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**created_on:** `typing.Optional[str]` — The date the item was created
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**is_archived:** `typing.Optional[bool]` — Boolean determining if the Item is set to archived
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**is_draft:** `typing.Optional[bool]` — Boolean determining if the Item is set to draft
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**field_data:** `typing.Optional[CollectionItemPatchSingleFieldData]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.collections.items.<a href="src/webflow/resources/collections/resources/items/client.py">publish_item</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Publish an item or multiple items.
+
+Required scope | `cms:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow.client import Webflow
+
+client = Webflow(
+    access_token="YOUR_ACCESS_TOKEN",
+)
+client.collections.items.publish_item(
+    collection_id="580e63fc8c9a982ac9b8b745",
+    item_ids=["itemIds"],
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**collection_id:** `str` — Unique identifier for a Collection
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**item_ids:** `typing.Sequence[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## Pages Scripts
+<details><summary><code>client.pages.scripts.<a href="src/webflow/resources/pages/resources/scripts/client.py">get_custom_code</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Get all registered scripts that have been applied to a specific Page.
+
+In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered
+to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate
+`custom_code` endpoints.
+
+<blockquote class="callout callout_info" theme="📘">Access to this endpoint requires a bearer token from a <a href="https://developers.webflow.com/data/docs/getting-started-data-clients">Data Client App</a>.</blockquote>
+
+Required scope | `custom_code:read`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow.client import Webflow
+
+client = Webflow(
+    access_token="YOUR_ACCESS_TOKEN",
+)
+client.pages.scripts.get_custom_code(
+    page_id="63c720f9347c2139b248e552",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**page_id:** `str` — Unique identifier for a Page
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.pages.scripts.<a href="src/webflow/resources/pages/resources/scripts/client.py">upsert_custom_code</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Add a registered script to a Page.
+
+In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered
+to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate
+`custom_code` endpoints.
+
+<blockquote class="callout callout_info" theme="📘">Access to this endpoint requires a bearer token from a <a href="https://developers.webflow.com/data/docs/getting-started-data-clients">Data Client App</a>.</blockquote>
+
+Required scope | `custom_code:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import ScriptApply, ScriptApplyLocation
+from webflow.client import Webflow
+
+client = Webflow(
+    access_token="YOUR_ACCESS_TOKEN",
+)
+client.pages.scripts.upsert_custom_code(
+    page_id="63c720f9347c2139b248e552",
+    scripts=[
+        ScriptApply(
+            id="cms_slider",
+            location=ScriptApplyLocation.HEADER,
+            version="1.0.0",
+            attributes={"my-attribute": "some-value"},
+        ),
+        ScriptApply(
+            id="alert",
+            location=ScriptApplyLocation.HEADER,
+            version="0.0.1",
+        ),
+    ],
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**page_id:** `str` — Unique identifier for a Page
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**scripts:** `typing.Optional[typing.Sequence[ScriptApply]]` — A list of scripts applied to a Site or a Page
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**last_updated:** `typing.Optional[str]` — Date when the Site's scripts were last updated
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**created_on:** `typing.Optional[str]` — Date when the Site's scripts were created
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.pages.scripts.<a href="src/webflow/resources/pages/resources/scripts/client.py">delete_custom_code</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Delete the custom code block that an app has created for a page
+
+In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered
+to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate
+`custom_code` endpoints.
+
+<blockquote class="callout callout_info" theme="📘">Access to this endpoint requires a bearer token from a <a href="https://developers.webflow.com/data/docs/getting-started-data-clients">Data Client App</a>.</blockquote>
+
+Required scope | `custom_code:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow.client import Webflow
+
+client = Webflow(
+    access_token="YOUR_ACCESS_TOKEN",
+)
+client.pages.scripts.delete_custom_code(
+    page_id="63c720f9347c2139b248e552",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**page_id:** `str` — Unique identifier for a Page
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## Sites ActivityLogs
+<details><summary><code>client.sites.activity_logs.<a href="src/webflow/resources/sites/resources/activity_logs/client.py">list</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Retrieve Activity Logs for a specific Site. Requires Site to be on an Enterprise plan. </br></br> Required scope | `site_activity:read`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow.client import Webflow
+
+client = Webflow(
+    access_token="YOUR_ACCESS_TOKEN",
+)
+client.sites.activity_logs.list(
+    site_id="580e63e98c9a982ac9b8b741",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[float]` — Maximum number of records to be returned (max limit: 100)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**offset:** `typing.Optional[float]` — Offset used for pagination if the results have more than limit records
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## Sites Scripts
+<details><summary><code>client.sites.scripts.<a href="src/webflow/resources/sites/resources/scripts/client.py">get_custom_code</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Get all registered scripts that have been applied to a specific Site.
+
+<blockquote class="callout callout_info" theme="📘">Access to this endpoint requires a bearer token from a <a href="https://developers.webflow.com/data/docs/getting-started-data-clients">Data Client App</a>.</blockquote>
+
+Required scope | `custom_code:read`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow.client import Webflow
+
+client = Webflow(
+    access_token="YOUR_ACCESS_TOKEN",
+)
+client.sites.scripts.get_custom_code(
+    site_id="580e63e98c9a982ac9b8b741",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sites.scripts.<a href="src/webflow/resources/sites/resources/scripts/client.py">upsert_custom_code</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Add a registered script to a Site.
+
+In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered
+to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate
+`custom_code` endpoints.
+
+<blockquote class="callout callout_info" theme="📘">Access to this endpoint requires a bearer token from a <a href="https://developers.webflow.com/data/docs/getting-started-data-clients">Data Client App</a>.</blockquote>
+
+Required scope | `custom_code:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import ScriptApply, ScriptApplyLocation
+from webflow.client import Webflow
+
+client = Webflow(
+    access_token="YOUR_ACCESS_TOKEN",
+)
+client.sites.scripts.upsert_custom_code(
+    site_id="580e63e98c9a982ac9b8b741",
+    scripts=[
+        ScriptApply(
+            id="cms_slider",
+            location=ScriptApplyLocation.HEADER,
+            version="1.0.0",
+            attributes={"my-attribute": "some-value"},
+        ),
+        ScriptApply(
+            id="alert",
+            location=ScriptApplyLocation.HEADER,
+            version="0.0.1",
+        ),
+    ],
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**scripts:** `typing.Optional[typing.Sequence[ScriptApply]]` — A list of scripts applied to a Site or a Page
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**last_updated:** `typing.Optional[str]` — Date when the Site's scripts were last updated
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**created_on:** `typing.Optional[str]` — Date when the Site's scripts were created
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sites.scripts.<a href="src/webflow/resources/sites/resources/scripts/client.py">delete_custom_code</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Delete the custom code block that an app created for a Site
+
+<blockquote class="callout callout_info" theme="📘">Access to this endpoint requires a bearer token from a <a href="https://developers.webflow.com/data/docs/getting-started-data-clients">Data Client App</a>.</blockquote>
+
+Required scope | `custom_code:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow.client import Webflow
+
+client = Webflow(
+    access_token="YOUR_ACCESS_TOKEN",
+)
+client.sites.scripts.delete_custom_code(
+    site_id="580e63e98c9a982ac9b8b741",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sites.scripts.<a href="src/webflow/resources/sites/resources/scripts/client.py">list_custom_code_blocks</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Get all instances of Custom Code applied to a Site or Pages.
+
+<blockquote class="callout callout_info" theme="📘">Access to this endpoint requires a bearer token from a <a href="https://developers.webflow.com/data/docs/getting-started-data-clients">Data Client App</a>.</blockquote>
+
+Required scope | `custom_code:read`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow.client import Webflow
+
+client = Webflow(
+    access_token="YOUR_ACCESS_TOKEN",
+)
+client.sites.scripts.list_custom_code_blocks(
+    site_id="580e63e98c9a982ac9b8b741",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**offset:** `typing.Optional[float]` — Offset used for pagination if the results have more than limit records
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[float]` — Maximum number of records to be returned (max limit: 100)
     
 </dd>
 </dl>
