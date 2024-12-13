@@ -15,6 +15,7 @@ from ...errors.too_many_requests_error import TooManyRequestsError
 from ...errors.unauthorized_error import UnauthorizedError
 from ...types.collection import Collection
 from ...types.collection_list import CollectionList
+from ...types.error import Error
 from .resources.fields.client import AsyncFieldsClient, FieldsClient
 from .resources.items.client import AsyncItemsClient, ItemsClient
 
@@ -30,7 +31,9 @@ class CollectionsClient:
 
     def list(self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> CollectionList:
         """
-        List of all Collections within a Site. </br></br> Required scope | `cms:read`
+        List of all Collections within a Site.
+
+        Required scope | `cms:read`
 
         Parameters
         ----------
@@ -53,7 +56,7 @@ class CollectionsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.collections.list(
-            site_id="site_id",
+            site_id="580e63e98c9a982ac9b8b741",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -65,13 +68,13 @@ class CollectionsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -87,7 +90,9 @@ class CollectionsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> Collection:
         """
-        Create a Collection for a site. </br></br> Required scope | `cms:write`
+        Create a Collection for a site.
+
+        Required scope | `cms:write`
 
         Parameters
         ----------
@@ -119,7 +124,7 @@ class CollectionsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.collections.create(
-            site_id="site_id",
+            site_id="580e63e98c9a982ac9b8b741",
             display_name="Blog Posts",
             singular_name="Blog Post",
             slug="posts",
@@ -138,13 +143,13 @@ class CollectionsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -152,7 +157,9 @@ class CollectionsClient:
 
     def get(self, collection_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> Collection:
         """
-        Get the full details of a collection from its ID. </br></br> Required scope | `cms:read`
+        Get the full details of a collection from its ID.
+
+        Required scope | `cms:read`
 
         Parameters
         ----------
@@ -175,7 +182,7 @@ class CollectionsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.collections.get(
-            collection_id="collection_id",
+            collection_id="580e63fc8c9a982ac9b8b745",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -187,79 +194,28 @@ class CollectionsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def delete_collection(self, collection_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
+    def delete(self, collection_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
         """
-        Delete a collection using its ID. </br></br> Required scope | `cms:write`
+        Delete a collection using its ID.
+
+        Required scope | `cms:write`
 
         Parameters
         ----------
         collection_id : str
             Unique identifier for a Collection
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        None
-
-        Examples
-        --------
-        from webflow.client import Webflow
-
-        client = Webflow(
-            access_token="YOUR_ACCESS_TOKEN",
-        )
-        client.collections.delete_collection(
-            collection_id="collection_id",
-        )
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            f"collections/{jsonable_encoder(collection_id)}", method="DELETE", request_options=request_options
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                return
-            if _response.status_code == 400:
-                raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
-            if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
-            if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
-            if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
-            if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
-
-    def delete(
-        self, collection_id: str, field_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> None:
-        """
-        Delete a custom field in a collection. This endpoint does not currently support bulk deletion. </br></br> Required scope | `cms:write`
-
-        Parameters
-        ----------
-        collection_id : str
-            Unique identifier for a Collection
-
-        field_id : str
-            Unique identifier for a Field in a collection
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -276,14 +232,11 @@ class CollectionsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.collections.delete(
-            collection_id="collection_id",
-            field_id="field_id",
+            collection_id="580e63fc8c9a982ac9b8b745",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"collections/{jsonable_encoder(collection_id)}/fields/{jsonable_encoder(field_id)}",
-            method="DELETE",
-            request_options=request_options,
+            f"collections/{jsonable_encoder(collection_id)}", method="DELETE", request_options=request_options
         )
         try:
             if 200 <= _response.status_code < 300:
@@ -291,13 +244,13 @@ class CollectionsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -312,7 +265,9 @@ class AsyncCollectionsClient:
 
     async def list(self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> CollectionList:
         """
-        List of all Collections within a Site. </br></br> Required scope | `cms:read`
+        List of all Collections within a Site.
+
+        Required scope | `cms:read`
 
         Parameters
         ----------
@@ -335,7 +290,7 @@ class AsyncCollectionsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.collections.list(
-            site_id="site_id",
+            site_id="580e63e98c9a982ac9b8b741",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -347,13 +302,13 @@ class AsyncCollectionsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -369,7 +324,9 @@ class AsyncCollectionsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> Collection:
         """
-        Create a Collection for a site. </br></br> Required scope | `cms:write`
+        Create a Collection for a site.
+
+        Required scope | `cms:write`
 
         Parameters
         ----------
@@ -401,7 +358,7 @@ class AsyncCollectionsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.collections.create(
-            site_id="site_id",
+            site_id="580e63e98c9a982ac9b8b741",
             display_name="Blog Posts",
             singular_name="Blog Post",
             slug="posts",
@@ -420,13 +377,13 @@ class AsyncCollectionsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -434,7 +391,9 @@ class AsyncCollectionsClient:
 
     async def get(self, collection_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> Collection:
         """
-        Get the full details of a collection from its ID. </br></br> Required scope | `cms:read`
+        Get the full details of a collection from its ID.
+
+        Required scope | `cms:read`
 
         Parameters
         ----------
@@ -457,7 +416,7 @@ class AsyncCollectionsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.collections.get(
-            collection_id="collection_id",
+            collection_id="580e63fc8c9a982ac9b8b745",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -469,81 +428,28 @@ class AsyncCollectionsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def delete_collection(
-        self, collection_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> None:
+    async def delete(self, collection_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
         """
-        Delete a collection using its ID. </br></br> Required scope | `cms:write`
+        Delete a collection using its ID.
+
+        Required scope | `cms:write`
 
         Parameters
         ----------
         collection_id : str
             Unique identifier for a Collection
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        None
-
-        Examples
-        --------
-        from webflow.client import AsyncWebflow
-
-        client = AsyncWebflow(
-            access_token="YOUR_ACCESS_TOKEN",
-        )
-        await client.collections.delete_collection(
-            collection_id="collection_id",
-        )
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"collections/{jsonable_encoder(collection_id)}", method="DELETE", request_options=request_options
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                return
-            if _response.status_code == 400:
-                raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
-            if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
-            if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
-            if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
-            if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
-
-    async def delete(
-        self, collection_id: str, field_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> None:
-        """
-        Delete a custom field in a collection. This endpoint does not currently support bulk deletion. </br></br> Required scope | `cms:write`
-
-        Parameters
-        ----------
-        collection_id : str
-            Unique identifier for a Collection
-
-        field_id : str
-            Unique identifier for a Field in a collection
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -560,14 +466,11 @@ class AsyncCollectionsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.collections.delete(
-            collection_id="collection_id",
-            field_id="field_id",
+            collection_id="580e63fc8c9a982ac9b8b745",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"collections/{jsonable_encoder(collection_id)}/fields/{jsonable_encoder(field_id)}",
-            method="DELETE",
-            request_options=request_options,
+            f"collections/{jsonable_encoder(collection_id)}", method="DELETE", request_options=request_options
         )
         try:
             if 200 <= _response.status_code < 300:
@@ -575,13 +478,13 @@ class AsyncCollectionsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
