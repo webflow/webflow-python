@@ -15,11 +15,20 @@ from .authorization_authorization import AuthorizationAuthorization
 from .authorization_authorization_authorized_to import AuthorizationAuthorizationAuthorizedTo
 from .authorized_user import AuthorizedUser
 from .bad_request_error_body import BadRequestErrorBody
+from .bulk_collection_item import BulkCollectionItem
+from .bulk_collection_item_field_data import BulkCollectionItemFieldData
 from .collection import Collection
 from .collection_item import CollectionItem
 from .collection_item_field_data import CollectionItemFieldData
 from .collection_item_list import CollectionItemList
+from .collection_item_list_no_pagination import CollectionItemListNoPagination
 from .collection_item_list_pagination import CollectionItemListPagination
+from .collection_item_patch_single import CollectionItemPatchSingle
+from .collection_item_patch_single_field_data import CollectionItemPatchSingleFieldData
+from .collection_item_post_single import CollectionItemPostSingle
+from .collection_item_post_single_field_data import CollectionItemPostSingleFieldData
+from .collection_item_with_id_input import CollectionItemWithIdInput
+from .collection_item_with_id_input_field_data import CollectionItemWithIdInputFieldData
 from .collection_list import CollectionList
 from .collection_list_array_item import CollectionListArrayItem
 from .conflict_error_body import ConflictErrorBody
@@ -33,6 +42,7 @@ from .domains import Domains
 from .duplicate_user_email import DuplicateUserEmail
 from .ecommerce_settings import EcommerceSettings
 from .error import Error
+from .error_code import ErrorCode
 from .error_details_item import ErrorDetailsItem
 from .field import Field
 from .field_type import FieldType
@@ -47,17 +57,16 @@ from .form_submission import FormSubmission
 from .form_submission_list import FormSubmissionList
 from .image_node import ImageNode
 from .invalid_domain import InvalidDomain
+from .invalid_scopes import InvalidScopes
 from .inventory_item import InventoryItem
 from .inventory_item_inventory_type import InventoryItemInventoryType
 from .list_custom_code_blocks import ListCustomCodeBlocks
 from .locale import Locale
 from .locales import Locales
-from .missing_scopes import MissingScopes
 from .no_domains import NoDomains
 from .node import Node
 from .node_type import NodeType
 from .not_enterprise_plan_site import NotEnterprisePlanSite
-from .oauth_scope import OauthScope
 from .order import Order
 from .order_address import OrderAddress
 from .order_address_japan_type import OrderAddressJapanType
@@ -77,9 +86,6 @@ from .order_totals import OrderTotals
 from .order_totals_extras_item import OrderTotalsExtrasItem
 from .order_totals_extras_item_type import OrderTotalsExtrasItemType
 from .page import Page
-from .page_details import PageDetails
-from .page_details_open_graph import PageDetailsOpenGraph
-from .page_details_seo import PageDetailsSeo
 from .page_list import PageList
 from .page_open_graph import PageOpenGraph
 from .page_seo import PageSeo
@@ -99,9 +105,11 @@ from .script_apply_location import ScriptApplyLocation
 from .scripts import Scripts
 from .site import Site
 from .site_activity_log_item import SiteActivityLogItem
+from .site_activity_log_item_event import SiteActivityLogItemEvent
 from .site_activity_log_item_resource_operation import SiteActivityLogItemResourceOperation
 from .site_activity_log_item_user import SiteActivityLogItemUser
 from .site_activity_log_response import SiteActivityLogResponse
+from .site_data_collection_type import SiteDataCollectionType
 from .sites import Sites
 from .sku import Sku
 from .sku_field_data import SkuFieldData
@@ -131,6 +139,7 @@ from .user_list import UserList
 from .user_status import UserStatus
 from .users_not_enabled import UsersNotEnabled
 from .webhook import Webhook
+from .webhook_filter import WebhookFilter
 from .webhook_list import WebhookList
 
 __all__ = [
@@ -149,11 +158,20 @@ __all__ = [
     "AuthorizationAuthorizationAuthorizedTo",
     "AuthorizedUser",
     "BadRequestErrorBody",
+    "BulkCollectionItem",
+    "BulkCollectionItemFieldData",
     "Collection",
     "CollectionItem",
     "CollectionItemFieldData",
     "CollectionItemList",
+    "CollectionItemListNoPagination",
     "CollectionItemListPagination",
+    "CollectionItemPatchSingle",
+    "CollectionItemPatchSingleFieldData",
+    "CollectionItemPostSingle",
+    "CollectionItemPostSingleFieldData",
+    "CollectionItemWithIdInput",
+    "CollectionItemWithIdInputFieldData",
     "CollectionList",
     "CollectionListArrayItem",
     "ConflictErrorBody",
@@ -167,6 +185,7 @@ __all__ = [
     "DuplicateUserEmail",
     "EcommerceSettings",
     "Error",
+    "ErrorCode",
     "ErrorDetailsItem",
     "Field",
     "FieldType",
@@ -181,17 +200,16 @@ __all__ = [
     "FormSubmissionList",
     "ImageNode",
     "InvalidDomain",
+    "InvalidScopes",
     "InventoryItem",
     "InventoryItemInventoryType",
     "ListCustomCodeBlocks",
     "Locale",
     "Locales",
-    "MissingScopes",
     "NoDomains",
     "Node",
     "NodeType",
     "NotEnterprisePlanSite",
-    "OauthScope",
     "Order",
     "OrderAddress",
     "OrderAddressJapanType",
@@ -211,9 +229,6 @@ __all__ = [
     "OrderTotalsExtrasItem",
     "OrderTotalsExtrasItemType",
     "Page",
-    "PageDetails",
-    "PageDetailsOpenGraph",
-    "PageDetailsSeo",
     "PageList",
     "PageOpenGraph",
     "PageSeo",
@@ -233,9 +248,11 @@ __all__ = [
     "Scripts",
     "Site",
     "SiteActivityLogItem",
+    "SiteActivityLogItemEvent",
     "SiteActivityLogItemResourceOperation",
     "SiteActivityLogItemUser",
     "SiteActivityLogResponse",
+    "SiteDataCollectionType",
     "Sites",
     "Sku",
     "SkuFieldData",
@@ -265,5 +282,6 @@ __all__ = [
     "UserStatus",
     "UsersNotEnabled",
     "Webhook",
+    "WebhookFilter",
     "WebhookList",
 ]
