@@ -16,7 +16,8 @@ from ...errors.not_found_error import NotFoundError
 from ...errors.too_many_requests_error import TooManyRequestsError
 from ...errors.unauthorized_error import UnauthorizedError
 from ...types.dom import Dom
-from ...types.page_details import PageDetails
+from ...types.error import Error
+from ...types.page import Page
 from ...types.page_list import PageList
 from ...types.page_open_graph import PageOpenGraph
 from ...types.page_seo import PageSeo
@@ -37,20 +38,22 @@ class PagesClient:
         self,
         site_id: str,
         *,
-        locale: typing.Optional[str] = None,
+        locale_id: typing.Optional[str] = None,
         limit: typing.Optional[float] = None,
         offset: typing.Optional[float] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> PageList:
         """
-        List of all pages for a site </br></br> Required scope | `pages:read`
+        List of all pages for a site.
+
+        Required scope | `pages:read`
 
         Parameters
         ----------
         site_id : str
             Unique identifier for a Site
 
-        locale : typing.Optional[str]
+        locale_id : typing.Optional[str]
             Unique identifier for a specific locale. Applicable, when using localization.
 
         limit : typing.Optional[float]
@@ -75,13 +78,14 @@ class PagesClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.pages.list(
-            site_id="site_id",
+            site_id="580e63e98c9a982ac9b8b741",
+            locale_id="65427cf400e02b306eaa04a0",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/pages",
             method="GET",
-            params={"locale": locale, "limit": limit, "offset": offset},
+            params={"localeId": locale_id, "limit": limit, "offset": offset},
             request_options=request_options,
         )
         try:
@@ -90,13 +94,13 @@ class PagesClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -106,18 +110,20 @@ class PagesClient:
         self,
         page_id: str,
         *,
-        locale: typing.Optional[str] = None,
+        locale_id: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> PageDetails:
+    ) -> Page:
         """
-        Get metadata information for a single page </br></br> Required scope | `pages:read`
+        Get metadata information for a single page.
+
+        Required scope | `pages:read`
 
         Parameters
         ----------
         page_id : str
             Unique identifier for a Page
 
-        locale : typing.Optional[str]
+        locale_id : typing.Optional[str]
             Unique identifier for a specific locale. Applicable, when using localization.
 
         request_options : typing.Optional[RequestOptions]
@@ -125,7 +131,7 @@ class PagesClient:
 
         Returns
         -------
-        PageDetails
+        Page
             Request was successful
 
         Examples
@@ -136,28 +142,29 @@ class PagesClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.pages.get_metadata(
-            page_id="page_id",
+            page_id="63c720f9347c2139b248e552",
+            locale_id="65427cf400e02b306eaa04a0",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             f"pages/{jsonable_encoder(page_id)}",
             method="GET",
-            params={"locale": locale},
+            params={"localeId": locale_id},
             request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:
-                return pydantic_v1.parse_obj_as(PageDetails, _response.json())  # type: ignore
+                return pydantic_v1.parse_obj_as(Page, _response.json())  # type: ignore
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -167,8 +174,8 @@ class PagesClient:
         self,
         page_id: str,
         *,
-        locale: typing.Optional[str] = None,
-        id: typing.Optional[str] = OMIT,
+        id: str,
+        locale_id: typing.Optional[str] = None,
         site_id: typing.Optional[str] = OMIT,
         title: typing.Optional[str] = OMIT,
         slug: typing.Optional[str] = OMIT,
@@ -179,24 +186,29 @@ class PagesClient:
         archived: typing.Optional[bool] = OMIT,
         draft: typing.Optional[bool] = OMIT,
         can_branch: typing.Optional[bool] = OMIT,
+        is_branch: typing.Optional[bool] = OMIT,
         is_members_only: typing.Optional[bool] = OMIT,
         seo: typing.Optional[PageSeo] = OMIT,
         open_graph: typing.Optional[PageOpenGraph] = OMIT,
+        page_locale_id: typing.Optional[str] = OMIT,
+        published_path: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> PageDetails:
+    ) -> Page:
         """
-        Update Page-level metadata, including SEO and Open Graph fields. </br></br> Required scope | `pages:write`
+        Update Page-level metadata, including SEO and Open Graph fields.
+
+        Required scope | `pages:write`
 
         Parameters
         ----------
         page_id : str
             Unique identifier for a Page
 
-        locale : typing.Optional[str]
-            Unique identifier for a specific locale. Applicable, when using localization.
-
-        id : typing.Optional[str]
+        id : str
             Unique identifier for the Page
+
+        locale_id : typing.Optional[str]
+            Unique identifier for a specific locale. Applicable, when using localization.
 
         site_id : typing.Optional[str]
             Unique identifier for the Site
@@ -228,6 +240,9 @@ class PagesClient:
         can_branch : typing.Optional[bool]
             Indicates whether the Page supports [Page Branching](https://university.webflow.com/lesson/page-branching)
 
+        is_branch : typing.Optional[bool]
+            Indicates whether the Page is a Branch of another Page [Page Branching](https://university.webflow.com/lesson/page-branching)
+
         is_members_only : typing.Optional[bool]
             Indicates whether the Page is restricted by [Memberships Controls](https://university.webflow.com/lesson/webflow-memberships-overview#how-to-manage-page-restrictions)
 
@@ -237,12 +252,18 @@ class PagesClient:
         open_graph : typing.Optional[PageOpenGraph]
             Open Graph fields for the Page
 
+        page_locale_id : typing.Optional[str]
+            Unique ID of the page locale
+
+        published_path : typing.Optional[str]
+            Relative path of the published page URL
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        PageDetails
+        Page
             Request was successful
 
         Examples
@@ -256,13 +277,12 @@ class PagesClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.pages.update_page_settings(
-            page_id="page_id",
+            page_id="63c720f9347c2139b248e552",
+            locale_id="65427cf400e02b306eaa04a0",
             id="6596da6045e56dee495bcbba",
             site_id="6258612d1ee792848f805dcf",
             title="Guide to the Galaxy",
             slug="guide-to-the-galaxy",
-            parent_id="6419db964a9c435aa3af6251",
-            collection_id="6390c49774a71f12831a08e3",
             created_on=datetime.datetime.fromisoformat(
                 "2024-03-11 10:42:00+00:00",
             ),
@@ -272,6 +292,7 @@ class PagesClient:
             archived=False,
             draft=False,
             can_branch=True,
+            is_branch=False,
             seo=PageSeo(
                 title="The Ultimate Hitchhiker's Guide to the Galaxy",
                 description="Everything you need to know about the galaxy, from avoiding Vogon poetry to the importance of towels.",
@@ -282,12 +303,14 @@ class PagesClient:
                 description="Dive deep into the mysteries of the universe with your guide to everything galactic.",
                 description_copied=False,
             ),
+            page_locale_id="653fd9af6a07fc9cfd7a5e57",
+            published_path="/en-us/guide-to-the-galaxy",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             f"pages/{jsonable_encoder(page_id)}",
             method="PUT",
-            params={"locale": locale},
+            params={"localeId": locale_id},
             json={
                 "id": id,
                 "siteId": site_id,
@@ -300,26 +323,29 @@ class PagesClient:
                 "archived": archived,
                 "draft": draft,
                 "canBranch": can_branch,
+                "isBranch": is_branch,
                 "isMembersOnly": is_members_only,
                 "seo": seo,
                 "openGraph": open_graph,
+                "localeId": locale_id,
+                "publishedPath": published_path,
             },
             request_options=request_options,
             omit=OMIT,
         )
         try:
             if 200 <= _response.status_code < 300:
-                return pydantic_v1.parse_obj_as(PageDetails, _response.json())  # type: ignore
+                return pydantic_v1.parse_obj_as(Page, _response.json())  # type: ignore
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -329,20 +355,24 @@ class PagesClient:
         self,
         page_id: str,
         *,
-        locale: typing.Optional[str] = None,
+        locale_id: typing.Optional[str] = None,
         limit: typing.Optional[float] = None,
         offset: typing.Optional[float] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> Dom:
         """
-        Get static content from a static page. </br> If you do not provide a Locale ID in your request, the response will return any content that can be localized from the Primary locale</br></br> Required scope | `pages:read`
+        Get static content from a static page.
+
+        If you do not provide a Locale ID in your request, the response will return any content that can be localized from the Primary locale.
+
+        Required scope | `pages:read`
 
         Parameters
         ----------
         page_id : str
             Unique identifier for a Page
 
-        locale : typing.Optional[str]
+        locale_id : typing.Optional[str]
             Unique identifier for a specific locale. Applicable, when using localization.
 
         limit : typing.Optional[float]
@@ -367,13 +397,14 @@ class PagesClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.pages.get_content(
-            page_id="page_id",
+            page_id="63c720f9347c2139b248e552",
+            locale_id="65427cf400e02b306eaa04a0",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             f"pages/{jsonable_encoder(page_id)}/dom",
             method="GET",
-            params={"locale": locale, "limit": limit, "offset": offset},
+            params={"localeId": locale_id, "limit": limit, "offset": offset},
             request_options=request_options,
         )
         try:
@@ -382,15 +413,15 @@ class PagesClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -400,22 +431,25 @@ class PagesClient:
         self,
         page_id: str,
         *,
-        locale: str,
         nodes: typing.Sequence[DomWriteNodesItem],
+        locale_id: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> UpdateStaticContentResponse:
         """
-        Update static content on a static page. This endpoint supports sending 1000 nodes per request. </br></br> Required scope | `pages:write`
+        This endpoint allows for updating static content on a static page within a secondary locale. It is designed specifically for localized pages and can handle up to 1000 nodes per request.
+        <blockquote class="callout callout_info"><p><strong>Note:</strong>This endpoint is specifically for localized pages. Ensure that the locale specified is a valid secondary locale for the site.</p></blockquote>
+
+        Required scope | `pages:write`
 
         Parameters
         ----------
         page_id : str
             Unique identifier for a Page
 
-        locale : str
-            The locale identifier.
-
         nodes : typing.Sequence[DomWriteNodesItem]
+
+        locale_id : typing.Optional[str]
+            Unique identifier for a specific locale. Applicable, when using localization.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -434,20 +468,20 @@ class PagesClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.pages.update_static_content(
-            page_id="page_id",
-            locale="locale",
+            page_id="63c720f9347c2139b248e552",
+            locale_id="65427cf400e02b306eaa04a0",
             nodes=[
                 DomWriteNodesItem(
                     node_id="a245c12d-995b-55ee-5ec7-aa36a6cad623",
-                    text="<h1>The Hitchhiker's Guide to the Galaxy</h1>",
+                    text="<h1>The Hitchhiker’s Guide to the Galaxy</h1>",
                 ),
                 DomWriteNodesItem(
                     node_id="a245c12d-995b-55ee-5ec7-aa36a6cad627",
-                    text="<div><h3>Don't Panic!</h3><p>Always know where your towel is.</p></div>",
+                    text="<div><h3>Don’t Panic!</h3><p>Always know where your towel is.</p></div>",
                 ),
                 DomWriteNodesItem(
                     node_id="a245c12d-995b-55ee-5ec7-aa36a6cad629",
-                    text="<img alt='Marvin, the Paranoid Android' src='path/to/image/with/assetId/659595234426a9fcbad57043'/>",
+                    text='<img alt="Marvin, the Paranoid Android" src="path/to/image/with/assetId/659595234426a9fcbad57043"/>',
                 ),
             ],
         )
@@ -455,7 +489,7 @@ class PagesClient:
         _response = self._client_wrapper.httpx_client.request(
             f"pages/{jsonable_encoder(page_id)}/dom",
             method="POST",
-            params={"locale": locale},
+            params={"localeId": locale_id},
             json={"nodes": nodes},
             request_options=request_options,
             omit=OMIT,
@@ -466,15 +500,15 @@ class PagesClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -490,20 +524,22 @@ class AsyncPagesClient:
         self,
         site_id: str,
         *,
-        locale: typing.Optional[str] = None,
+        locale_id: typing.Optional[str] = None,
         limit: typing.Optional[float] = None,
         offset: typing.Optional[float] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> PageList:
         """
-        List of all pages for a site </br></br> Required scope | `pages:read`
+        List of all pages for a site.
+
+        Required scope | `pages:read`
 
         Parameters
         ----------
         site_id : str
             Unique identifier for a Site
 
-        locale : typing.Optional[str]
+        locale_id : typing.Optional[str]
             Unique identifier for a specific locale. Applicable, when using localization.
 
         limit : typing.Optional[float]
@@ -528,13 +564,14 @@ class AsyncPagesClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.pages.list(
-            site_id="site_id",
+            site_id="580e63e98c9a982ac9b8b741",
+            locale_id="65427cf400e02b306eaa04a0",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/pages",
             method="GET",
-            params={"locale": locale, "limit": limit, "offset": offset},
+            params={"localeId": locale_id, "limit": limit, "offset": offset},
             request_options=request_options,
         )
         try:
@@ -543,13 +580,13 @@ class AsyncPagesClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -559,18 +596,20 @@ class AsyncPagesClient:
         self,
         page_id: str,
         *,
-        locale: typing.Optional[str] = None,
+        locale_id: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> PageDetails:
+    ) -> Page:
         """
-        Get metadata information for a single page </br></br> Required scope | `pages:read`
+        Get metadata information for a single page.
+
+        Required scope | `pages:read`
 
         Parameters
         ----------
         page_id : str
             Unique identifier for a Page
 
-        locale : typing.Optional[str]
+        locale_id : typing.Optional[str]
             Unique identifier for a specific locale. Applicable, when using localization.
 
         request_options : typing.Optional[RequestOptions]
@@ -578,7 +617,7 @@ class AsyncPagesClient:
 
         Returns
         -------
-        PageDetails
+        Page
             Request was successful
 
         Examples
@@ -589,28 +628,29 @@ class AsyncPagesClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.pages.get_metadata(
-            page_id="page_id",
+            page_id="63c720f9347c2139b248e552",
+            locale_id="65427cf400e02b306eaa04a0",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"pages/{jsonable_encoder(page_id)}",
             method="GET",
-            params={"locale": locale},
+            params={"localeId": locale_id},
             request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:
-                return pydantic_v1.parse_obj_as(PageDetails, _response.json())  # type: ignore
+                return pydantic_v1.parse_obj_as(Page, _response.json())  # type: ignore
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -620,8 +660,8 @@ class AsyncPagesClient:
         self,
         page_id: str,
         *,
-        locale: typing.Optional[str] = None,
-        id: typing.Optional[str] = OMIT,
+        id: str,
+        locale_id: typing.Optional[str] = None,
         site_id: typing.Optional[str] = OMIT,
         title: typing.Optional[str] = OMIT,
         slug: typing.Optional[str] = OMIT,
@@ -632,24 +672,29 @@ class AsyncPagesClient:
         archived: typing.Optional[bool] = OMIT,
         draft: typing.Optional[bool] = OMIT,
         can_branch: typing.Optional[bool] = OMIT,
+        is_branch: typing.Optional[bool] = OMIT,
         is_members_only: typing.Optional[bool] = OMIT,
         seo: typing.Optional[PageSeo] = OMIT,
         open_graph: typing.Optional[PageOpenGraph] = OMIT,
+        page_locale_id: typing.Optional[str] = OMIT,
+        published_path: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> PageDetails:
+    ) -> Page:
         """
-        Update Page-level metadata, including SEO and Open Graph fields. </br></br> Required scope | `pages:write`
+        Update Page-level metadata, including SEO and Open Graph fields.
+
+        Required scope | `pages:write`
 
         Parameters
         ----------
         page_id : str
             Unique identifier for a Page
 
-        locale : typing.Optional[str]
-            Unique identifier for a specific locale. Applicable, when using localization.
-
-        id : typing.Optional[str]
+        id : str
             Unique identifier for the Page
+
+        locale_id : typing.Optional[str]
+            Unique identifier for a specific locale. Applicable, when using localization.
 
         site_id : typing.Optional[str]
             Unique identifier for the Site
@@ -681,6 +726,9 @@ class AsyncPagesClient:
         can_branch : typing.Optional[bool]
             Indicates whether the Page supports [Page Branching](https://university.webflow.com/lesson/page-branching)
 
+        is_branch : typing.Optional[bool]
+            Indicates whether the Page is a Branch of another Page [Page Branching](https://university.webflow.com/lesson/page-branching)
+
         is_members_only : typing.Optional[bool]
             Indicates whether the Page is restricted by [Memberships Controls](https://university.webflow.com/lesson/webflow-memberships-overview#how-to-manage-page-restrictions)
 
@@ -690,12 +738,18 @@ class AsyncPagesClient:
         open_graph : typing.Optional[PageOpenGraph]
             Open Graph fields for the Page
 
+        page_locale_id : typing.Optional[str]
+            Unique ID of the page locale
+
+        published_path : typing.Optional[str]
+            Relative path of the published page URL
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        PageDetails
+        Page
             Request was successful
 
         Examples
@@ -709,13 +763,12 @@ class AsyncPagesClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.pages.update_page_settings(
-            page_id="page_id",
+            page_id="63c720f9347c2139b248e552",
+            locale_id="65427cf400e02b306eaa04a0",
             id="6596da6045e56dee495bcbba",
             site_id="6258612d1ee792848f805dcf",
             title="Guide to the Galaxy",
             slug="guide-to-the-galaxy",
-            parent_id="6419db964a9c435aa3af6251",
-            collection_id="6390c49774a71f12831a08e3",
             created_on=datetime.datetime.fromisoformat(
                 "2024-03-11 10:42:00+00:00",
             ),
@@ -725,6 +778,7 @@ class AsyncPagesClient:
             archived=False,
             draft=False,
             can_branch=True,
+            is_branch=False,
             seo=PageSeo(
                 title="The Ultimate Hitchhiker's Guide to the Galaxy",
                 description="Everything you need to know about the galaxy, from avoiding Vogon poetry to the importance of towels.",
@@ -735,12 +789,14 @@ class AsyncPagesClient:
                 description="Dive deep into the mysteries of the universe with your guide to everything galactic.",
                 description_copied=False,
             ),
+            page_locale_id="653fd9af6a07fc9cfd7a5e57",
+            published_path="/en-us/guide-to-the-galaxy",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"pages/{jsonable_encoder(page_id)}",
             method="PUT",
-            params={"locale": locale},
+            params={"localeId": locale_id},
             json={
                 "id": id,
                 "siteId": site_id,
@@ -753,26 +809,29 @@ class AsyncPagesClient:
                 "archived": archived,
                 "draft": draft,
                 "canBranch": can_branch,
+                "isBranch": is_branch,
                 "isMembersOnly": is_members_only,
                 "seo": seo,
                 "openGraph": open_graph,
+                "localeId": locale_id,
+                "publishedPath": published_path,
             },
             request_options=request_options,
             omit=OMIT,
         )
         try:
             if 200 <= _response.status_code < 300:
-                return pydantic_v1.parse_obj_as(PageDetails, _response.json())  # type: ignore
+                return pydantic_v1.parse_obj_as(Page, _response.json())  # type: ignore
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -782,20 +841,24 @@ class AsyncPagesClient:
         self,
         page_id: str,
         *,
-        locale: typing.Optional[str] = None,
+        locale_id: typing.Optional[str] = None,
         limit: typing.Optional[float] = None,
         offset: typing.Optional[float] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> Dom:
         """
-        Get static content from a static page. </br> If you do not provide a Locale ID in your request, the response will return any content that can be localized from the Primary locale</br></br> Required scope | `pages:read`
+        Get static content from a static page.
+
+        If you do not provide a Locale ID in your request, the response will return any content that can be localized from the Primary locale.
+
+        Required scope | `pages:read`
 
         Parameters
         ----------
         page_id : str
             Unique identifier for a Page
 
-        locale : typing.Optional[str]
+        locale_id : typing.Optional[str]
             Unique identifier for a specific locale. Applicable, when using localization.
 
         limit : typing.Optional[float]
@@ -820,13 +883,14 @@ class AsyncPagesClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.pages.get_content(
-            page_id="page_id",
+            page_id="63c720f9347c2139b248e552",
+            locale_id="65427cf400e02b306eaa04a0",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"pages/{jsonable_encoder(page_id)}/dom",
             method="GET",
-            params={"locale": locale, "limit": limit, "offset": offset},
+            params={"localeId": locale_id, "limit": limit, "offset": offset},
             request_options=request_options,
         )
         try:
@@ -835,15 +899,15 @@ class AsyncPagesClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -853,22 +917,25 @@ class AsyncPagesClient:
         self,
         page_id: str,
         *,
-        locale: str,
         nodes: typing.Sequence[DomWriteNodesItem],
+        locale_id: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> UpdateStaticContentResponse:
         """
-        Update static content on a static page. This endpoint supports sending 1000 nodes per request. </br></br> Required scope | `pages:write`
+        This endpoint allows for updating static content on a static page within a secondary locale. It is designed specifically for localized pages and can handle up to 1000 nodes per request.
+        <blockquote class="callout callout_info"><p><strong>Note:</strong>This endpoint is specifically for localized pages. Ensure that the locale specified is a valid secondary locale for the site.</p></blockquote>
+
+        Required scope | `pages:write`
 
         Parameters
         ----------
         page_id : str
             Unique identifier for a Page
 
-        locale : str
-            The locale identifier.
-
         nodes : typing.Sequence[DomWriteNodesItem]
+
+        locale_id : typing.Optional[str]
+            Unique identifier for a specific locale. Applicable, when using localization.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -887,20 +954,20 @@ class AsyncPagesClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.pages.update_static_content(
-            page_id="page_id",
-            locale="locale",
+            page_id="63c720f9347c2139b248e552",
+            locale_id="65427cf400e02b306eaa04a0",
             nodes=[
                 DomWriteNodesItem(
                     node_id="a245c12d-995b-55ee-5ec7-aa36a6cad623",
-                    text="<h1>The Hitchhiker's Guide to the Galaxy</h1>",
+                    text="<h1>The Hitchhiker’s Guide to the Galaxy</h1>",
                 ),
                 DomWriteNodesItem(
                     node_id="a245c12d-995b-55ee-5ec7-aa36a6cad627",
-                    text="<div><h3>Don't Panic!</h3><p>Always know where your towel is.</p></div>",
+                    text="<div><h3>Don’t Panic!</h3><p>Always know where your towel is.</p></div>",
                 ),
                 DomWriteNodesItem(
                     node_id="a245c12d-995b-55ee-5ec7-aa36a6cad629",
-                    text="<img alt='Marvin, the Paranoid Android' src='path/to/image/with/assetId/659595234426a9fcbad57043'/>",
+                    text='<img alt="Marvin, the Paranoid Android" src="path/to/image/with/assetId/659595234426a9fcbad57043"/>',
                 ),
             ],
         )
@@ -908,7 +975,7 @@ class AsyncPagesClient:
         _response = await self._client_wrapper.httpx_client.request(
             f"pages/{jsonable_encoder(page_id)}/dom",
             method="POST",
-            params={"locale": locale},
+            params={"localeId": locale_id},
             json={"nodes": nodes},
             request_options=request_options,
             omit=OMIT,
@@ -919,15 +986,15 @@ class AsyncPagesClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)

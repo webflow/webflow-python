@@ -7,19 +7,14 @@ from ..core.datetime_utils import serialize_datetime
 from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
 
 
-class PageDetailsSeo(pydantic_v1.BaseModel):
+class WebhookFilter(pydantic_v1.BaseModel):
     """
-    SEO-related fields for the Page
-    """
-
-    title: typing.Optional[str] = pydantic_v1.Field(default=None)
-    """
-    The Page title shown in search engine results
+    Only supported for the `form_submission` trigger type. Filter for the form you want Webhooks to be sent for.
     """
 
-    description: typing.Optional[str] = pydantic_v1.Field(default=None)
+    name: typing.Optional[str] = pydantic_v1.Field(default=None)
     """
-    The Page description shown in search engine results
+    The name of the form you'd like to recieve notifications for.
     """
 
     def json(self, **kwargs: typing.Any) -> str:

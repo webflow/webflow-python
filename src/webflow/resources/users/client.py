@@ -15,6 +15,7 @@ from ...errors.internal_server_error import InternalServerError
 from ...errors.not_found_error import NotFoundError
 from ...errors.too_many_requests_error import TooManyRequestsError
 from ...errors.unauthorized_error import UnauthorizedError
+from ...types.error import Error
 from ...types.user import User
 from ...types.user_list import UserList
 from .types.users_list_request_sort import UsersListRequestSort
@@ -38,7 +39,9 @@ class UsersClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> UserList:
         """
-        Get a list of users for a site <br><br> Required scope | `users:read`
+        Get a list of users for a site
+
+        Required scope | `users:read`
 
         Parameters
         ----------
@@ -74,7 +77,7 @@ class UsersClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.users.list(
-            site_id="site_id",
+            site_id="580e63e98c9a982ac9b8b741",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -89,15 +92,15 @@ class UsersClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -105,7 +108,9 @@ class UsersClient:
 
     def get(self, site_id: str, user_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> User:
         """
-        Get a User by ID <br><br> Required scope | `users:read`
+        Get a User by ID
+
+        Required scope | `users:read`
 
         Parameters
         ----------
@@ -131,8 +136,8 @@ class UsersClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.users.get(
-            site_id="site_id",
-            user_id="user_id",
+            site_id="580e63e98c9a982ac9b8b741",
+            user_id="580e63e98c9a982ac9b8b741",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -146,15 +151,15 @@ class UsersClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -162,7 +167,9 @@ class UsersClient:
 
     def delete(self, site_id: str, user_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
         """
-        Delete a User by ID <br><br> Required scope | `users:write`
+        Delete a User by ID
+
+        Required scope | `users:write`
 
         Parameters
         ----------
@@ -187,8 +194,8 @@ class UsersClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.users.delete(
-            site_id="site_id",
-            user_id="user_id",
+            site_id="580e63e98c9a982ac9b8b741",
+            user_id="580e63e98c9a982ac9b8b741",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -202,15 +209,15 @@ class UsersClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -226,9 +233,12 @@ class UsersClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> User:
         """
-        Update a User by ID <br><br> Required scope | `users:write`
+        Update a User by ID
 
-        <aside class="notice">The <code>email</code> and <code>password</code> fields cannot be updated using this endpoint</aside>
+          Required scope | `users:write`
+
+        <Note class="notice">The <code>email</code> and <code>password</code>
+        fields cannot be updated using this endpoint</Note>
 
         Parameters
         ----------
@@ -261,8 +271,8 @@ class UsersClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.users.update(
-            site_id="site_id",
-            user_id="user_id",
+            site_id="580e63e98c9a982ac9b8b741",
+            user_id="580e63e98c9a982ac9b8b741",
             data=UsersUpdateRequestData(
                 name="Some One",
                 accept_privacy=False,
@@ -284,15 +294,15 @@ class UsersClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -307,7 +317,11 @@ class UsersClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> User:
         """
-        Create and invite a user with an email address. The user will be sent and invite via email, which they will need to accept in order to join paid Access Groups. <br><br> Required scope | `users:write`
+        Create and invite a user with an email address.
+
+        The user will be sent and invite via email, which they will need to accept in order to join paid any paid access group.
+
+        Required scope | `users:write`
 
         Parameters
         ----------
@@ -337,7 +351,7 @@ class UsersClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.users.invite(
-            site_id="site_id",
+            site_id="580e63e98c9a982ac9b8b741",
             email="some.one@home.com",
             access_groups=["webflowers"],
         )
@@ -355,17 +369,17 @@ class UsersClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 409:
                 raise ConflictError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -386,7 +400,9 @@ class AsyncUsersClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> UserList:
         """
-        Get a list of users for a site <br><br> Required scope | `users:read`
+        Get a list of users for a site
+
+        Required scope | `users:read`
 
         Parameters
         ----------
@@ -422,7 +438,7 @@ class AsyncUsersClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.users.list(
-            site_id="site_id",
+            site_id="580e63e98c9a982ac9b8b741",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -437,15 +453,15 @@ class AsyncUsersClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -453,7 +469,9 @@ class AsyncUsersClient:
 
     async def get(self, site_id: str, user_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> User:
         """
-        Get a User by ID <br><br> Required scope | `users:read`
+        Get a User by ID
+
+        Required scope | `users:read`
 
         Parameters
         ----------
@@ -479,8 +497,8 @@ class AsyncUsersClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.users.get(
-            site_id="site_id",
-            user_id="user_id",
+            site_id="580e63e98c9a982ac9b8b741",
+            user_id="580e63e98c9a982ac9b8b741",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -494,15 +512,15 @@ class AsyncUsersClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -512,7 +530,9 @@ class AsyncUsersClient:
         self, site_id: str, user_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> None:
         """
-        Delete a User by ID <br><br> Required scope | `users:write`
+        Delete a User by ID
+
+        Required scope | `users:write`
 
         Parameters
         ----------
@@ -537,8 +557,8 @@ class AsyncUsersClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.users.delete(
-            site_id="site_id",
-            user_id="user_id",
+            site_id="580e63e98c9a982ac9b8b741",
+            user_id="580e63e98c9a982ac9b8b741",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -552,15 +572,15 @@ class AsyncUsersClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -576,9 +596,12 @@ class AsyncUsersClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> User:
         """
-        Update a User by ID <br><br> Required scope | `users:write`
+        Update a User by ID
 
-        <aside class="notice">The <code>email</code> and <code>password</code> fields cannot be updated using this endpoint</aside>
+          Required scope | `users:write`
+
+        <Note class="notice">The <code>email</code> and <code>password</code>
+        fields cannot be updated using this endpoint</Note>
 
         Parameters
         ----------
@@ -611,8 +634,8 @@ class AsyncUsersClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.users.update(
-            site_id="site_id",
-            user_id="user_id",
+            site_id="580e63e98c9a982ac9b8b741",
+            user_id="580e63e98c9a982ac9b8b741",
             data=UsersUpdateRequestData(
                 name="Some One",
                 accept_privacy=False,
@@ -634,15 +657,15 @@ class AsyncUsersClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -657,7 +680,11 @@ class AsyncUsersClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> User:
         """
-        Create and invite a user with an email address. The user will be sent and invite via email, which they will need to accept in order to join paid Access Groups. <br><br> Required scope | `users:write`
+        Create and invite a user with an email address.
+
+        The user will be sent and invite via email, which they will need to accept in order to join paid any paid access group.
+
+        Required scope | `users:write`
 
         Parameters
         ----------
@@ -687,7 +714,7 @@ class AsyncUsersClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.users.invite(
-            site_id="site_id",
+            site_id="580e63e98c9a982ac9b8b741",
             email="some.one@home.com",
             access_groups=["webflowers"],
         )
@@ -705,17 +732,17 @@ class AsyncUsersClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 409:
                 raise ConflictError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)

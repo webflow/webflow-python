@@ -21,9 +21,8 @@ class UserAccessGroupsItem(pydantic_v1.BaseModel):
     type: typing.Optional[UserAccessGroupsItemType] = pydantic_v1.Field(default=None)
     """
     The type of access group based on how it was assigned to the user.
-    
-    - `admin` - Assigned to the user via API or in the designer
-    - `ecommerce` - Assigned to the user via an ecommerce purchase
+    * `admin` - Assigned to the user via API or in the designer
+    * `ecommerce` - Assigned to the user via an ecommerce purchase
     """
 
     def json(self, **kwargs: typing.Any) -> str:
