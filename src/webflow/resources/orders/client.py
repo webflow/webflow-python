@@ -15,6 +15,7 @@ from ...errors.internal_server_error import InternalServerError
 from ...errors.not_found_error import NotFoundError
 from ...errors.too_many_requests_error import TooManyRequestsError
 from ...errors.unauthorized_error import UnauthorizedError
+from ...types.error import Error
 from ...types.order import Order
 from ...types.order_list import OrderList
 from .types.orders_list_request_status import OrdersListRequestStatus
@@ -72,7 +73,7 @@ class OrdersClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.orders.list(
-            site_id="site_id",
+            site_id="580e63e98c9a982ac9b8b741",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -87,17 +88,17 @@ class OrdersClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 409:
                 raise ConflictError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -105,7 +106,8 @@ class OrdersClient:
 
     def get(self, site_id: str, order_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> Order:
         """
-        Retrieve a single product by its id. All of its SKUs will also be retrieved.
+        Retrieve a single product by its ID. All of its SKUs will also be
+        retrieved.
 
         Required scope | `ecommerce:read`
 
@@ -133,8 +135,8 @@ class OrdersClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.orders.get(
-            site_id="site_id",
-            order_id="order_id",
+            site_id="580e63e98c9a982ac9b8b741",
+            order_id="5e8518516e147040726cc415",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -148,17 +150,17 @@ class OrdersClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 409:
                 raise ConflictError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -176,7 +178,9 @@ class OrdersClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> Order:
         """
-        This API lets you update the fields, `comment`, `shippingProvider`, and/or `shippingTracking` for a given order. All three fields can be updated simultaneously or independently.
+        This API lets you update the fields, `comment`, `shippingProvider`,
+        and/or `shippingTracking` for a given order. All three fields can be
+        updated simultaneously or independently.
 
         Required scope | `ecommerce:write`
 
@@ -216,8 +220,8 @@ class OrdersClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.orders.update(
-            site_id="site_id",
-            order_id="order_id",
+            site_id="580e63e98c9a982ac9b8b741",
+            order_id="5e8518516e147040726cc415",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -238,17 +242,17 @@ class OrdersClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 409:
                 raise ConflictError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -294,8 +298,8 @@ class OrdersClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.orders.update_fulfill(
-            site_id="site_id",
-            order_id="order_id",
+            site_id="580e63e98c9a982ac9b8b741",
+            order_id="5e8518516e147040726cc415",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -311,17 +315,17 @@ class OrdersClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 409:
                 raise ConflictError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -359,8 +363,8 @@ class OrdersClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.orders.update_unfulfill(
-            site_id="site_id",
-            order_id="order_id",
+            site_id="580e63e98c9a982ac9b8b741",
+            order_id="5e8518516e147040726cc415",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -374,17 +378,17 @@ class OrdersClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 409:
                 raise ConflictError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -431,8 +435,8 @@ class OrdersClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.orders.refund(
-            site_id="site_id",
-            order_id="order_id",
+            site_id="580e63e98c9a982ac9b8b741",
+            order_id="5e8518516e147040726cc415",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -448,17 +452,17 @@ class OrdersClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 409:
                 raise ConflictError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -513,7 +517,7 @@ class AsyncOrdersClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.orders.list(
-            site_id="site_id",
+            site_id="580e63e98c9a982ac9b8b741",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -528,17 +532,17 @@ class AsyncOrdersClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 409:
                 raise ConflictError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -548,7 +552,8 @@ class AsyncOrdersClient:
         self, site_id: str, order_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> Order:
         """
-        Retrieve a single product by its id. All of its SKUs will also be retrieved.
+        Retrieve a single product by its ID. All of its SKUs will also be
+        retrieved.
 
         Required scope | `ecommerce:read`
 
@@ -576,8 +581,8 @@ class AsyncOrdersClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.orders.get(
-            site_id="site_id",
-            order_id="order_id",
+            site_id="580e63e98c9a982ac9b8b741",
+            order_id="5e8518516e147040726cc415",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -591,17 +596,17 @@ class AsyncOrdersClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 409:
                 raise ConflictError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -619,7 +624,9 @@ class AsyncOrdersClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> Order:
         """
-        This API lets you update the fields, `comment`, `shippingProvider`, and/or `shippingTracking` for a given order. All three fields can be updated simultaneously or independently.
+        This API lets you update the fields, `comment`, `shippingProvider`,
+        and/or `shippingTracking` for a given order. All three fields can be
+        updated simultaneously or independently.
 
         Required scope | `ecommerce:write`
 
@@ -659,8 +666,8 @@ class AsyncOrdersClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.orders.update(
-            site_id="site_id",
-            order_id="order_id",
+            site_id="580e63e98c9a982ac9b8b741",
+            order_id="5e8518516e147040726cc415",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -681,17 +688,17 @@ class AsyncOrdersClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 409:
                 raise ConflictError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -737,8 +744,8 @@ class AsyncOrdersClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.orders.update_fulfill(
-            site_id="site_id",
-            order_id="order_id",
+            site_id="580e63e98c9a982ac9b8b741",
+            order_id="5e8518516e147040726cc415",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -754,17 +761,17 @@ class AsyncOrdersClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 409:
                 raise ConflictError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -802,8 +809,8 @@ class AsyncOrdersClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.orders.update_unfulfill(
-            site_id="site_id",
-            order_id="order_id",
+            site_id="580e63e98c9a982ac9b8b741",
+            order_id="5e8518516e147040726cc415",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -817,17 +824,17 @@ class AsyncOrdersClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 409:
                 raise ConflictError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -874,8 +881,8 @@ class AsyncOrdersClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.orders.refund(
-            site_id="site_id",
-            order_id="order_id",
+            site_id="580e63e98c9a982ac9b8b741",
+            order_id="5e8518516e147040726cc415",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -891,17 +898,17 @@ class AsyncOrdersClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 409:
                 raise ConflictError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
