@@ -7,6 +7,7 @@ from ..core.datetime_utils import serialize_datetime
 from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
 from .domain import Domain
 from .locales import Locales
+from .site_data_collection_type import SiteDataCollectionType
 
 
 class Site(pydantic_v1.BaseModel):
@@ -62,6 +63,17 @@ class Site(pydantic_v1.BaseModel):
 
     custom_domains: typing.Optional[typing.List[Domain]] = pydantic_v1.Field(alias="customDomains", default=None)
     locales: typing.Optional[Locales] = None
+    data_collection_enabled: typing.Optional[bool] = pydantic_v1.Field(alias="dataCollectionEnabled", default=None)
+    """
+    Indicates if data collection is enabled for the site.
+    """
+
+    data_collection_type: typing.Optional[SiteDataCollectionType] = pydantic_v1.Field(
+        alias="dataCollectionType", default=None
+    )
+    """
+    The type of data collection enabled for the site.
+    """
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

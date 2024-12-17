@@ -8,12 +8,12 @@ from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
 
 
 class CollectionItemFieldData(pydantic_v1.BaseModel):
-    name: typing.Optional[str] = pydantic_v1.Field(default=None)
+    name: str = pydantic_v1.Field()
     """
     Name of the Item
     """
 
-    slug: typing.Optional[str] = pydantic_v1.Field(default=None)
+    slug: str = pydantic_v1.Field()
     """
     URL structure of the Item in your site. Note: Updates to an item slug will break all links referencing the old slug.
     """

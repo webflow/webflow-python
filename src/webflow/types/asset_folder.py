@@ -34,7 +34,7 @@ class AssetFolder(pydantic_v1.BaseModel):
 
     site_id: typing.Optional[str] = pydantic_v1.Field(alias="siteId", default=None)
     """
-    The unique id of the site the Asset Folder belongs to
+    The unique ID of the site the Asset Folder belongs to
     """
 
     created_on: typing.Optional[dt.datetime] = pydantic_v1.Field(alias="createdOn", default=None)
