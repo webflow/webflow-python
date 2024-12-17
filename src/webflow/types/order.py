@@ -22,7 +22,9 @@ from .stripe_details import StripeDetails
 class Order(pydantic_v1.BaseModel):
     order_id: typing.Optional[str] = pydantic_v1.Field(alias="orderId", default=None)
     """
-    The order id. Will usually be 6 hex characters, but can also be 9 hex characters if the site has a very large number of Orders. Randomly assigned.
+    The order ID. Will usually be 6 hex characters, but can also be 9
+    hex characters if the site has a very large number of Orders.
+    Randomly assigned.
     """
 
     status: typing.Optional[OrderStatus] = pydantic_v1.Field(default=None)

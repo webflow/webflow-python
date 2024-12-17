@@ -10,7 +10,9 @@ from . import (
     orders,
     pages,
     products,
+    redirects,
     scripts,
+    site_plan,
     sites,
     token,
     users,
@@ -21,6 +23,7 @@ from .inventory import InventoryUpdateRequestInventoryType
 from .orders import OrdersListRequestStatus, OrdersRefundRequestReason
 from .pages import DomWriteNodesItem, UpdateStaticContentResponse
 from .products import ProductsCreateSkuResponse
+from .sites import SitesPublishResponse
 from .users import UsersListRequestSort, UsersUpdateRequestData
 
 __all__ = [
@@ -30,6 +33,7 @@ __all__ = [
     "OrdersListRequestStatus",
     "OrdersRefundRequestReason",
     "ProductsCreateSkuResponse",
+    "SitesPublishResponse",
     "UpdateStaticContentResponse",
     "UsersListRequestSort",
     "UsersUpdateRequestData",
@@ -42,7 +46,9 @@ __all__ = [
     "orders",
     "pages",
     "products",
+    "redirects",
     "scripts",
+    "site_plan",
     "sites",
     "token",
     "users",

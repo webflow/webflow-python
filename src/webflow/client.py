@@ -15,7 +15,9 @@ from .resources.inventory.client import AsyncInventoryClient, InventoryClient
 from .resources.orders.client import AsyncOrdersClient, OrdersClient
 from .resources.pages.client import AsyncPagesClient, PagesClient
 from .resources.products.client import AsyncProductsClient, ProductsClient
+from .resources.redirects.client import AsyncRedirectsClient, RedirectsClient
 from .resources.scripts.client import AsyncScriptsClient, ScriptsClient
+from .resources.site_plan.client import AsyncSitePlanClient, SitePlanClient
 from .resources.sites.client import AsyncSitesClient, SitesClient
 from .resources.token.client import AsyncTokenClient, TokenClient
 from .resources.users.client import AsyncUsersClient, UsersClient
@@ -82,6 +84,8 @@ class Webflow:
         )
         self.token = TokenClient(client_wrapper=self._client_wrapper)
         self.sites = SitesClient(client_wrapper=self._client_wrapper)
+        self.redirects = RedirectsClient(client_wrapper=self._client_wrapper)
+        self.site_plan = SitePlanClient(client_wrapper=self._client_wrapper)
         self.collections = CollectionsClient(client_wrapper=self._client_wrapper)
         self.pages = PagesClient(client_wrapper=self._client_wrapper)
         self.scripts = ScriptsClient(client_wrapper=self._client_wrapper)
@@ -156,6 +160,8 @@ class AsyncWebflow:
         )
         self.token = AsyncTokenClient(client_wrapper=self._client_wrapper)
         self.sites = AsyncSitesClient(client_wrapper=self._client_wrapper)
+        self.redirects = AsyncRedirectsClient(client_wrapper=self._client_wrapper)
+        self.site_plan = AsyncSitePlanClient(client_wrapper=self._client_wrapper)
         self.collections = AsyncCollectionsClient(client_wrapper=self._client_wrapper)
         self.pages = AsyncPagesClient(client_wrapper=self._client_wrapper)
         self.scripts = AsyncScriptsClient(client_wrapper=self._client_wrapper)
