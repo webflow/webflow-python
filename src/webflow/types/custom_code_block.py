@@ -16,12 +16,12 @@ class CustomCodeBlock(pydantic_v1.BaseModel):
 
     site_id: typing.Optional[str] = pydantic_v1.Field(alias="siteId", default=None)
     """
-    The Site id where the custom code was applied
+    The Site ID where the custom code was applied
     """
 
     page_id: typing.Optional[str] = pydantic_v1.Field(alias="pageId", default=None)
     """
-    The Page id (if applied at Page-level)
+    The Page ID (if applied at Page-level)
     """
 
     type: typing.Optional[CustomCodeBlockType] = pydantic_v1.Field(default=None)
