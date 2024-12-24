@@ -3,19 +3,19 @@
 import datetime as dt
 import typing
 
-from ....core.datetime_utils import serialize_datetime
-from ....core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
+from ..core.datetime_utils import serialize_datetime
+from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
 
 
-class DomWriteNodesItem(pydantic_v1.BaseModel):
-    node_id: str = pydantic_v1.Field(alias="nodeId")
+class CollectionItemWithIdInputFieldData(pydantic_v1.BaseModel):
+    name: typing.Optional[str] = pydantic_v1.Field(default=None)
     """
-    Node UUID
+    Name of the Item
     """
 
-    text: str = pydantic_v1.Field()
+    slug: typing.Optional[str] = pydantic_v1.Field(default=None)
     """
-    HTML content of the node, including the HTML tag. The HTML tags must be the same as what's returned from the Get Content endpoint.
+    URL structure of the Item in your site. Note: Updates to an item slug will break all links referencing the old slug.
     """
 
     def json(self, **kwargs: typing.Any) -> str:
@@ -33,7 +33,5 @@ class DomWriteNodesItem(pydantic_v1.BaseModel):
     class Config:
         frozen = True
         smart_union = True
-        allow_population_by_field_name = True
-        populate_by_name = True
         extra = pydantic_v1.Extra.allow
         json_encoders = {dt.datetime: serialize_datetime}
