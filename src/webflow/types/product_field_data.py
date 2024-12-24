@@ -12,7 +12,7 @@ from .sku_property_list import SkuPropertyList
 
 class ProductFieldData(pydantic_v1.BaseModel):
     """
-    Contains content-specific details for a product, covering both standard (e.g., title, description) and custom fields tailored to the product setup.
+    Contains content-specific details for a product, covering both standard (e.g., title, description)  and custom fields tailored to the product setup.
     """
 
     name: typing.Optional[str] = pydantic_v1.Field(default=None)
