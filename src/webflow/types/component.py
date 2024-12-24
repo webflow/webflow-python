@@ -3,19 +3,38 @@
 import datetime as dt
 import typing
 
-from ......core.datetime_utils import serialize_datetime
-from ......core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
+from ..core.datetime_utils import serialize_datetime
+from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
 
 
-class BulkCollectionItemFieldData(pydantic_v1.BaseModel):
+class Component(pydantic_v1.BaseModel):
+    """
+    The Component object
+    """
+
+    id: str = pydantic_v1.Field()
+    """
+    Unique identifier for the Component
+    """
+
     name: typing.Optional[str] = pydantic_v1.Field(default=None)
     """
-    Name of the Item
+    Component Name
     """
 
-    slug: typing.Optional[str] = pydantic_v1.Field(default=None)
+    group: typing.Optional[str] = pydantic_v1.Field(default=None)
     """
-    URL structure of the Item in your site. Note: Updates to an item slug will break all links referencing the old slug.
+    The group that the component belongs to
+    """
+
+    description: typing.Optional[str] = pydantic_v1.Field(default=None)
+    """
+    Component Description
+    """
+
+    readonly: typing.Optional[bool] = pydantic_v1.Field(default=None)
+    """
+    Indicates whether the component is read-only. Components that cannot be updated within this Site are set to readonly. Workspace Libraries are a good example.
     """
 
     def json(self, **kwargs: typing.Any) -> str:

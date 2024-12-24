@@ -15,6 +15,7 @@ from ...errors.too_many_requests_error import TooManyRequestsError
 from ...errors.unauthorized_error import UnauthorizedError
 from ...types.custom_code_hosted_response import CustomCodeHostedResponse
 from ...types.custom_code_inline_response import CustomCodeInlineResponse
+from ...types.error import Error
 from ...types.registered_script_list import RegisteredScriptList
 
 # this is used as the default value for optional parameters
@@ -27,7 +28,15 @@ class ScriptsClient:
 
     def list(self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> RegisteredScriptList:
         """
-        List of scripts registered to a Site. </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. Additionally, Scripts can be remotely hosted, or registered as inline snippets. <blockquote class="callout callout_info" theme="📘">Access to this endpoint requires a bearer token from a <a href="https://developers.webflow.com/data/docs/getting-started-data-clients">Data Client App</a>.</blockquote> Required scope | `custom_code:read`
+        List of scripts registered to a Site.
+
+        In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered
+        to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate
+        `custom_code` endpoints.
+        Additionally, Scripts can be remotely hosted, or registered as inline snippets.
+        <blockquote class="callout callout_info" theme="📘">Access to this endpoint requires a bearer token from a <a href="https://developers.webflow.com/data/docs/getting-started-data-clients">Data Client App</a>.</blockquote>
+
+        Required scope | `custom_code:read`
 
         Parameters
         ----------
@@ -50,7 +59,7 @@ class ScriptsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.scripts.list(
-            site_id="site_id",
+            site_id="580e63e98c9a982ac9b8b741",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -62,13 +71,13 @@ class ScriptsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -86,7 +95,15 @@ class ScriptsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CustomCodeHostedResponse:
         """
-        Add a script to a Site's Custom Code registry. </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. Additionally, Scripts can be remotely hosted, or registered as inline snippets. <blockquote class="callout callout_info" theme="📘">Access to this endpoint requires a bearer token from a <a href="https://developers.webflow.com/data/docs/getting-started-data-clients">Data Client App</a>.</blockquote> </br></br> Required scope | `custom_code:write`
+        Add a script to a Site's Custom Code registry.
+
+        In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered
+        to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate
+        `custom_code` endpoints.
+        Additionally, Scripts can be remotely hosted, or registered as inline snippets.
+        <blockquote class="callout callout_info" theme="📘">Access to this endpoint requires a bearer token from a <a href="https://developers.webflow.com/data/docs/getting-started-data-clients">Data Client App</a>.</blockquote>
+
+        Required scope | `custom_code:write`
 
         Parameters
         ----------
@@ -124,7 +141,7 @@ class ScriptsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.scripts.register_hosted(
-            site_id="site_id",
+            site_id="580e63e98c9a982ac9b8b741",
             hosted_location="hostedLocation",
             integrity_hash="integrityHash",
             version="version",
@@ -150,13 +167,13 @@ class ScriptsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -174,7 +191,15 @@ class ScriptsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CustomCodeInlineResponse:
         """
-        Add a script to a Site's Custom Code registry. Inline scripts can be between 1 and 2000 characters. </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. </br></br> <blockquote class="callout callout_info" theme="📘">Access to this endpoint requires a bearer token from a <a href="https://developers.webflow.com/data/docs/getting-started-data-clients">Data Client App</a>.</blockquote> Required scope | `custom_code:write`
+        Add a script to a Site's Custom Code registry. Inline scripts can be between 1 and 2000 characters.
+
+        In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered
+        to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate
+        `custom_code` endpoints.
+
+        <blockquote class="callout callout_info" theme="📘">Access to this endpoint requires a bearer token from a <a href="https://developers.webflow.com/data/docs/getting-started-data-clients">Data Client App</a>.</blockquote>
+
+        Required scope | `custom_code:write`
 
         Parameters
         ----------
@@ -212,7 +237,7 @@ class ScriptsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.scripts.register_inline(
-            site_id="site_id",
+            site_id="580e63e98c9a982ac9b8b741",
             source_code="alert('hello world');",
             version="0.0.1",
             display_name="Alert",
@@ -237,13 +262,13 @@ class ScriptsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -258,7 +283,15 @@ class AsyncScriptsClient:
         self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> RegisteredScriptList:
         """
-        List of scripts registered to a Site. </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. Additionally, Scripts can be remotely hosted, or registered as inline snippets. <blockquote class="callout callout_info" theme="📘">Access to this endpoint requires a bearer token from a <a href="https://developers.webflow.com/data/docs/getting-started-data-clients">Data Client App</a>.</blockquote> Required scope | `custom_code:read`
+        List of scripts registered to a Site.
+
+        In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered
+        to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate
+        `custom_code` endpoints.
+        Additionally, Scripts can be remotely hosted, or registered as inline snippets.
+        <blockquote class="callout callout_info" theme="📘">Access to this endpoint requires a bearer token from a <a href="https://developers.webflow.com/data/docs/getting-started-data-clients">Data Client App</a>.</blockquote>
+
+        Required scope | `custom_code:read`
 
         Parameters
         ----------
@@ -281,7 +314,7 @@ class AsyncScriptsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.scripts.list(
-            site_id="site_id",
+            site_id="580e63e98c9a982ac9b8b741",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -293,13 +326,13 @@ class AsyncScriptsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -317,7 +350,15 @@ class AsyncScriptsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CustomCodeHostedResponse:
         """
-        Add a script to a Site's Custom Code registry. </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. Additionally, Scripts can be remotely hosted, or registered as inline snippets. <blockquote class="callout callout_info" theme="📘">Access to this endpoint requires a bearer token from a <a href="https://developers.webflow.com/data/docs/getting-started-data-clients">Data Client App</a>.</blockquote> </br></br> Required scope | `custom_code:write`
+        Add a script to a Site's Custom Code registry.
+
+        In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered
+        to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate
+        `custom_code` endpoints.
+        Additionally, Scripts can be remotely hosted, or registered as inline snippets.
+        <blockquote class="callout callout_info" theme="📘">Access to this endpoint requires a bearer token from a <a href="https://developers.webflow.com/data/docs/getting-started-data-clients">Data Client App</a>.</blockquote>
+
+        Required scope | `custom_code:write`
 
         Parameters
         ----------
@@ -355,7 +396,7 @@ class AsyncScriptsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.scripts.register_hosted(
-            site_id="site_id",
+            site_id="580e63e98c9a982ac9b8b741",
             hosted_location="hostedLocation",
             integrity_hash="integrityHash",
             version="version",
@@ -381,13 +422,13 @@ class AsyncScriptsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -405,7 +446,15 @@ class AsyncScriptsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CustomCodeInlineResponse:
         """
-        Add a script to a Site's Custom Code registry. Inline scripts can be between 1 and 2000 characters. </br></br> In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate `custom_code` endpoints. </br></br> <blockquote class="callout callout_info" theme="📘">Access to this endpoint requires a bearer token from a <a href="https://developers.webflow.com/data/docs/getting-started-data-clients">Data Client App</a>.</blockquote> Required scope | `custom_code:write`
+        Add a script to a Site's Custom Code registry. Inline scripts can be between 1 and 2000 characters.
+
+        In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered
+        to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate
+        `custom_code` endpoints.
+
+        <blockquote class="callout callout_info" theme="📘">Access to this endpoint requires a bearer token from a <a href="https://developers.webflow.com/data/docs/getting-started-data-clients">Data Client App</a>.</blockquote>
+
+        Required scope | `custom_code:write`
 
         Parameters
         ----------
@@ -443,7 +492,7 @@ class AsyncScriptsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.scripts.register_inline(
-            site_id="site_id",
+            site_id="580e63e98c9a982ac9b8b741",
             source_code="alert('hello world');",
             version="0.0.1",
             display_name="Alert",
@@ -468,13 +517,13 @@ class AsyncScriptsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
