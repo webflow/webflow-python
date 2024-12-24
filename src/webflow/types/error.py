@@ -5,11 +5,12 @@ import typing
 
 from ..core.datetime_utils import serialize_datetime
 from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
+from .error_code import ErrorCode
 from .error_details_item import ErrorDetailsItem
 
 
 class Error(pydantic_v1.BaseModel):
-    code: typing.Optional[str] = pydantic_v1.Field(default=None)
+    code: typing.Optional[ErrorCode] = pydantic_v1.Field(default=None)
     """
     Error code
     """

@@ -14,7 +14,7 @@ class Page(pydantic_v1.BaseModel):
     The Page object
     """
 
-    id: typing.Optional[str] = pydantic_v1.Field(default=None)
+    id: str = pydantic_v1.Field()
     """
     Unique identifier for the Page
     """
@@ -69,6 +69,11 @@ class Page(pydantic_v1.BaseModel):
     Indicates whether the Page supports [Page Branching](https://university.webflow.com/lesson/page-branching)
     """
 
+    is_branch: typing.Optional[bool] = pydantic_v1.Field(alias="isBranch", default=None)
+    """
+    Indicates whether the Page is a Branch of another Page [Page Branching](https://university.webflow.com/lesson/page-branching)
+    """
+
     is_members_only: typing.Optional[bool] = pydantic_v1.Field(alias="isMembersOnly", default=None)
     """
     Indicates whether the Page is restricted by [Memberships Controls](https://university.webflow.com/lesson/webflow-memberships-overview#how-to-manage-page-restrictions)
@@ -82,6 +87,16 @@ class Page(pydantic_v1.BaseModel):
     open_graph: typing.Optional[PageOpenGraph] = pydantic_v1.Field(alias="openGraph", default=None)
     """
     Open Graph fields for the Page
+    """
+
+    locale_id: typing.Optional[str] = pydantic_v1.Field(alias="localeId", default=None)
+    """
+    Unique ID of the page locale
+    """
+
+    published_path: typing.Optional[str] = pydantic_v1.Field(alias="publishedPath", default=None)
+    """
+    Relative path of the published page URL
     """
 
     def json(self, **kwargs: typing.Any) -> str:
