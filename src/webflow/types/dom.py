@@ -11,7 +11,7 @@ from .pagination import Pagination
 
 class Dom(pydantic_v1.BaseModel):
     """
-    The DOM (Document Object Model) schema represents the content structure of a web page. It captures various content nodes, such as text and images, along with their associated attributes. Each node has a unique identifier and can be of different types like text or image. The schema also provides pagination details for scenarios where the content nodes are too many to be fetched in a single request.
+    The DOM (Document Object Model) schema represents the content structure of a web page or component. It captures various content nodes along with their associated attributes. Each node has a unique identifier and can be of different types like text, image or component-instance. The schema also provides pagination details for scenarios where the content nodes are too many to be fetched in a single request.
     """
 
     page_id: typing.Optional[str] = pydantic_v1.Field(alias="pageId", default=None)

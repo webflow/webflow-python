@@ -5,15 +5,24 @@ import typing
 
 from ..core.datetime_utils import serialize_datetime
 from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
+from .text_node_text import TextNodeText
 
 
 class TextNode(pydantic_v1.BaseModel):
     """
-    Represents textual content within the DOM. It contains both the raw text and its HTML representation, allowing for flexibility in rendering and processing. Additional attributes can be associated with the text for styling or other purposes.
+    Represents text content within the DOM. It contains both the raw text and its HTML representation. Additional attributes can be associated with the text for styling or other purposes.
     """
 
-    html: typing.Optional[str] = None
-    text: typing.Optional[str] = None
+    id: typing.Optional[str] = pydantic_v1.Field(default=None)
+    """
+    Node UUID
+    """
+
+    text: typing.Optional[TextNodeText] = None
+    attributes: typing.Optional[typing.Dict[str, str]] = pydantic_v1.Field(default=None)
+    """
+    The custom attributes of the node
+    """
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
