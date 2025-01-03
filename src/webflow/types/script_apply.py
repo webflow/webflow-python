@@ -21,7 +21,7 @@ class ScriptApply(pydantic_v1.BaseModel):
 
     version: str = pydantic_v1.Field()
     """
-    Semantic Version String for the registered script _e.g. 0.0.1_
+    Semantic Version String for the registered script *e.g. 0.0.1*
     """
 
     attributes: typing.Optional[typing.Dict[str, typing.Any]] = pydantic_v1.Field(default=None)

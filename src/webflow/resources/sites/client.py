@@ -15,10 +15,12 @@ from ...errors.not_found_error import NotFoundError
 from ...errors.too_many_requests_error import TooManyRequestsError
 from ...errors.unauthorized_error import UnauthorizedError
 from ...types.domains import Domains
+from ...types.error import Error
 from ...types.site import Site
 from ...types.sites import Sites
 from .resources.activity_logs.client import ActivityLogsClient, AsyncActivityLogsClient
 from .resources.scripts.client import AsyncScriptsClient, ScriptsClient
+from .types.sites_publish_response import SitesPublishResponse
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
@@ -30,9 +32,86 @@ class SitesClient:
         self.activity_logs = ActivityLogsClient(client_wrapper=self._client_wrapper)
         self.scripts = ScriptsClient(client_wrapper=self._client_wrapper)
 
+    def create(
+        self,
+        workspace_id: str,
+        *,
+        name: str,
+        template_name: typing.Optional[str] = OMIT,
+        parent_folder_id: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> Site:
+        """
+        Create a site. This endpoint requires an Enterprise workspace.
+
+        Required scope | `workspace:write`
+
+        Parameters
+        ----------
+        workspace_id : str
+            Unique identifier for a Workspace
+
+        name : str
+            The name of the site
+
+        template_name : typing.Optional[str]
+            The workspace or marketplace template to use
+
+        parent_folder_id : typing.Optional[str]
+            MegaDodo Publications - Potential Book Ideas
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        Site
+            Request was successful
+
+        Examples
+        --------
+        from webflow.client import Webflow
+
+        client = Webflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+        client.sites.create(
+            workspace_id="580e63e98c9a982ac9b8b741",
+            name="The Hitchhiker's Guide to the Galaxy",
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"workspaces/{jsonable_encoder(workspace_id)}/sites",
+            method="POST",
+            json={"name": name, "templateName": template_name, "parentFolderId": parent_folder_id},
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return pydantic_v1.parse_obj_as(Site, _response.json())  # type: ignore
+            if _response.status_code == 400:
+                raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+            if _response.status_code == 401:
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            if _response.status_code == 403:
+                raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+            if _response.status_code == 404:
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            if _response.status_code == 429:
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            if _response.status_code == 500:
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
     def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> Sites:
         """
-        List of all sites the provided access token is able to access. </br></br> Required scope | `sites:read`
+        List of all sites the provided access token is able to access.
+
+        Required scope | `sites:read`
 
         Parameters
         ----------
@@ -57,16 +136,12 @@ class SitesClient:
         try:
             if 200 <= _response.status_code < 300:
                 return pydantic_v1.parse_obj_as(Sites, _response.json())  # type: ignore
-            if _response.status_code == 400:
-                raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
-            if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -74,7 +149,9 @@ class SitesClient:
 
     def get(self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> Site:
         """
-        Get a site by site id </br></br> Required scope | `sites:read`
+        Get details of a site.
+
+        Required scope | `sites:read`
 
         Parameters
         ----------
@@ -97,7 +174,7 @@ class SitesClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.sites.get(
-            site_id="site_id",
+            site_id="580e63e98c9a982ac9b8b741",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -109,13 +186,135 @@ class SitesClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    def delete(self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
+        """
+        Delete a site. This endpoint requires an Enterprise workspace.
+
+        Required scope | `sites:write`
+
+        Parameters
+        ----------
+        site_id : str
+            Unique identifier for a Site
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        from webflow.client import Webflow
+
+        client = Webflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+        client.sites.delete(
+            site_id="580e63e98c9a982ac9b8b741",
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"sites/{jsonable_encoder(site_id)}", method="DELETE", request_options=request_options
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return
+            if _response.status_code == 400:
+                raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+            if _response.status_code == 401:
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            if _response.status_code == 403:
+                raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+            if _response.status_code == 404:
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            if _response.status_code == 429:
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            if _response.status_code == 500:
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    def update(
+        self,
+        site_id: str,
+        *,
+        name: typing.Optional[str] = OMIT,
+        parent_folder_id: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> Site:
+        """
+        Update a site. This endpoint requires an Enterprise workspace.
+
+        Required scope | `sites:write`
+
+        Parameters
+        ----------
+        site_id : str
+            Unique identifier for a Site
+
+        name : typing.Optional[str]
+            The name of the site
+
+        parent_folder_id : typing.Optional[str]
+            The parent folder ID of the site
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        Site
+            Request was successful
+
+        Examples
+        --------
+        from webflow.client import Webflow
+
+        client = Webflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+        client.sites.update(
+            site_id="580e63e98c9a982ac9b8b741",
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"sites/{jsonable_encoder(site_id)}",
+            method="PATCH",
+            json={"name": name, "parentFolderId": parent_folder_id},
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return pydantic_v1.parse_obj_as(Site, _response.json())  # type: ignore
+            if _response.status_code == 400:
+                raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+            if _response.status_code == 401:
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            if _response.status_code == 403:
+                raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+            if _response.status_code == 404:
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            if _response.status_code == 429:
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            if _response.status_code == 500:
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -123,7 +322,9 @@ class SitesClient:
 
     def get_custom_domain(self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> Domains:
         """
-        Get a list of all custom domains related to site. </br></br> Required scope | `sites:read`
+        Get a list of all custom domains related to site.
+
+        Required scope | `sites:read`
 
         Parameters
         ----------
@@ -146,7 +347,7 @@ class SitesClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.sites.get_custom_domain(
-            site_id="site_id",
+            site_id="580e63e98c9a982ac9b8b741",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -156,15 +357,15 @@ class SitesClient:
             if 200 <= _response.status_code < 300:
                 return pydantic_v1.parse_obj_as(Domains, _response.json())  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -177,9 +378,13 @@ class SitesClient:
         custom_domains: typing.Optional[typing.Sequence[str]] = OMIT,
         publish_to_webflow_subdomain: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> None:
+    ) -> SitesPublishResponse:
         """
-        Publish a site to one more more domains. </br></br> Required scope | `sites:write`
+        Publishes a site to one or more more domains.
+
+        <Note title="Endpoint-specific rate limit">This endpoint has a limit of one successful publish queue per minute.</Note>
+
+        Required scope | `sites:write`
 
         Parameters
         ----------
@@ -187,7 +392,7 @@ class SitesClient:
             Unique identifier for a Site
 
         custom_domains : typing.Optional[typing.Sequence[str]]
-            Array of Custom Domain ids to publish
+            Array of Custom Domain IDs to publish
 
         publish_to_webflow_subdomain : typing.Optional[bool]
             Choice of whether to publish to the default Webflow Subdomain
@@ -197,7 +402,8 @@ class SitesClient:
 
         Returns
         -------
-        None
+        SitesPublishResponse
+            Request accepted
 
         Examples
         --------
@@ -207,7 +413,7 @@ class SitesClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.sites.publish(
-            site_id="site_id",
+            site_id="580e63e98c9a982ac9b8b741",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -219,17 +425,17 @@ class SitesClient:
         )
         try:
             if 200 <= _response.status_code < 300:
-                return
+                return pydantic_v1.parse_obj_as(SitesPublishResponse, _response.json())  # type: ignore
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -242,9 +448,86 @@ class AsyncSitesClient:
         self.activity_logs = AsyncActivityLogsClient(client_wrapper=self._client_wrapper)
         self.scripts = AsyncScriptsClient(client_wrapper=self._client_wrapper)
 
+    async def create(
+        self,
+        workspace_id: str,
+        *,
+        name: str,
+        template_name: typing.Optional[str] = OMIT,
+        parent_folder_id: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> Site:
+        """
+        Create a site. This endpoint requires an Enterprise workspace.
+
+        Required scope | `workspace:write`
+
+        Parameters
+        ----------
+        workspace_id : str
+            Unique identifier for a Workspace
+
+        name : str
+            The name of the site
+
+        template_name : typing.Optional[str]
+            The workspace or marketplace template to use
+
+        parent_folder_id : typing.Optional[str]
+            MegaDodo Publications - Potential Book Ideas
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        Site
+            Request was successful
+
+        Examples
+        --------
+        from webflow.client import AsyncWebflow
+
+        client = AsyncWebflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+        await client.sites.create(
+            workspace_id="580e63e98c9a982ac9b8b741",
+            name="The Hitchhiker's Guide to the Galaxy",
+        )
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"workspaces/{jsonable_encoder(workspace_id)}/sites",
+            method="POST",
+            json={"name": name, "templateName": template_name, "parentFolderId": parent_folder_id},
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return pydantic_v1.parse_obj_as(Site, _response.json())  # type: ignore
+            if _response.status_code == 400:
+                raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+            if _response.status_code == 401:
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            if _response.status_code == 403:
+                raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+            if _response.status_code == 404:
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            if _response.status_code == 429:
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            if _response.status_code == 500:
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
     async def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> Sites:
         """
-        List of all sites the provided access token is able to access. </br></br> Required scope | `sites:read`
+        List of all sites the provided access token is able to access.
+
+        Required scope | `sites:read`
 
         Parameters
         ----------
@@ -271,16 +554,12 @@ class AsyncSitesClient:
         try:
             if 200 <= _response.status_code < 300:
                 return pydantic_v1.parse_obj_as(Sites, _response.json())  # type: ignore
-            if _response.status_code == 400:
-                raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
-            if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -288,7 +567,9 @@ class AsyncSitesClient:
 
     async def get(self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> Site:
         """
-        Get a site by site id </br></br> Required scope | `sites:read`
+        Get details of a site.
+
+        Required scope | `sites:read`
 
         Parameters
         ----------
@@ -311,7 +592,7 @@ class AsyncSitesClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.sites.get(
-            site_id="site_id",
+            site_id="580e63e98c9a982ac9b8b741",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -323,13 +604,135 @@ class AsyncSitesClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def delete(self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
+        """
+        Delete a site. This endpoint requires an Enterprise workspace.
+
+        Required scope | `sites:write`
+
+        Parameters
+        ----------
+        site_id : str
+            Unique identifier for a Site
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        from webflow.client import AsyncWebflow
+
+        client = AsyncWebflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+        await client.sites.delete(
+            site_id="580e63e98c9a982ac9b8b741",
+        )
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"sites/{jsonable_encoder(site_id)}", method="DELETE", request_options=request_options
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return
+            if _response.status_code == 400:
+                raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+            if _response.status_code == 401:
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            if _response.status_code == 403:
+                raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+            if _response.status_code == 404:
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            if _response.status_code == 429:
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            if _response.status_code == 500:
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def update(
+        self,
+        site_id: str,
+        *,
+        name: typing.Optional[str] = OMIT,
+        parent_folder_id: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> Site:
+        """
+        Update a site. This endpoint requires an Enterprise workspace.
+
+        Required scope | `sites:write`
+
+        Parameters
+        ----------
+        site_id : str
+            Unique identifier for a Site
+
+        name : typing.Optional[str]
+            The name of the site
+
+        parent_folder_id : typing.Optional[str]
+            The parent folder ID of the site
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        Site
+            Request was successful
+
+        Examples
+        --------
+        from webflow.client import AsyncWebflow
+
+        client = AsyncWebflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+        await client.sites.update(
+            site_id="580e63e98c9a982ac9b8b741",
+        )
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"sites/{jsonable_encoder(site_id)}",
+            method="PATCH",
+            json={"name": name, "parentFolderId": parent_folder_id},
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return pydantic_v1.parse_obj_as(Site, _response.json())  # type: ignore
+            if _response.status_code == 400:
+                raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+            if _response.status_code == 401:
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            if _response.status_code == 403:
+                raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+            if _response.status_code == 404:
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            if _response.status_code == 429:
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
+            if _response.status_code == 500:
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -339,7 +742,9 @@ class AsyncSitesClient:
         self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> Domains:
         """
-        Get a list of all custom domains related to site. </br></br> Required scope | `sites:read`
+        Get a list of all custom domains related to site.
+
+        Required scope | `sites:read`
 
         Parameters
         ----------
@@ -362,7 +767,7 @@ class AsyncSitesClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.sites.get_custom_domain(
-            site_id="site_id",
+            site_id="580e63e98c9a982ac9b8b741",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -372,15 +777,15 @@ class AsyncSitesClient:
             if 200 <= _response.status_code < 300:
                 return pydantic_v1.parse_obj_as(Domains, _response.json())  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -393,9 +798,13 @@ class AsyncSitesClient:
         custom_domains: typing.Optional[typing.Sequence[str]] = OMIT,
         publish_to_webflow_subdomain: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> None:
+    ) -> SitesPublishResponse:
         """
-        Publish a site to one more more domains. </br></br> Required scope | `sites:write`
+        Publishes a site to one or more more domains.
+
+        <Note title="Endpoint-specific rate limit">This endpoint has a limit of one successful publish queue per minute.</Note>
+
+        Required scope | `sites:write`
 
         Parameters
         ----------
@@ -403,7 +812,7 @@ class AsyncSitesClient:
             Unique identifier for a Site
 
         custom_domains : typing.Optional[typing.Sequence[str]]
-            Array of Custom Domain ids to publish
+            Array of Custom Domain IDs to publish
 
         publish_to_webflow_subdomain : typing.Optional[bool]
             Choice of whether to publish to the default Webflow Subdomain
@@ -413,7 +822,8 @@ class AsyncSitesClient:
 
         Returns
         -------
-        None
+        SitesPublishResponse
+            Request accepted
 
         Examples
         --------
@@ -423,7 +833,7 @@ class AsyncSitesClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.sites.publish(
-            site_id="site_id",
+            site_id="580e63e98c9a982ac9b8b741",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -435,17 +845,17 @@ class AsyncSitesClient:
         )
         try:
             if 200 <= _response.status_code < 300:
-                return
+                return pydantic_v1.parse_obj_as(SitesPublishResponse, _response.json())  # type: ignore
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
