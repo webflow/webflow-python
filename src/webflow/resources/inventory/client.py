@@ -15,6 +15,7 @@ from ...errors.internal_server_error import InternalServerError
 from ...errors.not_found_error import NotFoundError
 from ...errors.too_many_requests_error import TooManyRequestsError
 from ...errors.unauthorized_error import UnauthorizedError
+from ...types.error import Error
 from ...types.inventory_item import InventoryItem
 from .types.inventory_update_request_inventory_type import InventoryUpdateRequestInventoryType
 
@@ -58,8 +59,8 @@ class InventoryClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.inventory.list(
-            collection_id="collection_id",
-            item_id="item_id",
+            collection_id="580e63fc8c9a982ac9b8b745",
+            item_id="580e64008c9a982ac9b8b754",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -73,17 +74,17 @@ class InventoryClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 409:
                 raise ConflictError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -100,7 +101,11 @@ class InventoryClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> InventoryItem:
         """
-        Updates the current inventory levels for a particular SKU item. Updates may be given in one or two methods, absolutely or incrementally. Absolute updates are done by setting `quantity` directly. Incremental updates are by specifying the inventory delta in `updateQuantity` which is then added to the `quantity` stored on the server.
+        Updates the current inventory levels for a particular SKU item.
+
+        Updates may be given in one or two methods, absolutely or incrementally.
+        - Absolute updates are done by setting `quantity` directly.
+        - Incremental updates are by specifying the inventory delta in `updateQuantity` which is then added to the `quantity` stored on the server.
 
         Required scope | `ecommerce:write`
 
@@ -138,8 +143,8 @@ class InventoryClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.inventory.update(
-            collection_id="collection_id",
-            item_id="item_id",
+            collection_id="580e63fc8c9a982ac9b8b745",
+            item_id="580e64008c9a982ac9b8b754",
             inventory_type=InventoryUpdateRequestInventoryType.INFINITE,
         )
         """
@@ -156,17 +161,17 @@ class InventoryClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 409:
                 raise ConflictError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -209,8 +214,8 @@ class AsyncInventoryClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.inventory.list(
-            collection_id="collection_id",
-            item_id="item_id",
+            collection_id="580e63fc8c9a982ac9b8b745",
+            item_id="580e64008c9a982ac9b8b754",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -224,17 +229,17 @@ class AsyncInventoryClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 409:
                 raise ConflictError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -251,7 +256,11 @@ class AsyncInventoryClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> InventoryItem:
         """
-        Updates the current inventory levels for a particular SKU item. Updates may be given in one or two methods, absolutely or incrementally. Absolute updates are done by setting `quantity` directly. Incremental updates are by specifying the inventory delta in `updateQuantity` which is then added to the `quantity` stored on the server.
+        Updates the current inventory levels for a particular SKU item.
+
+        Updates may be given in one or two methods, absolutely or incrementally.
+        - Absolute updates are done by setting `quantity` directly.
+        - Incremental updates are by specifying the inventory delta in `updateQuantity` which is then added to the `quantity` stored on the server.
 
         Required scope | `ecommerce:write`
 
@@ -289,8 +298,8 @@ class AsyncInventoryClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.inventory.update(
-            collection_id="collection_id",
-            item_id="item_id",
+            collection_id="580e63fc8c9a982ac9b8b745",
+            item_id="580e64008c9a982ac9b8b754",
             inventory_type=InventoryUpdateRequestInventoryType.INFINITE,
         )
         """
@@ -307,17 +316,17 @@ class AsyncInventoryClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 409:
                 raise ConflictError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
