@@ -29,9 +29,9 @@ class Form(pydantic_v1.BaseModel):
     Date that the Form was last updated on
     """
 
-    fields: typing.Optional[typing.List[FormField]] = pydantic_v1.Field(default=None)
+    fields: typing.Optional[FormField] = pydantic_v1.Field(default=None)
     """
-    A list of form fields
+    A collection of form field objects
     """
 
     response_settings: typing.Optional[FormResponseSettings] = pydantic_v1.Field(alias="responseSettings", default=None)
@@ -41,22 +41,22 @@ class Form(pydantic_v1.BaseModel):
 
     id: typing.Optional[str] = pydantic_v1.Field(default=None)
     """
-    The unique id for the Form
+    The unique ID for the Form
     """
 
     site_id: typing.Optional[str] = pydantic_v1.Field(alias="siteId", default=None)
     """
-    The unique id of the Site the Form belongs to
+    The unique ID of the Site the Form belongs to
     """
 
     site_domain_id: typing.Optional[str] = pydantic_v1.Field(alias="siteDomainId", default=None)
     """
-    The unique id corresponding to the site's Domain name
+    The unique ID corresponding to the site's Domain name
     """
 
     page_id: typing.Optional[str] = pydantic_v1.Field(alias="pageId", default=None)
     """
-    The unique id for the Page on which the Form is placed
+    The unique ID for the Page on which the Form is placed
     """
 
     page_name: typing.Optional[str] = pydantic_v1.Field(alias="pageName", default=None)
@@ -64,9 +64,14 @@ class Form(pydantic_v1.BaseModel):
     The user-visible name of the Page where the Form is placed
     """
 
+    form_element_id: typing.Optional[str] = pydantic_v1.Field(alias="formElementId", default=None)
+    """
+    The unique ID of the Form element
+    """
+
     workspace_id: typing.Optional[str] = pydantic_v1.Field(alias="workspaceId", default=None)
     """
-    The unique id of the Workspace the Site belongs to
+    The unique ID of the Workspace the Site belongs to
     """
 
     def json(self, **kwargs: typing.Any) -> str:

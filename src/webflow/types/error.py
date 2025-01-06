@@ -5,11 +5,11 @@ import typing
 
 from ..core.datetime_utils import serialize_datetime
 from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
-from .error_details_item import ErrorDetailsItem
+from .error_code import ErrorCode
 
 
 class Error(pydantic_v1.BaseModel):
-    code: typing.Optional[str] = pydantic_v1.Field(default=None)
+    code: typing.Optional[ErrorCode] = pydantic_v1.Field(default=None)
     """
     Error code
     """
@@ -24,7 +24,7 @@ class Error(pydantic_v1.BaseModel):
     Link to more information
     """
 
-    details: typing.Optional[typing.List[ErrorDetailsItem]] = pydantic_v1.Field(default=None)
+    details: typing.Optional[typing.List[typing.Any]] = pydantic_v1.Field(default=None)
     """
     Array of errors
     """

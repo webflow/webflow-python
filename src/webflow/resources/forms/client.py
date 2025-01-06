@@ -15,6 +15,7 @@ from ...errors.internal_server_error import InternalServerError
 from ...errors.not_found_error import NotFoundError
 from ...errors.too_many_requests_error import TooManyRequestsError
 from ...errors.unauthorized_error import UnauthorizedError
+from ...types.error import Error
 from ...types.form import Form
 from ...types.form_list import FormList
 from ...types.form_submission import FormSubmission
@@ -37,7 +38,9 @@ class FormsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> FormList:
         """
-        List forms for a given site </br></br> Required scope | `forms:read`
+        List forms for a given site.
+
+        Required scope | `forms:read`
 
         Parameters
         ----------
@@ -66,7 +69,7 @@ class FormsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.forms.list(
-            site_id="site_id",
+            site_id="580e63e98c9a982ac9b8b741",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -81,17 +84,17 @@ class FormsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 409:
                 raise ConflictError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -99,7 +102,9 @@ class FormsClient:
 
     def get(self, form_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> Form:
         """
-        Get information about a given form</br></br> Required scope | `forms:read`
+        Get information about a given form.
+
+        Required scope | `forms:read`
 
         Parameters
         ----------
@@ -122,7 +127,7 @@ class FormsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.forms.get(
-            form_id="form_id",
+            form_id="580e63e98c9a982ac9b8b741",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -134,30 +139,43 @@ class FormsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
     def list_submissions(
-        self, form_id: str, *, request_options: typing.Optional[RequestOptions] = None
+        self,
+        form_id: str,
+        *,
+        offset: typing.Optional[float] = None,
+        limit: typing.Optional[float] = None,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> FormSubmissionList:
         """
-        List form submissions for a given form </br></br> Required scope | `forms:read`
+        List form submissions for a given form
+
+        Required scope | `forms:read`
 
         Parameters
         ----------
         form_id : str
             Unique identifier for a Form
+
+        offset : typing.Optional[float]
+            Offset used for pagination if the results have more than limit records
+
+        limit : typing.Optional[float]
+            Maximum number of records to be returned (max limit: 100)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -175,11 +193,14 @@ class FormsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.forms.list_submissions(
-            form_id="form_id",
+            form_id="580e63e98c9a982ac9b8b741",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"forms/{jsonable_encoder(form_id)}/submissions", method="GET", request_options=request_options
+            f"forms/{jsonable_encoder(form_id)}/submissions",
+            method="GET",
+            params={"offset": offset, "limit": limit},
+            request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:
@@ -187,15 +208,15 @@ class FormsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -205,7 +226,9 @@ class FormsClient:
         self, form_submission_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> FormSubmission:
         """
-        Get information about a given form submission</br></br> Required scope | `forms:read`
+        Get information about a given form submissio.
+
+        Required scope | `forms:read`
 
         Parameters
         ----------
@@ -228,7 +251,7 @@ class FormsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.forms.get_submission(
-            form_submission_id="form_submission_id",
+            form_submission_id="580e63e98c9a982ac9b8b741",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -240,15 +263,15 @@ class FormsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -262,7 +285,9 @@ class FormsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> FormSubmission:
         """
-        Update hidden fields on a form submission</br></br> Required scope | `forms:write`
+        Update hidden fields on a form submission
+
+        Required scope | `forms:write`
 
         Parameters
         ----------
@@ -288,7 +313,7 @@ class FormsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.forms.update_submission(
-            form_submission_id="form_submission_id",
+            form_submission_id="580e63e98c9a982ac9b8b741",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -304,17 +329,17 @@ class FormsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 409:
                 raise ConflictError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -334,7 +359,9 @@ class AsyncFormsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> FormList:
         """
-        List forms for a given site </br></br> Required scope | `forms:read`
+        List forms for a given site.
+
+        Required scope | `forms:read`
 
         Parameters
         ----------
@@ -363,7 +390,7 @@ class AsyncFormsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.forms.list(
-            site_id="site_id",
+            site_id="580e63e98c9a982ac9b8b741",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -378,17 +405,17 @@ class AsyncFormsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 409:
                 raise ConflictError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -396,7 +423,9 @@ class AsyncFormsClient:
 
     async def get(self, form_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> Form:
         """
-        Get information about a given form</br></br> Required scope | `forms:read`
+        Get information about a given form.
+
+        Required scope | `forms:read`
 
         Parameters
         ----------
@@ -419,7 +448,7 @@ class AsyncFormsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.forms.get(
-            form_id="form_id",
+            form_id="580e63e98c9a982ac9b8b741",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -431,30 +460,43 @@ class AsyncFormsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
     async def list_submissions(
-        self, form_id: str, *, request_options: typing.Optional[RequestOptions] = None
+        self,
+        form_id: str,
+        *,
+        offset: typing.Optional[float] = None,
+        limit: typing.Optional[float] = None,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> FormSubmissionList:
         """
-        List form submissions for a given form </br></br> Required scope | `forms:read`
+        List form submissions for a given form
+
+        Required scope | `forms:read`
 
         Parameters
         ----------
         form_id : str
             Unique identifier for a Form
+
+        offset : typing.Optional[float]
+            Offset used for pagination if the results have more than limit records
+
+        limit : typing.Optional[float]
+            Maximum number of records to be returned (max limit: 100)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -472,11 +514,14 @@ class AsyncFormsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.forms.list_submissions(
-            form_id="form_id",
+            form_id="580e63e98c9a982ac9b8b741",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"forms/{jsonable_encoder(form_id)}/submissions", method="GET", request_options=request_options
+            f"forms/{jsonable_encoder(form_id)}/submissions",
+            method="GET",
+            params={"offset": offset, "limit": limit},
+            request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:
@@ -484,15 +529,15 @@ class AsyncFormsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -502,7 +547,9 @@ class AsyncFormsClient:
         self, form_submission_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> FormSubmission:
         """
-        Get information about a given form submission</br></br> Required scope | `forms:read`
+        Get information about a given form submissio.
+
+        Required scope | `forms:read`
 
         Parameters
         ----------
@@ -525,7 +572,7 @@ class AsyncFormsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.forms.get_submission(
-            form_submission_id="form_submission_id",
+            form_submission_id="580e63e98c9a982ac9b8b741",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -537,15 +584,15 @@ class AsyncFormsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -559,7 +606,9 @@ class AsyncFormsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> FormSubmission:
         """
-        Update hidden fields on a form submission</br></br> Required scope | `forms:write`
+        Update hidden fields on a form submission
+
+        Required scope | `forms:write`
 
         Parameters
         ----------
@@ -585,7 +634,7 @@ class AsyncFormsClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         await client.forms.update_submission(
-            form_submission_id="form_submission_id",
+            form_submission_id="580e63e98c9a982ac9b8b741",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -601,17 +650,17 @@ class AsyncFormsClient:
             if _response.status_code == 400:
                 raise BadRequestError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 401:
-                raise UnauthorizedError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 403:
                 raise ForbiddenError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 404:
-                raise NotFoundError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise NotFoundError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 409:
                 raise ConflictError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
             if _response.status_code == 429:
-                raise TooManyRequestsError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise TooManyRequestsError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             if _response.status_code == 500:
-                raise InternalServerError(pydantic_v1.parse_obj_as(typing.Any, _response.json()))  # type: ignore
+                raise InternalServerError(pydantic_v1.parse_obj_as(Error, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
