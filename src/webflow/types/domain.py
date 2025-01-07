@@ -18,6 +18,11 @@ class Domain(pydantic_v1.BaseModel):
     The registered Domain name
     """
 
+    last_published: typing.Optional[dt.datetime] = pydantic_v1.Field(alias="lastPublished", default=None)
+    """
+    The date the custom domain was last published to
+    """
+
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
         return super().json(**kwargs_with_defaults)
@@ -33,5 +38,7 @@ class Domain(pydantic_v1.BaseModel):
     class Config:
         frozen = True
         smart_union = True
+        allow_population_by_field_name = True
+        populate_by_name = True
         extra = pydantic_v1.Extra.allow
         json_encoders = {dt.datetime: serialize_datetime}
