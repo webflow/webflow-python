@@ -5,6 +5,7 @@ import typing
 
 from ..core.datetime_utils import serialize_datetime
 from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
+from .image_node_image import ImageNodeImage
 
 
 class ImageNode(pydantic_v1.BaseModel):
@@ -12,8 +13,16 @@ class ImageNode(pydantic_v1.BaseModel):
     Represents an image within the DOM. It contains details about the image, such as its alternative text (alt) for accessibility and an asset identifier for fetching the actual image resource. Additional attributes can be associated with the image for styling or other purposes.
     """
 
-    alt: typing.Optional[str] = None
-    asset_id: typing.Optional[str] = pydantic_v1.Field(alias="assetId", default=None)
+    id: typing.Optional[str] = pydantic_v1.Field(default=None)
+    """
+    Node UUID
+    """
+
+    image: typing.Optional[ImageNodeImage] = None
+    attributes: typing.Optional[typing.Dict[str, str]] = pydantic_v1.Field(default=None)
+    """
+    The custom attributes of the node
+    """
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
@@ -30,7 +39,5 @@ class ImageNode(pydantic_v1.BaseModel):
     class Config:
         frozen = True
         smart_union = True
-        allow_population_by_field_name = True
-        populate_by_name = True
         extra = pydantic_v1.Extra.allow
         json_encoders = {dt.datetime: serialize_datetime}
