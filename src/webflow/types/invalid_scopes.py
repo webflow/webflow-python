@@ -2,4 +2,4 @@
 
 import typing
 
-ErrorDetailsItem = typing.Union[str, typing.Dict[str, typing.Any]]
+InvalidScopes = typing.Optional[typing.Any]

@@ -2,4 +2,4 @@
 
 import typing
 
-InvalidDomain = typing.Any
+InvalidDomain = typing.Optional[typing.Any]
