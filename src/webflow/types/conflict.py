@@ -2,4 +2,4 @@
 
 import typing
 
-ErrorDetailsItem = typing.Union[str, typing.Dict[str, typing.Any]]
+Conflict = typing.Optional[typing.Any]
