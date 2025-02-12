@@ -7,7 +7,8 @@ import hashlib
 from collections.abc import Mapping
 
 def verify(headers: Mapping, body:str , secret: str):
-    # Normalize header format to account for different server implementations
+    # Normalize header format to account for different python server implementations 
+    # that may or may not normalize headers already
     normalized_headers = {k.lower(): v for k, v in headers.items()}
 
     message = f"{normalized_headers.get('x-webflow-timestamp', '')}:{body}".encode('utf-8')
