@@ -4,6 +4,7 @@ from . import (
     access_groups,
     assets,
     collections,
+    components,
     ecommerce,
     forms,
     inventory,
@@ -17,25 +18,38 @@ from . import (
     webhooks,
 )
 from .access_groups import AccessGroupsListRequestSort
+from .components import (
+    ComponentDomWriteNodesItem,
+    ComponentPropertiesWritePropertiesItem,
+    ComponentsUpdateContentResponse,
+    ComponentsUpdatePropertiesResponse,
+)
 from .inventory import InventoryUpdateRequestInventoryType
 from .orders import OrdersListRequestStatus, OrdersRefundRequestReason
-from .pages import DomWriteNodesItem, UpdateStaticContentResponse
+from .pages import PageDomWriteNodesItem, UpdateStaticContentResponse
 from .products import ProductsCreateSkuResponse
+from .sites import SitesPublishResponse
 from .users import UsersListRequestSort, UsersUpdateRequestData
 
 __all__ = [
     "AccessGroupsListRequestSort",
-    "DomWriteNodesItem",
+    "ComponentDomWriteNodesItem",
+    "ComponentPropertiesWritePropertiesItem",
+    "ComponentsUpdateContentResponse",
+    "ComponentsUpdatePropertiesResponse",
     "InventoryUpdateRequestInventoryType",
     "OrdersListRequestStatus",
     "OrdersRefundRequestReason",
+    "PageDomWriteNodesItem",
     "ProductsCreateSkuResponse",
+    "SitesPublishResponse",
     "UpdateStaticContentResponse",
     "UsersListRequestSort",
     "UsersUpdateRequestData",
     "access_groups",
     "assets",
     "collections",
+    "components",
     "ecommerce",
     "forms",
     "inventory",
