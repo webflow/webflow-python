@@ -2,4 +2,4 @@
 
 import typing
 
-Application = typing.Any
+Application = typing.Optional[typing.Any]
