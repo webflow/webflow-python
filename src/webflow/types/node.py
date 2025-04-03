@@ -18,8 +18,8 @@ class Node_Text(UniversalBaseModel):
     """
 
     type: typing.Literal["text"] = "text"
-    id: typing.Optional[str] = None
-    text: typing.Optional[TextNodeText] = None
+    id: str
+    text: TextNodeText
     attributes: typing.Optional[typing.Dict[str, str]] = None
 
     if IS_PYDANTIC_V2:
@@ -38,8 +38,8 @@ class Node_Image(UniversalBaseModel):
     """
 
     type: typing.Literal["image"] = "image"
-    id: typing.Optional[str] = None
-    image: typing.Optional[ImageNodeImage] = None
+    id: str
+    image: ImageNodeImage
     attributes: typing.Optional[typing.Dict[str, str]] = None
 
     if IS_PYDANTIC_V2:
@@ -58,11 +58,11 @@ class Node_ComponentInstance(UniversalBaseModel):
     """
 
     type: typing.Literal["component-instance"] = "component-instance"
-    id: typing.Optional[str] = None
-    component_id: typing_extensions.Annotated[typing.Optional[str], FieldMetadata(alias="componentId")] = None
+    id: str
+    component_id: typing_extensions.Annotated[str, FieldMetadata(alias="componentId")]
     property_overrides: typing_extensions.Annotated[
-        typing.Optional[typing.List[ComponentProperty]], FieldMetadata(alias="propertyOverrides")
-    ] = None
+        typing.List[ComponentProperty], FieldMetadata(alias="propertyOverrides")
+    ]
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2
