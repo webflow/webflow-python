@@ -77,6 +77,7 @@ class ComponentsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/components",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "limit": limit,
@@ -206,6 +207,7 @@ class ComponentsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/components/{jsonable_encoder(component_id)}/dom",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "localeId": locale_id,
@@ -365,6 +367,7 @@ class ComponentsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/components/{jsonable_encoder(component_id)}/dom",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             params={
                 "localeId": locale_id,
@@ -465,9 +468,9 @@ class ComponentsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ComponentProperties:
         """
-        Get the property default values of a component definition.
+        Get the default property values of a component definition.
 
-        <Note>If you do not provide a Locale ID in your request, the response will return any properties that can be localized from the Primary locale.</Note>
+        <Note>If you do not include a `localeId` in your request, the response will return any properties that can be localized from the Primary locale.</Note>
 
         Required scope | `components:read`
 
@@ -511,6 +514,7 @@ class ComponentsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/components/{jsonable_encoder(component_id)}/properties",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "localeId": locale_id,
@@ -593,12 +597,11 @@ class ComponentsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ComponentsUpdatePropertiesResponse:
         """
-        Update the property default values of a component definition in a specificed locale.
+        Update the default property values of a component definition in a specificed locale.
 
-        Before making updates:
-        1. Use the [get component properties](/data/reference/pages-and-components/components/get-properties) endpoint to identify available properties
+        Before making updates, use the [get component properties](/data/reference/pages-and-components/components/get-properties) endpoint to identify properties that can be updated in a secondary locale.
 
-        <Note>The request requires a secondary locale ID. If a locale is missing, the request will not be processed and will result in an error.</Note>
+        <Note>The request requires a secondary locale ID. If a `localeId` is missing, the request will not be processed and will result in an error.</Note>
 
         Required scope | `components:write`
 
@@ -650,6 +653,7 @@ class ComponentsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/components/{jsonable_encoder(component_id)}/properties",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             params={
                 "localeId": locale_id,
@@ -789,6 +793,7 @@ class AsyncComponentsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/components",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "limit": limit,
@@ -926,6 +931,7 @@ class AsyncComponentsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/components/{jsonable_encoder(component_id)}/dom",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "localeId": locale_id,
@@ -1093,6 +1099,7 @@ class AsyncComponentsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/components/{jsonable_encoder(component_id)}/dom",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             params={
                 "localeId": locale_id,
@@ -1193,9 +1200,9 @@ class AsyncComponentsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ComponentProperties:
         """
-        Get the property default values of a component definition.
+        Get the default property values of a component definition.
 
-        <Note>If you do not provide a Locale ID in your request, the response will return any properties that can be localized from the Primary locale.</Note>
+        <Note>If you do not include a `localeId` in your request, the response will return any properties that can be localized from the Primary locale.</Note>
 
         Required scope | `components:read`
 
@@ -1247,6 +1254,7 @@ class AsyncComponentsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/components/{jsonable_encoder(component_id)}/properties",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "localeId": locale_id,
@@ -1329,12 +1337,11 @@ class AsyncComponentsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ComponentsUpdatePropertiesResponse:
         """
-        Update the property default values of a component definition in a specificed locale.
+        Update the default property values of a component definition in a specificed locale.
 
-        Before making updates:
-        1. Use the [get component properties](/data/reference/pages-and-components/components/get-properties) endpoint to identify available properties
+        Before making updates, use the [get component properties](/data/reference/pages-and-components/components/get-properties) endpoint to identify properties that can be updated in a secondary locale.
 
-        <Note>The request requires a secondary locale ID. If a locale is missing, the request will not be processed and will result in an error.</Note>
+        <Note>The request requires a secondary locale ID. If a `localeId` is missing, the request will not be processed and will result in an error.</Note>
 
         Required scope | `components:write`
 
@@ -1394,6 +1401,7 @@ class AsyncComponentsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/components/{jsonable_encoder(component_id)}/properties",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             params={
                 "localeId": locale_id,

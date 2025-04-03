@@ -31,9 +31,11 @@ class ScriptsClient:
         self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> ScriptApplyList:
         """
-        Get all registered scripts that have been applied to a specific Site.
+        Get all scripts applied to a site by the App.
 
-        <Note>Access to this endpoint requires a bearer token from a [Data Client App](/data/docs/getting-started-data-clients).</Note>
+        <Note title="Script Registration">
+          To apply a script to a site or page, the script must first be registered to a site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints. See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
+        </Note>
 
         Required scope | `custom_code:read`
 
@@ -63,6 +65,7 @@ class ScriptsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/custom_code",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -140,13 +143,11 @@ class ScriptsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ScriptApplyList:
         """
-        Add a registered script to a Site.
+        Apply registered scripts to a site.
 
-        In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered
-        to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate
-        `custom_code` endpoints.
-
-        <Note>Access to this endpoint requires a bearer token from a [Data Client App](/data/docs/getting-started-data-clients).</Note>
+        <Note title="Script Registration">
+          To apply a script to a site or page, the script must first be registered to a site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints. See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
+        </Note>
 
         Required scope | `custom_code:write`
 
@@ -198,6 +199,7 @@ class ScriptsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/custom_code",
+            base_url=self._client_wrapper.get_environment().base,
             method="PUT",
             json={
                 "scripts": convert_and_respect_annotation_metadata(
@@ -275,9 +277,7 @@ class ScriptsClient:
 
     def delete_custom_code(self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
         """
-        Delete the custom code block that an app created for a Site
-
-        <Note>Access to this endpoint requires a bearer token from a [Data Client App](/data/docs/getting-started-data-clients).</Note>
+        Remove scripts from a site applied by the App. This endpoint will not remove scripts from the site's registered scripts.
 
         Required scope | `custom_code:write`
 
@@ -306,6 +306,7 @@ class ScriptsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/custom_code",
+            base_url=self._client_wrapper.get_environment().base,
             method="DELETE",
             request_options=request_options,
         )
@@ -376,9 +377,13 @@ class ScriptsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ListCustomCodeBlocks:
         """
-        Get all instances of Custom Code applied to a Site or Pages.
+        Get a list of scripts that have been applied to a site and/or individual pages.
 
-        <Note>Access to this endpoint requires a bearer token from a [Data Client App](/data/docs/getting-started-data-clients).</Note>
+        <Note title="Script Registration">
+          To apply a script to a site or page, the script must first be registered to a site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints.
+
+          See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
+        </Note>
 
         Required scope | `custom_code:read`
 
@@ -414,6 +419,7 @@ class ScriptsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/custom_code/blocks",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "offset": offset,
@@ -494,9 +500,11 @@ class AsyncScriptsClient:
         self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> ScriptApplyList:
         """
-        Get all registered scripts that have been applied to a specific Site.
+        Get all scripts applied to a site by the App.
 
-        <Note>Access to this endpoint requires a bearer token from a [Data Client App](/data/docs/getting-started-data-clients).</Note>
+        <Note title="Script Registration">
+          To apply a script to a site or page, the script must first be registered to a site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints. See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
+        </Note>
 
         Required scope | `custom_code:read`
 
@@ -534,6 +542,7 @@ class AsyncScriptsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/custom_code",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -611,13 +620,11 @@ class AsyncScriptsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ScriptApplyList:
         """
-        Add a registered script to a Site.
+        Apply registered scripts to a site.
 
-        In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered
-        to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate
-        `custom_code` endpoints.
-
-        <Note>Access to this endpoint requires a bearer token from a [Data Client App](/data/docs/getting-started-data-clients).</Note>
+        <Note title="Script Registration">
+          To apply a script to a site or page, the script must first be registered to a site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints. See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
+        </Note>
 
         Required scope | `custom_code:write`
 
@@ -677,6 +684,7 @@ class AsyncScriptsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/custom_code",
+            base_url=self._client_wrapper.get_environment().base,
             method="PUT",
             json={
                 "scripts": convert_and_respect_annotation_metadata(
@@ -756,9 +764,7 @@ class AsyncScriptsClient:
         self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> None:
         """
-        Delete the custom code block that an app created for a Site
-
-        <Note>Access to this endpoint requires a bearer token from a [Data Client App](/data/docs/getting-started-data-clients).</Note>
+        Remove scripts from a site applied by the App. This endpoint will not remove scripts from the site's registered scripts.
 
         Required scope | `custom_code:write`
 
@@ -795,6 +801,7 @@ class AsyncScriptsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/custom_code",
+            base_url=self._client_wrapper.get_environment().base,
             method="DELETE",
             request_options=request_options,
         )
@@ -865,9 +872,13 @@ class AsyncScriptsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ListCustomCodeBlocks:
         """
-        Get all instances of Custom Code applied to a Site or Pages.
+        Get a list of scripts that have been applied to a site and/or individual pages.
 
-        <Note>Access to this endpoint requires a bearer token from a [Data Client App](/data/docs/getting-started-data-clients).</Note>
+        <Note title="Script Registration">
+          To apply a script to a site or page, the script must first be registered to a site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints.
+
+          See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
+        </Note>
 
         Required scope | `custom_code:read`
 
@@ -911,6 +922,7 @@ class AsyncScriptsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/custom_code/blocks",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "offset": offset,
