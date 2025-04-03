@@ -2,12 +2,11 @@
 
 import typing
 
-FieldCreateType = typing.Union[
+StaticFieldType = typing.Union[
     typing.Literal[
         "Color",
         "DateTime",
         "Email",
-        "ExtFileRef",
         "File",
         "Image",
         "Link",
