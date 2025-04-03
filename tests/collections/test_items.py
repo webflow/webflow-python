@@ -341,6 +341,9 @@ async def test_create_item_live(client: Webflow, async_client: AsyncWebflow) -> 
     response = client.collections.items.create_item_live(
         collection_id="580e63fc8c9a982ac9b8b745",
         request=CollectionItem(
+            last_published="2023-03-17T18:47:35.560Z",
+            last_updated="2023-03-17T18:47:35.560Z",
+            created_on="2023-03-17T18:47:35.560Z",
             is_archived=False,
             is_draft=False,
             field_data=CollectionItemFieldData(
@@ -353,6 +356,9 @@ async def test_create_item_live(client: Webflow, async_client: AsyncWebflow) -> 
     async_response = await async_client.collections.items.create_item_live(
         collection_id="580e63fc8c9a982ac9b8b745",
         request=CollectionItem(
+            last_published="2023-03-17T18:47:35.560Z",
+            last_updated="2023-03-17T18:47:35.560Z",
+            created_on="2023-03-17T18:47:35.560Z",
             is_archived=False,
             is_draft=False,
             field_data=CollectionItemFieldData(

@@ -16,6 +16,7 @@ from . import (
     token,
     users,
     webhooks,
+    well_known,
 )
 from .access_groups import AccessGroupsListRequestSort
 from .components import (
@@ -27,9 +28,10 @@ from .components import (
 from .inventory import InventoryUpdateRequestInventoryType
 from .orders import OrdersListRequestStatus, OrdersRefundRequestReason
 from .pages import PageDomWriteNodesItem, UpdateStaticContentResponse
-from .products import ProductsCreateSkuResponse
+from .products import ProductSkuCreateProduct, ProductSkuCreateSku, ProductsCreateSkuResponse
 from .sites import SitesPublishResponse
 from .users import UsersListRequestSort, UsersUpdateRequestData
+from .well_known import WellKnownFileContentType
 
 __all__ = [
     "AccessGroupsListRequestSort",
@@ -41,11 +43,14 @@ __all__ = [
     "OrdersListRequestStatus",
     "OrdersRefundRequestReason",
     "PageDomWriteNodesItem",
+    "ProductSkuCreateProduct",
+    "ProductSkuCreateSku",
     "ProductsCreateSkuResponse",
     "SitesPublishResponse",
     "UpdateStaticContentResponse",
     "UsersListRequestSort",
     "UsersUpdateRequestData",
+    "WellKnownFileContentType",
     "access_groups",
     "assets",
     "collections",
@@ -61,4 +66,5 @@ __all__ = [
     "token",
     "users",
     "webhooks",
+    "well_known",
 ]

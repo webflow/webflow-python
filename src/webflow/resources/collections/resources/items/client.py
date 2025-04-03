@@ -74,10 +74,10 @@ class ItemsClient:
             Maximum number of records to be returned (max limit: 100)
 
         name : typing.Optional[str]
-            The name of the item(s)
+            Filter by the exact name of the item(s)
 
         slug : typing.Optional[str]
-            The slug of the item
+            Filter by the exact slug of the item
 
         sort_by : typing.Optional[ItemsListItemsRequestSortBy]
             Sort results by the provided value
@@ -106,6 +106,7 @@ class ItemsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "cmsLocaleId": cms_locale_id,
@@ -237,6 +238,7 @@ class ItemsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             json=convert_and_respect_annotation_metadata(
                 object_=request, annotation=ItemsCreateItemRequest, direction="write"
@@ -318,7 +320,7 @@ class ItemsClient:
         """
         Delete Items from a Collection.
 
-        **Note:** If the `cmsLocaleId` parameter is undefined or empty and the items are localized, items will be deleted only in the primary locale.
+        <Tip title="Localization Tip">Items will only be deleted in the primary locale unless a `cmsLocaleId` is included in the request.</Tip>
 
         Required scope | `CMS:write`
 
@@ -349,6 +351,7 @@ class ItemsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items",
+            base_url=self._client_wrapper.get_environment().base,
             method="DELETE",
             json={
                 "items": convert_and_respect_annotation_metadata(
@@ -437,9 +440,11 @@ class ItemsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CollectionItem:
         """
-        Update a single item or multiple items (up to 100) in a Collection.
+        Update a single item or multiple items in a Collection.
 
-        **Note:** If the `cmsLocaleId` parameter is undefined or empty and the items are localized, items will be updated only in the primary locale.
+        The limit for this endpoint is 100 items.
+
+        <Tip title="Localization Tip">Items will only be updated in the primary locale, unless a `cmsLocaleId` is included in the request.</Tip>
 
         Required scope | `CMS:write`
 
@@ -509,6 +514,7 @@ class ItemsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items",
+            base_url=self._client_wrapper.get_environment().base,
             method="PATCH",
             json={
                 "items": convert_and_respect_annotation_metadata(
@@ -599,7 +605,12 @@ class ItemsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CollectionItemList:
         """
-        List of all live Items within a Collection.
+        List all published items in a collection.
+
+        <Note title="Serve data with the Content Delivery API">
+          To serve content to your other frontends applications, enterprise sites have access to a dedicated [content delivery API](/data/docs/cms-content-delivery), available at api-cdn.webflow.com.
+
+        </Note>
 
         Required scope | `CMS:read`
 
@@ -618,10 +629,10 @@ class ItemsClient:
             Maximum number of records to be returned (max limit: 100)
 
         name : typing.Optional[str]
-            The name of the item(s)
+            Filter by the exact name of the item(s)
 
         slug : typing.Optional[str]
-            The slug of the item
+            Filter by the exact slug of the item
 
         sort_by : typing.Optional[ItemsListItemsLiveRequestSortBy]
             Sort results by the provided value
@@ -650,6 +661,7 @@ class ItemsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/live",
+            base_url=self._client_wrapper.get_environment().data_api,
             method="GET",
             params={
                 "cmsLocaleId": cms_locale_id,
@@ -734,7 +746,7 @@ class ItemsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CollectionItem:
         """
-        Create live Item(s) in a Collection. The Item(s) will be published to the live site.
+        Create item(s) in a collection that will be immediately published to the live site.
 
 
         To create items across multiple locales, [please use this endpoint.](/v2.0.0/data/reference/cms/collection-items/staged-items/create-items)
@@ -767,6 +779,9 @@ class ItemsClient:
         client.collections.items.create_item_live(
             collection_id="580e63fc8c9a982ac9b8b745",
             request=CollectionItem(
+                last_published="2023-03-17T18:47:35.560Z",
+                last_updated="2023-03-17T18:47:35.560Z",
+                created_on="2023-03-17T18:47:35.560Z",
                 is_archived=False,
                 is_draft=False,
                 field_data=CollectionItemFieldData(
@@ -778,6 +793,7 @@ class ItemsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/live",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             json=convert_and_respect_annotation_metadata(
                 object_=request, annotation=ItemsCreateItemLiveRequest, direction="write"
@@ -857,9 +873,11 @@ class ItemsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> None:
         """
-        Remove an item or multiple items (up to 100 items) from the live site. Deleting published items will unpublish the items from the live site and set them to draft.
+        Remove an item or multiple items (up to 100 items) from the live site.
 
-        **Note:** If the `cmsLocaleId` parameter is undefined or empty and the items are localized, items will be unpublished only in the primary locale.
+        Using this endpoint to delete published item(s) will unpublish the item(s) from the live site and set the item(s) `isDraft` property to `true`.
+
+        <Tip title="Localization Tip">Items will only be unpublished in the primary locale unless a `cmsLocaleId` is included in the request.</Tip>
 
         Required scope | `CMS:write`
 
@@ -890,6 +908,7 @@ class ItemsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/live",
+            base_url=self._client_wrapper.get_environment().base,
             method="DELETE",
             json={
                 "items": convert_and_respect_annotation_metadata(
@@ -968,9 +987,9 @@ class ItemsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CollectionItemListNoPagination:
         """
-        Update a single live item or multiple live items (up to 100) in a Collection
+        Update a single published item or multiple published items (up to 100) in a Collection
 
-        **Note:** If the `cmsLocaleId` parameter is undefined or empty and the items are localized, items will be updated only in the primary locale.
+        <Tip title="Localization Tip">Items will only be updated in the primary locale, unless a `cmsLocaleId` is included in the request.</Tip>
 
         Required scope | `CMS:write`
 
@@ -1040,6 +1059,7 @@ class ItemsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/live",
+            base_url=self._client_wrapper.get_environment().base,
             method="PATCH",
             json={
                 "items": convert_and_respect_annotation_metadata(
@@ -1091,6 +1111,16 @@ class ItemsClient:
                         ),
                     )
                 )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    typing.cast(
+                        typing.Optional[typing.Any],
+                        parse_obj_as(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
             if _response.status_code == 429:
                 raise TooManyRequestsError(
                     typing.cast(
@@ -1129,9 +1159,10 @@ class ItemsClient:
         """
         Create an item or multiple items in a CMS Collection across multiple corresponding locales.
 
-        **Notes:**
+        <Note>
           - This endpoint can create up to 100 items in a request.
-          - If the `cmsLocaleIds` parameter is undefined or empty and localization is enabled, items will only be created in the primary locale.
+          - If the `cmsLocaleIds` parameter is not included in the request, an item will only be created in the primary locale.
+        </Note>
 
         Required scope | `CMS:write`
 
@@ -1184,6 +1215,7 @@ class ItemsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/bulk",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             json={
                 "cmsLocaleIds": cms_locale_ids,
@@ -1309,6 +1341,7 @@ class ItemsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/{jsonable_encoder(item_id)}",
+            base_url=self._client_wrapper.get_environment().production,
             method="GET",
             params={
                 "cmsLocaleId": cms_locale_id,
@@ -1388,7 +1421,7 @@ class ItemsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> None:
         """
-        Delete an Item from a Collection. This endpoint does not currently support bulk deletion.
+        Delete an item from a collection.
 
         Required scope | `CMS:write`
 
@@ -1424,6 +1457,7 @@ class ItemsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/{jsonable_encoder(item_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="DELETE",
             params={
                 "cmsLocaleId": cms_locale_id,
@@ -1567,6 +1601,7 @@ class ItemsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/{jsonable_encoder(item_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="PATCH",
             json={
                 "id": id,
@@ -1658,6 +1693,11 @@ class ItemsClient:
         """
         Get details of a selected Collection live Item.
 
+        <Note title="Serve data with the Content Delivery API">
+          To serve content to your other frontends applications, enterprise sites have access to a dedicated [content delivery API](/data/docs/cms-content-delivery), available at api-cdn.webflow.com.
+
+        </Note>
+
         Required scope | `CMS:read`
 
         Parameters
@@ -1693,6 +1733,7 @@ class ItemsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/{jsonable_encoder(item_id)}/live",
+            base_url=self._client_wrapper.get_environment().data_api,
             method="GET",
             params={
                 "cmsLocaleId": cms_locale_id,
@@ -1810,6 +1851,7 @@ class ItemsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/{jsonable_encoder(item_id)}/live",
+            base_url=self._client_wrapper.get_environment().base,
             method="DELETE",
             params={
                 "cmsLocaleId": cms_locale_id,
@@ -1953,6 +1995,7 @@ class ItemsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/{jsonable_encoder(item_id)}/live",
+            base_url=self._client_wrapper.get_environment().base,
             method="PATCH",
             json={
                 "id": id,
@@ -2004,6 +2047,16 @@ class ItemsClient:
                         Error,
                         parse_obj_as(
                             type_=Error,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    typing.cast(
+                        typing.Optional[typing.Any],
+                        parse_obj_as(
+                            type_=typing.Optional[typing.Any],  # type: ignore
                             object_=_response.json(),
                         ),
                     )
@@ -2074,6 +2127,7 @@ class ItemsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/publish",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             json={
                 "itemIds": item_ids,
@@ -2196,10 +2250,10 @@ class AsyncItemsClient:
             Maximum number of records to be returned (max limit: 100)
 
         name : typing.Optional[str]
-            The name of the item(s)
+            Filter by the exact name of the item(s)
 
         slug : typing.Optional[str]
-            The slug of the item
+            Filter by the exact slug of the item
 
         sort_by : typing.Optional[ItemsListItemsRequestSortBy]
             Sort results by the provided value
@@ -2236,6 +2290,7 @@ class AsyncItemsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "cmsLocaleId": cms_locale_id,
@@ -2375,6 +2430,7 @@ class AsyncItemsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             json=convert_and_respect_annotation_metadata(
                 object_=request, annotation=ItemsCreateItemRequest, direction="write"
@@ -2456,7 +2512,7 @@ class AsyncItemsClient:
         """
         Delete Items from a Collection.
 
-        **Note:** If the `cmsLocaleId` parameter is undefined or empty and the items are localized, items will be deleted only in the primary locale.
+        <Tip title="Localization Tip">Items will only be deleted in the primary locale unless a `cmsLocaleId` is included in the request.</Tip>
 
         Required scope | `CMS:write`
 
@@ -2495,6 +2551,7 @@ class AsyncItemsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items",
+            base_url=self._client_wrapper.get_environment().base,
             method="DELETE",
             json={
                 "items": convert_and_respect_annotation_metadata(
@@ -2583,9 +2640,11 @@ class AsyncItemsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CollectionItem:
         """
-        Update a single item or multiple items (up to 100) in a Collection.
+        Update a single item or multiple items in a Collection.
 
-        **Note:** If the `cmsLocaleId` parameter is undefined or empty and the items are localized, items will be updated only in the primary locale.
+        The limit for this endpoint is 100 items.
+
+        <Tip title="Localization Tip">Items will only be updated in the primary locale, unless a `cmsLocaleId` is included in the request.</Tip>
 
         Required scope | `CMS:write`
 
@@ -2663,6 +2722,7 @@ class AsyncItemsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items",
+            base_url=self._client_wrapper.get_environment().base,
             method="PATCH",
             json={
                 "items": convert_and_respect_annotation_metadata(
@@ -2753,7 +2813,12 @@ class AsyncItemsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CollectionItemList:
         """
-        List of all live Items within a Collection.
+        List all published items in a collection.
+
+        <Note title="Serve data with the Content Delivery API">
+          To serve content to your other frontends applications, enterprise sites have access to a dedicated [content delivery API](/data/docs/cms-content-delivery), available at api-cdn.webflow.com.
+
+        </Note>
 
         Required scope | `CMS:read`
 
@@ -2772,10 +2837,10 @@ class AsyncItemsClient:
             Maximum number of records to be returned (max limit: 100)
 
         name : typing.Optional[str]
-            The name of the item(s)
+            Filter by the exact name of the item(s)
 
         slug : typing.Optional[str]
-            The slug of the item
+            Filter by the exact slug of the item
 
         sort_by : typing.Optional[ItemsListItemsLiveRequestSortBy]
             Sort results by the provided value
@@ -2812,6 +2877,7 @@ class AsyncItemsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/live",
+            base_url=self._client_wrapper.get_environment().data_api,
             method="GET",
             params={
                 "cmsLocaleId": cms_locale_id,
@@ -2896,7 +2962,7 @@ class AsyncItemsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CollectionItem:
         """
-        Create live Item(s) in a Collection. The Item(s) will be published to the live site.
+        Create item(s) in a collection that will be immediately published to the live site.
 
 
         To create items across multiple locales, [please use this endpoint.](/v2.0.0/data/reference/cms/collection-items/staged-items/create-items)
@@ -2934,6 +3000,9 @@ class AsyncItemsClient:
             await client.collections.items.create_item_live(
                 collection_id="580e63fc8c9a982ac9b8b745",
                 request=CollectionItem(
+                    last_published="2023-03-17T18:47:35.560Z",
+                    last_updated="2023-03-17T18:47:35.560Z",
+                    created_on="2023-03-17T18:47:35.560Z",
                     is_archived=False,
                     is_draft=False,
                     field_data=CollectionItemFieldData(
@@ -2948,6 +3017,7 @@ class AsyncItemsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/live",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             json=convert_and_respect_annotation_metadata(
                 object_=request, annotation=ItemsCreateItemLiveRequest, direction="write"
@@ -3027,9 +3097,11 @@ class AsyncItemsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> None:
         """
-        Remove an item or multiple items (up to 100 items) from the live site. Deleting published items will unpublish the items from the live site and set them to draft.
+        Remove an item or multiple items (up to 100 items) from the live site.
 
-        **Note:** If the `cmsLocaleId` parameter is undefined or empty and the items are localized, items will be unpublished only in the primary locale.
+        Using this endpoint to delete published item(s) will unpublish the item(s) from the live site and set the item(s) `isDraft` property to `true`.
+
+        <Tip title="Localization Tip">Items will only be unpublished in the primary locale unless a `cmsLocaleId` is included in the request.</Tip>
 
         Required scope | `CMS:write`
 
@@ -3068,6 +3140,7 @@ class AsyncItemsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/live",
+            base_url=self._client_wrapper.get_environment().base,
             method="DELETE",
             json={
                 "items": convert_and_respect_annotation_metadata(
@@ -3146,9 +3219,9 @@ class AsyncItemsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CollectionItemListNoPagination:
         """
-        Update a single live item or multiple live items (up to 100) in a Collection
+        Update a single published item or multiple published items (up to 100) in a Collection
 
-        **Note:** If the `cmsLocaleId` parameter is undefined or empty and the items are localized, items will be updated only in the primary locale.
+        <Tip title="Localization Tip">Items will only be updated in the primary locale, unless a `cmsLocaleId` is included in the request.</Tip>
 
         Required scope | `CMS:write`
 
@@ -3226,6 +3299,7 @@ class AsyncItemsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/live",
+            base_url=self._client_wrapper.get_environment().base,
             method="PATCH",
             json={
                 "items": convert_and_respect_annotation_metadata(
@@ -3277,6 +3351,16 @@ class AsyncItemsClient:
                         ),
                     )
                 )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    typing.cast(
+                        typing.Optional[typing.Any],
+                        parse_obj_as(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
             if _response.status_code == 429:
                 raise TooManyRequestsError(
                     typing.cast(
@@ -3315,9 +3399,10 @@ class AsyncItemsClient:
         """
         Create an item or multiple items in a CMS Collection across multiple corresponding locales.
 
-        **Notes:**
+        <Note>
           - This endpoint can create up to 100 items in a request.
-          - If the `cmsLocaleIds` parameter is undefined or empty and localization is enabled, items will only be created in the primary locale.
+          - If the `cmsLocaleIds` parameter is not included in the request, an item will only be created in the primary locale.
+        </Note>
 
         Required scope | `CMS:write`
 
@@ -3378,6 +3463,7 @@ class AsyncItemsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/bulk",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             json={
                 "cmsLocaleIds": cms_locale_ids,
@@ -3511,6 +3597,7 @@ class AsyncItemsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/{jsonable_encoder(item_id)}",
+            base_url=self._client_wrapper.get_environment().production,
             method="GET",
             params={
                 "cmsLocaleId": cms_locale_id,
@@ -3590,7 +3677,7 @@ class AsyncItemsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> None:
         """
-        Delete an Item from a Collection. This endpoint does not currently support bulk deletion.
+        Delete an item from a collection.
 
         Required scope | `CMS:write`
 
@@ -3634,6 +3721,7 @@ class AsyncItemsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/{jsonable_encoder(item_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="DELETE",
             params={
                 "cmsLocaleId": cms_locale_id,
@@ -3785,6 +3873,7 @@ class AsyncItemsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/{jsonable_encoder(item_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="PATCH",
             json={
                 "id": id,
@@ -3876,6 +3965,11 @@ class AsyncItemsClient:
         """
         Get details of a selected Collection live Item.
 
+        <Note title="Serve data with the Content Delivery API">
+          To serve content to your other frontends applications, enterprise sites have access to a dedicated [content delivery API](/data/docs/cms-content-delivery), available at api-cdn.webflow.com.
+
+        </Note>
+
         Required scope | `CMS:read`
 
         Parameters
@@ -3919,6 +4013,7 @@ class AsyncItemsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/{jsonable_encoder(item_id)}/live",
+            base_url=self._client_wrapper.get_environment().data_api,
             method="GET",
             params={
                 "cmsLocaleId": cms_locale_id,
@@ -4044,6 +4139,7 @@ class AsyncItemsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/{jsonable_encoder(item_id)}/live",
+            base_url=self._client_wrapper.get_environment().base,
             method="DELETE",
             params={
                 "cmsLocaleId": cms_locale_id,
@@ -4195,6 +4291,7 @@ class AsyncItemsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/{jsonable_encoder(item_id)}/live",
+            base_url=self._client_wrapper.get_environment().base,
             method="PATCH",
             json={
                 "id": id,
@@ -4246,6 +4343,16 @@ class AsyncItemsClient:
                         Error,
                         parse_obj_as(
                             type_=Error,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    typing.cast(
+                        typing.Optional[typing.Any],
+                        parse_obj_as(
+                            type_=typing.Optional[typing.Any],  # type: ignore
                             object_=_response.json(),
                         ),
                     )
@@ -4324,6 +4431,7 @@ class AsyncItemsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/publish",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             json={
                 "itemIds": item_ids,
