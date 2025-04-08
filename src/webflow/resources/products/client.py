@@ -16,11 +16,13 @@ from ...errors.too_many_requests_error import TooManyRequestsError
 from ...errors.internal_server_error import InternalServerError
 from json.decoder import JSONDecodeError
 from ...core.api_error import ApiError
+from .types.product_sku_create_product import ProductSkuCreateProduct
+from .types.product_sku_create_sku import ProductSkuCreateSku
 from ...types.publish_status import PublishStatus
-from ...types.product import Product
-from ...types.sku import Sku
 from ...types.product_and_sk_us import ProductAndSkUs
 from ...core.serialization import convert_and_respect_annotation_metadata
+from ...types.product import Product
+from ...types.sku import Sku
 from .types.products_create_sku_response import ProductsCreateSkuResponse
 from ...core.client_wrapper import AsyncClientWrapper
 
@@ -80,6 +82,7 @@ class ProductsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/products",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "offset": offset,
@@ -175,9 +178,9 @@ class ProductsClient:
         self,
         site_id: str,
         *,
+        product: ProductSkuCreateProduct,
+        sku: ProductSkuCreateSku,
         publish_status: typing.Optional[PublishStatus] = OMIT,
-        product: typing.Optional[Product] = OMIT,
-        sku: typing.Optional[Sku] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ProductAndSkUs:
         """
@@ -201,11 +204,11 @@ class ProductsClient:
         site_id : str
             Unique identifier for a Site
 
+        product : ProductSkuCreateProduct
+
+        sku : ProductSkuCreateSku
+
         publish_status : typing.Optional[PublishStatus]
-
-        product : typing.Optional[Product]
-
-        sku : typing.Optional[Sku]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -217,24 +220,102 @@ class ProductsClient:
 
         Examples
         --------
-        from webflow import Webflow
+        from webflow import (
+            ProductFieldData,
+            SkuFieldData,
+            SkuFieldDataPrice,
+            SkuPropertyList,
+            SkuPropertyListEnumItem,
+            Webflow,
+        )
+        from webflow.resources.products import (
+            ProductSkuCreateProduct,
+            ProductSkuCreateSku,
+        )
 
         client = Webflow(
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.products.create(
             site_id="580e63e98c9a982ac9b8b741",
+            publish_status="staging",
+            product=ProductSkuCreateProduct(
+                field_data=ProductFieldData(
+                    name="Colorful T-shirt",
+                    slug="colorful-t-shirt",
+                    description="Our best-selling t-shirt available in multiple colors and sizes",
+                    sku_properties=[
+                        SkuPropertyList(
+                            id="color",
+                            name="Color",
+                            enum=[
+                                SkuPropertyListEnumItem(
+                                    id="red",
+                                    name="Red",
+                                    slug="red",
+                                ),
+                                SkuPropertyListEnumItem(
+                                    id="yellow",
+                                    name="Yellow",
+                                    slug="yellow",
+                                ),
+                                SkuPropertyListEnumItem(
+                                    id="blue",
+                                    name="Blue",
+                                    slug="blue",
+                                ),
+                            ],
+                        ),
+                        SkuPropertyList(
+                            id="size",
+                            name="Size",
+                            enum=[
+                                SkuPropertyListEnumItem(
+                                    id="small",
+                                    name="Small",
+                                    slug="small",
+                                ),
+                                SkuPropertyListEnumItem(
+                                    id="medium",
+                                    name="Medium",
+                                    slug="medium",
+                                ),
+                                SkuPropertyListEnumItem(
+                                    id="large",
+                                    name="Large",
+                                    slug="large",
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            sku=ProductSkuCreateSku(
+                field_data=SkuFieldData(
+                    name="Colorful T-shirt - Red Small",
+                    slug="colorful-t-shirt-red-small",
+                    price=SkuFieldDataPrice(
+                        value=2499.0,
+                        unit="USD",
+                        currency="USD",
+                    ),
+                    main_image="https://rocketamp-sample-store.myshopify.com/cdn/shop/products/Gildan_2000_Antique_Cherry_Red_Front_1024x1024.jpg?v=1527232987",
+                ),
+            ),
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/products",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             json={
                 "publishStatus": publish_status,
                 "product": convert_and_respect_annotation_metadata(
-                    object_=product, annotation=Product, direction="write"
+                    object_=product, annotation=ProductSkuCreateProduct, direction="write"
                 ),
-                "sku": convert_and_respect_annotation_metadata(object_=sku, annotation=Sku, direction="write"),
+                "sku": convert_and_respect_annotation_metadata(
+                    object_=sku, annotation=ProductSkuCreateSku, direction="write"
+                ),
             },
             headers={
                 "content-type": "application/json",
@@ -365,6 +446,7 @@ class ProductsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/products/{jsonable_encoder(product_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -505,6 +587,7 @@ class ProductsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/products/{jsonable_encoder(product_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="PATCH",
             json={
                 "publishStatus": publish_status,
@@ -642,7 +725,7 @@ class ProductsClient:
 
         Examples
         --------
-        from webflow import Sku, Webflow
+        from webflow import Sku, SkuFieldData, SkuFieldDataPrice, Webflow
 
         client = Webflow(
             access_token="YOUR_ACCESS_TOKEN",
@@ -650,11 +733,24 @@ class ProductsClient:
         client.products.create_sku(
             site_id="580e63e98c9a982ac9b8b741",
             product_id="580e63fc8c9a982ac9b8b745",
-            skus=[Sku()],
+            skus=[
+                Sku(
+                    field_data=SkuFieldData(
+                        name="Colorful T-shirt - Default",
+                        slug="colorful-t-shirt-default",
+                        price=SkuFieldDataPrice(
+                            value=2499.0,
+                            unit="USD",
+                            currency="USD",
+                        ),
+                    ),
+                )
+            ],
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/products/{jsonable_encoder(product_id)}/skus",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             json={
                 "publishStatus": publish_status,
@@ -794,7 +890,7 @@ class ProductsClient:
 
         Examples
         --------
-        from webflow import Sku, Webflow
+        from webflow import Sku, SkuFieldData, SkuFieldDataPrice, Webflow
 
         client = Webflow(
             access_token="YOUR_ACCESS_TOKEN",
@@ -803,11 +899,22 @@ class ProductsClient:
             site_id="580e63e98c9a982ac9b8b741",
             product_id="580e63fc8c9a982ac9b8b745",
             sku_id="5e8518516e147040726cc415",
-            sku=Sku(),
+            sku=Sku(
+                field_data=SkuFieldData(
+                    name="Colorful T-shirt - Default",
+                    slug="colorful-t-shirt-default",
+                    price=SkuFieldDataPrice(
+                        value=2499.0,
+                        unit="USD",
+                        currency="USD",
+                    ),
+                ),
+            ),
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/products/{jsonable_encoder(product_id)}/skus/{jsonable_encoder(sku_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="PATCH",
             json={
                 "publishStatus": publish_status,
@@ -964,6 +1071,7 @@ class AsyncProductsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/products",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "offset": offset,
@@ -1059,9 +1167,9 @@ class AsyncProductsClient:
         self,
         site_id: str,
         *,
+        product: ProductSkuCreateProduct,
+        sku: ProductSkuCreateSku,
         publish_status: typing.Optional[PublishStatus] = OMIT,
-        product: typing.Optional[Product] = OMIT,
-        sku: typing.Optional[Sku] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ProductAndSkUs:
         """
@@ -1085,11 +1193,11 @@ class AsyncProductsClient:
         site_id : str
             Unique identifier for a Site
 
+        product : ProductSkuCreateProduct
+
+        sku : ProductSkuCreateSku
+
         publish_status : typing.Optional[PublishStatus]
-
-        product : typing.Optional[Product]
-
-        sku : typing.Optional[Sku]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1103,7 +1211,18 @@ class AsyncProductsClient:
         --------
         import asyncio
 
-        from webflow import AsyncWebflow
+        from webflow import (
+            AsyncWebflow,
+            ProductFieldData,
+            SkuFieldData,
+            SkuFieldDataPrice,
+            SkuPropertyList,
+            SkuPropertyListEnumItem,
+        )
+        from webflow.resources.products import (
+            ProductSkuCreateProduct,
+            ProductSkuCreateSku,
+        )
 
         client = AsyncWebflow(
             access_token="YOUR_ACCESS_TOKEN",
@@ -1113,6 +1232,70 @@ class AsyncProductsClient:
         async def main() -> None:
             await client.products.create(
                 site_id="580e63e98c9a982ac9b8b741",
+                publish_status="staging",
+                product=ProductSkuCreateProduct(
+                    field_data=ProductFieldData(
+                        name="Colorful T-shirt",
+                        slug="colorful-t-shirt",
+                        description="Our best-selling t-shirt available in multiple colors and sizes",
+                        sku_properties=[
+                            SkuPropertyList(
+                                id="color",
+                                name="Color",
+                                enum=[
+                                    SkuPropertyListEnumItem(
+                                        id="red",
+                                        name="Red",
+                                        slug="red",
+                                    ),
+                                    SkuPropertyListEnumItem(
+                                        id="yellow",
+                                        name="Yellow",
+                                        slug="yellow",
+                                    ),
+                                    SkuPropertyListEnumItem(
+                                        id="blue",
+                                        name="Blue",
+                                        slug="blue",
+                                    ),
+                                ],
+                            ),
+                            SkuPropertyList(
+                                id="size",
+                                name="Size",
+                                enum=[
+                                    SkuPropertyListEnumItem(
+                                        id="small",
+                                        name="Small",
+                                        slug="small",
+                                    ),
+                                    SkuPropertyListEnumItem(
+                                        id="medium",
+                                        name="Medium",
+                                        slug="medium",
+                                    ),
+                                    SkuPropertyListEnumItem(
+                                        id="large",
+                                        name="Large",
+                                        slug="large",
+                                    ),
+                                ],
+                            ),
+                        ],
+                    ),
+                ),
+                sku=ProductSkuCreateSku(
+                    field_data=SkuFieldData(
+                        name="Colorful T-shirt - Red Small",
+                        slug="colorful-t-shirt-red-small",
+                        price=SkuFieldDataPrice(
+                            value=2499.0,
+                            unit="USD",
+                            currency="USD",
+                        ),
+                        main_image="https://rocketamp-sample-store.myshopify.com/cdn/shop/products/Gildan_2000_Antique_Cherry_Red_Front_1024x1024.jpg?v=1527232987",
+                    ),
+                ),
             )
 
 
@@ -1120,13 +1303,16 @@ class AsyncProductsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/products",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             json={
                 "publishStatus": publish_status,
                 "product": convert_and_respect_annotation_metadata(
-                    object_=product, annotation=Product, direction="write"
+                    object_=product, annotation=ProductSkuCreateProduct, direction="write"
                 ),
-                "sku": convert_and_respect_annotation_metadata(object_=sku, annotation=Sku, direction="write"),
+                "sku": convert_and_respect_annotation_metadata(
+                    object_=sku, annotation=ProductSkuCreateSku, direction="write"
+                ),
             },
             headers={
                 "content-type": "application/json",
@@ -1265,6 +1451,7 @@ class AsyncProductsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/products/{jsonable_encoder(product_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -1413,6 +1600,7 @@ class AsyncProductsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/products/{jsonable_encoder(product_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="PATCH",
             json={
                 "publishStatus": publish_status,
@@ -1552,7 +1740,7 @@ class AsyncProductsClient:
         --------
         import asyncio
 
-        from webflow import AsyncWebflow, Sku
+        from webflow import AsyncWebflow, Sku, SkuFieldData, SkuFieldDataPrice
 
         client = AsyncWebflow(
             access_token="YOUR_ACCESS_TOKEN",
@@ -1563,7 +1751,19 @@ class AsyncProductsClient:
             await client.products.create_sku(
                 site_id="580e63e98c9a982ac9b8b741",
                 product_id="580e63fc8c9a982ac9b8b745",
-                skus=[Sku()],
+                skus=[
+                    Sku(
+                        field_data=SkuFieldData(
+                            name="Colorful T-shirt - Default",
+                            slug="colorful-t-shirt-default",
+                            price=SkuFieldDataPrice(
+                                value=2499.0,
+                                unit="USD",
+                                currency="USD",
+                            ),
+                        ),
+                    )
+                ],
             )
 
 
@@ -1571,6 +1771,7 @@ class AsyncProductsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/products/{jsonable_encoder(product_id)}/skus",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             json={
                 "publishStatus": publish_status,
@@ -1712,7 +1913,7 @@ class AsyncProductsClient:
         --------
         import asyncio
 
-        from webflow import AsyncWebflow, Sku
+        from webflow import AsyncWebflow, Sku, SkuFieldData, SkuFieldDataPrice
 
         client = AsyncWebflow(
             access_token="YOUR_ACCESS_TOKEN",
@@ -1724,7 +1925,17 @@ class AsyncProductsClient:
                 site_id="580e63e98c9a982ac9b8b741",
                 product_id="580e63fc8c9a982ac9b8b745",
                 sku_id="5e8518516e147040726cc415",
-                sku=Sku(),
+                sku=Sku(
+                    field_data=SkuFieldData(
+                        name="Colorful T-shirt - Default",
+                        slug="colorful-t-shirt-default",
+                        price=SkuFieldDataPrice(
+                            value=2499.0,
+                            unit="USD",
+                            currency="USD",
+                        ),
+                    ),
+                ),
             )
 
 
@@ -1732,6 +1943,7 @@ class AsyncProductsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/products/{jsonable_encoder(product_id)}/skus/{jsonable_encoder(sku_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="PATCH",
             json={
                 "publishStatus": publish_status,
