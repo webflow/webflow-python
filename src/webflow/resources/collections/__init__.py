@@ -3,7 +3,6 @@
 from .resources import (
     CreateBulkCollectionItemRequestBodyFieldData,
     CreateBulkCollectionItemRequestBodyFieldDataItem,
-    FieldCreateType,
     ItemsCreateItemLiveRequest,
     ItemsCreateItemRequest,
     ItemsDeleteItemsLiveRequestItemsItem,
@@ -23,7 +22,6 @@ from .resources import (
 __all__ = [
     "CreateBulkCollectionItemRequestBodyFieldData",
     "CreateBulkCollectionItemRequestBodyFieldDataItem",
-    "FieldCreateType",
     "ItemsCreateItemLiveRequest",
     "ItemsCreateItemRequest",
     "ItemsDeleteItemsLiveRequestItemsItem",
