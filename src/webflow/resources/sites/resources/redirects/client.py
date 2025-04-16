@@ -31,6 +31,7 @@ class RedirectsClient:
 
         Use this endpoint to review, audit, or manage the redirection rules that control how traffic is rerouted on your site.
 
+        <Warning title="Enterprise Only">This endpoint requires an Enterprise workspace.</Warning>
 
         Required scope: `sites:read`
 
@@ -60,6 +61,7 @@ class RedirectsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/redirects",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -141,6 +143,8 @@ class RedirectsClient:
 
         This endpoint allows you to define a source path (`fromUrl`) and its corresponding destination path (`toUrl`), which will dictate how traffic is rerouted on your site. This is useful for managing site changes, restructuring URLs, or handling outdated links.
 
+        <Warning title="Enterprise Only">This endpoint requires an Enterprise workspace.</Warning>
+
         Required scope: `sites:write`
 
         Parameters
@@ -181,6 +185,7 @@ class RedirectsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/redirects",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             json={
                 "id": id,
@@ -259,7 +264,11 @@ class RedirectsClient:
     ) -> Redirects:
         """
         Remove a URL redirection rule from a site.
+
         This is useful for cleaning up outdated or unnecessary redirects, ensuring that your site's routing behavior remains efficient and up-to-date.
+
+        <Warning title="Enterprise Only">This endpoint requires an Enterprise workspace.</Warning>
+
         Required scope: `sites:write`
 
         Parameters
@@ -292,6 +301,7 @@ class RedirectsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/redirects/{jsonable_encoder(redirect_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="DELETE",
             request_options=request_options,
         )
@@ -371,6 +381,9 @@ class RedirectsClient:
     ) -> Redirect:
         """
         Update a URL redirection rule from a site.
+
+        <Warning title="Enterprise Only">This endpoint requires an Enterprise workspace.</Warning>
+
         Required scope: `sites:write`
 
         Parameters
@@ -415,6 +428,7 @@ class RedirectsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/redirects/{jsonable_encoder(redirect_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="PATCH",
             json={
                 "id": id,
@@ -499,6 +513,7 @@ class AsyncRedirectsClient:
 
         Use this endpoint to review, audit, or manage the redirection rules that control how traffic is rerouted on your site.
 
+        <Warning title="Enterprise Only">This endpoint requires an Enterprise workspace.</Warning>
 
         Required scope: `sites:read`
 
@@ -536,6 +551,7 @@ class AsyncRedirectsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/redirects",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -617,6 +633,8 @@ class AsyncRedirectsClient:
 
         This endpoint allows you to define a source path (`fromUrl`) and its corresponding destination path (`toUrl`), which will dictate how traffic is rerouted on your site. This is useful for managing site changes, restructuring URLs, or handling outdated links.
 
+        <Warning title="Enterprise Only">This endpoint requires an Enterprise workspace.</Warning>
+
         Required scope: `sites:write`
 
         Parameters
@@ -665,6 +683,7 @@ class AsyncRedirectsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/redirects",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             json={
                 "id": id,
@@ -743,7 +762,11 @@ class AsyncRedirectsClient:
     ) -> Redirects:
         """
         Remove a URL redirection rule from a site.
+
         This is useful for cleaning up outdated or unnecessary redirects, ensuring that your site's routing behavior remains efficient and up-to-date.
+
+        <Warning title="Enterprise Only">This endpoint requires an Enterprise workspace.</Warning>
+
         Required scope: `sites:write`
 
         Parameters
@@ -784,6 +807,7 @@ class AsyncRedirectsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/redirects/{jsonable_encoder(redirect_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="DELETE",
             request_options=request_options,
         )
@@ -863,6 +887,9 @@ class AsyncRedirectsClient:
     ) -> Redirect:
         """
         Update a URL redirection rule from a site.
+
+        <Warning title="Enterprise Only">This endpoint requires an Enterprise workspace.</Warning>
+
         Required scope: `sites:write`
 
         Parameters
@@ -915,6 +942,7 @@ class AsyncRedirectsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/redirects/{jsonable_encoder(redirect_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="PATCH",
             json={
                 "id": id,

@@ -101,7 +101,6 @@ async def test_list_custom_code_blocks(client: Webflow, async_client: AsyncWebfl
         "blocks": [
             {
                 "siteId": "6258612d1ee792848f805dcf",
-                "pageId": "pageId",
                 "type": "site",
                 "scripts": [
                     {"id": "chartjs", "location": "header", "version": "4.4.2", "attributes": {"key": "value"}}
@@ -126,7 +125,6 @@ async def test_list_custom_code_blocks(client: Webflow, async_client: AsyncWebfl
             {
                 0: {
                     "siteId": None,
-                    "pageId": None,
                     "type": None,
                     "scripts": (
                         "list",
