@@ -86,6 +86,7 @@ class PagesClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/pages",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "localeId": locale_id,
@@ -200,6 +201,7 @@ class PagesClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"pages/{jsonable_encoder(page_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "localeId": locale_id,
@@ -296,6 +298,10 @@ class PagesClient:
     ) -> Page:
         """
         Update Page-level metadata, including SEO and Open Graph fields.
+
+        <Note>
+          Note: When updating Page Metadata in secondary locales, you may only add `slug` to the request if your Site has the [Advanced or Enterprise Localization](https://webflow.com/localization) add-on.
+        </Note>
 
         Required scope | `pages:write`
 
@@ -408,6 +414,7 @@ class PagesClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"pages/{jsonable_encoder(page_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="PUT",
             params={
                 "localeId": locale_id,
@@ -510,10 +517,11 @@ class PagesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> Dom:
         """
-        Get static content from a static page. This includes text nodes, image nodes and component instances.
-        To retrieve the contents of components in the page use the [get component content](/data/reference/pages-and-components/components/get-content) endpoint.
+        Get content from a static page. This includes text nodes, image nodes, and component instances with [property overrides](https://help.webflow.com/hc/en-us/articles/33961219350547-Component-properties#how-to-modify-property-values-on-component-instances).
 
-        <Note>If you do not provide a Locale ID in your request, the response will return any content that can be localized from the Primary locale.</Note>
+        To retrieve the static content of a component instance, use the [Get Component Content](/data/reference/pages-and-components/components/get-content) endpoint.
+
+        <Note>If you do not include a `localeId` in your request, the response will return any content that can be localized from the Primary locale.</Note>
 
         Required scope | `pages:read`
 
@@ -553,6 +561,7 @@ class PagesClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"pages/{jsonable_encoder(page_id)}/dom",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "localeId": locale_id,
@@ -717,6 +726,7 @@ class PagesClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"pages/{jsonable_encoder(page_id)}/dom",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             params={
                 "localeId": locale_id,
@@ -870,6 +880,7 @@ class AsyncPagesClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/pages",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "localeId": locale_id,
@@ -992,6 +1003,7 @@ class AsyncPagesClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"pages/{jsonable_encoder(page_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "localeId": locale_id,
@@ -1088,6 +1100,10 @@ class AsyncPagesClient:
     ) -> Page:
         """
         Update Page-level metadata, including SEO and Open Graph fields.
+
+        <Note>
+          Note: When updating Page Metadata in secondary locales, you may only add `slug` to the request if your Site has the [Advanced or Enterprise Localization](https://webflow.com/localization) add-on.
+        </Note>
 
         Required scope | `pages:write`
 
@@ -1207,6 +1223,7 @@ class AsyncPagesClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"pages/{jsonable_encoder(page_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="PUT",
             params={
                 "localeId": locale_id,
@@ -1309,10 +1326,11 @@ class AsyncPagesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> Dom:
         """
-        Get static content from a static page. This includes text nodes, image nodes and component instances.
-        To retrieve the contents of components in the page use the [get component content](/data/reference/pages-and-components/components/get-content) endpoint.
+        Get content from a static page. This includes text nodes, image nodes, and component instances with [property overrides](https://help.webflow.com/hc/en-us/articles/33961219350547-Component-properties#how-to-modify-property-values-on-component-instances).
 
-        <Note>If you do not provide a Locale ID in your request, the response will return any content that can be localized from the Primary locale.</Note>
+        To retrieve the static content of a component instance, use the [Get Component Content](/data/reference/pages-and-components/components/get-content) endpoint.
+
+        <Note>If you do not include a `localeId` in your request, the response will return any content that can be localized from the Primary locale.</Note>
 
         Required scope | `pages:read`
 
@@ -1360,6 +1378,7 @@ class AsyncPagesClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"pages/{jsonable_encoder(page_id)}/dom",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "localeId": locale_id,
@@ -1532,6 +1551,7 @@ class AsyncPagesClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"pages/{jsonable_encoder(page_id)}/dom",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             params={
                 "localeId": locale_id,

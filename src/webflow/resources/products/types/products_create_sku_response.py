@@ -8,7 +8,7 @@ import pydantic
 
 
 class ProductsCreateSkuResponse(UniversalBaseModel):
-    skus: typing.Optional[typing.List[Sku]] = None
+    skus: typing.List[Sku]
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

@@ -25,6 +25,8 @@ class PlansClient:
         """
         Get site plan details for the specified Site.
 
+        <Warning title="Enterprise Only">This endpoint requires an Enterprise workspace.</Warning>
+
         Required scope | `sites:read`
 
         Parameters
@@ -53,6 +55,7 @@ class PlansClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/plan",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -129,6 +132,8 @@ class AsyncPlansClient:
         """
         Get site plan details for the specified Site.
 
+        <Warning title="Enterprise Only">This endpoint requires an Enterprise workspace.</Warning>
+
         Required scope | `sites:read`
 
         Parameters
@@ -165,6 +170,7 @@ class AsyncPlansClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/plan",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
