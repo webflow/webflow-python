@@ -78,6 +78,7 @@ class OrdersClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/orders",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "status": status,
@@ -207,6 +208,7 @@ class OrdersClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/orders/{jsonable_encoder(order_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -354,6 +356,7 @@ class OrdersClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/orders/{jsonable_encoder(order_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="PATCH",
             json={
                 "comment": comment,
@@ -497,6 +500,7 @@ class OrdersClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/orders/{jsonable_encoder(order_id)}/fulfill",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             json={
                 "sendOrderFulfilledEmail": send_order_fulfilled_email,
@@ -629,6 +633,7 @@ class OrdersClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/orders/{jsonable_encoder(order_id)}/unfulfill",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             request_options=request_options,
         )
@@ -763,6 +768,7 @@ class OrdersClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/orders/{jsonable_encoder(order_id)}/refund",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             json={
                 "reason": reason,
@@ -919,6 +925,7 @@ class AsyncOrdersClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/orders",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "status": status,
@@ -1058,6 +1065,7 @@ class AsyncOrdersClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/orders/{jsonable_encoder(order_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -1213,6 +1221,7 @@ class AsyncOrdersClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/orders/{jsonable_encoder(order_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="PATCH",
             json={
                 "comment": comment,
@@ -1364,6 +1373,7 @@ class AsyncOrdersClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/orders/{jsonable_encoder(order_id)}/fulfill",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             json={
                 "sendOrderFulfilledEmail": send_order_fulfilled_email,
@@ -1504,6 +1514,7 @@ class AsyncOrdersClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/orders/{jsonable_encoder(order_id)}/unfulfill",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             request_options=request_options,
         )
@@ -1646,6 +1657,7 @@ class AsyncOrdersClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/orders/{jsonable_encoder(order_id)}/refund",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             json={
                 "reason": reason,
