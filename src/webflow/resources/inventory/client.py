@@ -65,6 +65,7 @@ class InventoryClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/{jsonable_encoder(item_id)}/inventory",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -211,6 +212,7 @@ class InventoryClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/{jsonable_encoder(item_id)}/inventory",
+            base_url=self._client_wrapper.get_environment().base,
             method="PATCH",
             json={
                 "inventoryType": inventory_type,
@@ -358,6 +360,7 @@ class AsyncInventoryClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/{jsonable_encoder(item_id)}/inventory",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -512,6 +515,7 @@ class AsyncInventoryClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/{jsonable_encoder(item_id)}/inventory",
+            base_url=self._client_wrapper.get_environment().base,
             method="PATCH",
             json={
                 "inventoryType": inventory_type,

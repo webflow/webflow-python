@@ -7,6 +7,7 @@ from ..core.serialization import FieldMetadata
 import pydantic
 from .node import Node
 from .pagination import Pagination
+import datetime as dt
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 
 
@@ -24,6 +25,12 @@ class Dom(UniversalBaseModel):
 
     nodes: typing.Optional[typing.List[Node]] = None
     pagination: typing.Optional[Pagination] = None
+    last_updated: typing_extensions.Annotated[typing.Optional[dt.datetime], FieldMetadata(alias="lastUpdated")] = (
+        pydantic.Field(default=None)
+    )
+    """
+    The date the page dom was most recently updated
+    """
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2
