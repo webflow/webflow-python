@@ -29,7 +29,11 @@ class ActivityLogsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> SiteActivityLogResponse:
         """
-        Retrieve Activity Logs for a specific Site. Requires Site to be on an Enterprise plan. </br></br>  Required scope | `site_activity:read`
+        Retrieve Activity Logs for a specific Site.
+
+        <Warning title="Enterprise Only">This endpoint requires an Enterprise workspace.</Warning>
+
+        Required scope: `site_activity:read`
 
         Parameters
         ----------
@@ -63,6 +67,7 @@ class ActivityLogsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/activity_logs",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "limit": limit,
@@ -138,7 +143,11 @@ class AsyncActivityLogsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> SiteActivityLogResponse:
         """
-        Retrieve Activity Logs for a specific Site. Requires Site to be on an Enterprise plan. </br></br>  Required scope | `site_activity:read`
+        Retrieve Activity Logs for a specific Site.
+
+        <Warning title="Enterprise Only">This endpoint requires an Enterprise workspace.</Warning>
+
+        Required scope: `site_activity:read`
 
         Parameters
         ----------
@@ -180,6 +189,7 @@ class AsyncActivityLogsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/activity_logs",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "limit": limit,
