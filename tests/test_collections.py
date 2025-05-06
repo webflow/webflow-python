@@ -4,6 +4,9 @@ from webflow import Webflow
 from webflow import AsyncWebflow
 import typing
 from .utilities import validate_response
+from webflow import StaticField
+from webflow import ReferenceField
+from webflow import ReferenceFieldMetadata
 
 
 async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
@@ -75,22 +78,40 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
 
 async def test_create(client: Webflow, async_client: AsyncWebflow) -> None:
     expected_response: typing.Any = {
-        "id": "580e63fc8c9a982ac9b8b745",
+        "id": "562ac0395358780a1f5e6fbd",
         "displayName": "Blog Posts",
         "singularName": "Blog Post",
-        "slug": "post",
+        "slug": "posts",
         "createdOn": "2016-10-24T19:41:48Z",
         "lastUpdated": "2016-10-24T19:42:38Z",
         "fields": [
             {
-                "id": "23cc2d952d4e4631ffd4345d2743db4e",
+                "id": "id",
                 "isRequired": True,
                 "isEditable": True,
                 "type": "PlainText",
-                "slug": "name",
-                "displayName": "Name",
-                "helpText": "helpText",
-            }
+                "slug": "title",
+                "displayName": "Title",
+                "helpText": "The title of the blog post",
+            },
+            {
+                "id": "id",
+                "isRequired": True,
+                "isEditable": True,
+                "type": "RichText",
+                "slug": "content",
+                "displayName": "Content",
+                "helpText": "The content of the blog post",
+            },
+            {
+                "id": "id",
+                "isRequired": True,
+                "isEditable": True,
+                "type": "Reference",
+                "slug": "author",
+                "displayName": "Author",
+                "helpText": "The author of the blog post",
+            },
         ],
     }
     expected_types: typing.Any = {
@@ -111,17 +132,71 @@ async def test_create(client: Webflow, async_client: AsyncWebflow) -> None:
                     "slug": None,
                     "displayName": None,
                     "helpText": None,
-                }
+                },
+                1: {
+                    "id": None,
+                    "isRequired": None,
+                    "isEditable": None,
+                    "type": None,
+                    "slug": None,
+                    "displayName": None,
+                    "helpText": None,
+                },
+                2: {
+                    "id": None,
+                    "isRequired": None,
+                    "isEditable": None,
+                    "type": None,
+                    "slug": None,
+                    "displayName": None,
+                    "helpText": None,
+                },
             },
         ),
     }
     response = client.collections.create(
-        site_id="580e63e98c9a982ac9b8b741", display_name="Blog Posts", singular_name="Blog Post", slug="posts"
+        site_id="580e63e98c9a982ac9b8b741",
+        display_name="Blog Posts",
+        singular_name="Blog Post",
+        slug="posts",
+        fields=[
+            StaticField(
+                is_required=True, type="PlainText", display_name="Title", help_text="The title of the blog post"
+            ),
+            StaticField(
+                is_required=True, type="RichText", display_name="Content", help_text="The content of the blog post"
+            ),
+            ReferenceField(
+                is_required=True,
+                type="Reference",
+                display_name="Author",
+                help_text="The author of the blog post",
+                metadata=ReferenceFieldMetadata(collection_id="23cc2d952d4e4631ffd4345d2743db4e"),
+            ),
+        ],
     )
     validate_response(response, expected_response, expected_types)
 
     async_response = await async_client.collections.create(
-        site_id="580e63e98c9a982ac9b8b741", display_name="Blog Posts", singular_name="Blog Post", slug="posts"
+        site_id="580e63e98c9a982ac9b8b741",
+        display_name="Blog Posts",
+        singular_name="Blog Post",
+        slug="posts",
+        fields=[
+            StaticField(
+                is_required=True, type="PlainText", display_name="Title", help_text="The title of the blog post"
+            ),
+            StaticField(
+                is_required=True, type="RichText", display_name="Content", help_text="The content of the blog post"
+            ),
+            ReferenceField(
+                is_required=True,
+                type="Reference",
+                display_name="Author",
+                help_text="The author of the blog post",
+                metadata=ReferenceFieldMetadata(collection_id="23cc2d952d4e4631ffd4345d2743db4e"),
+            ),
+        ],
     )
     validate_response(async_response, expected_response, expected_types)
 
@@ -142,7 +217,6 @@ async def test_get(client: Webflow, async_client: AsyncWebflow) -> None:
                 "type": "PlainText",
                 "slug": "name",
                 "displayName": "Name",
-                "helpText": "helpText",
             }
         ],
     }
@@ -155,17 +229,7 @@ async def test_get(client: Webflow, async_client: AsyncWebflow) -> None:
         "lastUpdated": "datetime",
         "fields": (
             "list",
-            {
-                0: {
-                    "id": None,
-                    "isRequired": None,
-                    "isEditable": None,
-                    "type": None,
-                    "slug": None,
-                    "displayName": None,
-                    "helpText": None,
-                }
-            },
+            {0: {"id": None, "isRequired": None, "isEditable": None, "type": None, "slug": None, "displayName": None}},
         ),
     }
     response = client.collections.get(collection_id="580e63fc8c9a982ac9b8b745")
