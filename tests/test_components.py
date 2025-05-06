@@ -27,20 +27,8 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                 "description": "A secondary button component that can be used across the site",
                 "readonly": True,
             },
-            {
-                "id": "6258612d1ee792848f805dcf",
-                "name": "Card",
-                "group": "Buttons",
-                "description": "A button component that can be used across the site",
-                "readonly": True,
-            },
-            {
-                "id": "68a2b1d1ee792848f805dcf",
-                "name": "Nav",
-                "group": "Buttons",
-                "description": "A button component that can be used across the site",
-                "readonly": True,
-            },
+            {"id": "6258612d1ee792848f805dcf", "name": "Card", "readonly": True},
+            {"id": "68a2b1d1ee792848f805dcf", "name": "Nav", "readonly": True},
         ],
         "pagination": {"limit": 20, "offset": 0, "total": 4},
     }
@@ -50,8 +38,8 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
             {
                 0: {"id": None, "name": None, "group": None, "description": None, "readonly": None},
                 1: {"id": None, "name": None, "group": None, "description": None, "readonly": None},
-                2: {"id": None, "name": None, "group": None, "description": None, "readonly": None},
-                3: {"id": None, "name": None, "group": None, "description": None, "readonly": None},
+                2: {"id": None, "name": None, "readonly": None},
+                3: {"id": None, "name": None, "readonly": None},
             },
         ),
         "pagination": {"limit": None, "offset": None, "total": None},
@@ -67,40 +55,14 @@ async def test_get_content(client: Webflow, async_client: AsyncWebflow) -> None:
     expected_response: typing.Any = {
         "componentId": "69118560-d0bc-15fc-bbf8-b8fe5f6535b5",
         "nodes": [
+            {"id": "id", "text": {}, "attributes": {"key": "value"}, "type": "text"},
+            {"id": "id", "text": {}, "attributes": {"key": "value"}, "type": "text"},
+            {"id": "id", "image": {}, "attributes": {"key": "value"}, "type": "image"},
             {
-                "type": "component-instance",
-                "id": "a245c12d-995b-55ee-5ec7-aa36a6cad623",
-                "componentId": "nodes",
+                "id": "id",
+                "componentId": "componentId",
                 "propertyOverrides": [{"propertyId": "7dd14c08-2e96-8d3d-2b19-b5c03642a0f0"}],
-            },
-            {
                 "type": "component-instance",
-                "id": "a245c12d-995b-55ee-5ec7-aa36a6cad627",
-                "componentId": "nodes",
-                "propertyOverrides": [{"propertyId": "7dd14c08-2e96-8d3d-2b19-b5c03642a0f0"}],
-            },
-            {
-                "type": "component-instance",
-                "id": "a245c12d-995b-55ee-5ec7-aa36a6cad629",
-                "componentId": "nodes",
-                "propertyOverrides": [{"propertyId": "7dd14c08-2e96-8d3d-2b19-b5c03642a0f0"}],
-            },
-            {
-                "type": "component-instance",
-                "id": "a245c12d-995b-55ee-5ec7-aa36a6cad631",
-                "componentId": "6258612d1ee792848f805dcf",
-                "propertyOverrides": [
-                    {
-                        "propertyId": "a245c12d-995b-55ee-5ec7-aa36a6cad633",
-                        "type": "Plain Text",
-                        "text": {"text": "Don't Panic!"},
-                    },
-                    {
-                        "propertyId": "a245c12d-995b-55ee-5ec7-aa36a6cad635",
-                        "type": "Rich Text",
-                        "text": {"html": "<div><p>Always know where your towel is.</p></div>"},
-                    },
-                ],
             },
         ],
         "pagination": {"limit": 4, "offset": 0, "total": 4},
