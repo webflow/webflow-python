@@ -10,6 +10,7 @@ from .sku_field_data_price import SkuFieldDataPrice
 from .sku_field_data_compare_at_price import SkuFieldDataCompareAtPrice
 from .sku_field_data_ec_sku_billing_method import SkuFieldDataEcSkuBillingMethod
 from .sku_field_data_ec_sku_subscription_plan import SkuFieldDataEcSkuSubscriptionPlan
+from .sku_property_list import SkuPropertyList
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 
 
@@ -43,10 +44,18 @@ class SkuFieldData(UniversalBaseModel):
 
     ec_sku_billing_method: typing_extensions.Annotated[
         typing.Optional[SkuFieldDataEcSkuBillingMethod], FieldMetadata(alias="ec-sku-billing-method")
-    ] = None
+    ] = pydantic.Field(default=None)
+    """
+    [Billing method](https://help.webflow.com/hc/en-us/articles/33961432087955-Add-and-manage-products-and-categories#billing-methods)for the SKU
+    """
+
     ec_sku_subscription_plan: typing_extensions.Annotated[
         typing.Optional[SkuFieldDataEcSkuSubscriptionPlan], FieldMetadata(alias="ec-sku-subscription-plan")
-    ] = None
+    ] = pydantic.Field(default=None)
+    """
+    [Subscription plan](https://help.webflow.com/hc/en-us/articles/33961432087955-Add-and-manage-products-and-categories#subscription) for the SKU
+    """
+
     track_inventory: typing_extensions.Annotated[typing.Optional[bool], FieldMetadata(alias="track-inventory")] = (
         pydantic.Field(default=None)
     )
@@ -57,6 +66,25 @@ class SkuFieldData(UniversalBaseModel):
     quantity: typing.Optional[float] = pydantic.Field(default=None)
     """
     Quantity of SKU that will be tracked as items are ordered.
+    """
+
+    main_image: typing_extensions.Annotated[typing.Optional[str], FieldMetadata(alias="main-image")] = pydantic.Field(
+        default=None
+    )
+    """
+    The URL for the main image of the SKU
+    """
+
+    sku: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    A unique identifier for the SKU
+    """
+
+    sku_properties: typing_extensions.Annotated[
+        typing.Optional[typing.List[SkuPropertyList]], FieldMetadata(alias="sku-properties")
+    ] = pydantic.Field(default=None)
+    """
+    The properties of the SKU
     """
 
     if IS_PYDANTIC_V2:
