@@ -30,23 +30,17 @@ class CollectionItem(UniversalBaseModel):
     Identifier for the locale of the CMS item
     """
 
-    last_published: typing_extensions.Annotated[typing.Optional[str], FieldMetadata(alias="lastPublished")] = (
-        pydantic.Field(default=None)
-    )
+    last_published: typing_extensions.Annotated[str, FieldMetadata(alias="lastPublished")] = pydantic.Field()
     """
     The date the item was last published
     """
 
-    last_updated: typing_extensions.Annotated[typing.Optional[str], FieldMetadata(alias="lastUpdated")] = (
-        pydantic.Field(default=None)
-    )
+    last_updated: typing_extensions.Annotated[str, FieldMetadata(alias="lastUpdated")] = pydantic.Field()
     """
     The date the item was last updated
     """
 
-    created_on: typing_extensions.Annotated[typing.Optional[str], FieldMetadata(alias="createdOn")] = pydantic.Field(
-        default=None
-    )
+    created_on: typing_extensions.Annotated[str, FieldMetadata(alias="createdOn")] = pydantic.Field()
     """
     The date the item was created
     """
