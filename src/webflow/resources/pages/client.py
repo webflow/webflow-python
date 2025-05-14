@@ -86,6 +86,7 @@ class PagesClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/pages",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "localeId": locale_id,
@@ -200,6 +201,7 @@ class PagesClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"pages/{jsonable_encoder(page_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "localeId": locale_id,
@@ -287,7 +289,6 @@ class PagesClient:
         draft: typing.Optional[bool] = OMIT,
         can_branch: typing.Optional[bool] = OMIT,
         is_branch: typing.Optional[bool] = OMIT,
-        is_members_only: typing.Optional[bool] = OMIT,
         seo: typing.Optional[PageSeo] = OMIT,
         open_graph: typing.Optional[PageOpenGraph] = OMIT,
         page_locale_id: typing.Optional[str] = OMIT,
@@ -296,6 +297,10 @@ class PagesClient:
     ) -> Page:
         """
         Update Page-level metadata, including SEO and Open Graph fields.
+
+        <Note>
+          Note: When updating Page Metadata in secondary locales, you may only add `slug` to the request if your Site has the [Advanced or Enterprise Localization](https://webflow.com/localization) add-on.
+        </Note>
 
         Required scope | `pages:write`
 
@@ -342,9 +347,6 @@ class PagesClient:
 
         is_branch : typing.Optional[bool]
             Indicates whether the Page is a Branch of another Page [Page Branching](https://university.webflow.com/lesson/page-branching)
-
-        is_members_only : typing.Optional[bool]
-            Indicates whether the Page is restricted by [Memberships Controls](https://university.webflow.com/lesson/webflow-memberships-overview#how-to-manage-page-restrictions)
 
         seo : typing.Optional[PageSeo]
             SEO-related fields for the Page
@@ -408,6 +410,7 @@ class PagesClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"pages/{jsonable_encoder(page_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="PUT",
             params={
                 "localeId": locale_id,
@@ -425,7 +428,6 @@ class PagesClient:
                 "draft": draft,
                 "canBranch": can_branch,
                 "isBranch": is_branch,
-                "isMembersOnly": is_members_only,
                 "seo": convert_and_respect_annotation_metadata(object_=seo, annotation=PageSeo, direction="write"),
                 "openGraph": convert_and_respect_annotation_metadata(
                     object_=open_graph, annotation=PageOpenGraph, direction="write"
@@ -510,10 +512,11 @@ class PagesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> Dom:
         """
-        Get static content from a static page. This includes text nodes, image nodes and component instances.
-        To retrieve the contents of components in the page use the [get component content](/data/reference/pages-and-components/components/get-content) endpoint.
+        Get content from a static page. This includes text nodes, image nodes, select nodes, text input nodes, submit button nodes, and component instances with [property overrides](https://help.webflow.com/hc/en-us/articles/33961219350547-Component-properties#how-to-modify-property-values-on-component-instances).
 
-        <Note>If you do not provide a Locale ID in your request, the response will return any content that can be localized from the Primary locale.</Note>
+        To retrieve the static content of a component instance, use the [Get Component Content](/data/reference/pages-and-components/components/get-content) endpoint.
+
+        <Note>If you do not include a `localeId` in your request, the response will return any content that can be localized from the Primary locale.</Note>
 
         Required scope | `pages:read`
 
@@ -553,6 +556,7 @@ class PagesClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"pages/{jsonable_encoder(page_id)}/dom",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "localeId": locale_id,
@@ -680,6 +684,10 @@ class PagesClient:
         from webflow import (
             ComponentInstanceNodePropertyOverridesWrite,
             ComponentInstanceNodePropertyOverridesWritePropertyOverridesItem,
+            SelectNodeWrite,
+            SelectNodeWriteChoicesItem,
+            SubmitButtonNodeWrite,
+            TextInputNodeWrite,
             TextNodeWrite,
             Webflow,
         )
@@ -699,6 +707,28 @@ class PagesClient:
                     node_id="a245c12d-995b-55ee-5ec7-aa36a6cad627",
                     text="<div><h3>Don't Panic!</h3><p>Always know where your towel is.</p></div>",
                 ),
+                SelectNodeWrite(
+                    node_id="a245c12d-995b-55ee-5ec7-aa36a6cad635",
+                    choices=[
+                        SelectNodeWriteChoicesItem(
+                            value="choice-1",
+                            text="First choice",
+                        ),
+                        SelectNodeWriteChoicesItem(
+                            value="choice-2",
+                            text="Second choice",
+                        ),
+                    ],
+                ),
+                TextInputNodeWrite(
+                    node_id="a245c12d-995b-55ee-5ec7-aa36a6cad642",
+                    placeholder="Enter something here...",
+                ),
+                SubmitButtonNodeWrite(
+                    node_id="a245c12d-995b-55ee-5ec7-aa36a6cad671",
+                    value="Submit",
+                    waiting_text="Submitting...",
+                ),
                 ComponentInstanceNodePropertyOverridesWrite(
                     node_id="a245c12d-995b-55ee-5ec7-aa36a6cad629",
                     property_overrides=[
@@ -717,6 +747,7 @@ class PagesClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"pages/{jsonable_encoder(page_id)}/dom",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             params={
                 "localeId": locale_id,
@@ -870,6 +901,7 @@ class AsyncPagesClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/pages",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "localeId": locale_id,
@@ -992,6 +1024,7 @@ class AsyncPagesClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"pages/{jsonable_encoder(page_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "localeId": locale_id,
@@ -1079,7 +1112,6 @@ class AsyncPagesClient:
         draft: typing.Optional[bool] = OMIT,
         can_branch: typing.Optional[bool] = OMIT,
         is_branch: typing.Optional[bool] = OMIT,
-        is_members_only: typing.Optional[bool] = OMIT,
         seo: typing.Optional[PageSeo] = OMIT,
         open_graph: typing.Optional[PageOpenGraph] = OMIT,
         page_locale_id: typing.Optional[str] = OMIT,
@@ -1088,6 +1120,10 @@ class AsyncPagesClient:
     ) -> Page:
         """
         Update Page-level metadata, including SEO and Open Graph fields.
+
+        <Note>
+          Note: When updating Page Metadata in secondary locales, you may only add `slug` to the request if your Site has the [Advanced or Enterprise Localization](https://webflow.com/localization) add-on.
+        </Note>
 
         Required scope | `pages:write`
 
@@ -1134,9 +1170,6 @@ class AsyncPagesClient:
 
         is_branch : typing.Optional[bool]
             Indicates whether the Page is a Branch of another Page [Page Branching](https://university.webflow.com/lesson/page-branching)
-
-        is_members_only : typing.Optional[bool]
-            Indicates whether the Page is restricted by [Memberships Controls](https://university.webflow.com/lesson/webflow-memberships-overview#how-to-manage-page-restrictions)
 
         seo : typing.Optional[PageSeo]
             SEO-related fields for the Page
@@ -1207,6 +1240,7 @@ class AsyncPagesClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"pages/{jsonable_encoder(page_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="PUT",
             params={
                 "localeId": locale_id,
@@ -1224,7 +1258,6 @@ class AsyncPagesClient:
                 "draft": draft,
                 "canBranch": can_branch,
                 "isBranch": is_branch,
-                "isMembersOnly": is_members_only,
                 "seo": convert_and_respect_annotation_metadata(object_=seo, annotation=PageSeo, direction="write"),
                 "openGraph": convert_and_respect_annotation_metadata(
                     object_=open_graph, annotation=PageOpenGraph, direction="write"
@@ -1309,10 +1342,11 @@ class AsyncPagesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> Dom:
         """
-        Get static content from a static page. This includes text nodes, image nodes and component instances.
-        To retrieve the contents of components in the page use the [get component content](/data/reference/pages-and-components/components/get-content) endpoint.
+        Get content from a static page. This includes text nodes, image nodes, select nodes, text input nodes, submit button nodes, and component instances with [property overrides](https://help.webflow.com/hc/en-us/articles/33961219350547-Component-properties#how-to-modify-property-values-on-component-instances).
 
-        <Note>If you do not provide a Locale ID in your request, the response will return any content that can be localized from the Primary locale.</Note>
+        To retrieve the static content of a component instance, use the [Get Component Content](/data/reference/pages-and-components/components/get-content) endpoint.
+
+        <Note>If you do not include a `localeId` in your request, the response will return any content that can be localized from the Primary locale.</Note>
 
         Required scope | `pages:read`
 
@@ -1360,6 +1394,7 @@ class AsyncPagesClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"pages/{jsonable_encoder(page_id)}/dom",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "localeId": locale_id,
@@ -1490,6 +1525,10 @@ class AsyncPagesClient:
             AsyncWebflow,
             ComponentInstanceNodePropertyOverridesWrite,
             ComponentInstanceNodePropertyOverridesWritePropertyOverridesItem,
+            SelectNodeWrite,
+            SelectNodeWriteChoicesItem,
+            SubmitButtonNodeWrite,
+            TextInputNodeWrite,
             TextNodeWrite,
         )
 
@@ -1510,6 +1549,28 @@ class AsyncPagesClient:
                     TextNodeWrite(
                         node_id="a245c12d-995b-55ee-5ec7-aa36a6cad627",
                         text="<div><h3>Don't Panic!</h3><p>Always know where your towel is.</p></div>",
+                    ),
+                    SelectNodeWrite(
+                        node_id="a245c12d-995b-55ee-5ec7-aa36a6cad635",
+                        choices=[
+                            SelectNodeWriteChoicesItem(
+                                value="choice-1",
+                                text="First choice",
+                            ),
+                            SelectNodeWriteChoicesItem(
+                                value="choice-2",
+                                text="Second choice",
+                            ),
+                        ],
+                    ),
+                    TextInputNodeWrite(
+                        node_id="a245c12d-995b-55ee-5ec7-aa36a6cad642",
+                        placeholder="Enter something here...",
+                    ),
+                    SubmitButtonNodeWrite(
+                        node_id="a245c12d-995b-55ee-5ec7-aa36a6cad671",
+                        value="Submit",
+                        waiting_text="Submitting...",
                     ),
                     ComponentInstanceNodePropertyOverridesWrite(
                         node_id="a245c12d-995b-55ee-5ec7-aa36a6cad629",
@@ -1532,6 +1593,7 @@ class AsyncPagesClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"pages/{jsonable_encoder(page_id)}/dom",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             params={
                 "localeId": locale_id,

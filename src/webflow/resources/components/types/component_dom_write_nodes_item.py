@@ -3,5 +3,16 @@
 import typing
 from ....types.text_node_write import TextNodeWrite
 from ....types.component_instance_node_property_overrides_write import ComponentInstanceNodePropertyOverridesWrite
+from ....types.select_node_write import SelectNodeWrite
+from ....types.text_input_node_write import TextInputNodeWrite
+from ....types.submit_button_node_write import SubmitButtonNodeWrite
+from ....types.search_button_node_write import SearchButtonNodeWrite
 
-ComponentDomWriteNodesItem = typing.Union[TextNodeWrite, ComponentInstanceNodePropertyOverridesWrite]
+ComponentDomWriteNodesItem = typing.Union[
+    TextNodeWrite,
+    ComponentInstanceNodePropertyOverridesWrite,
+    SelectNodeWrite,
+    TextInputNodeWrite,
+    SubmitButtonNodeWrite,
+    SearchButtonNodeWrite,
+]
