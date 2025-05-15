@@ -90,13 +90,6 @@ class Page(UniversalBaseModel):
     Indicates whether the Page is a Branch of another Page [Page Branching](https://university.webflow.com/lesson/page-branching)
     """
 
-    is_members_only: typing_extensions.Annotated[typing.Optional[bool], FieldMetadata(alias="isMembersOnly")] = (
-        pydantic.Field(default=None)
-    )
-    """
-    Indicates whether the Page is restricted by [Memberships Controls](https://university.webflow.com/lesson/webflow-memberships-overview#how-to-manage-page-restrictions)
-    """
-
     seo: typing.Optional[PageSeo] = pydantic.Field(default=None)
     """
     SEO-related fields for the Page
