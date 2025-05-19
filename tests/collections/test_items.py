@@ -6,10 +6,12 @@ import typing
 from ..utilities import validate_response
 from webflow import CollectionItemPostSingle
 from webflow import CollectionItemPostSingleFieldData
+from webflow.resources.collections.resources.items import ItemsDeleteItemsRequestItemsItem
 from webflow import CollectionItemWithIdInput
 from webflow import CollectionItemWithIdInputFieldData
 from webflow import CollectionItem
 from webflow import CollectionItemFieldData
+from webflow.resources.collections.resources.items import ItemsDeleteItemsLiveRequestItemsItem
 from webflow.resources.collections.resources.items import SingleCmsItem
 from webflow import CollectionItemPatchSingleFieldData
 
@@ -140,12 +142,18 @@ async def test_create_item(client: Webflow, async_client: AsyncWebflow) -> None:
 async def test_delete_items(client: Webflow, async_client: AsyncWebflow) -> None:
     # Type ignore to avoid mypy complaining about the function not being meant to return a value
     assert (
-        client.collections.items.delete_items(collection_id="580e63fc8c9a982ac9b8b745")  # type: ignore[func-returns-value]
+        client.collections.items.delete_items(
+            collection_id="580e63fc8c9a982ac9b8b745",
+            items=[ItemsDeleteItemsRequestItemsItem(id="580e64008c9a982ac9b8b754")],
+        )  # type: ignore[func-returns-value]
         is None
     )
 
     assert (
-        await async_client.collections.items.delete_items(collection_id="580e63fc8c9a982ac9b8b745")  # type: ignore[func-returns-value]
+        await async_client.collections.items.delete_items(
+            collection_id="580e63fc8c9a982ac9b8b745",
+            items=[ItemsDeleteItemsRequestItemsItem(id="580e64008c9a982ac9b8b754")],
+        )  # type: ignore[func-returns-value]
         is None
     )
 
@@ -341,6 +349,9 @@ async def test_create_item_live(client: Webflow, async_client: AsyncWebflow) -> 
     response = client.collections.items.create_item_live(
         collection_id="580e63fc8c9a982ac9b8b745",
         request=CollectionItem(
+            last_published="2023-03-17T18:47:35.560Z",
+            last_updated="2023-03-17T18:47:35.560Z",
+            created_on="2023-03-17T18:47:35.560Z",
             is_archived=False,
             is_draft=False,
             field_data=CollectionItemFieldData(
@@ -353,6 +364,9 @@ async def test_create_item_live(client: Webflow, async_client: AsyncWebflow) -> 
     async_response = await async_client.collections.items.create_item_live(
         collection_id="580e63fc8c9a982ac9b8b745",
         request=CollectionItem(
+            last_published="2023-03-17T18:47:35.560Z",
+            last_updated="2023-03-17T18:47:35.560Z",
+            created_on="2023-03-17T18:47:35.560Z",
             is_archived=False,
             is_draft=False,
             field_data=CollectionItemFieldData(
@@ -366,12 +380,18 @@ async def test_create_item_live(client: Webflow, async_client: AsyncWebflow) -> 
 async def test_delete_items_live(client: Webflow, async_client: AsyncWebflow) -> None:
     # Type ignore to avoid mypy complaining about the function not being meant to return a value
     assert (
-        client.collections.items.delete_items_live(collection_id="580e63fc8c9a982ac9b8b745")  # type: ignore[func-returns-value]
+        client.collections.items.delete_items_live(
+            collection_id="580e63fc8c9a982ac9b8b745",
+            items=[ItemsDeleteItemsLiveRequestItemsItem(id="580e64008c9a982ac9b8b754")],
+        )  # type: ignore[func-returns-value]
         is None
     )
 
     assert (
-        await async_client.collections.items.delete_items_live(collection_id="580e63fc8c9a982ac9b8b745")  # type: ignore[func-returns-value]
+        await async_client.collections.items.delete_items_live(
+            collection_id="580e63fc8c9a982ac9b8b745",
+            items=[ItemsDeleteItemsLiveRequestItemsItem(id="580e64008c9a982ac9b8b754")],
+        )  # type: ignore[func-returns-value]
         is None
     )
 
