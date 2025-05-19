@@ -16,7 +16,10 @@ from ...errors.too_many_requests_error import TooManyRequestsError
 from ...errors.internal_server_error import InternalServerError
 from json.decoder import JSONDecodeError
 from ...core.api_error import ApiError
+from ...types.field_create import FieldCreate
 from ...types.collection import Collection
+from ...core.serialization import convert_and_respect_annotation_metadata
+from ...errors.conflict_error import ConflictError
 from ...core.client_wrapper import AsyncClientWrapper
 from .resources.fields.client import AsyncFieldsClient
 from .resources.items.client import AsyncItemsClient
@@ -63,6 +66,7 @@ class CollectionsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/collections",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -137,6 +141,7 @@ class CollectionsClient:
         display_name: str,
         singular_name: str,
         slug: typing.Optional[str] = OMIT,
+        fields: typing.Optional[typing.Sequence[FieldCreate]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> Collection:
         """
@@ -158,6 +163,9 @@ class CollectionsClient:
         slug : typing.Optional[str]
             Part of a URL that identifier
 
+        fields : typing.Optional[typing.Sequence[FieldCreate]]
+            An array of custom fields to add to the collection
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -168,7 +176,7 @@ class CollectionsClient:
 
         Examples
         --------
-        from webflow import Webflow
+        from webflow import ReferenceField, ReferenceFieldMetadata, StaticField, Webflow
 
         client = Webflow(
             access_token="YOUR_ACCESS_TOKEN",
@@ -178,15 +186,42 @@ class CollectionsClient:
             display_name="Blog Posts",
             singular_name="Blog Post",
             slug="posts",
+            fields=[
+                StaticField(
+                    is_required=True,
+                    type="PlainText",
+                    display_name="Title",
+                    help_text="The title of the blog post",
+                ),
+                StaticField(
+                    is_required=True,
+                    type="RichText",
+                    display_name="Content",
+                    help_text="The content of the blog post",
+                ),
+                ReferenceField(
+                    is_required=True,
+                    type="Reference",
+                    display_name="Author",
+                    help_text="The author of the blog post",
+                    metadata=ReferenceFieldMetadata(
+                        collection_id="23cc2d952d4e4631ffd4345d2743db4e",
+                    ),
+                ),
+            ],
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/collections",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             json={
                 "displayName": display_name,
                 "singularName": singular_name,
                 "slug": slug,
+                "fields": convert_and_respect_annotation_metadata(
+                    object_=fields, annotation=typing.Sequence[FieldCreate], direction="write"
+                ),
             },
             headers={
                 "content-type": "application/json",
@@ -229,6 +264,16 @@ class CollectionsClient:
                         Error,
                         parse_obj_as(
                             type_=Error,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    typing.cast(
+                        typing.Optional[typing.Any],
+                        parse_obj_as(
+                            type_=typing.Optional[typing.Any],  # type: ignore
                             object_=_response.json(),
                         ),
                     )
@@ -290,6 +335,7 @@ class CollectionsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -388,6 +434,7 @@ class CollectionsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="DELETE",
             request_options=request_options,
         )
@@ -496,6 +543,7 @@ class AsyncCollectionsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/collections",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -570,6 +618,7 @@ class AsyncCollectionsClient:
         display_name: str,
         singular_name: str,
         slug: typing.Optional[str] = OMIT,
+        fields: typing.Optional[typing.Sequence[FieldCreate]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> Collection:
         """
@@ -591,6 +640,9 @@ class AsyncCollectionsClient:
         slug : typing.Optional[str]
             Part of a URL that identifier
 
+        fields : typing.Optional[typing.Sequence[FieldCreate]]
+            An array of custom fields to add to the collection
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -603,7 +655,12 @@ class AsyncCollectionsClient:
         --------
         import asyncio
 
-        from webflow import AsyncWebflow
+        from webflow import (
+            AsyncWebflow,
+            ReferenceField,
+            ReferenceFieldMetadata,
+            StaticField,
+        )
 
         client = AsyncWebflow(
             access_token="YOUR_ACCESS_TOKEN",
@@ -616,6 +673,29 @@ class AsyncCollectionsClient:
                 display_name="Blog Posts",
                 singular_name="Blog Post",
                 slug="posts",
+                fields=[
+                    StaticField(
+                        is_required=True,
+                        type="PlainText",
+                        display_name="Title",
+                        help_text="The title of the blog post",
+                    ),
+                    StaticField(
+                        is_required=True,
+                        type="RichText",
+                        display_name="Content",
+                        help_text="The content of the blog post",
+                    ),
+                    ReferenceField(
+                        is_required=True,
+                        type="Reference",
+                        display_name="Author",
+                        help_text="The author of the blog post",
+                        metadata=ReferenceFieldMetadata(
+                            collection_id="23cc2d952d4e4631ffd4345d2743db4e",
+                        ),
+                    ),
+                ],
             )
 
 
@@ -623,11 +703,15 @@ class AsyncCollectionsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/collections",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             json={
                 "displayName": display_name,
                 "singularName": singular_name,
                 "slug": slug,
+                "fields": convert_and_respect_annotation_metadata(
+                    object_=fields, annotation=typing.Sequence[FieldCreate], direction="write"
+                ),
             },
             headers={
                 "content-type": "application/json",
@@ -670,6 +754,16 @@ class AsyncCollectionsClient:
                         Error,
                         parse_obj_as(
                             type_=Error,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    typing.cast(
+                        typing.Optional[typing.Any],
+                        parse_obj_as(
+                            type_=typing.Optional[typing.Any],  # type: ignore
                             object_=_response.json(),
                         ),
                     )
@@ -739,6 +833,7 @@ class AsyncCollectionsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -845,6 +940,7 @@ class AsyncCollectionsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="DELETE",
             request_options=request_options,
         )
