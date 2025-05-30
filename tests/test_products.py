@@ -4,6 +4,13 @@ from webflow import Webflow
 from webflow import AsyncWebflow
 import typing
 from .utilities import validate_response
+from webflow.resources.products import ProductSkuCreateProduct
+from webflow import ProductFieldData
+from webflow import SkuPropertyList
+from webflow import SkuPropertyListEnumItem
+from webflow.resources.products import ProductSkuCreateSku
+from webflow import SkuFieldData
+from webflow import SkuFieldDataPrice
 from webflow import Sku
 
 
@@ -41,11 +48,20 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                         "lastUpdated": "2023-03-17T18:47:35Z",
                         "createdOn": "2023-03-17T18:47:35Z",
                         "fieldData": {
-                            "sku-values": {"ff42fee0113744f693a764e3431a9cc2": "64a74715c456e36762fc39a1"},
-                            "name": "Blue T-shirt",
-                            "slug": "t-shirt-blue",
-                            "price": {"value": 100, "unit": "USD"},
+                            "sku-values": {"color": "blue", "size": "small"},
+                            "name": "Colorful T-shirt - Default",
+                            "slug": "colorful-t-shirt-default",
+                            "price": {"value": 2499, "unit": "USD", "currency": "USD"},
                             "quantity": 10,
+                            "main-image": "https://www.example.com/image.jpg",
+                            "sku": "1234567890",
+                            "sku-properties": [
+                                {
+                                    "id": "Color",
+                                    "name": "Color",
+                                    "enum": [{"id": "id", "name": "Royal Blue", "slug": "royal-blue"}],
+                                }
+                            ],
                         },
                     }
                 ],
@@ -93,11 +109,23 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                                 "lastUpdated": "datetime",
                                 "createdOn": "datetime",
                                 "fieldData": {
-                                    "sku-values": ("dict", {0: (None, None)}),
+                                    "sku-values": ("dict", {0: (None, None), 1: (None, None)}),
                                     "name": None,
                                     "slug": None,
-                                    "price": {"value": None, "unit": None},
+                                    "price": {"value": None, "unit": None, "currency": None},
                                     "quantity": None,
+                                    "main-image": None,
+                                    "sku": None,
+                                    "sku-properties": (
+                                        "list",
+                                        {
+                                            0: {
+                                                "id": None,
+                                                "name": None,
+                                                "enum": ("list", {0: {"id": None, "name": None, "slug": None}}),
+                                            }
+                                        },
+                                    ),
                                 },
                             }
                         },
@@ -146,11 +174,20 @@ async def test_create(client: Webflow, async_client: AsyncWebflow) -> None:
                 "lastUpdated": "2023-03-17T18:47:35Z",
                 "createdOn": "2023-03-17T18:47:35Z",
                 "fieldData": {
-                    "sku-values": {"ff42fee0113744f693a764e3431a9cc2": "64a74715c456e36762fc39a1"},
-                    "name": "Blue T-shirt",
-                    "slug": "t-shirt-blue",
-                    "price": {"value": 100, "unit": "USD"},
+                    "sku-values": {"color": "blue", "size": "small"},
+                    "name": "Colorful T-shirt - Default",
+                    "slug": "colorful-t-shirt-default",
+                    "price": {"value": 2499, "unit": "USD", "currency": "USD"},
                     "quantity": 10,
+                    "main-image": "https://www.example.com/image.jpg",
+                    "sku": "1234567890",
+                    "sku-properties": [
+                        {
+                            "id": "Color",
+                            "name": "Color",
+                            "enum": [{"id": "id", "name": "Royal Blue", "slug": "royal-blue"}],
+                        }
+                    ],
                 },
             }
         ],
@@ -189,20 +226,108 @@ async def test_create(client: Webflow, async_client: AsyncWebflow) -> None:
                     "lastUpdated": "datetime",
                     "createdOn": "datetime",
                     "fieldData": {
-                        "sku-values": ("dict", {0: (None, None)}),
+                        "sku-values": ("dict", {0: (None, None), 1: (None, None)}),
                         "name": None,
                         "slug": None,
-                        "price": {"value": None, "unit": None},
+                        "price": {"value": None, "unit": None, "currency": None},
                         "quantity": None,
+                        "main-image": None,
+                        "sku": None,
+                        "sku-properties": (
+                            "list",
+                            {
+                                0: {
+                                    "id": None,
+                                    "name": None,
+                                    "enum": ("list", {0: {"id": None, "name": None, "slug": None}}),
+                                }
+                            },
+                        ),
                     },
                 }
             },
         ),
     }
-    response = client.products.create(site_id="580e63e98c9a982ac9b8b741")
+    response = client.products.create(
+        site_id="580e63e98c9a982ac9b8b741",
+        publish_status="staging",
+        product=ProductSkuCreateProduct(
+            field_data=ProductFieldData(
+                name="Colorful T-shirt",
+                slug="colorful-t-shirt",
+                description="Our best-selling t-shirt available in multiple colors and sizes",
+                sku_properties=[
+                    SkuPropertyList(
+                        id="color",
+                        name="Color",
+                        enum=[
+                            SkuPropertyListEnumItem(id="red", name="Red", slug="red"),
+                            SkuPropertyListEnumItem(id="yellow", name="Yellow", slug="yellow"),
+                            SkuPropertyListEnumItem(id="blue", name="Blue", slug="blue"),
+                        ],
+                    ),
+                    SkuPropertyList(
+                        id="size",
+                        name="Size",
+                        enum=[
+                            SkuPropertyListEnumItem(id="small", name="Small", slug="small"),
+                            SkuPropertyListEnumItem(id="medium", name="Medium", slug="medium"),
+                            SkuPropertyListEnumItem(id="large", name="Large", slug="large"),
+                        ],
+                    ),
+                ],
+            )
+        ),
+        sku=ProductSkuCreateSku(
+            field_data=SkuFieldData(
+                name="Colorful T-shirt - Red Small",
+                slug="colorful-t-shirt-red-small",
+                price=SkuFieldDataPrice(value=2499.0, unit="USD", currency="USD"),
+                main_image="https://rocketamp-sample-store.myshopify.com/cdn/shop/products/Gildan_2000_Antique_Cherry_Red_Front_1024x1024.jpg?v=1527232987",
+            )
+        ),
+    )
     validate_response(response, expected_response, expected_types)
 
-    async_response = await async_client.products.create(site_id="580e63e98c9a982ac9b8b741")
+    async_response = await async_client.products.create(
+        site_id="580e63e98c9a982ac9b8b741",
+        publish_status="staging",
+        product=ProductSkuCreateProduct(
+            field_data=ProductFieldData(
+                name="Colorful T-shirt",
+                slug="colorful-t-shirt",
+                description="Our best-selling t-shirt available in multiple colors and sizes",
+                sku_properties=[
+                    SkuPropertyList(
+                        id="color",
+                        name="Color",
+                        enum=[
+                            SkuPropertyListEnumItem(id="red", name="Red", slug="red"),
+                            SkuPropertyListEnumItem(id="yellow", name="Yellow", slug="yellow"),
+                            SkuPropertyListEnumItem(id="blue", name="Blue", slug="blue"),
+                        ],
+                    ),
+                    SkuPropertyList(
+                        id="size",
+                        name="Size",
+                        enum=[
+                            SkuPropertyListEnumItem(id="small", name="Small", slug="small"),
+                            SkuPropertyListEnumItem(id="medium", name="Medium", slug="medium"),
+                            SkuPropertyListEnumItem(id="large", name="Large", slug="large"),
+                        ],
+                    ),
+                ],
+            )
+        ),
+        sku=ProductSkuCreateSku(
+            field_data=SkuFieldData(
+                name="Colorful T-shirt - Red Small",
+                slug="colorful-t-shirt-red-small",
+                price=SkuFieldDataPrice(value=2499.0, unit="USD", currency="USD"),
+                main_image="https://rocketamp-sample-store.myshopify.com/cdn/shop/products/Gildan_2000_Antique_Cherry_Red_Front_1024x1024.jpg?v=1527232987",
+            )
+        ),
+    )
     validate_response(async_response, expected_response, expected_types)
 
 
@@ -238,11 +363,20 @@ async def test_get(client: Webflow, async_client: AsyncWebflow) -> None:
                 "lastUpdated": "2023-03-17T18:47:35Z",
                 "createdOn": "2023-03-17T18:47:35Z",
                 "fieldData": {
-                    "sku-values": {"ff42fee0113744f693a764e3431a9cc2": "64a74715c456e36762fc39a1"},
-                    "name": "Blue T-shirt",
-                    "slug": "t-shirt-blue",
-                    "price": {"value": 100, "unit": "USD"},
+                    "sku-values": {"color": "blue", "size": "small"},
+                    "name": "Colorful T-shirt - Default",
+                    "slug": "colorful-t-shirt-default",
+                    "price": {"value": 2499, "unit": "USD", "currency": "USD"},
                     "quantity": 10,
+                    "main-image": "https://www.example.com/image.jpg",
+                    "sku": "1234567890",
+                    "sku-properties": [
+                        {
+                            "id": "Color",
+                            "name": "Color",
+                            "enum": [{"id": "id", "name": "Royal Blue", "slug": "royal-blue"}],
+                        }
+                    ],
                 },
             }
         ],
@@ -281,11 +415,23 @@ async def test_get(client: Webflow, async_client: AsyncWebflow) -> None:
                     "lastUpdated": "datetime",
                     "createdOn": "datetime",
                     "fieldData": {
-                        "sku-values": ("dict", {0: (None, None)}),
+                        "sku-values": ("dict", {0: (None, None), 1: (None, None)}),
                         "name": None,
                         "slug": None,
-                        "price": {"value": None, "unit": None},
+                        "price": {"value": None, "unit": None, "currency": None},
                         "quantity": None,
+                        "main-image": None,
+                        "sku": None,
+                        "sku-properties": (
+                            "list",
+                            {
+                                0: {
+                                    "id": None,
+                                    "name": None,
+                                    "enum": ("list", {0: {"id": None, "name": None, "slug": None}}),
+                                }
+                            },
+                        ),
                     },
                 }
             },
@@ -365,11 +511,20 @@ async def test_create_sku(client: Webflow, async_client: AsyncWebflow) -> None:
                 "lastUpdated": "2023-03-17T18:47:35Z",
                 "createdOn": "2023-03-17T18:47:35Z",
                 "fieldData": {
-                    "sku-values": {"ff42fee0113744f693a764e3431a9cc2": "64a74715c456e36762fc39a1"},
-                    "name": "Blue T-shirt",
-                    "slug": "t-shirt-blue",
-                    "price": {"value": 100, "unit": "USD"},
+                    "sku-values": {"color": "blue", "size": "small"},
+                    "name": "Colorful T-shirt - Default",
+                    "slug": "colorful-t-shirt-default",
+                    "price": {"value": 2499, "unit": "USD", "currency": "USD"},
                     "quantity": 10,
+                    "main-image": "https://www.example.com/image.jpg",
+                    "sku": "1234567890",
+                    "sku-properties": [
+                        {
+                            "id": "Color",
+                            "name": "Color",
+                            "enum": [{"id": "id", "name": "Royal Blue", "slug": "royal-blue"}],
+                        }
+                    ],
                 },
             }
         ]
@@ -385,23 +540,55 @@ async def test_create_sku(client: Webflow, async_client: AsyncWebflow) -> None:
                     "lastUpdated": "datetime",
                     "createdOn": "datetime",
                     "fieldData": {
-                        "sku-values": ("dict", {0: (None, None)}),
+                        "sku-values": ("dict", {0: (None, None), 1: (None, None)}),
                         "name": None,
                         "slug": None,
-                        "price": {"value": None, "unit": None},
+                        "price": {"value": None, "unit": None, "currency": None},
                         "quantity": None,
+                        "main-image": None,
+                        "sku": None,
+                        "sku-properties": (
+                            "list",
+                            {
+                                0: {
+                                    "id": None,
+                                    "name": None,
+                                    "enum": ("list", {0: {"id": None, "name": None, "slug": None}}),
+                                }
+                            },
+                        ),
                     },
                 }
             },
         )
     }
     response = client.products.create_sku(
-        site_id="580e63e98c9a982ac9b8b741", product_id="580e63fc8c9a982ac9b8b745", skus=[Sku()]
+        site_id="580e63e98c9a982ac9b8b741",
+        product_id="580e63fc8c9a982ac9b8b745",
+        skus=[
+            Sku(
+                field_data=SkuFieldData(
+                    name="Colorful T-shirt - Default",
+                    slug="colorful-t-shirt-default",
+                    price=SkuFieldDataPrice(value=2499.0, unit="USD", currency="USD"),
+                )
+            )
+        ],
     )
     validate_response(response, expected_response, expected_types)
 
     async_response = await async_client.products.create_sku(
-        site_id="580e63e98c9a982ac9b8b741", product_id="580e63fc8c9a982ac9b8b745", skus=[Sku()]
+        site_id="580e63e98c9a982ac9b8b741",
+        product_id="580e63fc8c9a982ac9b8b745",
+        skus=[
+            Sku(
+                field_data=SkuFieldData(
+                    name="Colorful T-shirt - Default",
+                    slug="colorful-t-shirt-default",
+                    price=SkuFieldDataPrice(value=2499.0, unit="USD", currency="USD"),
+                )
+            )
+        ],
     )
     validate_response(async_response, expected_response, expected_types)
 
@@ -414,15 +601,20 @@ async def test_update_sku(client: Webflow, async_client: AsyncWebflow) -> None:
         "lastUpdated": "2023-03-17T18:47:35Z",
         "createdOn": "2023-03-17T18:47:35Z",
         "fieldData": {
-            "sku-values": {"ff42fee0113744f693a764e3431a9cc2": "64a74715c456e36762fc39a1"},
-            "name": "Blue T-shirt",
-            "slug": "t-shirt-blue",
-            "price": {"value": 100, "unit": "USD"},
+            "sku-values": {"color": "blue", "size": "small"},
+            "name": "Colorful T-shirt - Default",
+            "slug": "colorful-t-shirt-default",
+            "price": {"value": 2499, "unit": "USD", "currency": "USD"},
             "compare-at-price": {"value": 100, "unit": "USD"},
             "ec-sku-billing-method": "one-time",
             "ec-sku-subscription-plan": {"interval": "day", "frequency": 1, "trial": 7, "plans": [{}]},
             "track-inventory": True,
             "quantity": 10,
+            "main-image": "https://www.example.com/image.jpg",
+            "sku": "1234567890",
+            "sku-properties": [
+                {"id": "Color", "name": "Color", "enum": [{"id": "id", "name": "Royal Blue", "slug": "royal-blue"}]}
+            ],
         },
     }
     expected_types: typing.Any = {
@@ -432,10 +624,10 @@ async def test_update_sku(client: Webflow, async_client: AsyncWebflow) -> None:
         "lastUpdated": "datetime",
         "createdOn": "datetime",
         "fieldData": {
-            "sku-values": ("dict", {0: (None, None)}),
+            "sku-values": ("dict", {0: (None, None), 1: (None, None)}),
             "name": None,
             "slug": None,
-            "price": {"value": None, "unit": None},
+            "price": {"value": None, "unit": None, "currency": None},
             "compare-at-price": {"value": None, "unit": None},
             "ec-sku-billing-method": None,
             "ec-sku-subscription-plan": {
@@ -446,13 +638,25 @@ async def test_update_sku(client: Webflow, async_client: AsyncWebflow) -> None:
             },
             "track-inventory": None,
             "quantity": None,
+            "main-image": None,
+            "sku": None,
+            "sku-properties": (
+                "list",
+                {0: {"id": None, "name": None, "enum": ("list", {0: {"id": None, "name": None, "slug": None}})}},
+            ),
         },
     }
     response = client.products.update_sku(
         site_id="580e63e98c9a982ac9b8b741",
         product_id="580e63fc8c9a982ac9b8b745",
         sku_id="5e8518516e147040726cc415",
-        sku=Sku(),
+        sku=Sku(
+            field_data=SkuFieldData(
+                name="Colorful T-shirt - Default",
+                slug="colorful-t-shirt-default",
+                price=SkuFieldDataPrice(value=2499.0, unit="USD", currency="USD"),
+            )
+        ),
     )
     validate_response(response, expected_response, expected_types)
 
@@ -460,6 +664,12 @@ async def test_update_sku(client: Webflow, async_client: AsyncWebflow) -> None:
         site_id="580e63e98c9a982ac9b8b741",
         product_id="580e63fc8c9a982ac9b8b745",
         sku_id="5e8518516e147040726cc415",
-        sku=Sku(),
+        sku=Sku(
+            field_data=SkuFieldData(
+                name="Colorful T-shirt - Default",
+                slug="colorful-t-shirt-default",
+                price=SkuFieldDataPrice(value=2499.0, unit="USD", currency="USD"),
+            )
+        ),
     )
     validate_response(async_response, expected_response, expected_types)
