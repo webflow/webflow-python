@@ -3,43 +3,50 @@
 from webflow import Webflow
 from webflow import AsyncWebflow
 import typing
+from webflow import StaticField
 from ..utilities import validate_response
 
 
 async def test_create(client: Webflow, async_client: AsyncWebflow) -> None:
     expected_response: typing.Any = {
-        "id": "75821f618da60c18383330bcc0ca488b",
-        "isRequired": False,
+        "id": "562ac0395358780a1f5e6fbc",
         "isEditable": True,
+        "isRequired": False,
         "type": "RichText",
-        "slug": "post-body",
         "displayName": "Post Body",
         "helpText": "Add the body of your post here",
     }
     expected_types: typing.Any = {
         "id": None,
-        "isRequired": None,
         "isEditable": None,
+        "isRequired": None,
         "type": None,
-        "slug": None,
         "displayName": None,
         "helpText": None,
     }
     response = client.collections.fields.create(
         collection_id="580e63fc8c9a982ac9b8b745",
-        is_required=False,
-        type="RichText",
-        display_name="Post Body",
-        help_text="Add the body of your post here",
+        request=StaticField(
+            id="562ac0395358780a1f5e6fbc",
+            is_editable=True,
+            is_required=False,
+            type="RichText",
+            display_name="Post Body",
+            help_text="Add the body of your post here",
+        ),
     )
     validate_response(response, expected_response, expected_types)
 
     async_response = await async_client.collections.fields.create(
         collection_id="580e63fc8c9a982ac9b8b745",
-        is_required=False,
-        type="RichText",
-        display_name="Post Body",
-        help_text="Add the body of your post here",
+        request=StaticField(
+            id="562ac0395358780a1f5e6fbc",
+            is_editable=True,
+            is_required=False,
+            type="RichText",
+            display_name="Post Body",
+            help_text="Add the body of your post here",
+        ),
     )
     validate_response(async_response, expected_response, expected_types)
 
