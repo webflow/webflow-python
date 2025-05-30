@@ -28,14 +28,11 @@ class ScriptsClient:
 
     def list(self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> RegisteredScriptList:
         """
-        List of scripts registered to a Site.
+        Get a list of scripts that have been registered to a site. A site can have a maximum of 800 registered scripts.
 
-        In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered
-        to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate
-        `custom_code` endpoints.
-        Additionally, Scripts can be remotely hosted, or registered as inline snippets.
-
-        <Note>Access to this endpoint requires a bearer token from a [Data Client App](/data/docs/getting-started-data-clients).</Note>
+        <Note title="Script Registration">
+          To apply a script to a site or page, the script must first be registered to a site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints. See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
+        </Note>
 
         Required scope | `custom_code:read`
 
@@ -65,6 +62,7 @@ class ScriptsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/registered_scripts",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -144,14 +142,11 @@ class ScriptsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CustomCodeHostedResponse:
         """
-        Add a script to a Site's Custom Code registry.
+        Register a hosted script to a site.
 
-        In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered
-        to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate
-        `custom_code` endpoints.
-        Additionally, Scripts can be remotely hosted, or registered as inline snippets.
-
-        <Note>Access to this endpoint requires a bearer token from a [Data Client App](/data/docs/getting-started-data-clients).</Note>
+        <Note title="Script Registration">
+          To apply a script to a site or page, the script must first be registered to a site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints. See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
+        </Note>
 
         Required scope | `custom_code:write`
 
@@ -200,6 +195,7 @@ class ScriptsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/registered_scripts/hosted",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             json={
                 "hostedLocation": hosted_location,
@@ -290,13 +286,11 @@ class ScriptsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CustomCodeInlineResponse:
         """
-        Add a script to a Site's Custom Code registry. Inline scripts can be between 1 and 2000 characters.
+        Register an inline script to a site. Inline scripts are limited to 2000 characters.
 
-        In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered
-        to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate
-        `custom_code` endpoints.
-
-        <Note>Access to this endpoint requires a bearer token from a [Data Client App](/data/docs/getting-started-data-clients).</Note>
+        <Note title="Script Registration">
+          To apply a script to a site or page, the script must first be registered to a site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints. See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
+        </Note>
 
         Required scope | `custom_code:write`
 
@@ -344,6 +338,7 @@ class ScriptsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/registered_scripts/inline",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             json={
                 "sourceCode": source_code,
@@ -431,14 +426,11 @@ class AsyncScriptsClient:
         self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> RegisteredScriptList:
         """
-        List of scripts registered to a Site.
+        Get a list of scripts that have been registered to a site. A site can have a maximum of 800 registered scripts.
 
-        In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered
-        to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate
-        `custom_code` endpoints.
-        Additionally, Scripts can be remotely hosted, or registered as inline snippets.
-
-        <Note>Access to this endpoint requires a bearer token from a [Data Client App](/data/docs/getting-started-data-clients).</Note>
+        <Note title="Script Registration">
+          To apply a script to a site or page, the script must first be registered to a site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints. See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
+        </Note>
 
         Required scope | `custom_code:read`
 
@@ -476,6 +468,7 @@ class AsyncScriptsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/registered_scripts",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -555,14 +548,11 @@ class AsyncScriptsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CustomCodeHostedResponse:
         """
-        Add a script to a Site's Custom Code registry.
+        Register a hosted script to a site.
 
-        In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered
-        to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate
-        `custom_code` endpoints.
-        Additionally, Scripts can be remotely hosted, or registered as inline snippets.
-
-        <Note>Access to this endpoint requires a bearer token from a [Data Client App](/data/docs/getting-started-data-clients).</Note>
+        <Note title="Script Registration">
+          To apply a script to a site or page, the script must first be registered to a site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints. See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
+        </Note>
 
         Required scope | `custom_code:write`
 
@@ -619,6 +609,7 @@ class AsyncScriptsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/registered_scripts/hosted",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             json={
                 "hostedLocation": hosted_location,
@@ -709,13 +700,11 @@ class AsyncScriptsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CustomCodeInlineResponse:
         """
-        Add a script to a Site's Custom Code registry. Inline scripts can be between 1 and 2000 characters.
+        Register an inline script to a site. Inline scripts are limited to 2000 characters.
 
-        In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered
-        to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate
-        `custom_code` endpoints.
-
-        <Note>Access to this endpoint requires a bearer token from a [Data Client App](/data/docs/getting-started-data-clients).</Note>
+        <Note title="Script Registration">
+          To apply a script to a site or page, the script must first be registered to a site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints. See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
+        </Note>
 
         Required scope | `custom_code:write`
 
@@ -771,6 +760,7 @@ class AsyncScriptsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/registered_scripts/inline",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             json={
                 "sourceCode": source_code,
