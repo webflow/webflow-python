@@ -11,6 +11,7 @@ from .items_list_items_live_request_sort_order import ItemsListItemsLiveRequestS
 from .items_list_items_request_sort_by import ItemsListItemsRequestSortBy
 from .items_list_items_request_sort_order import ItemsListItemsRequestSortOrder
 from .items_publish_item_response import ItemsPublishItemResponse
+from .items_update_items_response import ItemsUpdateItemsResponse
 from .multiple_items import MultipleItems
 from .multiple_live_items import MultipleLiveItems
 from .single_cms_item import SingleCmsItem
@@ -27,6 +28,7 @@ __all__ = [
     "ItemsListItemsRequestSortBy",
     "ItemsListItemsRequestSortOrder",
     "ItemsPublishItemResponse",
+    "ItemsUpdateItemsResponse",
     "MultipleItems",
     "MultipleLiveItems",
     "SingleCmsItem",

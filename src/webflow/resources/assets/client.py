@@ -30,7 +30,7 @@ class AssetsClient:
 
     def list(self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> Assets:
         """
-        List assets for a given site
+        List of assets uploaded to a site
 
         Required scope | `assets:read`
 
@@ -60,6 +60,7 @@ class AssetsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/assets",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -137,15 +138,18 @@ class AssetsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AssetUpload:
         """
-        Create a new asset entry.
+        The first step in uploading an asset to a site.
 
 
         This endpoint generates a response with the following information: `uploadUrl` and `uploadDetails`.
-        You can use these two properties to [upload the file to Amazon s3 by making a POST](https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPOST.html)
-        request to the `uploadUrl` with the `uploadDetails` object as your header information in the request.
 
 
-        Required scope | `assets:write`
+        Use these properties in the header of a [POST request to Amazson s3](https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPOST.html) to complete the upload.
+
+
+        To learn more about how to upload assets to Webflow, see our [assets guide](/data/docs/working-with-assets).
+
+         Required scope | `assets:write`
 
         Parameters
         ----------
@@ -184,6 +188,7 @@ class AssetsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/assets",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             json={
                 "fileName": file_name,
@@ -262,7 +267,7 @@ class AssetsClient:
 
     def get(self, asset_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> Asset:
         """
-        Get an Asset
+        Get details about an asset
 
         Required scope | `assets:read`
 
@@ -292,6 +297,7 @@ class AssetsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"assets/{jsonable_encoder(asset_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -390,6 +396,7 @@ class AssetsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"assets/{jsonable_encoder(asset_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="DELETE",
             request_options=request_options,
         )
@@ -460,7 +467,7 @@ class AssetsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> Asset:
         """
-        Update an Asset
+        Update details of an Asset.
 
         Required scope | `assets:write`
 
@@ -496,6 +503,7 @@ class AssetsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"assets/{jsonable_encoder(asset_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="PATCH",
             json={
                 "localeId": locale_id,
@@ -603,6 +611,7 @@ class AssetsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/asset_folders",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -716,6 +725,7 @@ class AssetsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/asset_folders",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             json={
                 "displayName": display_name,
@@ -825,6 +835,7 @@ class AssetsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"asset_folders/{jsonable_encoder(asset_folder_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -899,7 +910,7 @@ class AsyncAssetsClient:
 
     async def list(self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> Assets:
         """
-        List assets for a given site
+        List of assets uploaded to a site
 
         Required scope | `assets:read`
 
@@ -937,6 +948,7 @@ class AsyncAssetsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/assets",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -1014,15 +1026,18 @@ class AsyncAssetsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AssetUpload:
         """
-        Create a new asset entry.
+        The first step in uploading an asset to a site.
 
 
         This endpoint generates a response with the following information: `uploadUrl` and `uploadDetails`.
-        You can use these two properties to [upload the file to Amazon s3 by making a POST](https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPOST.html)
-        request to the `uploadUrl` with the `uploadDetails` object as your header information in the request.
 
 
-        Required scope | `assets:write`
+        Use these properties in the header of a [POST request to Amazson s3](https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPOST.html) to complete the upload.
+
+
+        To learn more about how to upload assets to Webflow, see our [assets guide](/data/docs/working-with-assets).
+
+         Required scope | `assets:write`
 
         Parameters
         ----------
@@ -1069,6 +1084,7 @@ class AsyncAssetsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/assets",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             json={
                 "fileName": file_name,
@@ -1147,7 +1163,7 @@ class AsyncAssetsClient:
 
     async def get(self, asset_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> Asset:
         """
-        Get an Asset
+        Get details about an asset
 
         Required scope | `assets:read`
 
@@ -1185,6 +1201,7 @@ class AsyncAssetsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"assets/{jsonable_encoder(asset_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -1291,6 +1308,7 @@ class AsyncAssetsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"assets/{jsonable_encoder(asset_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="DELETE",
             request_options=request_options,
         )
@@ -1361,7 +1379,7 @@ class AsyncAssetsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> Asset:
         """
-        Update an Asset
+        Update details of an Asset.
 
         Required scope | `assets:write`
 
@@ -1405,6 +1423,7 @@ class AsyncAssetsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"assets/{jsonable_encoder(asset_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="PATCH",
             json={
                 "localeId": locale_id,
@@ -1522,6 +1541,7 @@ class AsyncAssetsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/asset_folders",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -1643,6 +1663,7 @@ class AsyncAssetsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/asset_folders",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             json={
                 "displayName": display_name,
@@ -1760,6 +1781,7 @@ class AsyncAssetsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"asset_folders/{jsonable_encoder(asset_folder_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
