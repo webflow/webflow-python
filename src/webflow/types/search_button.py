@@ -4,16 +4,13 @@ from ..core.pydantic_utilities import UniversalBaseModel
 import typing_extensions
 from ..core.serialization import FieldMetadata
 import pydantic
-import typing
-from .component_instance_node_property_overrides_write_property_overrides_item import (
-    ComponentInstanceNodePropertyOverridesWritePropertyOverridesItem,
-)
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
+import typing
 
 
-class ComponentInstanceNodePropertyOverridesWrite(UniversalBaseModel):
+class SearchButton(UniversalBaseModel):
     """
-    Update text property overrides of a component instance
+    Update a search button node
     """
 
     node_id: typing_extensions.Annotated[str, FieldMetadata(alias="nodeId")] = pydantic.Field()
@@ -21,12 +18,9 @@ class ComponentInstanceNodePropertyOverridesWrite(UniversalBaseModel):
     Node UUID
     """
 
-    property_overrides: typing_extensions.Annotated[
-        typing.List[ComponentInstanceNodePropertyOverridesWritePropertyOverridesItem],
-        FieldMetadata(alias="propertyOverrides"),
-    ] = pydantic.Field()
+    value: str = pydantic.Field()
     """
-    A list of component instance properties to override within the specified secondary locale.
+    The text content of the search button.
     """
 
     if IS_PYDANTIC_V2:
