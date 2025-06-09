@@ -77,6 +77,7 @@ class ComponentsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/components",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "limit": limit,
@@ -159,7 +160,7 @@ class ComponentsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ComponentDom:
         """
-        Get static content from a component definition. This includes text nodes, image nodes and nested component instances.
+        Get static content from a component definition. This includes text nodes, image nodes, select nodes, text input nodes, submit button nodes, and nested component instances.
         To retrieve dynamic content set by component properties, use the [get component properties](/data/reference/pages-and-components/components/get-properties) endpoint.
 
         <Note>If you do not provide a Locale ID in your request, the response will return any content that can be localized from the Primary locale.</Note>
@@ -206,6 +207,7 @@ class ComponentsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/components/{jsonable_encoder(component_id)}/dom",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "localeId": locale_id,
@@ -325,9 +327,13 @@ class ComponentsClient:
         Examples
         --------
         from webflow import (
-            ComponentInstanceNodePropertyOverridesWrite,
+            ComponentInstance,
             ComponentInstanceNodePropertyOverridesWritePropertyOverridesItem,
-            TextNodeWrite,
+            Select,
+            SelectNodeWriteChoicesItem,
+            SubmitButton,
+            TextInput,
+            TextNode,
             Webflow,
         )
 
@@ -339,15 +345,37 @@ class ComponentsClient:
             component_id="8505ba55-ef72-629e-f85c-33e4b703d48b",
             locale_id="65427cf400e02b306eaa04a0",
             nodes=[
-                TextNodeWrite(
+                TextNode(
                     node_id="a245c12d-995b-55ee-5ec7-aa36a6cad623",
                     text="<h1>The Hitchhiker's Guide to the Galaxy</h1>",
                 ),
-                TextNodeWrite(
+                TextNode(
                     node_id="a245c12d-995b-55ee-5ec7-aa36a6cad627",
                     text="<div><h3>Don't Panic!</h3><p>Always know where your towel is.</p></div>",
                 ),
-                ComponentInstanceNodePropertyOverridesWrite(
+                Select(
+                    node_id="a245c12d-995b-55ee-5ec7-aa36a6cad635",
+                    choices=[
+                        SelectNodeWriteChoicesItem(
+                            value="choice-1",
+                            text="First choice",
+                        ),
+                        SelectNodeWriteChoicesItem(
+                            value="choice-2",
+                            text="Second choice",
+                        ),
+                    ],
+                ),
+                TextInput(
+                    node_id="a245c12d-995b-55ee-5ec7-aa36a6cad642",
+                    placeholder="Enter something here...",
+                ),
+                SubmitButton(
+                    node_id="a245c12d-995b-55ee-5ec7-aa36a6cad671",
+                    value="Submit",
+                    waiting_text="Submitting...",
+                ),
+                ComponentInstance(
                     node_id="a245c12d-995b-55ee-5ec7-aa36a6cad629",
                     property_overrides=[
                         ComponentInstanceNodePropertyOverridesWritePropertyOverridesItem(
@@ -365,6 +393,7 @@ class ComponentsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/components/{jsonable_encoder(component_id)}/dom",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             params={
                 "localeId": locale_id,
@@ -465,9 +494,9 @@ class ComponentsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ComponentProperties:
         """
-        Get the property default values of a component definition.
+        Get the default property values of a component definition.
 
-        <Note>If you do not provide a Locale ID in your request, the response will return any properties that can be localized from the Primary locale.</Note>
+        <Note>If you do not include a `localeId` in your request, the response will return any properties that can be localized from the Primary locale.</Note>
 
         Required scope | `components:read`
 
@@ -511,6 +540,7 @@ class ComponentsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/components/{jsonable_encoder(component_id)}/properties",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "localeId": locale_id,
@@ -593,12 +623,11 @@ class ComponentsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ComponentsUpdatePropertiesResponse:
         """
-        Update the property default values of a component definition in a specificed locale.
+        Update the default property values of a component definition in a specificed locale.
 
-        Before making updates:
-        1. Use the [get component properties](/data/reference/pages-and-components/components/get-properties) endpoint to identify available properties
+        Before making updates, use the [get component properties](/data/reference/pages-and-components/components/get-properties) endpoint to identify properties that can be updated in a secondary locale.
 
-        <Note>The request requires a secondary locale ID. If a locale is missing, the request will not be processed and will result in an error.</Note>
+        <Note>The request requires a secondary locale ID. If a `localeId` is missing, the request will not be processed and will result in an error.</Note>
 
         Required scope | `components:write`
 
@@ -650,6 +679,7 @@ class ComponentsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/components/{jsonable_encoder(component_id)}/properties",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             params={
                 "localeId": locale_id,
@@ -789,6 +819,7 @@ class AsyncComponentsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/components",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "limit": limit,
@@ -871,7 +902,7 @@ class AsyncComponentsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ComponentDom:
         """
-        Get static content from a component definition. This includes text nodes, image nodes and nested component instances.
+        Get static content from a component definition. This includes text nodes, image nodes, select nodes, text input nodes, submit button nodes, and nested component instances.
         To retrieve dynamic content set by component properties, use the [get component properties](/data/reference/pages-and-components/components/get-properties) endpoint.
 
         <Note>If you do not provide a Locale ID in your request, the response will return any content that can be localized from the Primary locale.</Note>
@@ -926,6 +957,7 @@ class AsyncComponentsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/components/{jsonable_encoder(component_id)}/dom",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "localeId": locale_id,
@@ -1048,9 +1080,13 @@ class AsyncComponentsClient:
 
         from webflow import (
             AsyncWebflow,
-            ComponentInstanceNodePropertyOverridesWrite,
+            ComponentInstance,
             ComponentInstanceNodePropertyOverridesWritePropertyOverridesItem,
-            TextNodeWrite,
+            Select,
+            SelectNodeWriteChoicesItem,
+            SubmitButton,
+            TextInput,
+            TextNode,
         )
 
         client = AsyncWebflow(
@@ -1064,15 +1100,37 @@ class AsyncComponentsClient:
                 component_id="8505ba55-ef72-629e-f85c-33e4b703d48b",
                 locale_id="65427cf400e02b306eaa04a0",
                 nodes=[
-                    TextNodeWrite(
+                    TextNode(
                         node_id="a245c12d-995b-55ee-5ec7-aa36a6cad623",
                         text="<h1>The Hitchhiker's Guide to the Galaxy</h1>",
                     ),
-                    TextNodeWrite(
+                    TextNode(
                         node_id="a245c12d-995b-55ee-5ec7-aa36a6cad627",
                         text="<div><h3>Don't Panic!</h3><p>Always know where your towel is.</p></div>",
                     ),
-                    ComponentInstanceNodePropertyOverridesWrite(
+                    Select(
+                        node_id="a245c12d-995b-55ee-5ec7-aa36a6cad635",
+                        choices=[
+                            SelectNodeWriteChoicesItem(
+                                value="choice-1",
+                                text="First choice",
+                            ),
+                            SelectNodeWriteChoicesItem(
+                                value="choice-2",
+                                text="Second choice",
+                            ),
+                        ],
+                    ),
+                    TextInput(
+                        node_id="a245c12d-995b-55ee-5ec7-aa36a6cad642",
+                        placeholder="Enter something here...",
+                    ),
+                    SubmitButton(
+                        node_id="a245c12d-995b-55ee-5ec7-aa36a6cad671",
+                        value="Submit",
+                        waiting_text="Submitting...",
+                    ),
+                    ComponentInstance(
                         node_id="a245c12d-995b-55ee-5ec7-aa36a6cad629",
                         property_overrides=[
                             ComponentInstanceNodePropertyOverridesWritePropertyOverridesItem(
@@ -1093,6 +1151,7 @@ class AsyncComponentsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/components/{jsonable_encoder(component_id)}/dom",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             params={
                 "localeId": locale_id,
@@ -1193,9 +1252,9 @@ class AsyncComponentsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ComponentProperties:
         """
-        Get the property default values of a component definition.
+        Get the default property values of a component definition.
 
-        <Note>If you do not provide a Locale ID in your request, the response will return any properties that can be localized from the Primary locale.</Note>
+        <Note>If you do not include a `localeId` in your request, the response will return any properties that can be localized from the Primary locale.</Note>
 
         Required scope | `components:read`
 
@@ -1247,6 +1306,7 @@ class AsyncComponentsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/components/{jsonable_encoder(component_id)}/properties",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "localeId": locale_id,
@@ -1329,12 +1389,11 @@ class AsyncComponentsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ComponentsUpdatePropertiesResponse:
         """
-        Update the property default values of a component definition in a specificed locale.
+        Update the default property values of a component definition in a specificed locale.
 
-        Before making updates:
-        1. Use the [get component properties](/data/reference/pages-and-components/components/get-properties) endpoint to identify available properties
+        Before making updates, use the [get component properties](/data/reference/pages-and-components/components/get-properties) endpoint to identify properties that can be updated in a secondary locale.
 
-        <Note>The request requires a secondary locale ID. If a locale is missing, the request will not be processed and will result in an error.</Note>
+        <Note>The request requires a secondary locale ID. If a `localeId` is missing, the request will not be processed and will result in an error.</Note>
 
         Required scope | `components:write`
 
@@ -1394,6 +1453,7 @@ class AsyncComponentsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/components/{jsonable_encoder(component_id)}/properties",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             params={
                 "localeId": locale_id,
