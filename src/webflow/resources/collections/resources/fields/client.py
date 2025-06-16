@@ -2,19 +2,21 @@
 
 import typing
 from .....core.client_wrapper import SyncClientWrapper
-from .types.field_create_type import FieldCreateType
+from .....types.field_create import FieldCreate
 from .....core.request_options import RequestOptions
-from .....types.field import Field
 from .....core.jsonable_encoder import jsonable_encoder
+from .....core.serialization import convert_and_respect_annotation_metadata
 from .....core.pydantic_utilities import parse_obj_as
 from .....errors.bad_request_error import BadRequestError
 from .....errors.unauthorized_error import UnauthorizedError
 from .....types.error import Error
 from .....errors.not_found_error import NotFoundError
+from .....errors.conflict_error import ConflictError
 from .....errors.too_many_requests_error import TooManyRequestsError
 from .....errors.internal_server_error import InternalServerError
 from json.decoder import JSONDecodeError
 from .....core.api_error import ApiError
+from .....types.field import Field
 from .....core.client_wrapper import AsyncClientWrapper
 
 # this is used as the default value for optional parameters
@@ -26,23 +28,14 @@ class FieldsClient:
         self._client_wrapper = client_wrapper
 
     def create(
-        self,
-        collection_id: str,
-        *,
-        type: FieldCreateType,
-        display_name: str,
-        is_required: typing.Optional[bool] = OMIT,
-        help_text: typing.Optional[str] = OMIT,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> Field:
+        self, collection_id: str, *, request: FieldCreate, request_options: typing.Optional[RequestOptions] = None
+    ) -> FieldCreate:
         """
         Create a custom field in a collection.
 
         Slugs must be all lowercase letters without spaces.
         If you pass a string with uppercase letters and/or spaces to the "Slug" property, Webflow will
         convert the slug to lowercase and replace spaces with "-."
-
-        Only some field types can be created through the API.
         This endpoint does not currently support bulk creation.
 
         Required scope | `cms:write`
@@ -52,62 +45,49 @@ class FieldsClient:
         collection_id : str
             Unique identifier for a Collection
 
-        type : FieldCreateType
-            Choose these appropriate field type for your collection data
-
-        display_name : str
-            The name of a field
-
-        is_required : typing.Optional[bool]
-            define whether a field is required in a collection
-
-        help_text : typing.Optional[str]
-            Additional text to help anyone filling out this field
+        request : FieldCreate
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        Field
+        FieldCreate
             Request was successful
 
         Examples
         --------
-        from webflow import Webflow
+        from webflow import StaticField, Webflow
 
         client = Webflow(
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.collections.fields.create(
             collection_id="580e63fc8c9a982ac9b8b745",
-            is_required=False,
-            type="RichText",
-            display_name="Post Body",
-            help_text="Add the body of your post here",
+            request=StaticField(
+                id="562ac0395358780a1f5e6fbc",
+                is_editable=True,
+                is_required=False,
+                type="RichText",
+                display_name="Post Body",
+                help_text="Add the body of your post here",
+            ),
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/fields",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
-            json={
-                "isRequired": is_required,
-                "type": type,
-                "displayName": display_name,
-                "helpText": help_text,
-            },
-            headers={
-                "content-type": "application/json",
-            },
+            json=convert_and_respect_annotation_metadata(object_=request, annotation=FieldCreate, direction="write"),
             request_options=request_options,
             omit=OMIT,
         )
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    Field,
+                    FieldCreate,
                     parse_obj_as(
-                        type_=Field,  # type: ignore
+                        type_=FieldCreate,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -137,6 +117,16 @@ class FieldsClient:
                         Error,
                         parse_obj_as(
                             type_=Error,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    typing.cast(
+                        typing.Optional[typing.Any],
+                        parse_obj_as(
+                            type_=typing.Optional[typing.Any],  # type: ignore
                             object_=_response.json(),
                         ),
                     )
@@ -203,6 +193,7 @@ class FieldsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/fields/{jsonable_encoder(field_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="DELETE",
             request_options=request_options,
         )
@@ -321,6 +312,7 @@ class FieldsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/fields/{jsonable_encoder(field_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="PATCH",
             json={
                 "isRequired": is_required,
@@ -403,23 +395,14 @@ class AsyncFieldsClient:
         self._client_wrapper = client_wrapper
 
     async def create(
-        self,
-        collection_id: str,
-        *,
-        type: FieldCreateType,
-        display_name: str,
-        is_required: typing.Optional[bool] = OMIT,
-        help_text: typing.Optional[str] = OMIT,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> Field:
+        self, collection_id: str, *, request: FieldCreate, request_options: typing.Optional[RequestOptions] = None
+    ) -> FieldCreate:
         """
         Create a custom field in a collection.
 
         Slugs must be all lowercase letters without spaces.
         If you pass a string with uppercase letters and/or spaces to the "Slug" property, Webflow will
         convert the slug to lowercase and replace spaces with "-."
-
-        Only some field types can be created through the API.
         This endpoint does not currently support bulk creation.
 
         Required scope | `cms:write`
@@ -429,31 +412,21 @@ class AsyncFieldsClient:
         collection_id : str
             Unique identifier for a Collection
 
-        type : FieldCreateType
-            Choose these appropriate field type for your collection data
-
-        display_name : str
-            The name of a field
-
-        is_required : typing.Optional[bool]
-            define whether a field is required in a collection
-
-        help_text : typing.Optional[str]
-            Additional text to help anyone filling out this field
+        request : FieldCreate
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        Field
+        FieldCreate
             Request was successful
 
         Examples
         --------
         import asyncio
 
-        from webflow import AsyncWebflow
+        from webflow import AsyncWebflow, StaticField
 
         client = AsyncWebflow(
             access_token="YOUR_ACCESS_TOKEN",
@@ -463,10 +436,14 @@ class AsyncFieldsClient:
         async def main() -> None:
             await client.collections.fields.create(
                 collection_id="580e63fc8c9a982ac9b8b745",
-                is_required=False,
-                type="RichText",
-                display_name="Post Body",
-                help_text="Add the body of your post here",
+                request=StaticField(
+                    id="562ac0395358780a1f5e6fbc",
+                    is_editable=True,
+                    is_required=False,
+                    type="RichText",
+                    display_name="Post Body",
+                    help_text="Add the body of your post here",
+                ),
             )
 
 
@@ -474,25 +451,18 @@ class AsyncFieldsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/fields",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
-            json={
-                "isRequired": is_required,
-                "type": type,
-                "displayName": display_name,
-                "helpText": help_text,
-            },
-            headers={
-                "content-type": "application/json",
-            },
+            json=convert_and_respect_annotation_metadata(object_=request, annotation=FieldCreate, direction="write"),
             request_options=request_options,
             omit=OMIT,
         )
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    Field,
+                    FieldCreate,
                     parse_obj_as(
-                        type_=Field,  # type: ignore
+                        type_=FieldCreate,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -522,6 +492,16 @@ class AsyncFieldsClient:
                         Error,
                         parse_obj_as(
                             type_=Error,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    typing.cast(
+                        typing.Optional[typing.Any],
+                        parse_obj_as(
+                            type_=typing.Optional[typing.Any],  # type: ignore
                             object_=_response.json(),
                         ),
                     )
@@ -596,6 +576,7 @@ class AsyncFieldsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/fields/{jsonable_encoder(field_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="DELETE",
             request_options=request_options,
         )
@@ -722,6 +703,7 @@ class AsyncFieldsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/fields/{jsonable_encoder(field_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="PATCH",
             json={
                 "isRequired": is_required,
