@@ -9,12 +9,15 @@ service:
       method: GET
       auth: true
       docs: >
-        Fetch a list of all URL redirect rules configured for a specific site.
+        Fetch a list of all 301 redirect rules configured for a specific site.
 
 
         Use this endpoint to review, audit, or manage the redirection rules that
         control how traffic is rerouted on your site.
 
+
+        <Warning title="Enterprise Only">This endpoint requires an Enterprise
+        workspace.</Warning>
 
 
         Required scope: `sites:read`
@@ -24,10 +27,11 @@ service:
         site_id:
           type: string
           docs: Unique identifier for a Site
-      display-name: Get URL redirects
+      display-name: Get 301 redirects
       response:
         docs: Request was successful
         type: root.Redirects
+        status-code: 200
       errors:
         - root.BadRequestError
         - root.UnauthorizedError
@@ -55,13 +59,17 @@ service:
       method: POST
       auth: true
       docs: >
-        Add a new URL redirection rule to a site.
+        Add a new 301 redirection rule to a site.
 
 
         This endpoint allows you to define a source path (`fromUrl`) and its
         corresponding destination path (`toUrl`), which will dictate how traffic
         is rerouted on your site. This is useful for managing site changes,
         restructuring URLs, or handling outdated links.
+
+
+        <Warning title="Enterprise Only">This endpoint requires an Enterprise
+        workspace.</Warning>
 
 
         Required scope: `sites:write`
@@ -71,13 +79,14 @@ service:
         site_id:
           type: string
           docs: Unique identifier for a Site
-      display-name: Create a URL redirect
+      display-name: Create a 301 redirect
       request:
         body: root.Redirect
         content-type: application/json
       response:
         docs: Request was successful
         type: root.Redirect
+        status-code: 200
       errors:
         - root.BadRequestError
         - root.UnauthorizedError
@@ -101,11 +110,17 @@ service:
       method: DELETE
       auth: true
       docs: >
-        Remove a URL redirection rule from a site.
+        Remove a 301 redirection rule from a site.
+
 
         This is useful for cleaning up outdated or unnecessary redirects,
         ensuring that your site's routing behavior remains efficient and
         up-to-date.
+
+
+        <Warning title="Enterprise Only">This endpoint requires an Enterprise
+        workspace.</Warning>
+
 
         Required scope: `sites:write`
       source:
@@ -117,10 +132,11 @@ service:
         redirect_id:
           type: string
           docs: Unique identifier site rediect
-      display-name: Delete URL redirects
+      display-name: Delete 301 redirects
       response:
         docs: Request was successful
         type: root.Redirects
+        status-code: 200
       errors:
         - root.BadRequestError
         - root.UnauthorizedError
@@ -148,8 +164,14 @@ service:
       path: /sites/{site_id}/redirects/{redirect_id}
       method: PATCH
       auth: true
-      docs: |
-        Update a URL redirection rule from a site.
+      docs: >
+        Update a 301 redirection rule from a site.
+
+
+        <Warning title="Enterprise Only">This endpoint requires an Enterprise
+        workspace.</Warning>
+
+
         Required scope: `sites:write`
       source:
         openapi: ../../../openapi/referenced-specs/v2.yml
@@ -160,13 +182,14 @@ service:
         redirect_id:
           type: string
           docs: Unique identifier site rediect
-      display-name: Update URL redirect
+      display-name: Update 301 redirect
       request:
         body: root.Redirect
         content-type: application/json
       response:
         docs: Request was successful
         type: root.Redirect
+        status-code: 200
       errors:
         - root.BadRequestError
         - root.UnauthorizedError
