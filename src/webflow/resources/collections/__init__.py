@@ -3,7 +3,6 @@
 from .resources import (
     CreateBulkCollectionItemRequestBodyFieldData,
     CreateBulkCollectionItemRequestBodyFieldDataItem,
-    FieldCreateType,
     ItemsCreateItemLiveRequest,
     ItemsCreateItemRequest,
     ItemsDeleteItemsLiveRequestItemsItem,
@@ -13,6 +12,7 @@ from .resources import (
     ItemsListItemsRequestSortBy,
     ItemsListItemsRequestSortOrder,
     ItemsPublishItemResponse,
+    ItemsUpdateItemsResponse,
     MultipleItems,
     MultipleLiveItems,
     SingleCmsItem,
@@ -23,7 +23,6 @@ from .resources import (
 __all__ = [
     "CreateBulkCollectionItemRequestBodyFieldData",
     "CreateBulkCollectionItemRequestBodyFieldDataItem",
-    "FieldCreateType",
     "ItemsCreateItemLiveRequest",
     "ItemsCreateItemRequest",
     "ItemsDeleteItemsLiveRequestItemsItem",
@@ -33,6 +32,7 @@ __all__ = [
     "ItemsListItemsRequestSortBy",
     "ItemsListItemsRequestSortOrder",
     "ItemsPublishItemResponse",
+    "ItemsUpdateItemsResponse",
     "MultipleItems",
     "MultipleLiveItems",
     "SingleCmsItem",
