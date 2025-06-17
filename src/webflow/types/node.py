@@ -10,6 +10,7 @@ from .image_node_image import ImageNodeImage
 import typing_extensions
 from ..core.serialization import FieldMetadata
 from .component_property import ComponentProperty
+from .select_node_choices_item import SelectNodeChoicesItem
 
 
 class Node_Text(UniversalBaseModel):
@@ -19,7 +20,7 @@ class Node_Text(UniversalBaseModel):
 
     type: typing.Literal["text"] = "text"
     id: typing.Optional[str] = None
-    text: typing.Optional[TextNodeText] = None
+    text: TextNodeText
     attributes: typing.Optional[typing.Dict[str, str]] = None
 
     if IS_PYDANTIC_V2:
@@ -39,7 +40,7 @@ class Node_Image(UniversalBaseModel):
 
     type: typing.Literal["image"] = "image"
     id: typing.Optional[str] = None
-    image: typing.Optional[ImageNodeImage] = None
+    image: ImageNodeImage
     attributes: typing.Optional[typing.Dict[str, str]] = None
 
     if IS_PYDANTIC_V2:
@@ -59,10 +60,10 @@ class Node_ComponentInstance(UniversalBaseModel):
 
     type: typing.Literal["component-instance"] = "component-instance"
     id: typing.Optional[str] = None
-    component_id: typing_extensions.Annotated[typing.Optional[str], FieldMetadata(alias="componentId")] = None
+    component_id: typing_extensions.Annotated[str, FieldMetadata(alias="componentId")]
     property_overrides: typing_extensions.Annotated[
-        typing.Optional[typing.List[ComponentProperty]], FieldMetadata(alias="propertyOverrides")
-    ] = None
+        typing.List[ComponentProperty], FieldMetadata(alias="propertyOverrides")
+    ]
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2
@@ -74,4 +75,87 @@ class Node_ComponentInstance(UniversalBaseModel):
             extra = pydantic.Extra.allow
 
 
-Node = typing.Union[Node_Text, Node_Image, Node_ComponentInstance]
+class Node_TextInput(UniversalBaseModel):
+    """
+    A generic representation of a content element within the Document Object Model (DOM). Each node has a unique identifier and a specific type that determines its content structure and attributes.
+    """
+
+    type: typing.Literal["text-input"] = "text-input"
+    id: typing.Optional[str] = None
+    placeholder: str
+    attributes: typing.Optional[typing.Dict[str, str]] = None
+
+    if IS_PYDANTIC_V2:
+        model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2
+    else:
+
+        class Config:
+            frozen = True
+            smart_union = True
+            extra = pydantic.Extra.allow
+
+
+class Node_Select(UniversalBaseModel):
+    """
+    A generic representation of a content element within the Document Object Model (DOM). Each node has a unique identifier and a specific type that determines its content structure and attributes.
+    """
+
+    type: typing.Literal["select"] = "select"
+    id: typing.Optional[str] = None
+    choices: typing.List[SelectNodeChoicesItem]
+    attributes: typing.Optional[typing.Dict[str, str]] = None
+
+    if IS_PYDANTIC_V2:
+        model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2
+    else:
+
+        class Config:
+            frozen = True
+            smart_union = True
+            extra = pydantic.Extra.allow
+
+
+class Node_SubmitButton(UniversalBaseModel):
+    """
+    A generic representation of a content element within the Document Object Model (DOM). Each node has a unique identifier and a specific type that determines its content structure and attributes.
+    """
+
+    type: typing.Literal["submit-button"] = "submit-button"
+    id: typing.Optional[str] = None
+    value: str
+    waiting_text: typing_extensions.Annotated[str, FieldMetadata(alias="waitingText")]
+    attributes: typing.Optional[typing.Dict[str, str]] = None
+
+    if IS_PYDANTIC_V2:
+        model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2
+    else:
+
+        class Config:
+            frozen = True
+            smart_union = True
+            extra = pydantic.Extra.allow
+
+
+class Node_SearchButton(UniversalBaseModel):
+    """
+    A generic representation of a content element within the Document Object Model (DOM). Each node has a unique identifier and a specific type that determines its content structure and attributes.
+    """
+
+    type: typing.Literal["search-button"] = "search-button"
+    id: typing.Optional[str] = None
+    value: str
+    attributes: typing.Optional[typing.Dict[str, str]] = None
+
+    if IS_PYDANTIC_V2:
+        model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2
+    else:
+
+        class Config:
+            frozen = True
+            smart_union = True
+            extra = pydantic.Extra.allow
+
+
+Node = typing.Union[
+    Node_Text, Node_Image, Node_ComponentInstance, Node_TextInput, Node_Select, Node_SubmitButton, Node_SearchButton
+]
