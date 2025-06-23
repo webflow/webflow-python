@@ -83,6 +83,7 @@ class UsersClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/users",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "offset": offset,
@@ -201,6 +202,7 @@ class UsersClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/users/{jsonable_encoder(user_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -313,6 +315,7 @@ class UsersClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/users/{jsonable_encoder(user_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="DELETE",
             request_options=request_options,
         )
@@ -414,7 +417,6 @@ class UsersClient:
         access_groups : typing.Optional[typing.Sequence[str]]
             An array of access group slugs. Access groups are assigned to the user as type `admin` and the user remains in the group until removed.
 
-
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -444,6 +446,7 @@ class UsersClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/users/{jsonable_encoder(user_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="PATCH",
             json={
                 "data": convert_and_respect_annotation_metadata(
@@ -557,7 +560,6 @@ class UsersClient:
         access_groups : typing.Optional[typing.Sequence[str]]
             An array of access group slugs. Access groups are assigned to the user as type `admin` and the user remains in the group until removed.
 
-
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -581,6 +583,7 @@ class UsersClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/users/invite",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             json={
                 "email": email,
@@ -742,6 +745,7 @@ class AsyncUsersClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/users",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "offset": offset,
@@ -868,6 +872,7 @@ class AsyncUsersClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/users/{jsonable_encoder(user_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -990,6 +995,7 @@ class AsyncUsersClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/users/{jsonable_encoder(user_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="DELETE",
             request_options=request_options,
         )
@@ -1091,7 +1097,6 @@ class AsyncUsersClient:
         access_groups : typing.Optional[typing.Sequence[str]]
             An array of access group slugs. Access groups are assigned to the user as type `admin` and the user remains in the group until removed.
 
-
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -1129,6 +1134,7 @@ class AsyncUsersClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/users/{jsonable_encoder(user_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="PATCH",
             json={
                 "data": convert_and_respect_annotation_metadata(
@@ -1242,7 +1248,6 @@ class AsyncUsersClient:
         access_groups : typing.Optional[typing.Sequence[str]]
             An array of access group slugs. Access groups are assigned to the user as type `admin` and the user remains in the group until removed.
 
-
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -1274,6 +1279,7 @@ class AsyncUsersClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/users/invite",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             json={
                 "email": email,
