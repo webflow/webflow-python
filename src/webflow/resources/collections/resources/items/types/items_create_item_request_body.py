@@ -4,4 +4,4 @@ import typing
 from ......types.collection_item_post_single import CollectionItemPostSingle
 from .multiple_items import MultipleItems
 
-ItemsCreateItemRequest = typing.Union[CollectionItemPostSingle, MultipleItems]
+ItemsCreateItemRequestBody = typing.Union[CollectionItemPostSingle, MultipleItems]

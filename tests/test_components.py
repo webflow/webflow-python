@@ -4,8 +4,12 @@ from webflow import Webflow
 from webflow import AsyncWebflow
 import typing
 from .utilities import validate_response
-from webflow import TextNodeWrite
-from webflow import ComponentInstanceNodePropertyOverridesWrite
+from webflow import TextNode
+from webflow import Select
+from webflow import SelectNodeWriteChoicesItem
+from webflow import TextInput
+from webflow import SubmitButton
+from webflow import ComponentInstance
 from webflow import ComponentInstanceNodePropertyOverridesWritePropertyOverridesItem
 from webflow.resources.components import ComponentPropertiesWritePropertiesItem
 
@@ -27,20 +31,8 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                 "description": "A secondary button component that can be used across the site",
                 "readonly": True,
             },
-            {
-                "id": "6258612d1ee792848f805dcf",
-                "name": "Card",
-                "group": "Buttons",
-                "description": "A button component that can be used across the site",
-                "readonly": True,
-            },
-            {
-                "id": "68a2b1d1ee792848f805dcf",
-                "name": "Nav",
-                "group": "Buttons",
-                "description": "A button component that can be used across the site",
-                "readonly": True,
-            },
+            {"id": "6258612d1ee792848f805dcf", "name": "Card", "readonly": True},
+            {"id": "68a2b1d1ee792848f805dcf", "name": "Nav", "readonly": True},
         ],
         "pagination": {"limit": 20, "offset": 0, "total": 4},
     }
@@ -50,8 +42,8 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
             {
                 0: {"id": None, "name": None, "group": None, "description": None, "readonly": None},
                 1: {"id": None, "name": None, "group": None, "description": None, "readonly": None},
-                2: {"id": None, "name": None, "group": None, "description": None, "readonly": None},
-                3: {"id": None, "name": None, "group": None, "description": None, "readonly": None},
+                2: {"id": None, "name": None, "readonly": None},
+                3: {"id": None, "name": None, "readonly": None},
             },
         ),
         "pagination": {"limit": None, "offset": None, "total": None},
@@ -67,47 +59,46 @@ async def test_get_content(client: Webflow, async_client: AsyncWebflow) -> None:
     expected_response: typing.Any = {
         "componentId": "69118560-d0bc-15fc-bbf8-b8fe5f6535b5",
         "nodes": [
+            {"id": "id", "text": {}, "attributes": {"key": "value"}, "type": "text"},
+            {"id": "id", "text": {}, "attributes": {"key": "value"}, "type": "text"},
+            {"id": "id", "image": {}, "attributes": {"key": "value"}, "type": "image"},
+            {"id": "id", "placeholder": "placeholder", "attributes": {"key": "value"}, "type": "text-input"},
             {
-                "type": "component-instance",
-                "id": "a245c12d-995b-55ee-5ec7-aa36a6cad623",
-                "componentId": "nodes",
-                "propertyOverrides": [{"propertyId": "7dd14c08-2e96-8d3d-2b19-b5c03642a0f0"}],
+                "id": "id",
+                "choices": [{"value": "value", "text": "text"}],
+                "attributes": {"key": "value"},
+                "type": "select",
             },
             {
-                "type": "component-instance",
-                "id": "a245c12d-995b-55ee-5ec7-aa36a6cad627",
-                "componentId": "nodes",
-                "propertyOverrides": [{"propertyId": "7dd14c08-2e96-8d3d-2b19-b5c03642a0f0"}],
+                "id": "id",
+                "value": "value",
+                "waitingText": "waitingText",
+                "attributes": {"key": "value"},
+                "type": "submit-button",
             },
             {
-                "type": "component-instance",
-                "id": "a245c12d-995b-55ee-5ec7-aa36a6cad629",
-                "componentId": "nodes",
+                "id": "id",
+                "componentId": "componentId",
                 "propertyOverrides": [{"propertyId": "7dd14c08-2e96-8d3d-2b19-b5c03642a0f0"}],
-            },
-            {
                 "type": "component-instance",
-                "id": "a245c12d-995b-55ee-5ec7-aa36a6cad631",
-                "componentId": "6258612d1ee792848f805dcf",
-                "propertyOverrides": [
-                    {
-                        "propertyId": "a245c12d-995b-55ee-5ec7-aa36a6cad633",
-                        "type": "Plain Text",
-                        "text": {"text": "Don't Panic!"},
-                    },
-                    {
-                        "propertyId": "a245c12d-995b-55ee-5ec7-aa36a6cad635",
-                        "type": "Rich Text",
-                        "text": {"html": "<div><p>Always know where your towel is.</p></div>"},
-                    },
-                ],
             },
         ],
-        "pagination": {"limit": 4, "offset": 0, "total": 4},
+        "pagination": {"limit": 7, "offset": 0, "total": 7},
     }
     expected_types: typing.Any = {
         "componentId": None,
-        "nodes": ("list", {0: "no_validate", 1: "no_validate", 2: "no_validate", 3: "no_validate"}),
+        "nodes": (
+            "list",
+            {
+                0: "no_validate",
+                1: "no_validate",
+                2: "no_validate",
+                3: "no_validate",
+                4: "no_validate",
+                5: "no_validate",
+                6: "no_validate",
+            },
+        ),
         "pagination": {"limit": None, "offset": None, "total": None},
     }
     response = client.components.get_content(
@@ -133,14 +124,23 @@ async def test_update_content(client: Webflow, async_client: AsyncWebflow) -> No
         component_id="8505ba55-ef72-629e-f85c-33e4b703d48b",
         locale_id="65427cf400e02b306eaa04a0",
         nodes=[
-            TextNodeWrite(
+            TextNode(
                 node_id="a245c12d-995b-55ee-5ec7-aa36a6cad623", text="<h1>The Hitchhiker's Guide to the Galaxy</h1>"
             ),
-            TextNodeWrite(
+            TextNode(
                 node_id="a245c12d-995b-55ee-5ec7-aa36a6cad627",
                 text="<div><h3>Don't Panic!</h3><p>Always know where your towel is.</p></div>",
             ),
-            ComponentInstanceNodePropertyOverridesWrite(
+            Select(
+                node_id="a245c12d-995b-55ee-5ec7-aa36a6cad635",
+                choices=[
+                    SelectNodeWriteChoicesItem(value="choice-1", text="First choice"),
+                    SelectNodeWriteChoicesItem(value="choice-2", text="Second choice"),
+                ],
+            ),
+            TextInput(node_id="a245c12d-995b-55ee-5ec7-aa36a6cad642", placeholder="Enter something here..."),
+            SubmitButton(node_id="a245c12d-995b-55ee-5ec7-aa36a6cad671", value="Submit", waiting_text="Submitting..."),
+            ComponentInstance(
                 node_id="a245c12d-995b-55ee-5ec7-aa36a6cad629",
                 property_overrides=[
                     ComponentInstanceNodePropertyOverridesWritePropertyOverridesItem(
@@ -161,14 +161,23 @@ async def test_update_content(client: Webflow, async_client: AsyncWebflow) -> No
         component_id="8505ba55-ef72-629e-f85c-33e4b703d48b",
         locale_id="65427cf400e02b306eaa04a0",
         nodes=[
-            TextNodeWrite(
+            TextNode(
                 node_id="a245c12d-995b-55ee-5ec7-aa36a6cad623", text="<h1>The Hitchhiker's Guide to the Galaxy</h1>"
             ),
-            TextNodeWrite(
+            TextNode(
                 node_id="a245c12d-995b-55ee-5ec7-aa36a6cad627",
                 text="<div><h3>Don't Panic!</h3><p>Always know where your towel is.</p></div>",
             ),
-            ComponentInstanceNodePropertyOverridesWrite(
+            Select(
+                node_id="a245c12d-995b-55ee-5ec7-aa36a6cad635",
+                choices=[
+                    SelectNodeWriteChoicesItem(value="choice-1", text="First choice"),
+                    SelectNodeWriteChoicesItem(value="choice-2", text="Second choice"),
+                ],
+            ),
+            TextInput(node_id="a245c12d-995b-55ee-5ec7-aa36a6cad642", placeholder="Enter something here..."),
+            SubmitButton(node_id="a245c12d-995b-55ee-5ec7-aa36a6cad671", value="Submit", waiting_text="Submitting..."),
+            ComponentInstance(
                 node_id="a245c12d-995b-55ee-5ec7-aa36a6cad629",
                 property_overrides=[
                     ComponentInstanceNodePropertyOverridesWritePropertyOverridesItem(

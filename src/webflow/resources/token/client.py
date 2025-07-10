@@ -45,6 +45,7 @@ class TokenClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             "token/authorized_by",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -109,6 +110,7 @@ class TokenClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             "token/introspect",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -176,6 +178,7 @@ class AsyncTokenClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             "token/authorized_by",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -248,6 +251,7 @@ class AsyncTokenClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             "token/introspect",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )

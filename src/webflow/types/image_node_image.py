@@ -9,6 +9,10 @@ import pydantic
 
 
 class ImageNodeImage(UniversalBaseModel):
+    """
+    The image details of the node
+    """
+
     alt: typing.Optional[str] = None
     asset_id: typing_extensions.Annotated[typing.Optional[str], FieldMetadata(alias="assetId")] = None
 
