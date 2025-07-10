@@ -4,4 +4,4 @@ import typing
 from ......types.collection_item import CollectionItem
 from .multiple_live_items import MultipleLiveItems
 
-ItemsCreateItemLiveRequest = typing.Union[CollectionItem, MultipleLiveItems]
+ItemsCreateItemLiveRequestBody = typing.Union[CollectionItem, MultipleLiveItems]
