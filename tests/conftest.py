@@ -2,6 +2,7 @@
 
 from webflow import Webflow
 import os
+from webflow.environment import WebflowEnvironment
 import pytest
 from webflow import AsyncWebflow
 
@@ -9,12 +10,26 @@ from webflow import AsyncWebflow
 @pytest.fixture
 def client() -> Webflow:
     return Webflow(
-        access_token=os.getenv("ENV_ACCESS_TOKEN", "access_token"), base_url=os.getenv("TESTS_BASE_URL", "base_url")
+        access_token=os.getenv("ENV_ACCESS_TOKEN", "access_token"),
+        environment=WebflowEnvironment(
+            base=os.getenv("TESTS_BASE_URL", "base_url"),
+            data_api=os.getenv("TESTS_BASE_URL", "base_url"),
+            content_delivery_api=os.getenv("TESTS_BASE_URL", "base_url"),
+            production=os.getenv("TESTS_BASE_URL", "base_url"),
+            cdn=os.getenv("TESTS_BASE_URL", "base_url"),
+        ),
     )
 
 
 @pytest.fixture
 def async_client() -> AsyncWebflow:
     return AsyncWebflow(
-        access_token=os.getenv("ENV_ACCESS_TOKEN", "access_token"), base_url=os.getenv("TESTS_BASE_URL", "base_url")
+        access_token=os.getenv("ENV_ACCESS_TOKEN", "access_token"),
+        environment=WebflowEnvironment(
+            base=os.getenv("TESTS_BASE_URL", "base_url"),
+            data_api=os.getenv("TESTS_BASE_URL", "base_url"),
+            content_delivery_api=os.getenv("TESTS_BASE_URL", "base_url"),
+            production=os.getenv("TESTS_BASE_URL", "base_url"),
+            cdn=os.getenv("TESTS_BASE_URL", "base_url"),
+        ),
     )
