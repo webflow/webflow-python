@@ -17,7 +17,11 @@ class ImageNode(UniversalBaseModel):
     Node UUID
     """
 
-    image: typing.Optional[ImageNodeImage] = None
+    image: ImageNodeImage = pydantic.Field()
+    """
+    The image details of the node
+    """
+
     attributes: typing.Optional[typing.Dict[str, str]] = pydantic.Field(default=None)
     """
     The custom attributes of the node
