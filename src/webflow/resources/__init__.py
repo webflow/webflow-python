@@ -16,6 +16,7 @@ from . import (
     token,
     users,
     webhooks,
+    workspaces,
 )
 from .access_groups import AccessGroupsListRequestSort
 from .components import (
@@ -26,10 +27,10 @@ from .components import (
 )
 from .inventory import InventoryUpdateRequestInventoryType
 from .orders import OrdersListRequestStatus, OrdersRefundRequestReason
-from .pages import PageDomWriteNodesItem, UpdateStaticContentResponse
-from .products import ProductsCreateSkuResponse
+from .pages import PageDomWriteNodesItem, PageMetadataWriteOpenGraph, PageMetadataWriteSeo, UpdateStaticContentResponse
+from .products import ProductSkuCreateProduct, ProductSkuCreateSku, ProductsCreateSkuResponse
 from .sites import SitesPublishResponse
-from .users import UsersListRequestSort, UsersUpdateRequestData
+from .users import UsersListRequestSort
 
 __all__ = [
     "AccessGroupsListRequestSort",
@@ -41,11 +42,14 @@ __all__ = [
     "OrdersListRequestStatus",
     "OrdersRefundRequestReason",
     "PageDomWriteNodesItem",
+    "PageMetadataWriteOpenGraph",
+    "PageMetadataWriteSeo",
+    "ProductSkuCreateProduct",
+    "ProductSkuCreateSku",
     "ProductsCreateSkuResponse",
     "SitesPublishResponse",
     "UpdateStaticContentResponse",
     "UsersListRequestSort",
-    "UsersUpdateRequestData",
     "access_groups",
     "assets",
     "collections",
@@ -61,4 +65,5 @@ __all__ = [
     "token",
     "users",
     "webhooks",
+    "workspaces",
 ]
