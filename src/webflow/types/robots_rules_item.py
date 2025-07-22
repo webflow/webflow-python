@@ -4,23 +4,24 @@ from ..core.pydantic_utilities import UniversalBaseModel
 import typing_extensions
 from ..core.serialization import FieldMetadata
 import pydantic
-from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import typing
+from ..core.pydantic_utilities import IS_PYDANTIC_V2
 
 
-class TextNodeWrite(UniversalBaseModel):
+class RobotsRulesItem(UniversalBaseModel):
+    user_agent: typing_extensions.Annotated[str, FieldMetadata(alias="userAgent")] = pydantic.Field()
     """
-    Update a text node
-    """
-
-    node_id: typing_extensions.Annotated[str, FieldMetadata(alias="nodeId")] = pydantic.Field()
-    """
-    Node UUID
+    The user agent the rules apply to.
     """
 
-    text: str = pydantic.Field()
+    allows: typing.Optional[typing.List[str]] = pydantic.Field(default=None)
     """
-    HTML content of the node, including the HTML tag. The HTML tags must be the same as what's returned from the Get Content endpoint.
+    List of paths allowed for this user agent.
+    """
+
+    disallows: typing.Optional[typing.List[str]] = pydantic.Field(default=None)
+    """
+    List of paths disallowed for this user agent.
     """
 
     if IS_PYDANTIC_V2:
