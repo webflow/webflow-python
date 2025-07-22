@@ -57,7 +57,7 @@ async def test_introspect(client: Webflow, async_client: AsyncWebflow) -> None:
                 "userIds": ("list", {0: None}),
             },
         },
-        "application": None,
+        "application": {"id": None, "description": None, "homepage": None, "displayName": None},
     }
     response = client.token.introspect()
     validate_response(response, expected_response, expected_types)
