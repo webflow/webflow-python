@@ -16,19 +16,17 @@ class ComponentNode(UniversalBaseModel):
 
     id: typing.Optional[str] = pydantic.Field(default=None)
     """
-    Node UUID
+    The unique identifier of the component instance node
     """
 
-    component_id: typing_extensions.Annotated[typing.Optional[str], FieldMetadata(alias="componentId")] = (
-        pydantic.Field(default=None)
-    )
+    component_id: typing_extensions.Annotated[str, FieldMetadata(alias="componentId")] = pydantic.Field()
     """
-    Component ID
+    The unique identifier of the component
     """
 
     property_overrides: typing_extensions.Annotated[
-        typing.Optional[typing.List[ComponentProperty]], FieldMetadata(alias="propertyOverrides")
-    ] = pydantic.Field(default=None)
+        typing.List[ComponentProperty], FieldMetadata(alias="propertyOverrides")
+    ] = pydantic.Field()
     """
     List of component properties with overrides for a component instance.
     """
