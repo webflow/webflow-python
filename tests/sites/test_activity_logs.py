@@ -18,9 +18,6 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                 "user": {"id": "6509cd56e90eec668b009712", "displayName": "John Doe"},
                 "resourceId": "654c16c7b229e56bcf26870c",
                 "resourceName": "foo-bar",
-                "newValue": "newValue",
-                "previousValue": "previousValue",
-                "payload": {"key": "value"},
             }
         ],
         "pagination": {"limit": 25, "offset": 0, "total": 1},
@@ -38,9 +35,6 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                     "user": {"id": None, "displayName": None},
                     "resourceId": None,
                     "resourceName": None,
-                    "newValue": None,
-                    "previousValue": None,
-                    "payload": ("dict", {0: (None, None)}),
                 }
             },
         ),
