@@ -2,15 +2,15 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
-from .pagination import Pagination
 from .webhook import Webhook
+from .pagination import Pagination
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
 
 class WebhookList(UniversalBaseModel):
-    pagination: typing.Optional[Pagination] = None
     webhooks: typing.Optional[typing.List[Webhook]] = None
+    pagination: typing.Optional[Pagination] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2
