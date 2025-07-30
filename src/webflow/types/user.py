@@ -57,11 +57,7 @@ class User(UniversalBaseModel):
     The timestamp the user was logged in
     """
 
-    status: typing.Optional[UserStatus] = pydantic.Field(default=None)
-    """
-    The status of the user
-    """
-
+    status: typing.Optional[UserStatus] = None
     access_groups: typing_extensions.Annotated[
         typing.Optional[typing.List[UserAccessGroupsItem]], FieldMetadata(alias="accessGroups")
     ] = pydantic.Field(default=None)
