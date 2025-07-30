@@ -16,6 +16,7 @@ from . import (
     token,
     users,
     webhooks,
+    workspaces,
 )
 from .access_groups import AccessGroupsListRequestSort
 from .components import (
@@ -24,12 +25,23 @@ from .components import (
     ComponentsUpdateContentResponse,
     ComponentsUpdatePropertiesResponse,
 )
-from .inventory import InventoryUpdateRequestInventoryType
+from .inventory import EcommInventoryChangedPayload, InventoryUpdateRequestInventoryType
 from .orders import OrdersListRequestStatus, OrdersRefundRequestReason
-from .pages import PageDomWriteNodesItem, UpdateStaticContentResponse
-from .products import ProductsCreateSkuResponse
+from .pages import PageDomWriteNodesItem, PageMetadataWriteOpenGraph, PageMetadataWriteSeo, UpdateStaticContentResponse
+from .products import ProductSkuCreateProduct, ProductSkuCreateSku, ProductsCreateSkuResponse
 from .sites import SitesPublishResponse
-from .users import UsersListRequestSort, UsersUpdateRequestData
+from .users import (
+    UserAccountAddedPayload,
+    UserAccountAddedPayloadPayload,
+    UserAccountAddedPayloadPayloadData,
+    UserAccountDeletedPayload,
+    UserAccountDeletedPayloadPayload,
+    UserAccountDeletedPayloadPayloadData,
+    UserAccountUpdatedPayload,
+    UserAccountUpdatedPayloadPayload,
+    UserAccountUpdatedPayloadPayloadData,
+    UsersListRequestSort,
+)
 
 __all__ = [
     "AccessGroupsListRequestSort",
@@ -37,15 +49,28 @@ __all__ = [
     "ComponentPropertiesWritePropertiesItem",
     "ComponentsUpdateContentResponse",
     "ComponentsUpdatePropertiesResponse",
+    "EcommInventoryChangedPayload",
     "InventoryUpdateRequestInventoryType",
     "OrdersListRequestStatus",
     "OrdersRefundRequestReason",
     "PageDomWriteNodesItem",
+    "PageMetadataWriteOpenGraph",
+    "PageMetadataWriteSeo",
+    "ProductSkuCreateProduct",
+    "ProductSkuCreateSku",
     "ProductsCreateSkuResponse",
     "SitesPublishResponse",
     "UpdateStaticContentResponse",
+    "UserAccountAddedPayload",
+    "UserAccountAddedPayloadPayload",
+    "UserAccountAddedPayloadPayloadData",
+    "UserAccountDeletedPayload",
+    "UserAccountDeletedPayloadPayload",
+    "UserAccountDeletedPayloadPayloadData",
+    "UserAccountUpdatedPayload",
+    "UserAccountUpdatedPayloadPayload",
+    "UserAccountUpdatedPayloadPayloadData",
     "UsersListRequestSort",
-    "UsersUpdateRequestData",
     "access_groups",
     "assets",
     "collections",
@@ -61,4 +86,5 @@ __all__ = [
     "token",
     "users",
     "webhooks",
+    "workspaces",
 ]
