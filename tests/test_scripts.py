@@ -14,7 +14,6 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                 "canCopy": False,
                 "displayName": "Alert",
                 "hostedLocation": "https://cdn.webflow.io/.../alert-0.0.1.js",
-                "integrityHash": "integrityHash",
                 "createdOn": "2022-10-26T00:28:54.191Z",
                 "lastUpdated": "lastUpdated",
                 "version": "0.0.1",
@@ -24,7 +23,6 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                 "canCopy": False,
                 "displayName": "Alert",
                 "hostedLocation": "https://cdn.webflow.io/.../alert-0.0.2.js",
-                "integrityHash": "integrityHash",
                 "createdOn": "2022-10-26T00:28:54.191Z",
                 "lastUpdated": "lastUpdated",
                 "version": "0.0.2",
@@ -39,7 +37,8 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                 "lastUpdated": "lastUpdated",
                 "version": "1.0.0",
             },
-        ]
+        ],
+        "pagination": {"limit": 100, "offset": 0, "total": 3},
     }
     expected_types: typing.Any = {
         "registeredScripts": (
@@ -50,7 +49,6 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                     "canCopy": None,
                     "displayName": None,
                     "hostedLocation": None,
-                    "integrityHash": None,
                     "createdOn": None,
                     "lastUpdated": None,
                     "version": None,
@@ -60,7 +58,6 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                     "canCopy": None,
                     "displayName": None,
                     "hostedLocation": None,
-                    "integrityHash": None,
                     "createdOn": None,
                     "lastUpdated": None,
                     "version": None,
@@ -76,7 +73,8 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                     "version": None,
                 },
             },
-        )
+        ),
+        "pagination": {"limit": None, "offset": None, "total": None},
     }
     response = client.scripts.list(site_id="580e63e98c9a982ac9b8b741")
     validate_response(response, expected_response, expected_types)
@@ -131,7 +129,6 @@ async def test_register_inline(client: Webflow, async_client: AsyncWebflow) -> N
         "canCopy": False,
         "displayName": "Alert",
         "hostedLocation": "https://uploads-ssl.webflow.com/6258612d1ee792848f805dcf%2F64b6c769ff52ba6c3d904a91%2F660d6e15b3d1696f2d2b1447%2Falert-0.0.1.js",
-        "integrityHash": "integrityHash",
         "createdOn": "2022-10-26T00:28:54.191Z",
         "lastUpdated": "lastUpdated",
         "version": "0.0.1",
@@ -141,7 +138,6 @@ async def test_register_inline(client: Webflow, async_client: AsyncWebflow) -> N
         "canCopy": None,
         "displayName": None,
         "hostedLocation": None,
-        "integrityHash": None,
         "createdOn": None,
         "lastUpdated": None,
         "version": None,

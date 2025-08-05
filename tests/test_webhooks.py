@@ -9,7 +9,6 @@ import datetime
 
 async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
     expected_response: typing.Any = {
-        "pagination": {"limit": 100, "offset": 0, "total": 100},
         "webhooks": [
             {
                 "id": "57ca0a9e418c504a6e1acbb6",
@@ -42,9 +41,9 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                 "createdOn": "2016-07-19T01:43:40Z",
             },
         ],
+        "pagination": {"limit": 100, "offset": 0, "total": 100},
     }
     expected_types: typing.Any = {
-        "pagination": {"limit": None, "offset": None, "total": None},
         "webhooks": (
             "list",
             {
@@ -80,6 +79,7 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                 },
             },
         ),
+        "pagination": {"limit": None, "offset": None, "total": None},
     }
     response = client.webhooks.list(site_id="580e63e98c9a982ac9b8b741")
     validate_response(response, expected_response, expected_types)
@@ -95,7 +95,6 @@ async def test_create(client: Webflow, async_client: AsyncWebflow) -> None:
         "url": "https://webhook.site/7f7f7f7f-7f7f-7f7f-7f7f-7f7f7f7f7f7f",
         "workspaceId": "4f4e46fd476ea8c507000001",
         "siteId": "562ac0395358780a1f5e6fbd",
-        "filter": {"name": "My Form"},
         "lastTriggered": "2023-02-08T23:59:28Z",
         "createdOn": "2022-11-08T23:59:28Z",
     }
@@ -105,7 +104,6 @@ async def test_create(client: Webflow, async_client: AsyncWebflow) -> None:
         "url": None,
         "workspaceId": None,
         "siteId": None,
-        "filter": {"name": None},
         "lastTriggered": "datetime",
         "createdOn": "datetime",
     }
@@ -141,7 +139,6 @@ async def test_get(client: Webflow, async_client: AsyncWebflow) -> None:
         "url": "https://webhook.site/7f7f7f7f-7f7f-7f7f-7f7f-7f7f7f7f7f7f",
         "workspaceId": "4f4e46fd476ea8c507000001",
         "siteId": "562ac0395358780a1f5e6fbd",
-        "filter": {"name": "My Form"},
         "lastTriggered": "2023-02-08T23:59:28Z",
         "createdOn": "2022-11-08T23:59:28Z",
     }
@@ -151,7 +148,6 @@ async def test_get(client: Webflow, async_client: AsyncWebflow) -> None:
         "url": None,
         "workspaceId": None,
         "siteId": None,
-        "filter": {"name": None},
         "lastTriggered": "datetime",
         "createdOn": "datetime",
     }

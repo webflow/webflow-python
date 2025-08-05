@@ -22,6 +22,9 @@ service:
       request:
         name: ComponentsListRequest
         query-parameters:
+          branchId:
+            type: optional<string>
+            docs: Scope the operation to work on a specific branch.
           limit:
             type: optional<double>
             docs: 'Maximum number of records to be returned (max limit: 100)'
@@ -33,6 +36,7 @@ service:
       response:
         docs: Request was successful
         type: root.ComponentList
+        status-code: 200
       errors:
         - root.BadRequestError
         - root.UnauthorizedError
@@ -42,6 +46,8 @@ service:
       examples:
         - path-parameters:
             site_id: 580e63e98c9a982ac9b8b741
+          query-parameters:
+            branchId: 68026fa68ef6dc744c75b833
           response:
             body:
               components:
@@ -59,13 +65,9 @@ service:
                   readonly: true
                 - id: 6258612d1ee792848f805dcf
                   name: Card
-                  group: Buttons
-                  description: A button component that can be used across the site
                   readonly: true
                 - id: 68a2b1d1ee792848f805dcf
                   name: Nav
-                  group: Buttons
-                  description: A button component that can be used across the site
                   readonly: true
               pagination:
                 limit: 20
@@ -77,7 +79,8 @@ service:
       auth: true
       docs: >
         Get static content from a component definition. This includes text
-        nodes, image nodes and nested component instances.
+        nodes, image nodes, select nodes, text input nodes, submit button nodes,
+        and nested component instances.
 
         To retrieve dynamic content set by component properties, use the [get
         component
@@ -109,6 +112,9 @@ service:
             docs: >-
               Unique identifier for a specific locale. Applicable, when using
               localization.
+          branchId:
+            type: optional<string>
+            docs: Scope the operation to work on a specific branch.
           limit:
             type: optional<double>
             docs: 'Maximum number of records to be returned (max limit: 100)'
@@ -120,6 +126,7 @@ service:
       response:
         docs: Request was successful
         type: root.ComponentDom
+        status-code: 200
       errors:
         - root.BadRequestError
         - root.UnauthorizedError
@@ -127,76 +134,58 @@ service:
         - root.TooManyRequestsError
         - root.InternalServerError
       examples:
-        - name: ComponentDOM
-          path-parameters:
+        - path-parameters:
             site_id: 580e63e98c9a982ac9b8b741
             component_id: 8505ba55-ef72-629e-f85c-33e4b703d48b
           query-parameters:
             localeId: 65427cf400e02b306eaa04a0
+            branchId: 68026fa68ef6dc744c75b833
           response:
             body:
               componentId: 69118560-d0bc-15fc-bbf8-b8fe5f6535b5
               nodes:
-                - type: component-instance
-                  id: a245c12d-995b-55ee-5ec7-aa36a6cad623
-                  componentId: nodes
+                - id: id
+                  text: {}
+                  attributes:
+                    key: value
+                  type: text
+                - id: id
+                  text: {}
+                  attributes:
+                    key: value
+                  type: text
+                - id: id
+                  image: {}
+                  attributes:
+                    key: value
+                  type: image
+                - id: id
+                  placeholder: placeholder
+                  attributes:
+                    key: value
+                  type: text-input
+                - id: id
+                  choices:
+                    - value: value
+                      text: text
+                  attributes:
+                    key: value
+                  type: select
+                - id: id
+                  value: value
+                  waitingText: waitingText
+                  attributes:
+                    key: value
+                  type: submit-button
+                - id: id
+                  componentId: componentId
                   propertyOverrides:
                     - propertyId: 7dd14c08-2e96-8d3d-2b19-b5c03642a0f0
-                - type: component-instance
-                  id: a245c12d-995b-55ee-5ec7-aa36a6cad627
-                  componentId: nodes
-                  propertyOverrides:
-                    - propertyId: 7dd14c08-2e96-8d3d-2b19-b5c03642a0f0
-                - type: component-instance
-                  id: a245c12d-995b-55ee-5ec7-aa36a6cad629
-                  componentId: nodes
-                  propertyOverrides:
-                    - propertyId: 7dd14c08-2e96-8d3d-2b19-b5c03642a0f0
-                - type: component-instance
-                  id: a245c12d-995b-55ee-5ec7-aa36a6cad631
-                  componentId: 6258612d1ee792848f805dcf
-                  propertyOverrides:
-                    - propertyId: a245c12d-995b-55ee-5ec7-aa36a6cad633
-                      type: Plain Text
-                      text:
-                        text: Don't Panic!
-                    - propertyId: a245c12d-995b-55ee-5ec7-aa36a6cad635
-                      type: Rich Text
-                      text:
-                        html: <div><p>Always know where your towel is.</p></div>
+                  type: component-instance
               pagination:
-                limit: 4
+                limit: 7
                 offset: 0
-                total: 4
-        - name: LocalizedComponentDOM
-          path-parameters:
-            site_id: 580e63e98c9a982ac9b8b741
-            component_id: 8505ba55-ef72-629e-f85c-33e4b703d48b
-          query-parameters:
-            localeId: 65427cf400e02b306eaa04a0
-          response:
-            body:
-              componentId: 69118560-d0bc-15fc-bbf8-b8fe5f6535b5
-              nodes:
-                - type: component-instance
-                  id: 69118560-d0bc-15fc-bbf8-b8fe5f6535b8
-                  componentId: nodes
-                  propertyOverrides:
-                    - propertyId: 7dd14c08-2e96-8d3d-2b19-b5c03642a0f0
-                - type: component-instance
-                  id: 8ebfb409-7493-3bca-5d48-0e547befb960
-                  componentId: nodes
-                  propertyOverrides:
-                    - propertyId: 7dd14c08-2e96-8d3d-2b19-b5c03642a0f0
-                - type: component-instance
-                  id: 69118560-d0bc-15fc-bbf8-b8fe5f6535c2
-                  componentId: 69118560-d0bc-15fc-bbf8-b8fe5f6535b5
-                  propertyOverrides:
-                    - propertyId: a245c12d-995b-55ee-5ec7-aa36a6cad623
-              pagination:
-                limit: 100
-                offset: 0
-                total: 3
+                total: 7
     update-content:
       path: /sites/{site_id}/components/{component_id}/dom
       method: POST
@@ -244,6 +233,9 @@ service:
             docs: >-
               Unique identifier for a specific locale. Applicable, when using
               localization.
+          branchId:
+            type: optional<string>
+            docs: Scope the operation to work on a specific branch.
         body:
           properties:
             nodes:
@@ -255,6 +247,7 @@ service:
       response:
         docs: Request was successful
         type: ComponentsUpdateContentResponse
+        status-code: 200
       errors:
         - root.BadRequestError
         - root.UnauthorizedError
@@ -268,6 +261,7 @@ service:
             component_id: 8505ba55-ef72-629e-f85c-33e4b703d48b
           query-parameters:
             localeId: 65427cf400e02b306eaa04a0
+            branchId: 68026fa68ef6dc744c75b833
           request:
             nodes:
               - nodeId: a245c12d-995b-55ee-5ec7-aa36a6cad623
@@ -276,6 +270,17 @@ service:
                 text: >-
                   <div><h3>Don't Panic!</h3><p>Always know where your towel
                   is.</p></div>
+              - nodeId: a245c12d-995b-55ee-5ec7-aa36a6cad635
+                choices:
+                  - value: choice-1
+                    text: First choice
+                  - value: choice-2
+                    text: Second choice
+              - nodeId: a245c12d-995b-55ee-5ec7-aa36a6cad642
+                placeholder: Enter something here...
+              - nodeId: a245c12d-995b-55ee-5ec7-aa36a6cad671
+                value: Submit
+                waitingText: Submitting...
               - nodeId: a245c12d-995b-55ee-5ec7-aa36a6cad629
                 propertyOverrides:
                   - propertyId: 7dd14c08-2e96-8d3d-2b19-b5c03642a0f0
@@ -291,10 +296,10 @@ service:
       method: GET
       auth: true
       docs: >
-        Get the property default values of a component definition.
+        Get the default property values of a component definition.
 
 
-        <Note>If you do not provide a Locale ID in your request, the response
+        <Note>If you do not include a `localeId` in your request, the response
         will return any properties that can be localized from the Primary
         locale.</Note>
 
@@ -318,6 +323,9 @@ service:
             docs: >-
               Unique identifier for a specific locale. Applicable, when using
               localization.
+          branchId:
+            type: optional<string>
+            docs: Scope the operation to work on a specific branch.
           limit:
             type: optional<double>
             docs: 'Maximum number of records to be returned (max limit: 100)'
@@ -329,6 +337,7 @@ service:
       response:
         docs: Request was successful
         type: root.ComponentProperties
+        status-code: 200
       errors:
         - root.BadRequestError
         - root.UnauthorizedError
@@ -341,6 +350,7 @@ service:
             component_id: 8505ba55-ef72-629e-f85c-33e4b703d48b
           query-parameters:
             localeId: 65427cf400e02b306eaa04a0
+            branchId: 68026fa68ef6dc744c75b833
           response:
             body:
               componentId: 658205daa3e8206a523b5ad4
@@ -366,18 +376,17 @@ service:
       method: POST
       auth: true
       docs: >
-        Update the property default values of a component definition in a
+        Update the default property values of a component definition in a
         specificed locale.
 
 
-        Before making updates:
-
-        1. Use the [get component
+        Before making updates, use the [get component
         properties](/data/reference/pages-and-components/components/get-properties)
-        endpoint to identify available properties
+        endpoint to identify properties that can be updated in a secondary
+        locale.
 
 
-        <Note>The request requires a secondary locale ID. If a locale is
+        <Note>The request requires a secondary locale ID. If a `localeId` is
         missing, the request will not be processed and will result in an
         error.</Note>
 
@@ -401,6 +410,9 @@ service:
             docs: >-
               Unique identifier for a specific locale. Applicable, when using
               localization.
+          branchId:
+            type: optional<string>
+            docs: Scope the operation to work on a specific branch.
         body:
           properties:
             properties:
@@ -412,6 +424,7 @@ service:
       response:
         docs: Request was successful
         type: ComponentsUpdatePropertiesResponse
+        status-code: 200
       errors:
         - root.BadRequestError
         - root.UnauthorizedError
@@ -424,6 +437,7 @@ service:
             component_id: 8505ba55-ef72-629e-f85c-33e4b703d48b
           query-parameters:
             localeId: 65427cf400e02b306eaa04a0
+            branchId: 68026fa68ef6dc744c75b833
           request:
             properties:
               - propertyId: a245c12d-995b-55ee-5ec7-aa36a6cad623
@@ -442,8 +456,12 @@ types:
   ComponentDomWriteNodesItem:
     discriminated: false
     union:
-      - root.TextNodeWrite
-      - root.ComponentInstanceNodePropertyOverridesWrite
+      - type: root.Text Node
+      - type: root.Component Instance
+      - type: root.Select
+      - type: root.Text Input
+      - type: root.Submit Button
+      - type: root.Search Button
     source:
       openapi: ../../../openapi/referenced-specs/v2.yml
     inline: true
