@@ -16,9 +16,8 @@ from ...errors.internal_server_error import InternalServerError
 from json.decoder import JSONDecodeError
 from ...core.api_error import ApiError
 from ...types.page import Page
-import datetime as dt
-from ...types.page_seo import PageSeo
-from ...types.page_open_graph import PageOpenGraph
+from .types.page_metadata_write_seo import PageMetadataWriteSeo
+from .types.page_metadata_write_open_graph import PageMetadataWriteOpenGraph
 from ...core.serialization import convert_and_respect_annotation_metadata
 from ...types.dom import Dom
 from ...errors.forbidden_error import ForbiddenError
@@ -86,6 +85,7 @@ class PagesClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/pages",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "localeId": locale_id,
@@ -200,6 +200,7 @@ class PagesClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"pages/{jsonable_encoder(page_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "localeId": locale_id,
@@ -274,28 +275,19 @@ class PagesClient:
         self,
         page_id: str,
         *,
-        id: str,
         locale_id: typing.Optional[str] = None,
-        site_id: typing.Optional[str] = OMIT,
         title: typing.Optional[str] = OMIT,
         slug: typing.Optional[str] = OMIT,
-        parent_id: typing.Optional[str] = OMIT,
-        collection_id: typing.Optional[str] = OMIT,
-        created_on: typing.Optional[dt.datetime] = OMIT,
-        last_updated: typing.Optional[dt.datetime] = OMIT,
-        archived: typing.Optional[bool] = OMIT,
-        draft: typing.Optional[bool] = OMIT,
-        can_branch: typing.Optional[bool] = OMIT,
-        is_branch: typing.Optional[bool] = OMIT,
-        is_members_only: typing.Optional[bool] = OMIT,
-        seo: typing.Optional[PageSeo] = OMIT,
-        open_graph: typing.Optional[PageOpenGraph] = OMIT,
-        page_locale_id: typing.Optional[str] = OMIT,
-        published_path: typing.Optional[str] = OMIT,
+        seo: typing.Optional[PageMetadataWriteSeo] = OMIT,
+        open_graph: typing.Optional[PageMetadataWriteOpenGraph] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> Page:
         """
         Update Page-level metadata, including SEO and Open Graph fields.
+
+        <Note>
+          Note: When updating Page Metadata in secondary locales, you may only add `slug` to the request if your Site has the [Advanced or Enterprise Localization](https://webflow.com/localization) add-on.
+        </Note>
 
         Required scope | `pages:write`
 
@@ -304,59 +296,20 @@ class PagesClient:
         page_id : str
             Unique identifier for a Page
 
-        id : str
-            Unique identifier for the Page
-
         locale_id : typing.Optional[str]
             Unique identifier for a specific locale. Applicable, when using localization.
 
-        site_id : typing.Optional[str]
-            Unique identifier for the Site
-
         title : typing.Optional[str]
-            Title of the Page
+            Title for the page
 
         slug : typing.Optional[str]
-            slug of the Page (derived from title)
+            Slug for the page
 
-        parent_id : typing.Optional[str]
-            Identifier of the parent folder
-
-        collection_id : typing.Optional[str]
-            Unique identifier for a linked Collection, value will be null if the Page is not part of a Collection.
-
-        created_on : typing.Optional[dt.datetime]
-            The date the Page was created
-
-        last_updated : typing.Optional[dt.datetime]
-            The date the Page was most recently updated
-
-        archived : typing.Optional[bool]
-            Whether the Page has been archived
-
-        draft : typing.Optional[bool]
-            Whether the Page is a draft
-
-        can_branch : typing.Optional[bool]
-            Indicates whether the Page supports [Page Branching](https://university.webflow.com/lesson/page-branching)
-
-        is_branch : typing.Optional[bool]
-            Indicates whether the Page is a Branch of another Page [Page Branching](https://university.webflow.com/lesson/page-branching)
-
-        is_members_only : typing.Optional[bool]
-            Indicates whether the Page is restricted by [Memberships Controls](https://university.webflow.com/lesson/webflow-memberships-overview#how-to-manage-page-restrictions)
-
-        seo : typing.Optional[PageSeo]
+        seo : typing.Optional[PageMetadataWriteSeo]
             SEO-related fields for the Page
 
-        open_graph : typing.Optional[PageOpenGraph]
+        open_graph : typing.Optional[PageMetadataWriteOpenGraph]
             Open Graph fields for the Page
-
-        page_locale_id : typing.Optional[str]
-            Unique ID of the page locale
-
-        published_path : typing.Optional[str]
-            Relative path of the published page URL
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -368,9 +321,11 @@ class PagesClient:
 
         Examples
         --------
-        import datetime
-
-        from webflow import PageOpenGraph, PageSeo, Webflow
+        from webflow import Webflow
+        from webflow.resources.pages import (
+            PageMetadataWriteOpenGraph,
+            PageMetadataWriteSeo,
+        )
 
         client = Webflow(
             access_token="YOUR_ACCESS_TOKEN",
@@ -378,60 +333,39 @@ class PagesClient:
         client.pages.update_page_settings(
             page_id="63c720f9347c2139b248e552",
             locale_id="65427cf400e02b306eaa04a0",
-            id="6596da6045e56dee495bcbba",
-            site_id="6258612d1ee792848f805dcf",
             title="Guide to the Galaxy",
             slug="guide-to-the-galaxy",
-            created_on=datetime.datetime.fromisoformat(
-                "2024-03-11 10:42:00+00:00",
-            ),
-            last_updated=datetime.datetime.fromisoformat(
-                "2024-03-11 10:42:42+00:00",
-            ),
-            archived=False,
-            draft=False,
-            can_branch=True,
-            is_branch=False,
-            seo=PageSeo(
+            seo=PageMetadataWriteSeo(
                 title="The Ultimate Hitchhiker's Guide to the Galaxy",
                 description="Everything you need to know about the galaxy, from avoiding Vogon poetry to the importance of towels.",
             ),
-            open_graph=PageOpenGraph(
+            open_graph=PageMetadataWriteOpenGraph(
                 title="Explore the Cosmos with The Ultimate Guide",
                 title_copied=False,
                 description="Dive deep into the mysteries of the universe with your guide to everything galactic.",
                 description_copied=False,
             ),
-            page_locale_id="653fd9af6a07fc9cfd7a5e57",
-            published_path="/en-us/guide-to-the-galaxy",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             f"pages/{jsonable_encoder(page_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="PUT",
             params={
                 "localeId": locale_id,
             },
             json={
-                "id": id,
-                "siteId": site_id,
                 "title": title,
                 "slug": slug,
-                "parentId": parent_id,
-                "collectionId": collection_id,
-                "createdOn": created_on,
-                "lastUpdated": last_updated,
-                "archived": archived,
-                "draft": draft,
-                "canBranch": can_branch,
-                "isBranch": is_branch,
-                "isMembersOnly": is_members_only,
-                "seo": convert_and_respect_annotation_metadata(object_=seo, annotation=PageSeo, direction="write"),
-                "openGraph": convert_and_respect_annotation_metadata(
-                    object_=open_graph, annotation=PageOpenGraph, direction="write"
+                "seo": convert_and_respect_annotation_metadata(
+                    object_=seo, annotation=PageMetadataWriteSeo, direction="write"
                 ),
-                "localeId": locale_id,
-                "publishedPath": published_path,
+                "openGraph": convert_and_respect_annotation_metadata(
+                    object_=open_graph, annotation=PageMetadataWriteOpenGraph, direction="write"
+                ),
+            },
+            headers={
+                "content-type": "application/json",
             },
             request_options=request_options,
             omit=OMIT,
@@ -510,10 +444,11 @@ class PagesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> Dom:
         """
-        Get static content from a static page. This includes text nodes, image nodes and component instances.
-        To retrieve the contents of components in the page use the [get component content](/data/reference/pages-and-components/components/get-content) endpoint.
+        Get content from a static page. This includes text nodes, image nodes, select nodes, text input nodes, submit button nodes, and component instances with [property overrides](https://help.webflow.com/hc/en-us/articles/33961219350547-Component-properties#how-to-modify-property-values-on-component-instances).
 
-        <Note>If you do not provide a Locale ID in your request, the response will return any content that can be localized from the Primary locale.</Note>
+        To retrieve the static content of a component instance, use the [Get Component Content](/data/reference/pages-and-components/components/get-content) endpoint.
+
+        <Note>If you do not include a `localeId` in your request, the response will return any content that can be localized from the Primary locale.</Note>
 
         Required scope | `pages:read`
 
@@ -553,6 +488,7 @@ class PagesClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"pages/{jsonable_encoder(page_id)}/dom",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "localeId": locale_id,
@@ -678,9 +614,13 @@ class PagesClient:
         Examples
         --------
         from webflow import (
-            ComponentInstanceNodePropertyOverridesWrite,
+            ComponentInstance,
             ComponentInstanceNodePropertyOverridesWritePropertyOverridesItem,
-            TextNodeWrite,
+            Select,
+            SelectNodeWriteChoicesItem,
+            SubmitButton,
+            TextInput,
+            TextNode,
             Webflow,
         )
 
@@ -691,15 +631,37 @@ class PagesClient:
             page_id="63c720f9347c2139b248e552",
             locale_id="localeId",
             nodes=[
-                TextNodeWrite(
+                TextNode(
                     node_id="a245c12d-995b-55ee-5ec7-aa36a6cad623",
                     text="<h1>The Hitchhiker's Guide to the Galaxy</h1>",
                 ),
-                TextNodeWrite(
+                TextNode(
                     node_id="a245c12d-995b-55ee-5ec7-aa36a6cad627",
                     text="<div><h3>Don't Panic!</h3><p>Always know where your towel is.</p></div>",
                 ),
-                ComponentInstanceNodePropertyOverridesWrite(
+                Select(
+                    node_id="a245c12d-995b-55ee-5ec7-aa36a6cad635",
+                    choices=[
+                        SelectNodeWriteChoicesItem(
+                            value="choice-1",
+                            text="First choice",
+                        ),
+                        SelectNodeWriteChoicesItem(
+                            value="choice-2",
+                            text="Second choice",
+                        ),
+                    ],
+                ),
+                TextInput(
+                    node_id="a245c12d-995b-55ee-5ec7-aa36a6cad642",
+                    placeholder="Enter something here...",
+                ),
+                SubmitButton(
+                    node_id="a245c12d-995b-55ee-5ec7-aa36a6cad671",
+                    value="Submit",
+                    waiting_text="Submitting...",
+                ),
+                ComponentInstance(
                     node_id="a245c12d-995b-55ee-5ec7-aa36a6cad629",
                     property_overrides=[
                         ComponentInstanceNodePropertyOverridesWritePropertyOverridesItem(
@@ -717,6 +679,7 @@ class PagesClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"pages/{jsonable_encoder(page_id)}/dom",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             params={
                 "localeId": locale_id,
@@ -870,6 +833,7 @@ class AsyncPagesClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/pages",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "localeId": locale_id,
@@ -992,6 +956,7 @@ class AsyncPagesClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"pages/{jsonable_encoder(page_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "localeId": locale_id,
@@ -1066,28 +1031,19 @@ class AsyncPagesClient:
         self,
         page_id: str,
         *,
-        id: str,
         locale_id: typing.Optional[str] = None,
-        site_id: typing.Optional[str] = OMIT,
         title: typing.Optional[str] = OMIT,
         slug: typing.Optional[str] = OMIT,
-        parent_id: typing.Optional[str] = OMIT,
-        collection_id: typing.Optional[str] = OMIT,
-        created_on: typing.Optional[dt.datetime] = OMIT,
-        last_updated: typing.Optional[dt.datetime] = OMIT,
-        archived: typing.Optional[bool] = OMIT,
-        draft: typing.Optional[bool] = OMIT,
-        can_branch: typing.Optional[bool] = OMIT,
-        is_branch: typing.Optional[bool] = OMIT,
-        is_members_only: typing.Optional[bool] = OMIT,
-        seo: typing.Optional[PageSeo] = OMIT,
-        open_graph: typing.Optional[PageOpenGraph] = OMIT,
-        page_locale_id: typing.Optional[str] = OMIT,
-        published_path: typing.Optional[str] = OMIT,
+        seo: typing.Optional[PageMetadataWriteSeo] = OMIT,
+        open_graph: typing.Optional[PageMetadataWriteOpenGraph] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> Page:
         """
         Update Page-level metadata, including SEO and Open Graph fields.
+
+        <Note>
+          Note: When updating Page Metadata in secondary locales, you may only add `slug` to the request if your Site has the [Advanced or Enterprise Localization](https://webflow.com/localization) add-on.
+        </Note>
 
         Required scope | `pages:write`
 
@@ -1096,59 +1052,20 @@ class AsyncPagesClient:
         page_id : str
             Unique identifier for a Page
 
-        id : str
-            Unique identifier for the Page
-
         locale_id : typing.Optional[str]
             Unique identifier for a specific locale. Applicable, when using localization.
 
-        site_id : typing.Optional[str]
-            Unique identifier for the Site
-
         title : typing.Optional[str]
-            Title of the Page
+            Title for the page
 
         slug : typing.Optional[str]
-            slug of the Page (derived from title)
+            Slug for the page
 
-        parent_id : typing.Optional[str]
-            Identifier of the parent folder
-
-        collection_id : typing.Optional[str]
-            Unique identifier for a linked Collection, value will be null if the Page is not part of a Collection.
-
-        created_on : typing.Optional[dt.datetime]
-            The date the Page was created
-
-        last_updated : typing.Optional[dt.datetime]
-            The date the Page was most recently updated
-
-        archived : typing.Optional[bool]
-            Whether the Page has been archived
-
-        draft : typing.Optional[bool]
-            Whether the Page is a draft
-
-        can_branch : typing.Optional[bool]
-            Indicates whether the Page supports [Page Branching](https://university.webflow.com/lesson/page-branching)
-
-        is_branch : typing.Optional[bool]
-            Indicates whether the Page is a Branch of another Page [Page Branching](https://university.webflow.com/lesson/page-branching)
-
-        is_members_only : typing.Optional[bool]
-            Indicates whether the Page is restricted by [Memberships Controls](https://university.webflow.com/lesson/webflow-memberships-overview#how-to-manage-page-restrictions)
-
-        seo : typing.Optional[PageSeo]
+        seo : typing.Optional[PageMetadataWriteSeo]
             SEO-related fields for the Page
 
-        open_graph : typing.Optional[PageOpenGraph]
+        open_graph : typing.Optional[PageMetadataWriteOpenGraph]
             Open Graph fields for the Page
-
-        page_locale_id : typing.Optional[str]
-            Unique ID of the page locale
-
-        published_path : typing.Optional[str]
-            Relative path of the published page URL
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1161,9 +1078,12 @@ class AsyncPagesClient:
         Examples
         --------
         import asyncio
-        import datetime
 
-        from webflow import AsyncWebflow, PageOpenGraph, PageSeo
+        from webflow import AsyncWebflow
+        from webflow.resources.pages import (
+            PageMetadataWriteOpenGraph,
+            PageMetadataWriteSeo,
+        )
 
         client = AsyncWebflow(
             access_token="YOUR_ACCESS_TOKEN",
@@ -1174,32 +1094,18 @@ class AsyncPagesClient:
             await client.pages.update_page_settings(
                 page_id="63c720f9347c2139b248e552",
                 locale_id="65427cf400e02b306eaa04a0",
-                id="6596da6045e56dee495bcbba",
-                site_id="6258612d1ee792848f805dcf",
                 title="Guide to the Galaxy",
                 slug="guide-to-the-galaxy",
-                created_on=datetime.datetime.fromisoformat(
-                    "2024-03-11 10:42:00+00:00",
-                ),
-                last_updated=datetime.datetime.fromisoformat(
-                    "2024-03-11 10:42:42+00:00",
-                ),
-                archived=False,
-                draft=False,
-                can_branch=True,
-                is_branch=False,
-                seo=PageSeo(
+                seo=PageMetadataWriteSeo(
                     title="The Ultimate Hitchhiker's Guide to the Galaxy",
                     description="Everything you need to know about the galaxy, from avoiding Vogon poetry to the importance of towels.",
                 ),
-                open_graph=PageOpenGraph(
+                open_graph=PageMetadataWriteOpenGraph(
                     title="Explore the Cosmos with The Ultimate Guide",
                     title_copied=False,
                     description="Dive deep into the mysteries of the universe with your guide to everything galactic.",
                     description_copied=False,
                 ),
-                page_locale_id="653fd9af6a07fc9cfd7a5e57",
-                published_path="/en-us/guide-to-the-galaxy",
             )
 
 
@@ -1207,30 +1113,23 @@ class AsyncPagesClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"pages/{jsonable_encoder(page_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="PUT",
             params={
                 "localeId": locale_id,
             },
             json={
-                "id": id,
-                "siteId": site_id,
                 "title": title,
                 "slug": slug,
-                "parentId": parent_id,
-                "collectionId": collection_id,
-                "createdOn": created_on,
-                "lastUpdated": last_updated,
-                "archived": archived,
-                "draft": draft,
-                "canBranch": can_branch,
-                "isBranch": is_branch,
-                "isMembersOnly": is_members_only,
-                "seo": convert_and_respect_annotation_metadata(object_=seo, annotation=PageSeo, direction="write"),
-                "openGraph": convert_and_respect_annotation_metadata(
-                    object_=open_graph, annotation=PageOpenGraph, direction="write"
+                "seo": convert_and_respect_annotation_metadata(
+                    object_=seo, annotation=PageMetadataWriteSeo, direction="write"
                 ),
-                "localeId": locale_id,
-                "publishedPath": published_path,
+                "openGraph": convert_and_respect_annotation_metadata(
+                    object_=open_graph, annotation=PageMetadataWriteOpenGraph, direction="write"
+                ),
+            },
+            headers={
+                "content-type": "application/json",
             },
             request_options=request_options,
             omit=OMIT,
@@ -1309,10 +1208,11 @@ class AsyncPagesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> Dom:
         """
-        Get static content from a static page. This includes text nodes, image nodes and component instances.
-        To retrieve the contents of components in the page use the [get component content](/data/reference/pages-and-components/components/get-content) endpoint.
+        Get content from a static page. This includes text nodes, image nodes, select nodes, text input nodes, submit button nodes, and component instances with [property overrides](https://help.webflow.com/hc/en-us/articles/33961219350547-Component-properties#how-to-modify-property-values-on-component-instances).
 
-        <Note>If you do not provide a Locale ID in your request, the response will return any content that can be localized from the Primary locale.</Note>
+        To retrieve the static content of a component instance, use the [Get Component Content](/data/reference/pages-and-components/components/get-content) endpoint.
+
+        <Note>If you do not include a `localeId` in your request, the response will return any content that can be localized from the Primary locale.</Note>
 
         Required scope | `pages:read`
 
@@ -1360,6 +1260,7 @@ class AsyncPagesClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"pages/{jsonable_encoder(page_id)}/dom",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "localeId": locale_id,
@@ -1488,9 +1389,13 @@ class AsyncPagesClient:
 
         from webflow import (
             AsyncWebflow,
-            ComponentInstanceNodePropertyOverridesWrite,
+            ComponentInstance,
             ComponentInstanceNodePropertyOverridesWritePropertyOverridesItem,
-            TextNodeWrite,
+            Select,
+            SelectNodeWriteChoicesItem,
+            SubmitButton,
+            TextInput,
+            TextNode,
         )
 
         client = AsyncWebflow(
@@ -1503,15 +1408,37 @@ class AsyncPagesClient:
                 page_id="63c720f9347c2139b248e552",
                 locale_id="localeId",
                 nodes=[
-                    TextNodeWrite(
+                    TextNode(
                         node_id="a245c12d-995b-55ee-5ec7-aa36a6cad623",
                         text="<h1>The Hitchhiker's Guide to the Galaxy</h1>",
                     ),
-                    TextNodeWrite(
+                    TextNode(
                         node_id="a245c12d-995b-55ee-5ec7-aa36a6cad627",
                         text="<div><h3>Don't Panic!</h3><p>Always know where your towel is.</p></div>",
                     ),
-                    ComponentInstanceNodePropertyOverridesWrite(
+                    Select(
+                        node_id="a245c12d-995b-55ee-5ec7-aa36a6cad635",
+                        choices=[
+                            SelectNodeWriteChoicesItem(
+                                value="choice-1",
+                                text="First choice",
+                            ),
+                            SelectNodeWriteChoicesItem(
+                                value="choice-2",
+                                text="Second choice",
+                            ),
+                        ],
+                    ),
+                    TextInput(
+                        node_id="a245c12d-995b-55ee-5ec7-aa36a6cad642",
+                        placeholder="Enter something here...",
+                    ),
+                    SubmitButton(
+                        node_id="a245c12d-995b-55ee-5ec7-aa36a6cad671",
+                        value="Submit",
+                        waiting_text="Submitting...",
+                    ),
+                    ComponentInstance(
                         node_id="a245c12d-995b-55ee-5ec7-aa36a6cad629",
                         property_overrides=[
                             ComponentInstanceNodePropertyOverridesWritePropertyOverridesItem(
@@ -1532,6 +1459,7 @@ class AsyncPagesClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"pages/{jsonable_encoder(page_id)}/dom",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             params={
                 "localeId": locale_id,
