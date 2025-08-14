@@ -6,12 +6,15 @@ import typing
 from ..utilities import validate_response
 from webflow import CollectionItemPostSingle
 from webflow import CollectionItemPostSingleFieldData
+from webflow.resources.collections.resources.items import ItemsDeleteItemsRequestItemsItem
 from webflow import CollectionItemWithIdInput
 from webflow import CollectionItemWithIdInputFieldData
 from webflow import CollectionItem
 from webflow import CollectionItemFieldData
+from webflow.resources.collections.resources.items import ItemsDeleteItemsLiveRequestItemsItem
 from webflow.resources.collections.resources.items import SingleCmsItem
 from webflow import CollectionItemPatchSingleFieldData
+from webflow.resources.collections.resources.items import ItemIDs
 
 
 async def test_list_items(client: Webflow, async_client: AsyncWebflow) -> None:
@@ -140,42 +143,123 @@ async def test_create_item(client: Webflow, async_client: AsyncWebflow) -> None:
 async def test_delete_items(client: Webflow, async_client: AsyncWebflow) -> None:
     # Type ignore to avoid mypy complaining about the function not being meant to return a value
     assert (
-        client.collections.items.delete_items(collection_id="580e63fc8c9a982ac9b8b745")  # type: ignore[func-returns-value]
+        client.collections.items.delete_items(
+            collection_id="580e63fc8c9a982ac9b8b745",
+            items=[ItemsDeleteItemsRequestItemsItem(id="580e64008c9a982ac9b8b754")],
+        )  # type: ignore[func-returns-value]
         is None
     )
 
     assert (
-        await async_client.collections.items.delete_items(collection_id="580e63fc8c9a982ac9b8b745")  # type: ignore[func-returns-value]
+        await async_client.collections.items.delete_items(
+            collection_id="580e63fc8c9a982ac9b8b745",
+            items=[ItemsDeleteItemsRequestItemsItem(id="580e64008c9a982ac9b8b754")],
+        )  # type: ignore[func-returns-value]
         is None
     )
 
 
 async def test_update_items(client: Webflow, async_client: AsyncWebflow) -> None:
     expected_response: typing.Any = {
-        "id": "id",
-        "cmsLocaleId": "653ad57de882f528b32e810e",
-        "lastPublished": "2023-03-17T18:47:35.560Z",
-        "lastUpdated": "2023-03-17T18:47:35.560Z",
-        "createdOn": "2023-03-17T18:47:35.560Z",
-        "isArchived": True,
-        "isDraft": True,
-        "fieldData": {
-            "name": "My new item",
-            "slug": "my-new-item",
-            "date": "2022-11-18T00:00:00.000Z",
-            "featured": False,
-            "color": "#db4b68",
-        },
+        "items": [
+            {
+                "id": "66f6ed9576ddacf3149d5ea6",
+                "cmsLocaleId": "66f6e966c9e1dc700a857ca5",
+                "lastPublished": "2024-09-27T17:38:29.066Z",
+                "lastUpdated": "2024-09-27T17:38:29.066Z",
+                "createdOn": "2024-09-27T17:38:29.066Z",
+                "isArchived": False,
+                "isDraft": False,
+                "fieldData": {"name": "Ne Paniquez Pas", "slug": "ne-paniquez-pas", "featured": False},
+            },
+            {
+                "id": "66f6ed9576ddacf3149d5ea6",
+                "cmsLocaleId": "66f6e966c9e1dc700a857ca4",
+                "lastPublished": "2024-09-27T17:38:29.066Z",
+                "lastUpdated": "2024-09-27T17:38:29.066Z",
+                "createdOn": "2024-09-27T17:38:29.066Z",
+                "isArchived": False,
+                "isDraft": False,
+                "fieldData": {"name": "No Entrar en Pánico", "slug": "no-entrar-en-panico", "featured": False},
+            },
+            {
+                "id": "66f6ed9576ddacf3149d5eaa",
+                "cmsLocaleId": "66f6e966c9e1dc700a857ca5",
+                "lastPublished": "2024-09-27T17:38:29.066Z",
+                "lastUpdated": "2024-09-27T17:38:29.066Z",
+                "createdOn": "2024-09-27T17:38:29.066Z",
+                "isArchived": False,
+                "isDraft": False,
+                "fieldData": {
+                    "name": "Au Revoir et Merci pour Tous les Poissons",
+                    "slug": "au-revoir-et-merci",
+                    "featured": False,
+                },
+            },
+            {
+                "id": "66f6ed9576ddacf3149d5eaa",
+                "cmsLocaleId": "66f6e966c9e1dc700a857ca4",
+                "lastPublished": "2024-09-27T17:38:29.066Z",
+                "lastUpdated": "2024-09-27T17:38:29.066Z",
+                "createdOn": "2024-09-27T17:38:29.066Z",
+                "isArchived": False,
+                "isDraft": False,
+                "fieldData": {
+                    "name": "Hasta Luego y Gracias por Todo el Pescado",
+                    "slug": "hasta-luego-y-gracias",
+                    "featured": False,
+                },
+            },
+        ],
+        "pagination": {"limit": 25, "offset": 0, "total": 4},
     }
     expected_types: typing.Any = {
-        "id": None,
-        "cmsLocaleId": None,
-        "lastPublished": None,
-        "lastUpdated": None,
-        "createdOn": None,
-        "isArchived": None,
-        "isDraft": None,
-        "fieldData": {"name": None, "slug": None},
+        "items": (
+            "list",
+            {
+                0: {
+                    "id": None,
+                    "cmsLocaleId": None,
+                    "lastPublished": None,
+                    "lastUpdated": None,
+                    "createdOn": None,
+                    "isArchived": None,
+                    "isDraft": None,
+                    "fieldData": {"name": None, "slug": None},
+                },
+                1: {
+                    "id": None,
+                    "cmsLocaleId": None,
+                    "lastPublished": None,
+                    "lastUpdated": None,
+                    "createdOn": None,
+                    "isArchived": None,
+                    "isDraft": None,
+                    "fieldData": {"name": None, "slug": None},
+                },
+                2: {
+                    "id": None,
+                    "cmsLocaleId": None,
+                    "lastPublished": None,
+                    "lastUpdated": None,
+                    "createdOn": None,
+                    "isArchived": None,
+                    "isDraft": None,
+                    "fieldData": {"name": None, "slug": None},
+                },
+                3: {
+                    "id": None,
+                    "cmsLocaleId": None,
+                    "lastPublished": None,
+                    "lastUpdated": None,
+                    "createdOn": None,
+                    "isArchived": None,
+                    "isDraft": None,
+                    "fieldData": {"name": None, "slug": None},
+                },
+            },
+        ),
+        "pagination": {"limit": None, "offset": None, "total": None},
     }
     response = client.collections.items.update_items(
         collection_id="580e63fc8c9a982ac9b8b745",
@@ -366,12 +450,18 @@ async def test_create_item_live(client: Webflow, async_client: AsyncWebflow) -> 
 async def test_delete_items_live(client: Webflow, async_client: AsyncWebflow) -> None:
     # Type ignore to avoid mypy complaining about the function not being meant to return a value
     assert (
-        client.collections.items.delete_items_live(collection_id="580e63fc8c9a982ac9b8b745")  # type: ignore[func-returns-value]
+        client.collections.items.delete_items_live(
+            collection_id="580e63fc8c9a982ac9b8b745",
+            items=[ItemsDeleteItemsLiveRequestItemsItem(id="580e64008c9a982ac9b8b754")],
+        )  # type: ignore[func-returns-value]
         is None
     )
 
     assert (
-        await async_client.collections.items.delete_items_live(collection_id="580e63fc8c9a982ac9b8b745")  # type: ignore[func-returns-value]
+        await async_client.collections.items.delete_items_live(
+            collection_id="580e63fc8c9a982ac9b8b745",
+            items=[ItemsDeleteItemsLiveRequestItemsItem(id="580e64008c9a982ac9b8b754")],
+        )  # type: ignore[func-returns-value]
         is None
     )
 
@@ -382,31 +472,31 @@ async def test_update_items_live(client: Webflow, async_client: AsyncWebflow) ->
             {
                 "id": "66f6ed9576ddacf3149d5ea6",
                 "cmsLocaleId": "66f6e966c9e1dc700a857ca5",
-                "lastPublished": "2023-03-17T18:47:35.560Z",
+                "lastPublished": "2024-09-27T17:38:29.066Z",
                 "lastUpdated": "2024-09-27T17:38:29.066Z",
                 "createdOn": "2024-09-27T17:38:29.066Z",
-                "isArchived": True,
-                "isDraft": True,
+                "isArchived": False,
+                "isDraft": False,
                 "fieldData": {"name": "Ne Paniquez Pas", "slug": "ne-paniquez-pas", "featured": False},
             },
             {
                 "id": "66f6ed9576ddacf3149d5ea6",
                 "cmsLocaleId": "66f6e966c9e1dc700a857ca4",
-                "lastPublished": "2023-03-17T18:47:35.560Z",
+                "lastPublished": "2024-09-27T17:38:29.066Z",
                 "lastUpdated": "2024-09-27T17:38:29.066Z",
                 "createdOn": "2024-09-27T17:38:29.066Z",
-                "isArchived": True,
-                "isDraft": True,
+                "isArchived": False,
+                "isDraft": False,
                 "fieldData": {"name": "No Entrar en Pánico", "slug": "no-entrar-en-panico", "featured": False},
             },
             {
                 "id": "66f6ed9576ddacf3149d5eaa",
                 "cmsLocaleId": "66f6e966c9e1dc700a857ca5",
-                "lastPublished": "2023-03-17T18:47:35.560Z",
+                "lastPublished": "2024-09-27T17:38:29.066Z",
                 "lastUpdated": "2024-09-27T17:38:29.066Z",
                 "createdOn": "2024-09-27T17:38:29.066Z",
-                "isArchived": True,
-                "isDraft": True,
+                "isArchived": False,
+                "isDraft": False,
                 "fieldData": {
                     "name": "Au Revoir et Merci pour Tous les Poissons",
                     "slug": "au-revoir-et-merci",
@@ -416,11 +506,11 @@ async def test_update_items_live(client: Webflow, async_client: AsyncWebflow) ->
             {
                 "id": "66f6ed9576ddacf3149d5eaa",
                 "cmsLocaleId": "66f6e966c9e1dc700a857ca4",
-                "lastPublished": "2023-03-17T18:47:35.560Z",
+                "lastPublished": "2024-09-27T17:38:29.066Z",
                 "lastUpdated": "2024-09-27T17:38:29.066Z",
                 "createdOn": "2024-09-27T17:38:29.066Z",
-                "isArchived": True,
-                "isDraft": True,
+                "isArchived": False,
+                "isDraft": False,
                 "fieldData": {
                     "name": "Hasta Luego y Gracias por Todo el Pescado",
                     "slug": "hasta-luego-y-gracias",
@@ -801,10 +891,14 @@ async def test_publish_item(client: Webflow, async_client: AsyncWebflow) -> None
         "errors": ["Staging item ID 643fd856d66b6528195ee2cf not found."],
     }
     expected_types: typing.Any = {"publishedItemIds": ("list", {0: None, 1: None}), "errors": ("list", {0: None})}
-    response = client.collections.items.publish_item(collection_id="580e63fc8c9a982ac9b8b745", item_ids=["itemIds"])
+    response = client.collections.items.publish_item(
+        collection_id="580e63fc8c9a982ac9b8b745",
+        request=ItemIDs(item_ids=["643fd856d66b6528195ee2ca", "643fd856d66b6528195ee2cb", "643fd856d66b6528195ee2cc"]),
+    )
     validate_response(response, expected_response, expected_types)
 
     async_response = await async_client.collections.items.publish_item(
-        collection_id="580e63fc8c9a982ac9b8b745", item_ids=["itemIds"]
+        collection_id="580e63fc8c9a982ac9b8b745",
+        request=ItemIDs(item_ids=["643fd856d66b6528195ee2ca", "643fd856d66b6528195ee2cb", "643fd856d66b6528195ee2cc"]),
     )
     validate_response(async_response, expected_response, expected_types)
