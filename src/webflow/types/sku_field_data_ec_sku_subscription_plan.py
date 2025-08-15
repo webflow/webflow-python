@@ -9,6 +9,10 @@ from ..core.pydantic_utilities import IS_PYDANTIC_V2
 
 
 class SkuFieldDataEcSkuSubscriptionPlan(UniversalBaseModel):
+    """
+    [Subscription plan](https://help.webflow.com/hc/en-us/articles/33961432087955-Add-and-manage-products-and-categories#subscription) for the SKU
+    """
+
     interval: typing.Optional[SkuFieldDataEcSkuSubscriptionPlanInterval] = pydantic.Field(default=None)
     """
     Interval of subscription renewal

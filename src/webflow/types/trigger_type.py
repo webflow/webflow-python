@@ -18,7 +18,9 @@ TriggerType = typing.Union[
         "collection_item_created",
         "collection_item_changed",
         "collection_item_deleted",
+        "collection_item_published",
         "collection_item_unpublished",
+        "comment_created",
     ],
     typing.Any,
 ]
