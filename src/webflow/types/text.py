@@ -7,6 +7,10 @@ from ..core.pydantic_utilities import IS_PYDANTIC_V2
 
 
 class Text(UniversalBaseModel):
+    """
+    The text content of the node
+    """
+
     html: typing.Optional[str] = pydantic.Field(default=None)
     """
     The HTML content of the text node.
