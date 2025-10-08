@@ -18,6 +18,9 @@ from json.decoder import JSONDecodeError
 from .....core.api_error import ApiError
 from .types.items_create_item_request import ItemsCreateItemRequest
 from .....types.collection_item import CollectionItem
+from .....types.bulk_collection_item import BulkCollectionItem
+from .....types.collection_item_list import CollectionItemList
+from .types.multiple_items import MultipleItems
 from .....core.serialization import convert_and_respect_annotation_metadata
 from .types.items_delete_items_request_items_item import ItemsDeleteItemsRequestItemsItem
 from .....errors.conflict_error import ConflictError
@@ -188,7 +191,7 @@ class ItemsClient:
         *,
         request: ItemsCreateItemRequest,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> CollectionItem:
+    ) -> typing.Union[CollectionItem, CollectionItemList]:
         """
         Create Item(s) in a Collection.
 
@@ -209,7 +212,7 @@ class ItemsClient:
 
         Returns
         -------
-        CollectionItem
+        typing.Union[CollectionItem, CollectionItemList]
             Request was successful
 
         Examples
@@ -246,13 +249,23 @@ class ItemsClient:
         )
         try:
             if 200 <= _response.status_code < 300:
-                return typing.cast(
-                    CollectionItem,
-                    parse_obj_as(
-                        type_=CollectionItem,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
+                # Check if the request is a MultipleItems object
+                if isinstance(request, MultipleItems):
+                    return typing.cast(
+                        CollectionItemList,
+                        parse_obj_as(
+                            type_=CollectionItemList,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                else:
+                    return typing.cast(
+                        CollectionItem,
+                        parse_obj_as(
+                            type_=CollectionItem,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
             if _response.status_code == 400:
                 raise BadRequestError(
                     typing.cast(
