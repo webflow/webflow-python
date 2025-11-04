@@ -1,3 +1,5 @@
+imports:
+  root: ../__package__.yml
 types:
   ItemsListItemsRequestSortBy:
     enum:
@@ -20,11 +22,11 @@ types:
     source:
       openapi: ../../../openapi/referenced-specs/v2.yml
     inline: true
-  ItemsCreateItemRequest:
+  ItemsCreateItemRequestBody:
     discriminated: false
     union:
       - root.CollectionItemPostSingle
-      - Multiple Items
+      - type: Multiple Items
     source:
       openapi: ../../../openapi/referenced-specs/v2.yml
   ItemsDeleteItemsRequestItemsItem:
@@ -38,6 +40,13 @@ types:
     source:
       openapi: ../../../openapi/referenced-specs/v2.yml
     inline: true
+  ItemsUpdateItemsResponse:
+    discriminated: false
+    union:
+      - type: root.CollectionItem
+      - type: root.CollectionItemList
+    source:
+      openapi: ../../../openapi/referenced-specs/v2.yml
   ItemsListItemsLiveRequestSortBy:
     enum:
       - lastPublished
@@ -59,16 +68,16 @@ types:
     source:
       openapi: ../../../openapi/referenced-specs/v2.yml
     inline: true
-  ItemsCreateItemLiveRequest:
+  ItemsCreateItemLiveRequestBody:
     discriminated: false
     union:
-      - root.CollectionItem
-      - Multiple Live Items
+      - type: root.CollectionItem
+      - type: Multiple Live Items
     source:
       openapi: ../../../openapi/referenced-specs/v2.yml
   ItemsDeleteItemsLiveRequestItemsItem:
     properties:
-      itemId:
+      id:
         type: string
         docs: Unique identifier for the Item
       cmsLocaleIds:
@@ -113,20 +122,52 @@ types:
   CreateBulkCollectionItemRequestBodyFieldData:
     discriminated: false
     union:
-      - Single CMS Item
+      - type: Single CMS Item
       - docs: A list of CMS items to create
         type: list<CreateBulkCollectionItemRequestBodyFieldDataItem>
     source:
       openapi: ../../../openapi/referenced-specs/v2.yml
     inline: true
+  Item IDs:
+    docs: An array of Item IDs in a single locale
+    properties:
+      itemIds: optional<list<string>>
+    source:
+      openapi: ../../../openapi/referenced-specs/v2.yml
+    inline: true
+  ItemsPublishItemRequestItemsItemsItem:
+    properties:
+      id:
+        type: string
+        docs: The ID of the CMS item
+      cmsLocaleIds:
+        type: optional<list<string>>
+        docs: Array of identifiers for the locales where the item will be published
+    source:
+      openapi: ../../../openapi/referenced-specs/v2.yml
+    inline: true
+  Item IDs with Locales:
+    docs: An array of Item IDs with included `cmsLocaleIds`
+    properties:
+      items: optional<list<ItemsPublishItemRequestItemsItemsItem>>
+    source:
+      openapi: ../../../openapi/referenced-specs/v2.yml
+    inline: true
+  ItemsPublishItemRequest:
+    discriminated: false
+    union:
+      - type: Item IDs
+        docs: An array of Item IDs in a single locale
+      - type: Item IDs with Locales
+        docs: An array of Item IDs with included `cmsLocaleIds`
+    source:
+      openapi: ../../../openapi/referenced-specs/v2.yml
   ItemsPublishItemResponse:
     properties:
       publishedItemIds: optional<list<string>>
       errors: optional<list<string>>
     source:
       openapi: ../../../openapi/referenced-specs/v2.yml
-imports:
-  root: ../__package__.yml
 service:
   auth: false
   base-path: ''
@@ -134,7 +175,9 @@ service:
     list-items:
       path: /collections/{collection_id}/items
       method: GET
-      auth: true
+      auth:
+        - OAuth2:
+            - cms:read
       docs: |
         List of all Items within a Collection.
 
@@ -166,10 +209,13 @@ service:
             docs: 'Maximum number of records to be returned (max limit: 100)'
           name:
             type: optional<string>
-            docs: The name of the item(s)
+            docs: Filter by the exact name of the item(s)
           slug:
             type: optional<string>
-            docs: The slug of the item
+            docs: Filter by the exact slug of the item
+          lastPublished:
+            type: optional<root.ItemsListItemsRequestLastPublished>
+            docs: Filter by the last published date of the item(s)
           sortBy:
             type: optional<ItemsListItemsRequestSortBy>
             docs: Sort results by the provided value
@@ -179,6 +225,7 @@ service:
       response:
         docs: Request was successful
         type: root.CollectionItemList
+        status-code: 200
       errors:
         - root.BadRequestError
         - root.UnauthorizedError
@@ -188,6 +235,14 @@ service:
       examples:
         - path-parameters:
             collection_id: 580e63fc8c9a982ac9b8b745
+          query-parameters:
+            cmsLocaleId: cmsLocaleId
+            offset: 1.1
+            limit: 1.1
+            name: name
+            slug: slug
+            sortBy: lastPublished
+            sortOrder: asc
           response:
             body:
               items:
@@ -222,14 +277,16 @@ service:
     create-item:
       path: /collections/{collection_id}/items
       method: POST
-      auth: true
+      auth:
+        - OAuth2:
+            - cms:write
       docs: >
         Create Item(s) in a Collection.
 
 
 
         To create items across multiple locales, please use [this
-        endpoint.](/v2.0.0/data/reference/cms/collection-items/staged-items/create-items)
+        endpoint.](/data/reference/cms/collection-items/staged-items/create-items)
 
 
         Required scope | `CMS:write`
@@ -241,11 +298,20 @@ service:
           docs: Unique identifier for a Collection
       display-name: Create Collection Item(s)
       request:
-        body: ItemsCreateItemRequest
+        body: ItemsCreateItemRequestBody
+        query-parameters:
+          skipInvalidFiles:
+            type: optional<boolean>
+            default: true
+            docs: >-
+              When true, invalid files are skipped and processing continues.
+              When false, the entire request fails if any file is invalid.
+        name: ItemsCreateItemRequest
         content-type: application/json
       response:
         docs: Request was successful
         type: root.CollectionItem
+        status-code: 202
       errors:
         - root.BadRequestError
         - root.UnauthorizedError
@@ -256,15 +322,44 @@ service:
         - name: SingleItem
           path-parameters:
             collection_id: 580e63fc8c9a982ac9b8b745
+          query-parameters:
+            skipInvalidFiles: true
           request:
             isArchived: false
             isDraft: false
             fieldData:
-              name: Pan Galactic Gargle Blaster Recipe
-              slug: pan-galactic-gargle-blaster
-              date: '2022-11-18T00:00:00.000Z'
-              featured: true
-              color: '#db4b68'
+              name: The Hitchhiker's Guide to the Galaxy
+              slug: hitchhikers-guide-to-the-galaxy
+              plain-text: Don't Panic.
+              rich-text: >-
+                <h3>A Guide to Interstellar Travel</h3><p>A towel is about the
+                most massively useful thing an interstellar hitchhiker can have.
+                <strong>Don't forget yours!</strong></p>
+              main-image:
+                fileId: 62b720ef280c7a7a3be8cabe
+                url: /files/62b720ef280c7a7a3be8cabe_image.png
+              image-gallery:
+                - fileId: 62b720ef280c7a7a3be8cabd
+                  url: /files/62b720ef280c7a7a3be8cabd_image.png
+                - fileId: 62b720ef280c7a7a3be8cabe
+                  url: /files/62b720ef280c7a7a3be8cabe_image.png
+              intro-video: https://www.youtube.com/watch?v=aJ83KAggd-4
+              official-site: >-
+                https://hitchhikers.fandom.com/wiki/The_Hitchhiker%27s_Guide_to_the_Galaxy
+              contact-email: zaphod.beeblebrox@heartofgold.gov
+              support-phone: 424-242-4242
+              answer-to-everything: 42
+              release-date: '1979-10-12T00:00:00.000Z'
+              is-featured: true
+              brand-color: '#000000'
+              category: 62b720ef280c7a7a3be8cabf
+              author: 62b720ef280c7a7a3be8cab0
+              tags:
+                - 62b720ef280c7a7a3be8cab1
+                - 62b720ef280c7a7a3be8cab2
+              downloadable-asset:
+                fileId: 62b720ef280c7a7a3be8cab3
+                url: /files/62b720ef280c7a7a3be8cab3_document.pdf
           response:
             body:
               id: 42b720ef280c7a7a3be8cabe
@@ -275,14 +370,43 @@ service:
               isArchived: false
               isDraft: false
               fieldData:
-                name: Pan Galactic Gargle Blaster Recipe
-                slug: pan-galactic-gargle-blaster
-                color: '#db4b68'
-                date: '2022-11-18T00:00:00.000Z'
-                featured: true
+                name: The Hitchhiker's Guide to the Galaxy
+                slug: hitchhikers-guide-to-the-galaxy
+                plain-text: Don't Panic.
+                rich-text: >-
+                  <h3>A Guide to Interstellar Travel</h3><p>A towel is about the
+                  most massively useful thing an interstellar hitchhiker can
+                  have. <strong>Don't forget yours!</strong></p>
+                main-image:
+                  fileId: 62b720ef280c7a7a3be8cabe
+                  url: /files/62b720ef280c7a7a3be8cabe_image.png
+                image-gallery:
+                  - fileId: 62b720ef280c7a7a3be8cabd
+                    url: /files/62b720ef280c7a7a3be8cabd_image.png
+                  - fileId: 62b720ef280c7a7a3be8cabe
+                    url: /files/62b720ef280c7a7a3be8cabe_image.png
+                intro-video: https://www.youtube.com/watch?v=aJ83KAggd-4
+                official-site: >-
+                  https://hitchhikers.fandom.com/wiki/The_Hitchhiker%27s_Guide_to_the_Galaxy
+                contact-email: zaphod.beeblebrox@heartofgold.gov
+                support-phone: 424-242-4242
+                answer-to-everything: 42
+                release-date: '1979-10-12T00:00:00.000Z'
+                is-featured: true
+                brand-color: '#000000'
+                category: 62b720ef280c7a7a3be8cabf
+                author: 62b720ef280c7a7a3be8cab0
+                tags:
+                  - 62b720ef280c7a7a3be8cab1
+                  - 62b720ef280c7a7a3be8cab2
+                downloadable-asset:
+                  fileId: 62b720ef280c7a7a3be8cab3
+                  url: /files/62b720ef280c7a7a3be8cab3_document.pdf
         - name: MultipleItems
           path-parameters:
             collection_id: 580e63fc8c9a982ac9b8b745
+          query-parameters:
+            skipInvalidFiles: true
           request:
             items:
               - isArchived: false
@@ -317,13 +441,15 @@ service:
     delete-items:
       path: /collections/{collection_id}/items
       method: DELETE
-      auth: true
+      auth:
+        - OAuth2:
+            - cms:write
       docs: >
         Delete Items from a Collection.
 
 
-        **Note:** If the `cmsLocaleId` parameter is undefined or empty and the
-        items are localized, items will be deleted only in the primary locale.
+        <Tip title="Localization Tip">Items will only be deleted in the primary
+        locale unless a `cmsLocaleId` is included in the request.</Tip>
 
 
         Required scope | `CMS:write`
@@ -338,7 +464,7 @@ service:
         name: ItemsDeleteItemsRequest
         body:
           properties:
-            items: optional<list<ItemsDeleteItemsRequestItemsItem>>
+            items: list<ItemsDeleteItemsRequestItemsItem>
         content-type: application/json
       errors:
         - root.BadRequestError
@@ -350,17 +476,24 @@ service:
       examples:
         - path-parameters:
             collection_id: 580e63fc8c9a982ac9b8b745
-          request: {}
+          request:
+            items:
+              - id: 580e64008c9a982ac9b8b754
     update-items:
       path: /collections/{collection_id}/items
       method: PATCH
-      auth: true
+      auth:
+        - OAuth2:
+            - cms:write
       docs: >
-        Update a single item or multiple items (up to 100) in a Collection.
+        Update a single item or multiple items in a Collection.
 
 
-        **Note:** If the `cmsLocaleId` parameter is undefined or empty and the
-        items are localized, items will be updated only in the primary locale.
+        The limit for this endpoint is 100 items.
+
+
+        <Tip title="Localization Tip">Items will only be updated in the primary
+        locale, unless a `cmsLocaleId` is included in the request.</Tip>
 
 
         Required scope | `CMS:write`
@@ -373,13 +506,21 @@ service:
       display-name: Update Collection Items
       request:
         name: ItemsUpdateItemsRequest
+        query-parameters:
+          skipInvalidFiles:
+            type: optional<boolean>
+            default: true
+            docs: >-
+              When true, invalid files are skipped and processing continues.
+              When false, the entire request fails if any file is invalid.
         body:
           properties:
             items: optional<list<root.CollectionItemWithIdInput>>
         content-type: application/json
       response:
         docs: Request was successful
-        type: root.CollectionItem
+        type: ItemsUpdateItemsResponse
+        status-code: 200
       errors:
         - root.BadRequestError
         - root.UnauthorizedError
@@ -390,6 +531,8 @@ service:
         - name: LocalizedItems
           path-parameters:
             collection_id: 580e63fc8c9a982ac9b8b745
+          query-parameters:
+            skipInvalidFiles: true
           request:
             items:
               - id: 66f6ed9576ddacf3149d5ea6
@@ -418,22 +561,60 @@ service:
                   featured: false
           response:
             body:
-              id: id
-              cmsLocaleId: 653ad57de882f528b32e810e
-              lastPublished: '2023-03-17T18:47:35.560Z'
-              lastUpdated: '2023-03-17T18:47:35.560Z'
-              createdOn: '2023-03-17T18:47:35.560Z'
-              isArchived: true
-              isDraft: true
-              fieldData:
-                name: My new item
-                slug: my-new-item
-                date: '2022-11-18T00:00:00.000Z'
-                featured: false
-                color: '#db4b68'
+              items:
+                - id: 66f6ed9576ddacf3149d5ea6
+                  cmsLocaleId: 66f6e966c9e1dc700a857ca5
+                  lastPublished: '2024-09-27T17:38:29.066Z'
+                  lastUpdated: '2024-09-27T17:38:29.066Z'
+                  createdOn: '2024-09-27T17:38:29.066Z'
+                  isArchived: false
+                  isDraft: false
+                  fieldData:
+                    name: Ne Paniquez Pas
+                    slug: ne-paniquez-pas
+                    featured: false
+                - id: 66f6ed9576ddacf3149d5ea6
+                  cmsLocaleId: 66f6e966c9e1dc700a857ca4
+                  lastPublished: '2024-09-27T17:38:29.066Z'
+                  lastUpdated: '2024-09-27T17:38:29.066Z'
+                  createdOn: '2024-09-27T17:38:29.066Z'
+                  isArchived: false
+                  isDraft: false
+                  fieldData:
+                    name: No Entrar en Pánico
+                    slug: no-entrar-en-panico
+                    featured: false
+                - id: 66f6ed9576ddacf3149d5eaa
+                  cmsLocaleId: 66f6e966c9e1dc700a857ca5
+                  lastPublished: '2024-09-27T17:38:29.066Z'
+                  lastUpdated: '2024-09-27T17:38:29.066Z'
+                  createdOn: '2024-09-27T17:38:29.066Z'
+                  isArchived: false
+                  isDraft: false
+                  fieldData:
+                    name: Au Revoir et Merci pour Tous les Poissons
+                    slug: au-revoir-et-merci
+                    featured: false
+                - id: 66f6ed9576ddacf3149d5eaa
+                  cmsLocaleId: 66f6e966c9e1dc700a857ca4
+                  lastPublished: '2024-09-27T17:38:29.066Z'
+                  lastUpdated: '2024-09-27T17:38:29.066Z'
+                  createdOn: '2024-09-27T17:38:29.066Z'
+                  isArchived: false
+                  isDraft: false
+                  fieldData:
+                    name: Hasta Luego y Gracias por Todo el Pescado
+                    slug: hasta-luego-y-gracias
+                    featured: false
+              pagination:
+                limit: 25
+                offset: 0
+                total: 4
         - name: MultipleItems
           path-parameters:
             collection_id: 580e63fc8c9a982ac9b8b745
+          query-parameters:
+            skipInvalidFiles: true
           request:
             items:
               - id: 580e64008c9a982ac9b8b754
@@ -454,113 +635,48 @@ service:
                   department: Product
           response:
             body:
-              id: id
-              cmsLocaleId: 653ad57de882f528b32e810e
-              lastPublished: '2023-03-17T18:47:35.560Z'
-              lastUpdated: '2023-03-17T18:47:35.560Z'
-              createdOn: '2023-03-17T18:47:35.560Z'
-              isArchived: true
-              isDraft: true
-              fieldData:
-                name: My new item
-                slug: my-new-item
-                date: '2022-11-18T00:00:00.000Z'
-                featured: false
-                color: '#db4b68'
-        - name: Multiple items updated across multiple locales
-          path-parameters:
-            collection_id: 580e63fc8c9a982ac9b8b745
-          request:
-            items:
-              - id: 66f6ed9576ddacf3149d5ea6
-                cmsLocaleId: 66f6e966c9e1dc700a857ca5
-                fieldData:
-                  name: Ne Paniquez Pas
-                  slug: ne-paniquez-pas
-                  featured: false
-              - id: 66f6ed9576ddacf3149d5ea6
-                cmsLocaleId: 66f6e966c9e1dc700a857ca4
-                fieldData:
-                  name: No Entrar en Pánico
-                  slug: no-entrar-en-panico
-                  featured: false
-              - id: 66f6ed9576ddacf3149d5eaa
-                cmsLocaleId: 66f6e966c9e1dc700a857ca5
-                fieldData:
-                  name: Au Revoir et Merci pour Tous les Poissons
-                  slug: au-revoir-et-merci
-                  featured: false
-              - id: 66f6ed9576ddacf3149d5eaa
-                cmsLocaleId: 66f6e966c9e1dc700a857ca4
-                fieldData:
-                  name: Hasta Luego y Gracias por Todo el Pescado
-                  slug: hasta-luego-y-gracias
-                  featured: false
-          response:
-            body:
-              id: id
-              cmsLocaleId: 653ad57de882f528b32e810e
-              lastPublished: '2023-03-17T18:47:35.560Z'
-              lastUpdated: '2023-03-17T18:47:35.560Z'
-              createdOn: '2023-03-17T18:47:35.560Z'
-              isArchived: true
-              isDraft: true
-              fieldData:
-                name: My new item
-                slug: my-new-item
-                date: '2022-11-18T00:00:00.000Z'
-                featured: false
-                color: '#db4b68'
-        - name: Mulitple items updated in a single locale
-          path-parameters:
-            collection_id: 580e63fc8c9a982ac9b8b745
-          request:
-            items:
-              - id: 66f6ed9576ddacf3149d5ea6
-                cmsLocaleId: 66f6e966c9e1dc700a857ca5
-                fieldData:
-                  name: Ne Paniquez Pas
-                  slug: ne-paniquez-pas
-                  featured: false
-              - id: 66f6ed9576ddacf3149d5ea6
-                cmsLocaleId: 66f6e966c9e1dc700a857ca4
-                fieldData:
-                  name: No Entrar en Pánico
-                  slug: no-entrar-en-panico
-                  featured: false
-              - id: 66f6ed9576ddacf3149d5eaa
-                cmsLocaleId: 66f6e966c9e1dc700a857ca5
-                fieldData:
-                  name: Au Revoir et Merci pour Tous les Poissons
-                  slug: au-revoir-et-merci
-                  featured: false
-              - id: 66f6ed9576ddacf3149d5eaa
-                cmsLocaleId: 66f6e966c9e1dc700a857ca4
-                fieldData:
-                  name: Hasta Luego y Gracias por Todo el Pescado
-                  slug: hasta-luego-y-gracias
-                  featured: false
-          response:
-            body:
-              id: id
-              cmsLocaleId: 653ad57de882f528b32e810e
-              lastPublished: '2023-03-17T18:47:35.560Z'
-              lastUpdated: '2023-03-17T18:47:35.560Z'
-              createdOn: '2023-03-17T18:47:35.560Z'
-              isArchived: true
-              isDraft: true
-              fieldData:
-                name: My new item
-                slug: my-new-item
-                date: '2022-11-18T00:00:00.000Z'
-                featured: false
-                color: '#db4b68'
+              items:
+                - id: 62b720ef280c7a7a3be8cabe
+                  cmsLocaleId: 66f6e966c9e1dc700a857ca3
+                  lastPublished: '2022-06-30T13:35:20.878Z'
+                  lastUpdated: '2022-06-25T14:51:27.809Z'
+                  createdOn: '2022-06-25T14:51:27.809Z'
+                  isArchived: false
+                  isDraft: false
+                  fieldData:
+                    name: Senior Data Analyst
+                    slug: senior-data-analyst
+                    url: https://boards.greenhouse.io/webflow/jobs/26567701
+                    department: Data
+                - id: 62c880ef281c7b7b4cf9dabc
+                  cmsLocaleId: 66f6e966c9e1dc700a857ca3
+                  lastPublished: '2023-04-15T10:25:18.123Z'
+                  lastUpdated: '2023-04-10T11:45:30.567Z'
+                  createdOn: '2023-04-10T11:45:30.567Z'
+                  isArchived: false
+                  isDraft: false
+                  fieldData:
+                    name: Product Manager
+                    slug: product-manager
+                    url: https://boards.greenhouse.io/webflow/jobs/31234567
+                    department: Product
+              pagination:
+                limit: 25
+                offset: 0
+                total: 2
     list-items-live:
       path: /collections/{collection_id}/items/live
       method: GET
-      auth: true
+      auth:
+        - OAuth2:
+            - cms:read
       docs: |
-        List of all live Items within a Collection.
+        List all published items in a collection.
+
+        <Note title="Serve data with the Content Delivery API">
+          To serve content to your other frontends applications, enterprise sites have access to a dedicated [content delivery API](/data/docs/cms-content-delivery), available at api-cdn.webflow.com.
+
+        </Note>
 
         Required scope | `CMS:read`
       source:
@@ -590,10 +706,13 @@ service:
             docs: 'Maximum number of records to be returned (max limit: 100)'
           name:
             type: optional<string>
-            docs: The name of the item(s)
+            docs: Filter by the exact name of the item(s)
           slug:
             type: optional<string>
-            docs: The slug of the item
+            docs: Filter by the exact slug of the item
+          lastPublished:
+            type: optional<root.ItemsListItemsLiveRequestLastPublished>
+            docs: Filter by the last published date of the item(s)
           sortBy:
             type: optional<ItemsListItemsLiveRequestSortBy>
             docs: Sort results by the provided value
@@ -603,6 +722,8 @@ service:
       response:
         docs: Request was successful
         type: root.CollectionItemList
+        status-code: 200
+      url: Data API
       errors:
         - root.BadRequestError
         - root.UnauthorizedError
@@ -612,6 +733,14 @@ service:
       examples:
         - path-parameters:
             collection_id: 580e63fc8c9a982ac9b8b745
+          query-parameters:
+            cmsLocaleId: cmsLocaleId
+            offset: 1.1
+            limit: 1.1
+            name: name
+            slug: slug
+            sortBy: lastPublished
+            sortOrder: asc
           response:
             body:
               items:
@@ -646,15 +775,17 @@ service:
     create-item-live:
       path: /collections/{collection_id}/items/live
       method: POST
-      auth: true
+      auth:
+        - OAuth2:
+            - cms:write
       docs: >
-        Create live Item(s) in a Collection. The Item(s) will be published to
-        the live site.
+        Create item(s) in a collection that will be immediately published to the
+        live site.
 
 
 
         To create items across multiple locales, [please use this
-        endpoint.](/v2.0.0/data/reference/cms/collection-items/staged-items/create-items)
+        endpoint.](/data/reference/cms/collection-items/staged-items/create-items)
 
 
 
@@ -667,11 +798,20 @@ service:
           docs: Unique identifier for a Collection
       display-name: Create Live Collection Item(s)
       request:
-        body: ItemsCreateItemLiveRequest
+        body: ItemsCreateItemLiveRequestBody
+        query-parameters:
+          skipInvalidFiles:
+            type: optional<boolean>
+            default: true
+            docs: >-
+              When true, invalid files are skipped and processing continues.
+              When false, the entire request fails if any file is invalid.
+        name: ItemsCreateItemLiveRequest
         content-type: application/json
       response:
         docs: Request was successful
         type: root.CollectionItem
+        status-code: 202
       errors:
         - root.BadRequestError
         - root.UnauthorizedError
@@ -682,15 +822,44 @@ service:
         - name: SingleItem
           path-parameters:
             collection_id: 580e63fc8c9a982ac9b8b745
+          query-parameters:
+            skipInvalidFiles: true
           request:
             isArchived: false
             isDraft: false
             fieldData:
-              name: Pan Galactic Gargle Blaster Recipe
-              slug: pan-galactic-gargle-blaster
-              date: '2022-11-18T00:00:00.000Z'
-              featured: true
-              color: '#db4b68'
+              name: The Hitchhiker's Guide to the Galaxy
+              slug: hitchhikers-guide-to-the-galaxy
+              plain-text: Don't Panic.
+              rich-text: >-
+                <h3>A Guide to Interstellar Travel</h3><p>A towel is about the
+                most massively useful thing an interstellar hitchhiker can have.
+                <strong>Don't forget yours!</strong></p>
+              main-image:
+                fileId: 62b720ef280c7a7a3be8cabe
+                url: /files/62b720ef280c7a7a3be8cabe_image.png
+              image-gallery:
+                - fileId: 62b720ef280c7a7a3be8cabd
+                  url: /files/62b720ef280c7a7a3be8cabd_image.png
+                - fileId: 62b720ef280c7a7a3be8cabe
+                  url: /files/62b720ef280c7a7a3be8cabe_image.png
+              intro-video: https://www.youtube.com/watch?v=aJ83KAggd-4
+              official-site: >-
+                https://hitchhikers.fandom.com/wiki/The_Hitchhiker%27s_Guide_to_the_Galaxy
+              contact-email: zaphod.beeblebrox@heartofgold.gov
+              support-phone: 424-242-4242
+              answer-to-everything: 42
+              release-date: '1979-10-12T00:00:00.000Z'
+              is-featured: true
+              brand-color: '#000000'
+              category: 62b720ef280c7a7a3be8cabf
+              author: 62b720ef280c7a7a3be8cab0
+              tags:
+                - 62b720ef280c7a7a3be8cab1
+                - 62b720ef280c7a7a3be8cab2
+              downloadable-asset:
+                fileId: 62b720ef280c7a7a3be8cab3
+                url: /files/62b720ef280c7a7a3be8cab3_document.pdf
           response:
             body:
               id: 42b720ef280c7a7a3be8cabe
@@ -701,14 +870,43 @@ service:
               isArchived: false
               isDraft: false
               fieldData:
-                name: Pan Galactic Gargle Blaster Recipe
-                slug: pan-galactic-gargle-blaster
-                color: '#db4b68'
-                date: '2022-11-18T00:00:00.000Z'
-                featured: true
+                name: The Hitchhiker's Guide to the Galaxy
+                slug: hitchhikers-guide-to-the-galaxy
+                plain-text: Don't Panic.
+                rich-text: >-
+                  <h3>A Guide to Interstellar Travel</h3><p>A towel is about the
+                  most massively useful thing an interstellar hitchhiker can
+                  have. <strong>Don't forget yours!</strong></p>
+                main-image:
+                  fileId: 62b720ef280c7a7a3be8cabe
+                  url: /files/62b720ef280c7a7a3be8cabe_image.png
+                image-gallery:
+                  - fileId: 62b720ef280c7a7a3be8cabd
+                    url: /files/62b720ef280c7a7a3be8cabd_image.png
+                  - fileId: 62b720ef280c7a7a3be8cabe
+                    url: /files/62b720ef280c7a7a3be8cabe_image.png
+                intro-video: https://www.youtube.com/watch?v=aJ83KAggd-4
+                official-site: >-
+                  https://hitchhikers.fandom.com/wiki/The_Hitchhiker%27s_Guide_to_the_Galaxy
+                contact-email: zaphod.beeblebrox@heartofgold.gov
+                support-phone: 424-242-4242
+                answer-to-everything: 42
+                release-date: '1979-10-12T00:00:00.000Z'
+                is-featured: true
+                brand-color: '#000000'
+                category: 62b720ef280c7a7a3be8cabf
+                author: 62b720ef280c7a7a3be8cab0
+                tags:
+                  - 62b720ef280c7a7a3be8cab1
+                  - 62b720ef280c7a7a3be8cab2
+                downloadable-asset:
+                  fileId: 62b720ef280c7a7a3be8cab3
+                  url: /files/62b720ef280c7a7a3be8cab3_document.pdf
         - name: MultipleItems
           path-parameters:
             collection_id: 580e63fc8c9a982ac9b8b745
+          query-parameters:
+            skipInvalidFiles: true
           request:
             items:
               - isArchived: false
@@ -735,24 +933,51 @@ service:
               isArchived: false
               isDraft: false
               fieldData:
-                name: Pan Galactic Gargle Blaster Recipe
-                slug: pan-galactic-gargle-blaster
-                color: '#db4b68'
-                date: '2022-11-18T00:00:00.000Z'
-                featured: true
+                name: The Hitchhiker's Guide to the Galaxy
+                slug: hitchhikers-guide-to-the-galaxy
+                plain-text: Don't Panic.
+                rich-text: >-
+                  <h3>A Guide to Interstellar Travel</h3><p>A towel is about the
+                  most massively useful thing an interstellar hitchhiker can
+                  have. <strong>Don't forget yours!</strong></p>
+                main-image:
+                  fileId: 62b720ef280c7a7a3be8cabe
+                  url: /files/62b720ef280c7a7a3be8cabe_image.png
+                image-gallery:
+                  - fileId: 62b720ef280c7a7a3be8cabd
+                    url: /files/62b720ef280c7a7a3be8cabd_image.png
+                  - fileId: 62b720ef280c7a7a3be8cabe
+                    url: /files/62b720ef280c7a7a3be8cabe_image.png
+                intro-video: https://www.youtube.com/watch?v=aJ83KAggd-4
+                official-site: >-
+                  https://hitchhikers.fandom.com/wiki/The_Hitchhiker%27s_Guide_to_the_Galaxy
+                contact-email: zaphod.beeblebrox@heartofgold.gov
+                support-phone: 424-242-4242
+                answer-to-everything: 42
+                release-date: '1979-10-12T00:00:00.000Z'
+                is-featured: true
+                brand-color: '#000000'
+                category: 62b720ef280c7a7a3be8cabf
+                author: 62b720ef280c7a7a3be8cab0
+                tags:
+                  - 62b720ef280c7a7a3be8cab1
+                  - 62b720ef280c7a7a3be8cab2
+                downloadable-asset:
+                  fileId: 62b720ef280c7a7a3be8cab3
+                  url: /files/62b720ef280c7a7a3be8cab3_document.pdf
     delete-items-live:
       path: /collections/{collection_id}/items/live
       method: DELETE
-      auth: true
+      auth:
+        - OAuth2:
+            - cms:write
       docs: >
-        Remove an item or multiple items (up to 100 items) from the live site.
-        Deleting published items will unpublish the items from the live site and
-        set them to draft. 
+        Unpublish up to 100 items from the live site and set the `isDraft`
+        property to `true`. 
 
 
-        **Note:** If the `cmsLocaleId` parameter is undefined or empty and the
-        items are localized, items will be unpublished only in the primary
-        locale.
+        <Tip title="Localization Tip">Items will only be unpublished in the
+        primary locale unless a `cmsLocaleId` is included in the request.</Tip>
 
 
         Required scope | `CMS:write`
@@ -762,12 +987,12 @@ service:
         collection_id:
           type: string
           docs: Unique identifier for a Collection
-      display-name: Delete Live Collection Items
+      display-name: Unpublish Live Collection Items
       request:
         name: ItemsDeleteItemsLiveRequest
         body:
           properties:
-            items: optional<list<ItemsDeleteItemsLiveRequestItemsItem>>
+            items: list<ItemsDeleteItemsLiveRequestItemsItem>
         content-type: application/json
       errors:
         - root.BadRequestError
@@ -778,18 +1003,22 @@ service:
       examples:
         - path-parameters:
             collection_id: 580e63fc8c9a982ac9b8b745
-          request: {}
+          request:
+            items:
+              - id: 580e64008c9a982ac9b8b754
     update-items-live:
       path: /collections/{collection_id}/items/live
       method: PATCH
-      auth: true
+      auth:
+        - OAuth2:
+            - cms:write
       docs: >
-        Update a single live item or multiple live items (up to 100) in a
-        Collection
+        Update a single published item or multiple published items (up to 100)
+        in a Collection
 
 
-        **Note:** If the `cmsLocaleId` parameter is undefined or empty and the
-        items are localized, items will be updated only in the primary locale. 
+        <Tip title="Localization Tip">Items will only be updated in the primary
+        locale, unless a `cmsLocaleId` is included in the request.</Tip>
 
 
         Required scope | `CMS:write`
@@ -802,6 +1031,13 @@ service:
       display-name: Update Live Collection Items
       request:
         name: ItemsUpdateItemsLiveRequest
+        query-parameters:
+          skipInvalidFiles:
+            type: optional<boolean>
+            default: true
+            docs: >-
+              When true, invalid files are skipped and processing continues.
+              When false, the entire request fails if any file is invalid.
         body:
           properties:
             items: optional<list<root.CollectionItemWithIdInput>>
@@ -809,16 +1045,20 @@ service:
       response:
         docs: Request was successful
         type: root.CollectionItemListNoPagination
+        status-code: 200
       errors:
         - root.BadRequestError
         - root.UnauthorizedError
         - root.NotFoundError
+        - root.ConflictError
         - root.TooManyRequestsError
         - root.InternalServerError
       examples:
         - name: LocalizedItems
           path-parameters:
             collection_id: 580e63fc8c9a982ac9b8b745
+          query-parameters:
+            skipInvalidFiles: true
           request:
             items:
               - id: 66f6ed9576ddacf3149d5ea6
@@ -850,44 +1090,44 @@ service:
               items:
                 - id: 66f6ed9576ddacf3149d5ea6
                   cmsLocaleId: 66f6e966c9e1dc700a857ca5
-                  lastPublished: '2023-03-17T18:47:35.560Z'
+                  lastPublished: '2024-09-27T17:38:29.066Z'
                   lastUpdated: '2024-09-27T17:38:29.066Z'
                   createdOn: '2024-09-27T17:38:29.066Z'
-                  isArchived: true
-                  isDraft: true
+                  isArchived: false
+                  isDraft: false
                   fieldData:
                     name: Ne Paniquez Pas
                     slug: ne-paniquez-pas
                     featured: false
                 - id: 66f6ed9576ddacf3149d5ea6
                   cmsLocaleId: 66f6e966c9e1dc700a857ca4
-                  lastPublished: '2023-03-17T18:47:35.560Z'
+                  lastPublished: '2024-09-27T17:38:29.066Z'
                   lastUpdated: '2024-09-27T17:38:29.066Z'
                   createdOn: '2024-09-27T17:38:29.066Z'
-                  isArchived: true
-                  isDraft: true
+                  isArchived: false
+                  isDraft: false
                   fieldData:
                     name: No Entrar en Pánico
                     slug: no-entrar-en-panico
                     featured: false
                 - id: 66f6ed9576ddacf3149d5eaa
                   cmsLocaleId: 66f6e966c9e1dc700a857ca5
-                  lastPublished: '2023-03-17T18:47:35.560Z'
+                  lastPublished: '2024-09-27T17:38:29.066Z'
                   lastUpdated: '2024-09-27T17:38:29.066Z'
                   createdOn: '2024-09-27T17:38:29.066Z'
-                  isArchived: true
-                  isDraft: true
+                  isArchived: false
+                  isDraft: false
                   fieldData:
                     name: Au Revoir et Merci pour Tous les Poissons
                     slug: au-revoir-et-merci
                     featured: false
                 - id: 66f6ed9576ddacf3149d5eaa
                   cmsLocaleId: 66f6e966c9e1dc700a857ca4
-                  lastPublished: '2023-03-17T18:47:35.560Z'
+                  lastPublished: '2024-09-27T17:38:29.066Z'
                   lastUpdated: '2024-09-27T17:38:29.066Z'
                   createdOn: '2024-09-27T17:38:29.066Z'
-                  isArchived: true
-                  isDraft: true
+                  isArchived: false
+                  isDraft: false
                   fieldData:
                     name: Hasta Luego y Gracias por Todo el Pescado
                     slug: hasta-luego-y-gracias
@@ -895,6 +1135,8 @@ service:
         - name: MultipleItems
           path-parameters:
             collection_id: 580e63fc8c9a982ac9b8b745
+          query-parameters:
+            skipInvalidFiles: true
           request:
             items:
               - id: 580e64008c9a982ac9b8b754
@@ -918,44 +1160,44 @@ service:
               items:
                 - id: 66f6ed9576ddacf3149d5ea6
                   cmsLocaleId: 66f6e966c9e1dc700a857ca5
-                  lastPublished: '2023-03-17T18:47:35.560Z'
+                  lastPublished: '2024-09-27T17:38:29.066Z'
                   lastUpdated: '2024-09-27T17:38:29.066Z'
                   createdOn: '2024-09-27T17:38:29.066Z'
-                  isArchived: true
-                  isDraft: true
+                  isArchived: false
+                  isDraft: false
                   fieldData:
                     name: Ne Paniquez Pas
                     slug: ne-paniquez-pas
                     featured: false
                 - id: 66f6ed9576ddacf3149d5ea6
                   cmsLocaleId: 66f6e966c9e1dc700a857ca4
-                  lastPublished: '2023-03-17T18:47:35.560Z'
+                  lastPublished: '2024-09-27T17:38:29.066Z'
                   lastUpdated: '2024-09-27T17:38:29.066Z'
                   createdOn: '2024-09-27T17:38:29.066Z'
-                  isArchived: true
-                  isDraft: true
+                  isArchived: false
+                  isDraft: false
                   fieldData:
                     name: No Entrar en Pánico
                     slug: no-entrar-en-panico
                     featured: false
                 - id: 66f6ed9576ddacf3149d5eaa
                   cmsLocaleId: 66f6e966c9e1dc700a857ca5
-                  lastPublished: '2023-03-17T18:47:35.560Z'
+                  lastPublished: '2024-09-27T17:38:29.066Z'
                   lastUpdated: '2024-09-27T17:38:29.066Z'
                   createdOn: '2024-09-27T17:38:29.066Z'
-                  isArchived: true
-                  isDraft: true
+                  isArchived: false
+                  isDraft: false
                   fieldData:
                     name: Au Revoir et Merci pour Tous les Poissons
                     slug: au-revoir-et-merci
                     featured: false
                 - id: 66f6ed9576ddacf3149d5eaa
                   cmsLocaleId: 66f6e966c9e1dc700a857ca4
-                  lastPublished: '2023-03-17T18:47:35.560Z'
+                  lastPublished: '2024-09-27T17:38:29.066Z'
                   lastUpdated: '2024-09-27T17:38:29.066Z'
                   createdOn: '2024-09-27T17:38:29.066Z'
-                  isArchived: true
-                  isDraft: true
+                  isArchived: false
+                  isDraft: false
                   fieldData:
                     name: Hasta Luego y Gracias por Todo el Pescado
                     slug: hasta-luego-y-gracias
@@ -963,6 +1205,8 @@ service:
         - name: Multiple items updated across multiple locales
           path-parameters:
             collection_id: 580e63fc8c9a982ac9b8b745
+          query-parameters:
+            skipInvalidFiles: true
           request:
             items:
               - id: 66f6ed9576ddacf3149d5ea6
@@ -994,51 +1238,53 @@ service:
               items:
                 - id: 66f6ed9576ddacf3149d5ea6
                   cmsLocaleId: 66f6e966c9e1dc700a857ca5
-                  lastPublished: '2023-03-17T18:47:35.560Z'
+                  lastPublished: '2024-09-27T17:38:29.066Z'
                   lastUpdated: '2024-09-27T17:38:29.066Z'
                   createdOn: '2024-09-27T17:38:29.066Z'
-                  isArchived: true
-                  isDraft: true
+                  isArchived: false
+                  isDraft: false
                   fieldData:
                     name: Ne Paniquez Pas
                     slug: ne-paniquez-pas
                     featured: false
                 - id: 66f6ed9576ddacf3149d5ea6
                   cmsLocaleId: 66f6e966c9e1dc700a857ca4
-                  lastPublished: '2023-03-17T18:47:35.560Z'
+                  lastPublished: '2024-09-27T17:38:29.066Z'
                   lastUpdated: '2024-09-27T17:38:29.066Z'
                   createdOn: '2024-09-27T17:38:29.066Z'
-                  isArchived: true
-                  isDraft: true
+                  isArchived: false
+                  isDraft: false
                   fieldData:
                     name: No Entrar en Pánico
                     slug: no-entrar-en-panico
                     featured: false
                 - id: 66f6ed9576ddacf3149d5eaa
                   cmsLocaleId: 66f6e966c9e1dc700a857ca5
-                  lastPublished: '2023-03-17T18:47:35.560Z'
+                  lastPublished: '2024-09-27T17:38:29.066Z'
                   lastUpdated: '2024-09-27T17:38:29.066Z'
                   createdOn: '2024-09-27T17:38:29.066Z'
-                  isArchived: true
-                  isDraft: true
+                  isArchived: false
+                  isDraft: false
                   fieldData:
                     name: Au Revoir et Merci pour Tous les Poissons
                     slug: au-revoir-et-merci
                     featured: false
                 - id: 66f6ed9576ddacf3149d5eaa
                   cmsLocaleId: 66f6e966c9e1dc700a857ca4
-                  lastPublished: '2023-03-17T18:47:35.560Z'
+                  lastPublished: '2024-09-27T17:38:29.066Z'
                   lastUpdated: '2024-09-27T17:38:29.066Z'
                   createdOn: '2024-09-27T17:38:29.066Z'
-                  isArchived: true
-                  isDraft: true
+                  isArchived: false
+                  isDraft: false
                   fieldData:
                     name: Hasta Luego y Gracias por Todo el Pescado
                     slug: hasta-luego-y-gracias
                     featured: false
-        - name: Mulitple items updated in a single locale
+        - name: Multiple items updated in a single locale
           path-parameters:
             collection_id: 580e63fc8c9a982ac9b8b745
+          query-parameters:
+            skipInvalidFiles: true
           request:
             items:
               - id: 66f6ed9576ddacf3149d5ea6
@@ -1095,15 +1341,19 @@ service:
     create-items:
       path: /collections/{collection_id}/items/bulk
       method: POST
-      auth: true
+      auth:
+        - OAuth2:
+            - cms:write
       docs: >
         Create an item or multiple items in a CMS Collection across multiple
         corresponding locales.
 
 
-        **Notes:**
+        <Note>
           - This endpoint can create up to 100 items in a request.
-          - If the `cmsLocaleIds` parameter is undefined or empty and localization is enabled, items will only be created in the primary locale.
+          - If the `cmsLocaleIds` parameter is not included in the request, an item will only be created in the primary locale.
+        </Note>
+
 
         Required scope | `CMS:write`
       source:
@@ -1115,6 +1365,13 @@ service:
       display-name: Create Collection Items
       request:
         name: CreateBulkCollectionItemRequestBody
+        query-parameters:
+          skipInvalidFiles:
+            type: optional<boolean>
+            default: true
+            docs: >-
+              When true, invalid files are skipped and processing continues.
+              When false, the entire request fails if any file is invalid.
         body:
           properties:
             cmsLocaleIds:
@@ -1129,12 +1386,13 @@ service:
             isDraft:
               type: optional<boolean>
               docs: Indicates whether the item is in draft state.
-              default: false
+              default: true
             fieldData: CreateBulkCollectionItemRequestBodyFieldData
         content-type: application/json
       response:
         docs: Request was successful
         type: root.BulkCollectionItem
+        status-code: 202
       errors:
         - root.BadRequestError
         - root.UnauthorizedError
@@ -1145,6 +1403,8 @@ service:
         - name: Create a single item across multiple locales
           path-parameters:
             collection_id: 580e63fc8c9a982ac9b8b745
+          query-parameters:
+            skipInvalidFiles: true
           request:
             cmsLocaleIds:
               - 66f6e966c9e1dc700a857ca3
@@ -1173,9 +1433,11 @@ service:
                 date: '2022-11-18T00:00:00.000Z'
                 featured: false
                 color: '#db4b68'
-        - name: Create multiple items across multipel locales
+        - name: Create multiple items across multiple locales
           path-parameters:
             collection_id: 580e63fc8c9a982ac9b8b745
+          query-parameters:
+            skipInvalidFiles: true
           request:
             cmsLocaleIds:
               - 66f6e966c9e1dc700a857ca3
@@ -1208,6 +1470,8 @@ service:
         - name: Single item created across multiple locales
           path-parameters:
             collection_id: 580e63fc8c9a982ac9b8b745
+          query-parameters:
+            skipInvalidFiles: true
           request:
             cmsLocaleIds:
               - 66f6e966c9e1dc700a857ca3
@@ -1239,6 +1503,8 @@ service:
         - name: Multiple items created across multiple locales
           path-parameters:
             collection_id: 580e63fc8c9a982ac9b8b745
+          query-parameters:
+            skipInvalidFiles: true
           request:
             cmsLocaleIds:
               - 66f6e966c9e1dc700a857ca3
@@ -1270,7 +1536,9 @@ service:
     get-item:
       path: /collections/{collection_id}/items/{item_id}
       method: GET
-      auth: true
+      auth:
+        - OAuth2:
+            - cms:read
       docs: |
         Get details of a selected Collection Item.
 
@@ -1298,6 +1566,7 @@ service:
       response:
         docs: Request was successful
         type: root.CollectionItem
+        status-code: 200
       errors:
         - root.BadRequestError
         - root.UnauthorizedError
@@ -1308,6 +1577,8 @@ service:
         - path-parameters:
             collection_id: 580e63fc8c9a982ac9b8b745
             item_id: 580e64008c9a982ac9b8b754
+          query-parameters:
+            cmsLocaleId: cmsLocaleId
           response:
             body:
               id: 42b720ef280c7a7a3be8cabe
@@ -1318,19 +1589,46 @@ service:
               isArchived: false
               isDraft: false
               fieldData:
-                name: Pan Galactic Gargle Blaster Recipe
-                slug: pan-galactic-gargle-blaster
-                color: '#db4b68'
-                date: '2022-11-18T00:00:00.000Z'
-                featured: true
+                name: The Hitchhiker's Guide to the Galaxy
+                slug: hitchhikers-guide-to-the-galaxy
+                plain-text: Don't Panic.
+                rich-text: >-
+                  <h3>A Guide to Interstellar Travel</h3><p>A towel is about the
+                  most massively useful thing an interstellar hitchhiker can
+                  have. <strong>Don't forget yours!</strong></p>
+                main-image:
+                  fileId: 62b720ef280c7a7a3be8cabe
+                  url: /files/62b720ef280c7a7a3be8cabe_image.png
+                image-gallery:
+                  - fileId: 62b720ef280c7a7a3be8cabd
+                    url: /files/62b720ef280c7a7a3be8cabd_image.png
+                  - fileId: 62b720ef280c7a7a3be8cabe
+                    url: /files/62b720ef280c7a7a3be8cabe_image.png
+                intro-video: https://www.youtube.com/watch?v=aJ83KAggd-4
+                official-site: >-
+                  https://hitchhikers.fandom.com/wiki/The_Hitchhiker%27s_Guide_to_the_Galaxy
+                contact-email: zaphod.beeblebrox@heartofgold.gov
+                support-phone: 424-242-4242
+                answer-to-everything: 42
+                release-date: '1979-10-12T00:00:00.000Z'
+                is-featured: true
+                brand-color: '#000000'
+                category: 62b720ef280c7a7a3be8cabf
+                author: 62b720ef280c7a7a3be8cab0
+                tags:
+                  - 62b720ef280c7a7a3be8cab1
+                  - 62b720ef280c7a7a3be8cab2
+                downloadable-asset:
+                  fileId: 62b720ef280c7a7a3be8cab3
+                  url: /files/62b720ef280c7a7a3be8cab3_document.pdf
     delete-item:
       path: /collections/{collection_id}/items/{item_id}
       method: DELETE
-      auth: true
-      docs: >
-        Delete an Item from a Collection. This endpoint does not currently
-        support bulk deletion.
-
+      auth:
+        - OAuth2:
+            - cms:write
+      docs: |
+        Delete an item from a collection. 
 
         Required scope | `CMS:write`
       source:
@@ -1363,10 +1661,14 @@ service:
         - path-parameters:
             collection_id: 580e63fc8c9a982ac9b8b745
             item_id: 580e64008c9a982ac9b8b754
+          query-parameters:
+            cmsLocaleId: cmsLocaleId
     update-item:
       path: /collections/{collection_id}/items/{item_id}
       method: PATCH
-      auth: true
+      auth:
+        - OAuth2:
+            - cms:write
       docs: |
         Update a selected Item in a Collection.
 
@@ -1383,10 +1685,19 @@ service:
       display-name: Update Collection Item
       request:
         body: root.CollectionItemPatchSingle
+        query-parameters:
+          skipInvalidFiles:
+            type: optional<boolean>
+            default: true
+            docs: >-
+              When true, invalid files are skipped and processing continues.
+              When false, the entire request fails if any file is invalid.
+        name: ItemsUpdateItemRequest
         content-type: application/json
       response:
         docs: Request was successful
         type: root.CollectionItem
+        status-code: 200
       errors:
         - root.BadRequestError
         - root.UnauthorizedError
@@ -1397,15 +1708,44 @@ service:
         - path-parameters:
             collection_id: 580e63fc8c9a982ac9b8b745
             item_id: 580e64008c9a982ac9b8b754
+          query-parameters:
+            skipInvalidFiles: true
           request:
             isArchived: false
             isDraft: false
             fieldData:
-              name: Pan Galactic Gargle Blaster Recipe
-              slug: pan-galactic-gargle-blaster
-              date: '2022-11-18T00:00:00.000Z'
-              featured: true
-              color: '#db4b68'
+              name: The Hitchhiker's Guide to the Galaxy
+              slug: hitchhikers-guide-to-the-galaxy
+              plain-text: Don't Panic.
+              rich-text: >-
+                <h3>A Guide to Interstellar Travel</h3><p>A towel is about the
+                most massively useful thing an interstellar hitchhiker can have.
+                <strong>Don't forget yours!</strong></p>
+              main-image:
+                fileId: 62b720ef280c7a7a3be8cabe
+                url: /files/62b720ef280c7a7a3be8cabe_image.png
+              image-gallery:
+                - fileId: 62b720ef280c7a7a3be8cabd
+                  url: /files/62b720ef280c7a7a3be8cabd_image.png
+                - fileId: 62b720ef280c7a7a3be8cabe
+                  url: /files/62b720ef280c7a7a3be8cabe_image.png
+              intro-video: https://www.youtube.com/watch?v=aJ83KAggd-4
+              official-site: >-
+                https://hitchhikers.fandom.com/wiki/The_Hitchhiker%27s_Guide_to_the_Galaxy
+              contact-email: zaphod.beeblebrox@heartofgold.gov
+              support-phone: 424-242-4242
+              answer-to-everything: 42
+              release-date: '1979-10-12T00:00:00.000Z'
+              is-featured: true
+              brand-color: '#000000'
+              category: 62b720ef280c7a7a3be8cabf
+              author: 62b720ef280c7a7a3be8cab0
+              tags:
+                - 62b720ef280c7a7a3be8cab1
+                - 62b720ef280c7a7a3be8cab2
+              downloadable-asset:
+                fileId: 62b720ef280c7a7a3be8cab3
+                url: /files/62b720ef280c7a7a3be8cab3_document.pdf
           response:
             body:
               id: 42b720ef280c7a7a3be8cabe
@@ -1416,17 +1756,51 @@ service:
               isArchived: false
               isDraft: false
               fieldData:
-                name: Pan Galactic Gargle Blaster Recipe
-                slug: pan-galactic-gargle-blaster
-                color: '#db4b68'
-                date: '2022-11-18T00:00:00.000Z'
-                featured: true
+                name: The Hitchhiker's Guide to the Galaxy
+                slug: hitchhikers-guide-to-the-galaxy
+                plain-text: Don't Panic.
+                rich-text: >-
+                  <h3>A Guide to Interstellar Travel</h3><p>A towel is about the
+                  most massively useful thing an interstellar hitchhiker can
+                  have. <strong>Don't forget yours!</strong></p>
+                main-image:
+                  fileId: 62b720ef280c7a7a3be8cabe
+                  url: /files/62b720ef280c7a7a3be8cabe_image.png
+                image-gallery:
+                  - fileId: 62b720ef280c7a7a3be8cabd
+                    url: /files/62b720ef280c7a7a3be8cabd_image.png
+                  - fileId: 62b720ef280c7a7a3be8cabe
+                    url: /files/62b720ef280c7a7a3be8cabe_image.png
+                intro-video: https://www.youtube.com/watch?v=aJ83KAggd-4
+                official-site: >-
+                  https://hitchhikers.fandom.com/wiki/The_Hitchhiker%27s_Guide_to_the_Galaxy
+                contact-email: zaphod.beeblebrox@heartofgold.gov
+                support-phone: 424-242-4242
+                answer-to-everything: 42
+                release-date: '1979-10-12T00:00:00.000Z'
+                is-featured: true
+                brand-color: '#000000'
+                category: 62b720ef280c7a7a3be8cabf
+                author: 62b720ef280c7a7a3be8cab0
+                tags:
+                  - 62b720ef280c7a7a3be8cab1
+                  - 62b720ef280c7a7a3be8cab2
+                downloadable-asset:
+                  fileId: 62b720ef280c7a7a3be8cab3
+                  url: /files/62b720ef280c7a7a3be8cab3_document.pdf
     get-item-live:
       path: /collections/{collection_id}/items/{item_id}/live
       method: GET
-      auth: true
+      auth:
+        - OAuth2:
+            - cms:read
       docs: |
         Get details of a selected Collection live Item.
+
+        <Note title="Serve data with the Content Delivery API">
+          To serve content to your other frontends applications, enterprise sites have access to a dedicated [content delivery API](/data/docs/cms-content-delivery), available at api-cdn.webflow.com.
+
+        </Note>
 
         Required scope | `CMS:read`
       source:
@@ -1452,6 +1826,8 @@ service:
       response:
         docs: Request was successful
         type: root.CollectionItem
+        status-code: 200
+      url: Data API
       errors:
         - root.BadRequestError
         - root.UnauthorizedError
@@ -1462,6 +1838,8 @@ service:
         - path-parameters:
             collection_id: 580e63fc8c9a982ac9b8b745
             item_id: 580e64008c9a982ac9b8b754
+          query-parameters:
+            cmsLocaleId: cmsLocaleId
           response:
             body:
               id: 42b720ef280c7a7a3be8cabe
@@ -1472,21 +1850,51 @@ service:
               isArchived: false
               isDraft: false
               fieldData:
-                name: Pan Galactic Gargle Blaster Recipe
-                slug: pan-galactic-gargle-blaster
-                color: '#db4b68'
-                date: '2022-11-18T00:00:00.000Z'
-                featured: true
+                name: The Hitchhiker's Guide to the Galaxy
+                slug: hitchhikers-guide-to-the-galaxy
+                plain-text: Don't Panic.
+                rich-text: >-
+                  <h3>A Guide to Interstellar Travel</h3><p>A towel is about the
+                  most massively useful thing an interstellar hitchhiker can
+                  have. <strong>Don't forget yours!</strong></p>
+                main-image:
+                  fileId: 62b720ef280c7a7a3be8cabe
+                  url: /files/62b720ef280c7a7a3be8cabe_image.png
+                image-gallery:
+                  - fileId: 62b720ef280c7a7a3be8cabd
+                    url: /files/62b720ef280c7a7a3be8cabd_image.png
+                  - fileId: 62b720ef280c7a7a3be8cabe
+                    url: /files/62b720ef280c7a7a3be8cabe_image.png
+                intro-video: https://www.youtube.com/watch?v=aJ83KAggd-4
+                official-site: >-
+                  https://hitchhikers.fandom.com/wiki/The_Hitchhiker%27s_Guide_to_the_Galaxy
+                contact-email: zaphod.beeblebrox@heartofgold.gov
+                support-phone: 424-242-4242
+                answer-to-everything: 42
+                release-date: '1979-10-12T00:00:00.000Z'
+                is-featured: true
+                brand-color: '#000000'
+                category: 62b720ef280c7a7a3be8cabf
+                author: 62b720ef280c7a7a3be8cab0
+                tags:
+                  - 62b720ef280c7a7a3be8cab1
+                  - 62b720ef280c7a7a3be8cab2
+                downloadable-asset:
+                  fileId: 62b720ef280c7a7a3be8cab3
+                  url: /files/62b720ef280c7a7a3be8cab3_document.pdf
     delete-item-live:
       path: /collections/{collection_id}/items/{item_id}/live
       method: DELETE
-      auth: true
+      auth:
+        - OAuth2:
+            - cms:write
       docs: >
-        Remove a live item from the site. Removing a published item will
-        unpublish the item from the live site and set it to draft. 
+        Unpublish a live item from the site and set the `isDraft` property to
+        `true`. 
 
 
-        This endpoint does not currently support bulk deletion.
+        For bulk unpublishing, please use [this
+        endpoint.](/data/v2.0.0/reference/cms/collection-items/live-items/delete-items-live)
 
 
         Required scope | `CMS:write`
@@ -1499,7 +1907,7 @@ service:
         item_id:
           type: string
           docs: Unique identifier for an Item
-      display-name: Delete Live Collection Item
+      display-name: Unpublish Live Collection Item
       request:
         name: ItemsDeleteItemLiveRequest
         query-parameters:
@@ -1520,10 +1928,14 @@ service:
         - path-parameters:
             collection_id: 580e63fc8c9a982ac9b8b745
             item_id: 580e64008c9a982ac9b8b754
+          query-parameters:
+            cmsLocaleId: cmsLocaleId
     update-item-live:
       path: /collections/{collection_id}/items/{item_id}/live
       method: PATCH
-      auth: true
+      auth:
+        - OAuth2:
+            - cms:write
       docs: >
         Update a selected live Item in a Collection. The updates for this Item
         will be published to the live site.
@@ -1542,29 +1954,68 @@ service:
       display-name: Update Live Collection Item
       request:
         body: root.CollectionItemPatchSingle
+        query-parameters:
+          skipInvalidFiles:
+            type: optional<boolean>
+            default: true
+            docs: >-
+              When true, invalid files are skipped and processing continues.
+              When false, the entire request fails if any file is invalid.
+        name: ItemsUpdateItemLiveRequest
         content-type: application/json
       response:
         docs: Request was successful
         type: root.CollectionItem
+        status-code: 200
       errors:
         - root.BadRequestError
         - root.UnauthorizedError
         - root.NotFoundError
+        - root.ConflictError
         - root.TooManyRequestsError
         - root.InternalServerError
       examples:
         - path-parameters:
             collection_id: 580e63fc8c9a982ac9b8b745
             item_id: 580e64008c9a982ac9b8b754
+          query-parameters:
+            skipInvalidFiles: true
           request:
             isArchived: false
             isDraft: false
             fieldData:
-              name: Pan Galactic Gargle Blaster Recipe
-              slug: pan-galactic-gargle-blaster
-              date: '2022-11-18T00:00:00.000Z'
-              featured: true
-              color: '#db4b68'
+              name: The Hitchhiker's Guide to the Galaxy
+              slug: hitchhikers-guide-to-the-galaxy
+              plain-text: Don't Panic.
+              rich-text: >-
+                <h3>A Guide to Interstellar Travel</h3><p>A towel is about the
+                most massively useful thing an interstellar hitchhiker can have.
+                <strong>Don't forget yours!</strong></p>
+              main-image:
+                fileId: 62b720ef280c7a7a3be8cabe
+                url: /files/62b720ef280c7a7a3be8cabe_image.png
+              image-gallery:
+                - fileId: 62b720ef280c7a7a3be8cabd
+                  url: /files/62b720ef280c7a7a3be8cabd_image.png
+                - fileId: 62b720ef280c7a7a3be8cabe
+                  url: /files/62b720ef280c7a7a3be8cabe_image.png
+              intro-video: https://www.youtube.com/watch?v=aJ83KAggd-4
+              official-site: >-
+                https://hitchhikers.fandom.com/wiki/The_Hitchhiker%27s_Guide_to_the_Galaxy
+              contact-email: zaphod.beeblebrox@heartofgold.gov
+              support-phone: 424-242-4242
+              answer-to-everything: 42
+              release-date: '1979-10-12T00:00:00.000Z'
+              is-featured: true
+              brand-color: '#000000'
+              category: 62b720ef280c7a7a3be8cabf
+              author: 62b720ef280c7a7a3be8cab0
+              tags:
+                - 62b720ef280c7a7a3be8cab1
+                - 62b720ef280c7a7a3be8cab2
+              downloadable-asset:
+                fileId: 62b720ef280c7a7a3be8cab3
+                url: /files/62b720ef280c7a7a3be8cab3_document.pdf
           response:
             body:
               id: 42b720ef280c7a7a3be8cabe
@@ -1575,15 +2026,44 @@ service:
               isArchived: false
               isDraft: false
               fieldData:
-                name: Pan Galactic Gargle Blaster Recipe
-                slug: pan-galactic-gargle-blaster
-                color: '#db4b68'
-                date: '2022-11-18T00:00:00.000Z'
-                featured: true
+                name: The Hitchhiker's Guide to the Galaxy
+                slug: hitchhikers-guide-to-the-galaxy
+                plain-text: Don't Panic.
+                rich-text: >-
+                  <h3>A Guide to Interstellar Travel</h3><p>A towel is about the
+                  most massively useful thing an interstellar hitchhiker can
+                  have. <strong>Don't forget yours!</strong></p>
+                main-image:
+                  fileId: 62b720ef280c7a7a3be8cabe
+                  url: /files/62b720ef280c7a7a3be8cabe_image.png
+                image-gallery:
+                  - fileId: 62b720ef280c7a7a3be8cabd
+                    url: /files/62b720ef280c7a7a3be8cabd_image.png
+                  - fileId: 62b720ef280c7a7a3be8cabe
+                    url: /files/62b720ef280c7a7a3be8cabe_image.png
+                intro-video: https://www.youtube.com/watch?v=aJ83KAggd-4
+                official-site: >-
+                  https://hitchhikers.fandom.com/wiki/The_Hitchhiker%27s_Guide_to_the_Galaxy
+                contact-email: zaphod.beeblebrox@heartofgold.gov
+                support-phone: 424-242-4242
+                answer-to-everything: 42
+                release-date: '1979-10-12T00:00:00.000Z'
+                is-featured: true
+                brand-color: '#000000'
+                category: 62b720ef280c7a7a3be8cabf
+                author: 62b720ef280c7a7a3be8cab0
+                tags:
+                  - 62b720ef280c7a7a3be8cab1
+                  - 62b720ef280c7a7a3be8cab2
+                downloadable-asset:
+                  fileId: 62b720ef280c7a7a3be8cab3
+                  url: /files/62b720ef280c7a7a3be8cab3_document.pdf
     publish-item:
       path: /collections/{collection_id}/items/publish
       method: POST
-      auth: true
+      auth:
+        - OAuth2:
+            - cms:write
       docs: |
         Publish an item or multiple items.
 
@@ -1596,14 +2076,12 @@ service:
           docs: Unique identifier for a Collection
       display-name: Publish Collection Item
       request:
-        name: ItemsPublishItemRequest
-        body:
-          properties:
-            itemIds: list<string>
+        body: ItemsPublishItemRequest
         content-type: application/json
       response:
         docs: Request was successful
         type: ItemsPublishItemResponse
+        status-code: 202
       errors:
         - root.BadRequestError
         - root.UnauthorizedError
@@ -1612,11 +2090,52 @@ service:
         - root.TooManyRequestsError
         - root.InternalServerError
       examples:
-        - path-parameters:
+        - name: PrimaryLocale
+          path-parameters:
             collection_id: 580e63fc8c9a982ac9b8b745
           request:
             itemIds:
-              - itemIds
+              - 643fd856d66b6528195ee2ca
+              - 643fd856d66b6528195ee2cb
+              - 643fd856d66b6528195ee2cc
+          response:
+            body:
+              publishedItemIds:
+                - 643fd856d66b6528195ee2ca
+                - 643fd856d66b6528195ee2cb
+              errors:
+                - Staging item ID 643fd856d66b6528195ee2cf not found.
+        - name: SecondaryLocale
+          path-parameters:
+            collection_id: 580e63fc8c9a982ac9b8b745
+          request:
+            items:
+              - id: 643fd856d66b6528195ee2ca
+                cmsLocaleIds:
+                  - 653ad57de882f528b32e810e
+              - id: 643fd856d66b6528195ee2cb
+                cmsLocaleIds:
+                  - 653ad57de882f528b32e810e
+              - id: 643fd856d66b6528195ee2cc
+                cmsLocaleIds:
+                  - 653ad57de882f528b32e810e
+          response:
+            body:
+              publishedItemIds:
+                - 643fd856d66b6528195ee2ca
+                - 643fd856d66b6528195ee2cb
+              errors:
+                - Staging item ID 643fd856d66b6528195ee2cf not found.
+        - name: MultipleLocales
+          path-parameters:
+            collection_id: 580e63fc8c9a982ac9b8b745
+          request:
+            items:
+              - id: 643fd856d66b6528195ee2ca
+                cmsLocaleIds:
+                  - 653ad57de882f528b32e810e
+                  - 6514390aea353fc691d69827
+                  - 65143930ea353fc691d69cd8
           response:
             body:
               publishedItemIds:

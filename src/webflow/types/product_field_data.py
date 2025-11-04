@@ -43,9 +43,9 @@ class ProductFieldData(UniversalBaseModel):
     Variant types to include in SKUs
     """
 
-    categories: typing.Optional[typing.List[str]] = pydantic.Field(default=None)
+    category: typing.Optional[typing.List[str]] = pydantic.Field(default=None)
     """
-    The categories your product belongs to.
+    The category your product belongs to.
     """
 
     tax_category: typing_extensions.Annotated[
