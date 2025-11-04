@@ -18,9 +18,6 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                 "user": {"id": "6509cd56e90eec668b009712", "displayName": "John Doe"},
                 "resourceId": "654c16c7b229e56bcf26870c",
                 "resourceName": "foo-bar",
-                "newValue": "newValue",
-                "previousValue": "previousValue",
-                "payload": {"key": "value"},
             }
         ],
         "pagination": {"limit": 25, "offset": 0, "total": 1},
@@ -38,16 +35,15 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                     "user": {"id": None, "displayName": None},
                     "resourceId": None,
                     "resourceName": None,
-                    "newValue": None,
-                    "previousValue": None,
-                    "payload": ("dict", {0: (None, None)}),
                 }
             },
         ),
         "pagination": {"limit": None, "offset": None, "total": None},
     }
-    response = client.sites.activity_logs.list(site_id="580e63e98c9a982ac9b8b741")
+    response = client.sites.activity_logs.list(site_id="580e63e98c9a982ac9b8b741", limit=1.1, offset=1.1)
     validate_response(response, expected_response, expected_types)
 
-    async_response = await async_client.sites.activity_logs.list(site_id="580e63e98c9a982ac9b8b741")
+    async_response = await async_client.sites.activity_logs.list(
+        site_id="580e63e98c9a982ac9b8b741", limit=1.1, offset=1.1
+    )
     validate_response(async_response, expected_response, expected_types)

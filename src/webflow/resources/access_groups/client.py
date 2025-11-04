@@ -69,10 +69,14 @@ class AccessGroupsClient:
         )
         client.access_groups.list(
             site_id="580e63e98c9a982ac9b8b741",
+            offset=1.1,
+            limit=1.1,
+            sort="CreatedOn",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/accessgroups",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "offset": offset,
@@ -211,6 +215,9 @@ class AsyncAccessGroupsClient:
         async def main() -> None:
             await client.access_groups.list(
                 site_id="580e63e98c9a982ac9b8b741",
+                offset=1.1,
+                limit=1.1,
+                sort="CreatedOn",
             )
 
 
@@ -218,6 +225,7 @@ class AsyncAccessGroupsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/accessgroups",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "offset": offset,
