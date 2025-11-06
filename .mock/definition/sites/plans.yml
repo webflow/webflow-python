@@ -7,9 +7,16 @@ service:
     get-site-plan:
       path: /sites/{site_id}/plan
       method: GET
-      auth: true
-      docs: |
+      auth:
+        - OAuth2:
+            - sites:read
+      docs: >
         Get site plan details for the specified Site.
+
+
+        <Warning title="Enterprise Only">This endpoint requires an Enterprise
+        workspace.</Warning>
+
 
         Required scope | `sites:read`
       source:
@@ -22,6 +29,7 @@ service:
       response:
         docs: Request was successful
         type: root.SitePlan
+        status-code: 200
       errors:
         - root.BadRequestError
         - root.UnauthorizedError

@@ -39,7 +39,8 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                 "lastUpdated": "lastUpdated",
                 "version": "1.0.0",
             },
-        ]
+        ],
+        "pagination": {"limit": 100, "offset": 0, "total": 3},
     }
     expected_types: typing.Any = {
         "registeredScripts": (
@@ -76,7 +77,8 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                     "version": None,
                 },
             },
-        )
+        ),
+        "pagination": {"limit": None, "offset": None, "total": None},
     }
     response = client.scripts.list(site_id="580e63e98c9a982ac9b8b741")
     validate_response(response, expected_response, expected_types)
