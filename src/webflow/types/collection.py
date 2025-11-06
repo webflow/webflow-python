@@ -3,8 +3,8 @@
 from ..core.pydantic_utilities import UniversalBaseModel
 import pydantic
 import typing_extensions
-import typing
 from ..core.serialization import FieldMetadata
+import typing
 import datetime as dt
 from .field import Field
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
@@ -20,16 +20,12 @@ class Collection(UniversalBaseModel):
     Unique identifier for a Collection
     """
 
-    display_name: typing_extensions.Annotated[typing.Optional[str], FieldMetadata(alias="displayName")] = (
-        pydantic.Field(default=None)
-    )
+    display_name: typing_extensions.Annotated[str, FieldMetadata(alias="displayName")] = pydantic.Field()
     """
     Name given to the Collection
     """
 
-    singular_name: typing_extensions.Annotated[typing.Optional[str], FieldMetadata(alias="singularName")] = (
-        pydantic.Field(default=None)
-    )
+    singular_name: typing_extensions.Annotated[str, FieldMetadata(alias="singularName")] = pydantic.Field()
     """
     The name of one Item in Collection (e.g. ”Blog Post” if the Collection is called “Blog Posts”)
     """

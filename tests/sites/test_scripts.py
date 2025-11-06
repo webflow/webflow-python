@@ -147,8 +147,10 @@ async def test_list_custom_code_blocks(client: Webflow, async_client: AsyncWebfl
         ),
         "pagination": {"limit": None, "offset": None, "total": None},
     }
-    response = client.sites.scripts.list_custom_code_blocks(site_id="580e63e98c9a982ac9b8b741")
+    response = client.sites.scripts.list_custom_code_blocks(site_id="580e63e98c9a982ac9b8b741", offset=1.1, limit=1.1)
     validate_response(response, expected_response, expected_types)
 
-    async_response = await async_client.sites.scripts.list_custom_code_blocks(site_id="580e63e98c9a982ac9b8b741")
+    async_response = await async_client.sites.scripts.list_custom_code_blocks(
+        site_id="580e63e98c9a982ac9b8b741", offset=1.1, limit=1.1
+    )
     validate_response(async_response, expected_response, expected_types)

@@ -2,40 +2,38 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing_extensions
-import typing
 from ..core.serialization import FieldMetadata
 import pydantic
+import typing
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 
 
 class AssetVariant(UniversalBaseModel):
-    hosted_url: typing_extensions.Annotated[typing.Optional[str], FieldMetadata(alias="hostedUrl")] = pydantic.Field(
-        default=None
-    )
+    """
+    Asset variant details
+    """
+
+    hosted_url: typing_extensions.Annotated[str, FieldMetadata(alias="hostedUrl")] = pydantic.Field()
     """
     URL of where the asset variant is hosted
     """
 
-    original_file_name: typing_extensions.Annotated[typing.Optional[str], FieldMetadata(alias="originalFileName")] = (
-        pydantic.Field(default=None)
-    )
+    original_file_name: typing_extensions.Annotated[str, FieldMetadata(alias="originalFileName")] = pydantic.Field()
     """
     Original file name of the variant
     """
 
-    display_name: typing_extensions.Annotated[typing.Optional[str], FieldMetadata(alias="displayName")] = (
-        pydantic.Field(default=None)
-    )
+    display_name: typing_extensions.Annotated[str, FieldMetadata(alias="displayName")] = pydantic.Field()
     """
     Display name of the variant
     """
 
-    format: typing.Optional[str] = pydantic.Field(default=None)
+    format: str = pydantic.Field()
     """
     format of the variant
     """
 
-    width: typing.Optional[int] = pydantic.Field(default=None)
+    width: int = pydantic.Field()
     """
     Width in pixels
     """
@@ -45,7 +43,7 @@ class AssetVariant(UniversalBaseModel):
     Height in pixels
     """
 
-    quality: typing.Optional[int] = pydantic.Field(default=None)
+    quality: int = pydantic.Field()
     """
     Value between 0 and 100 representing the image quality
     """

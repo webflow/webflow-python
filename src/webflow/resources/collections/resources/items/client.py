@@ -2,11 +2,13 @@
 
 import typing
 from .....core.client_wrapper import SyncClientWrapper
+from .....types.items_list_items_request_last_published import ItemsListItemsRequestLastPublished
 from .types.items_list_items_request_sort_by import ItemsListItemsRequestSortBy
 from .types.items_list_items_request_sort_order import ItemsListItemsRequestSortOrder
 from .....core.request_options import RequestOptions
 from .....types.collection_item_list import CollectionItemList
 from .....core.jsonable_encoder import jsonable_encoder
+from .....core.serialization import convert_and_respect_annotation_metadata
 from .....core.pydantic_utilities import parse_obj_as
 from .....errors.bad_request_error import BadRequestError
 from .....errors.unauthorized_error import UnauthorizedError
@@ -16,20 +18,22 @@ from .....errors.too_many_requests_error import TooManyRequestsError
 from .....errors.internal_server_error import InternalServerError
 from json.decoder import JSONDecodeError
 from .....core.api_error import ApiError
-from .types.items_create_item_request import ItemsCreateItemRequest
+from .types.items_create_item_request_body import ItemsCreateItemRequestBody
 from .....types.collection_item import CollectionItem
-from .....core.serialization import convert_and_respect_annotation_metadata
 from .types.items_delete_items_request_items_item import ItemsDeleteItemsRequestItemsItem
 from .....errors.conflict_error import ConflictError
 from .....types.collection_item_with_id_input import CollectionItemWithIdInput
+from .types.items_update_items_response import ItemsUpdateItemsResponse
+from .....types.items_list_items_live_request_last_published import ItemsListItemsLiveRequestLastPublished
 from .types.items_list_items_live_request_sort_by import ItemsListItemsLiveRequestSortBy
 from .types.items_list_items_live_request_sort_order import ItemsListItemsLiveRequestSortOrder
-from .types.items_create_item_live_request import ItemsCreateItemLiveRequest
+from .types.items_create_item_live_request_body import ItemsCreateItemLiveRequestBody
 from .types.items_delete_items_live_request_items_item import ItemsDeleteItemsLiveRequestItemsItem
 from .....types.collection_item_list_no_pagination import CollectionItemListNoPagination
 from .types.create_bulk_collection_item_request_body_field_data import CreateBulkCollectionItemRequestBodyFieldData
 from .....types.bulk_collection_item import BulkCollectionItem
 from .....types.collection_item_patch_single_field_data import CollectionItemPatchSingleFieldData
+from .types.items_publish_item_request import ItemsPublishItemRequest
 from .types.items_publish_item_response import ItemsPublishItemResponse
 from .....core.client_wrapper import AsyncClientWrapper
 
@@ -50,6 +54,7 @@ class ItemsClient:
         limit: typing.Optional[float] = None,
         name: typing.Optional[str] = None,
         slug: typing.Optional[str] = None,
+        last_published: typing.Optional[ItemsListItemsRequestLastPublished] = None,
         sort_by: typing.Optional[ItemsListItemsRequestSortBy] = None,
         sort_order: typing.Optional[ItemsListItemsRequestSortOrder] = None,
         request_options: typing.Optional[RequestOptions] = None,
@@ -74,10 +79,13 @@ class ItemsClient:
             Maximum number of records to be returned (max limit: 100)
 
         name : typing.Optional[str]
-            The name of the item(s)
+            Filter by the exact name of the item(s)
 
         slug : typing.Optional[str]
-            The slug of the item
+            Filter by the exact slug of the item
+
+        last_published : typing.Optional[ItemsListItemsRequestLastPublished]
+            Filter by the last published date of the item(s)
 
         sort_by : typing.Optional[ItemsListItemsRequestSortBy]
             Sort results by the provided value
@@ -102,10 +110,18 @@ class ItemsClient:
         )
         client.collections.items.list_items(
             collection_id="580e63fc8c9a982ac9b8b745",
+            cms_locale_id="cmsLocaleId",
+            offset=1.1,
+            limit=1.1,
+            name="name",
+            slug="slug",
+            sort_by="lastPublished",
+            sort_order="asc",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "cmsLocaleId": cms_locale_id,
@@ -113,6 +129,9 @@ class ItemsClient:
                 "limit": limit,
                 "name": name,
                 "slug": slug,
+                "lastPublished": convert_and_respect_annotation_metadata(
+                    object_=last_published, annotation=ItemsListItemsRequestLastPublished, direction="write"
+                ),
                 "sortBy": sort_by,
                 "sortOrder": sort_order,
             },
@@ -186,14 +205,15 @@ class ItemsClient:
         self,
         collection_id: str,
         *,
-        request: ItemsCreateItemRequest,
+        request: ItemsCreateItemRequestBody,
+        skip_invalid_files: typing.Optional[bool] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CollectionItem:
         """
         Create Item(s) in a Collection.
 
 
-        To create items across multiple locales, please use [this endpoint.](/v2.0.0/data/reference/cms/collection-items/staged-items/create-items)
+        To create items across multiple locales, please use [this endpoint.](/data/reference/cms/collection-items/staged-items/create-items)
 
         Required scope | `CMS:write`
 
@@ -202,7 +222,10 @@ class ItemsClient:
         collection_id : str
             Unique identifier for a Collection
 
-        request : ItemsCreateItemRequest
+        request : ItemsCreateItemRequestBody
+
+        skip_invalid_files : typing.Optional[bool]
+            When true, invalid files are skipped and processing continues. When false, the entire request fails if any file is invalid.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -225,21 +248,26 @@ class ItemsClient:
         )
         client.collections.items.create_item(
             collection_id="580e63fc8c9a982ac9b8b745",
+            skip_invalid_files=True,
             request=CollectionItemPostSingle(
                 is_archived=False,
                 is_draft=False,
                 field_data=CollectionItemPostSingleFieldData(
-                    name="Pan Galactic Gargle Blaster Recipe",
-                    slug="pan-galactic-gargle-blaster",
+                    name="The Hitchhiker's Guide to the Galaxy",
+                    slug="hitchhikers-guide-to-the-galaxy",
                 ),
             ),
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
+            params={
+                "skipInvalidFiles": skip_invalid_files,
+            },
             json=convert_and_respect_annotation_metadata(
-                object_=request, annotation=ItemsCreateItemRequest, direction="write"
+                object_=request, annotation=ItemsCreateItemRequestBody, direction="write"
             ),
             request_options=request_options,
             omit=OMIT,
@@ -312,13 +340,13 @@ class ItemsClient:
         self,
         collection_id: str,
         *,
-        items: typing.Optional[typing.Sequence[ItemsDeleteItemsRequestItemsItem]] = OMIT,
+        items: typing.Sequence[ItemsDeleteItemsRequestItemsItem],
         request_options: typing.Optional[RequestOptions] = None,
     ) -> None:
         """
         Delete Items from a Collection.
 
-        **Note:** If the `cmsLocaleId` parameter is undefined or empty and the items are localized, items will be deleted only in the primary locale.
+        <Tip title="Localization Tip">Items will only be deleted in the primary locale unless a `cmsLocaleId` is included in the request.</Tip>
 
         Required scope | `CMS:write`
 
@@ -327,7 +355,7 @@ class ItemsClient:
         collection_id : str
             Unique identifier for a Collection
 
-        items : typing.Optional[typing.Sequence[ItemsDeleteItemsRequestItemsItem]]
+        items : typing.Sequence[ItemsDeleteItemsRequestItemsItem]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -339,16 +367,25 @@ class ItemsClient:
         Examples
         --------
         from webflow import Webflow
+        from webflow.resources.collections.resources.items import (
+            ItemsDeleteItemsRequestItemsItem,
+        )
 
         client = Webflow(
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.collections.items.delete_items(
             collection_id="580e63fc8c9a982ac9b8b745",
+            items=[
+                ItemsDeleteItemsRequestItemsItem(
+                    id="580e64008c9a982ac9b8b754",
+                )
+            ],
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items",
+            base_url=self._client_wrapper.get_environment().base,
             method="DELETE",
             json={
                 "items": convert_and_respect_annotation_metadata(
@@ -433,13 +470,16 @@ class ItemsClient:
         self,
         collection_id: str,
         *,
+        skip_invalid_files: typing.Optional[bool] = None,
         items: typing.Optional[typing.Sequence[CollectionItemWithIdInput]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> CollectionItem:
+    ) -> ItemsUpdateItemsResponse:
         """
-        Update a single item or multiple items (up to 100) in a Collection.
+        Update a single item or multiple items in a Collection.
 
-        **Note:** If the `cmsLocaleId` parameter is undefined or empty and the items are localized, items will be updated only in the primary locale.
+        The limit for this endpoint is 100 items.
+
+        <Tip title="Localization Tip">Items will only be updated in the primary locale, unless a `cmsLocaleId` is included in the request.</Tip>
 
         Required scope | `CMS:write`
 
@@ -448,6 +488,9 @@ class ItemsClient:
         collection_id : str
             Unique identifier for a Collection
 
+        skip_invalid_files : typing.Optional[bool]
+            When true, invalid files are skipped and processing continues. When false, the entire request fails if any file is invalid.
+
         items : typing.Optional[typing.Sequence[CollectionItemWithIdInput]]
 
         request_options : typing.Optional[RequestOptions]
@@ -455,7 +498,7 @@ class ItemsClient:
 
         Returns
         -------
-        CollectionItem
+        ItemsUpdateItemsResponse
             Request was successful
 
         Examples
@@ -471,6 +514,7 @@ class ItemsClient:
         )
         client.collections.items.update_items(
             collection_id="580e63fc8c9a982ac9b8b745",
+            skip_invalid_files=True,
             items=[
                 CollectionItemWithIdInput(
                     id="66f6ed9576ddacf3149d5ea6",
@@ -509,7 +553,11 @@ class ItemsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items",
+            base_url=self._client_wrapper.get_environment().base,
             method="PATCH",
+            params={
+                "skipInvalidFiles": skip_invalid_files,
+            },
             json={
                 "items": convert_and_respect_annotation_metadata(
                     object_=items, annotation=typing.Sequence[CollectionItemWithIdInput], direction="write"
@@ -524,9 +572,9 @@ class ItemsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    CollectionItem,
+                    ItemsUpdateItemsResponse,
                     parse_obj_as(
-                        type_=CollectionItem,  # type: ignore
+                        type_=ItemsUpdateItemsResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -594,12 +642,18 @@ class ItemsClient:
         limit: typing.Optional[float] = None,
         name: typing.Optional[str] = None,
         slug: typing.Optional[str] = None,
+        last_published: typing.Optional[ItemsListItemsLiveRequestLastPublished] = None,
         sort_by: typing.Optional[ItemsListItemsLiveRequestSortBy] = None,
         sort_order: typing.Optional[ItemsListItemsLiveRequestSortOrder] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CollectionItemList:
         """
-        List of all live Items within a Collection.
+        List all published items in a collection.
+
+        <Note title="Serve data with the Content Delivery API">
+          To serve content to your other frontends applications, enterprise sites have access to a dedicated [content delivery API](/data/docs/cms-content-delivery), available at api-cdn.webflow.com.
+
+        </Note>
 
         Required scope | `CMS:read`
 
@@ -618,10 +672,13 @@ class ItemsClient:
             Maximum number of records to be returned (max limit: 100)
 
         name : typing.Optional[str]
-            The name of the item(s)
+            Filter by the exact name of the item(s)
 
         slug : typing.Optional[str]
-            The slug of the item
+            Filter by the exact slug of the item
+
+        last_published : typing.Optional[ItemsListItemsLiveRequestLastPublished]
+            Filter by the last published date of the item(s)
 
         sort_by : typing.Optional[ItemsListItemsLiveRequestSortBy]
             Sort results by the provided value
@@ -646,10 +703,18 @@ class ItemsClient:
         )
         client.collections.items.list_items_live(
             collection_id="580e63fc8c9a982ac9b8b745",
+            cms_locale_id="cmsLocaleId",
+            offset=1.1,
+            limit=1.1,
+            name="name",
+            slug="slug",
+            sort_by="lastPublished",
+            sort_order="asc",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/live",
+            base_url=self._client_wrapper.get_environment().data_api,
             method="GET",
             params={
                 "cmsLocaleId": cms_locale_id,
@@ -657,6 +722,9 @@ class ItemsClient:
                 "limit": limit,
                 "name": name,
                 "slug": slug,
+                "lastPublished": convert_and_respect_annotation_metadata(
+                    object_=last_published, annotation=ItemsListItemsLiveRequestLastPublished, direction="write"
+                ),
                 "sortBy": sort_by,
                 "sortOrder": sort_order,
             },
@@ -730,14 +798,15 @@ class ItemsClient:
         self,
         collection_id: str,
         *,
-        request: ItemsCreateItemLiveRequest,
+        request: ItemsCreateItemLiveRequestBody,
+        skip_invalid_files: typing.Optional[bool] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CollectionItem:
         """
-        Create live Item(s) in a Collection. The Item(s) will be published to the live site.
+        Create item(s) in a collection that will be immediately published to the live site.
 
 
-        To create items across multiple locales, [please use this endpoint.](/v2.0.0/data/reference/cms/collection-items/staged-items/create-items)
+        To create items across multiple locales, [please use this endpoint.](/data/reference/cms/collection-items/staged-items/create-items)
 
 
         Required scope | `CMS:write`
@@ -747,7 +816,10 @@ class ItemsClient:
         collection_id : str
             Unique identifier for a Collection
 
-        request : ItemsCreateItemLiveRequest
+        request : ItemsCreateItemLiveRequestBody
+
+        skip_invalid_files : typing.Optional[bool]
+            When true, invalid files are skipped and processing continues. When false, the entire request fails if any file is invalid.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -766,21 +838,26 @@ class ItemsClient:
         )
         client.collections.items.create_item_live(
             collection_id="580e63fc8c9a982ac9b8b745",
+            skip_invalid_files=True,
             request=CollectionItem(
                 is_archived=False,
                 is_draft=False,
                 field_data=CollectionItemFieldData(
-                    name="Pan Galactic Gargle Blaster Recipe",
-                    slug="pan-galactic-gargle-blaster",
+                    name="The Hitchhiker's Guide to the Galaxy",
+                    slug="hitchhikers-guide-to-the-galaxy",
                 ),
             ),
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/live",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
+            params={
+                "skipInvalidFiles": skip_invalid_files,
+            },
             json=convert_and_respect_annotation_metadata(
-                object_=request, annotation=ItemsCreateItemLiveRequest, direction="write"
+                object_=request, annotation=ItemsCreateItemLiveRequestBody, direction="write"
             ),
             request_options=request_options,
             omit=OMIT,
@@ -853,13 +930,13 @@ class ItemsClient:
         self,
         collection_id: str,
         *,
-        items: typing.Optional[typing.Sequence[ItemsDeleteItemsLiveRequestItemsItem]] = OMIT,
+        items: typing.Sequence[ItemsDeleteItemsLiveRequestItemsItem],
         request_options: typing.Optional[RequestOptions] = None,
     ) -> None:
         """
-        Remove an item or multiple items (up to 100 items) from the live site. Deleting published items will unpublish the items from the live site and set them to draft.
+        Unpublish up to 100 items from the live site and set the `isDraft` property to `true`.
 
-        **Note:** If the `cmsLocaleId` parameter is undefined or empty and the items are localized, items will be unpublished only in the primary locale.
+        <Tip title="Localization Tip">Items will only be unpublished in the primary locale unless a `cmsLocaleId` is included in the request.</Tip>
 
         Required scope | `CMS:write`
 
@@ -868,7 +945,7 @@ class ItemsClient:
         collection_id : str
             Unique identifier for a Collection
 
-        items : typing.Optional[typing.Sequence[ItemsDeleteItemsLiveRequestItemsItem]]
+        items : typing.Sequence[ItemsDeleteItemsLiveRequestItemsItem]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -880,16 +957,25 @@ class ItemsClient:
         Examples
         --------
         from webflow import Webflow
+        from webflow.resources.collections.resources.items import (
+            ItemsDeleteItemsLiveRequestItemsItem,
+        )
 
         client = Webflow(
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.collections.items.delete_items_live(
             collection_id="580e63fc8c9a982ac9b8b745",
+            items=[
+                ItemsDeleteItemsLiveRequestItemsItem(
+                    id="580e64008c9a982ac9b8b754",
+                )
+            ],
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/live",
+            base_url=self._client_wrapper.get_environment().base,
             method="DELETE",
             json={
                 "items": convert_and_respect_annotation_metadata(
@@ -964,13 +1050,14 @@ class ItemsClient:
         self,
         collection_id: str,
         *,
+        skip_invalid_files: typing.Optional[bool] = None,
         items: typing.Optional[typing.Sequence[CollectionItemWithIdInput]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CollectionItemListNoPagination:
         """
-        Update a single live item or multiple live items (up to 100) in a Collection
+        Update a single published item or multiple published items (up to 100) in a Collection
 
-        **Note:** If the `cmsLocaleId` parameter is undefined or empty and the items are localized, items will be updated only in the primary locale.
+        <Tip title="Localization Tip">Items will only be updated in the primary locale, unless a `cmsLocaleId` is included in the request.</Tip>
 
         Required scope | `CMS:write`
 
@@ -978,6 +1065,9 @@ class ItemsClient:
         ----------
         collection_id : str
             Unique identifier for a Collection
+
+        skip_invalid_files : typing.Optional[bool]
+            When true, invalid files are skipped and processing continues. When false, the entire request fails if any file is invalid.
 
         items : typing.Optional[typing.Sequence[CollectionItemWithIdInput]]
 
@@ -1002,6 +1092,7 @@ class ItemsClient:
         )
         client.collections.items.update_items_live(
             collection_id="580e63fc8c9a982ac9b8b745",
+            skip_invalid_files=True,
             items=[
                 CollectionItemWithIdInput(
                     id="66f6ed9576ddacf3149d5ea6",
@@ -1040,7 +1131,11 @@ class ItemsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/live",
+            base_url=self._client_wrapper.get_environment().base,
             method="PATCH",
+            params={
+                "skipInvalidFiles": skip_invalid_files,
+            },
             json={
                 "items": convert_and_respect_annotation_metadata(
                     object_=items, annotation=typing.Sequence[CollectionItemWithIdInput], direction="write"
@@ -1091,6 +1186,16 @@ class ItemsClient:
                         ),
                     )
                 )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    typing.cast(
+                        typing.Optional[typing.Any],
+                        parse_obj_as(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
             if _response.status_code == 429:
                 raise TooManyRequestsError(
                     typing.cast(
@@ -1121,6 +1226,7 @@ class ItemsClient:
         collection_id: str,
         *,
         field_data: CreateBulkCollectionItemRequestBodyFieldData,
+        skip_invalid_files: typing.Optional[bool] = None,
         cms_locale_ids: typing.Optional[typing.Sequence[str]] = OMIT,
         is_archived: typing.Optional[bool] = OMIT,
         is_draft: typing.Optional[bool] = OMIT,
@@ -1129,9 +1235,10 @@ class ItemsClient:
         """
         Create an item or multiple items in a CMS Collection across multiple corresponding locales.
 
-        **Notes:**
+        <Note>
           - This endpoint can create up to 100 items in a request.
-          - If the `cmsLocaleIds` parameter is undefined or empty and localization is enabled, items will only be created in the primary locale.
+          - If the `cmsLocaleIds` parameter is not included in the request, an item will only be created in the primary locale.
+        </Note>
 
         Required scope | `CMS:write`
 
@@ -1141,6 +1248,9 @@ class ItemsClient:
             Unique identifier for a Collection
 
         field_data : CreateBulkCollectionItemRequestBodyFieldData
+
+        skip_invalid_files : typing.Optional[bool]
+            When true, invalid files are skipped and processing continues. When false, the entire request fails if any file is invalid.
 
         cms_locale_ids : typing.Optional[typing.Sequence[str]]
             Array of identifiers for the locales where the item will be created
@@ -1169,6 +1279,7 @@ class ItemsClient:
         )
         client.collections.items.create_items(
             collection_id="580e63fc8c9a982ac9b8b745",
+            skip_invalid_files=True,
             cms_locale_ids=[
                 "66f6e966c9e1dc700a857ca3",
                 "66f6e966c9e1dc700a857ca4",
@@ -1184,7 +1295,11 @@ class ItemsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/bulk",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
+            params={
+                "skipInvalidFiles": skip_invalid_files,
+            },
             json={
                 "cmsLocaleIds": cms_locale_ids,
                 "isArchived": is_archived,
@@ -1305,10 +1420,12 @@ class ItemsClient:
         client.collections.items.get_item(
             collection_id="580e63fc8c9a982ac9b8b745",
             item_id="580e64008c9a982ac9b8b754",
+            cms_locale_id="cmsLocaleId",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/{jsonable_encoder(item_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "cmsLocaleId": cms_locale_id,
@@ -1388,7 +1505,7 @@ class ItemsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> None:
         """
-        Delete an Item from a Collection. This endpoint does not currently support bulk deletion.
+        Delete an item from a collection.
 
         Required scope | `CMS:write`
 
@@ -1420,10 +1537,12 @@ class ItemsClient:
         client.collections.items.delete_item(
             collection_id="580e63fc8c9a982ac9b8b745",
             item_id="580e64008c9a982ac9b8b754",
+            cms_locale_id="cmsLocaleId",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/{jsonable_encoder(item_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="DELETE",
             params={
                 "cmsLocaleId": cms_locale_id,
@@ -1493,6 +1612,7 @@ class ItemsClient:
         collection_id: str,
         item_id: str,
         *,
+        skip_invalid_files: typing.Optional[bool] = None,
         id: typing.Optional[str] = OMIT,
         cms_locale_id: typing.Optional[str] = OMIT,
         last_published: typing.Optional[str] = OMIT,
@@ -1515,6 +1635,9 @@ class ItemsClient:
 
         item_id : str
             Unique identifier for an Item
+
+        skip_invalid_files : typing.Optional[bool]
+            When true, invalid files are skipped and processing continues. When false, the entire request fails if any file is invalid.
 
         id : typing.Optional[str]
             Unique identifier for the Item
@@ -1557,17 +1680,22 @@ class ItemsClient:
         client.collections.items.update_item(
             collection_id="580e63fc8c9a982ac9b8b745",
             item_id="580e64008c9a982ac9b8b754",
+            skip_invalid_files=True,
             is_archived=False,
             is_draft=False,
             field_data=CollectionItemPatchSingleFieldData(
-                name="Pan Galactic Gargle Blaster Recipe",
-                slug="pan-galactic-gargle-blaster",
+                name="The Hitchhiker's Guide to the Galaxy",
+                slug="hitchhikers-guide-to-the-galaxy",
             ),
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/{jsonable_encoder(item_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="PATCH",
+            params={
+                "skipInvalidFiles": skip_invalid_files,
+            },
             json={
                 "id": id,
                 "cmsLocaleId": cms_locale_id,
@@ -1658,6 +1786,11 @@ class ItemsClient:
         """
         Get details of a selected Collection live Item.
 
+        <Note title="Serve data with the Content Delivery API">
+          To serve content to your other frontends applications, enterprise sites have access to a dedicated [content delivery API](/data/docs/cms-content-delivery), available at api-cdn.webflow.com.
+
+        </Note>
+
         Required scope | `CMS:read`
 
         Parameters
@@ -1689,10 +1822,12 @@ class ItemsClient:
         client.collections.items.get_item_live(
             collection_id="580e63fc8c9a982ac9b8b745",
             item_id="580e64008c9a982ac9b8b754",
+            cms_locale_id="cmsLocaleId",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/{jsonable_encoder(item_id)}/live",
+            base_url=self._client_wrapper.get_environment().data_api,
             method="GET",
             params={
                 "cmsLocaleId": cms_locale_id,
@@ -1772,9 +1907,9 @@ class ItemsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> None:
         """
-        Remove a live item from the site. Removing a published item will unpublish the item from the live site and set it to draft.
+        Unpublish a live item from the site and set the `isDraft` property to `true`.
 
-        This endpoint does not currently support bulk deletion.
+        For bulk unpublishing, please use [this endpoint.](/data/v2.0.0/reference/cms/collection-items/live-items/delete-items-live)
 
         Required scope | `CMS:write`
 
@@ -1806,10 +1941,12 @@ class ItemsClient:
         client.collections.items.delete_item_live(
             collection_id="580e63fc8c9a982ac9b8b745",
             item_id="580e64008c9a982ac9b8b754",
+            cms_locale_id="cmsLocaleId",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/{jsonable_encoder(item_id)}/live",
+            base_url=self._client_wrapper.get_environment().base,
             method="DELETE",
             params={
                 "cmsLocaleId": cms_locale_id,
@@ -1879,6 +2016,7 @@ class ItemsClient:
         collection_id: str,
         item_id: str,
         *,
+        skip_invalid_files: typing.Optional[bool] = None,
         id: typing.Optional[str] = OMIT,
         cms_locale_id: typing.Optional[str] = OMIT,
         last_published: typing.Optional[str] = OMIT,
@@ -1901,6 +2039,9 @@ class ItemsClient:
 
         item_id : str
             Unique identifier for an Item
+
+        skip_invalid_files : typing.Optional[bool]
+            When true, invalid files are skipped and processing continues. When false, the entire request fails if any file is invalid.
 
         id : typing.Optional[str]
             Unique identifier for the Item
@@ -1943,17 +2084,22 @@ class ItemsClient:
         client.collections.items.update_item_live(
             collection_id="580e63fc8c9a982ac9b8b745",
             item_id="580e64008c9a982ac9b8b754",
+            skip_invalid_files=True,
             is_archived=False,
             is_draft=False,
             field_data=CollectionItemPatchSingleFieldData(
-                name="Pan Galactic Gargle Blaster Recipe",
-                slug="pan-galactic-gargle-blaster",
+                name="The Hitchhiker's Guide to the Galaxy",
+                slug="hitchhikers-guide-to-the-galaxy",
             ),
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/{jsonable_encoder(item_id)}/live",
+            base_url=self._client_wrapper.get_environment().base,
             method="PATCH",
+            params={
+                "skipInvalidFiles": skip_invalid_files,
+            },
             json={
                 "id": id,
                 "cmsLocaleId": cms_locale_id,
@@ -2008,6 +2154,16 @@ class ItemsClient:
                         ),
                     )
                 )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    typing.cast(
+                        typing.Optional[typing.Any],
+                        parse_obj_as(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
             if _response.status_code == 429:
                 raise TooManyRequestsError(
                     typing.cast(
@@ -2037,7 +2193,7 @@ class ItemsClient:
         self,
         collection_id: str,
         *,
-        item_ids: typing.Sequence[str],
+        request: ItemsPublishItemRequest,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ItemsPublishItemResponse:
         """
@@ -2050,7 +2206,7 @@ class ItemsClient:
         collection_id : str
             Unique identifier for a Collection
 
-        item_ids : typing.Sequence[str]
+        request : ItemsPublishItemRequest
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -2063,24 +2219,29 @@ class ItemsClient:
         Examples
         --------
         from webflow import Webflow
+        from webflow.resources.collections.resources.items import ItemIDs
 
         client = Webflow(
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.collections.items.publish_item(
             collection_id="580e63fc8c9a982ac9b8b745",
-            item_ids=["itemIds"],
+            request=ItemIDs(
+                item_ids=[
+                    "643fd856d66b6528195ee2ca",
+                    "643fd856d66b6528195ee2cb",
+                    "643fd856d66b6528195ee2cc",
+                ],
+            ),
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/publish",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
-            json={
-                "itemIds": item_ids,
-            },
-            headers={
-                "content-type": "application/json",
-            },
+            json=convert_and_respect_annotation_metadata(
+                object_=request, annotation=ItemsPublishItemRequest, direction="write"
+            ),
             request_options=request_options,
             omit=OMIT,
         )
@@ -2172,6 +2333,7 @@ class AsyncItemsClient:
         limit: typing.Optional[float] = None,
         name: typing.Optional[str] = None,
         slug: typing.Optional[str] = None,
+        last_published: typing.Optional[ItemsListItemsRequestLastPublished] = None,
         sort_by: typing.Optional[ItemsListItemsRequestSortBy] = None,
         sort_order: typing.Optional[ItemsListItemsRequestSortOrder] = None,
         request_options: typing.Optional[RequestOptions] = None,
@@ -2196,10 +2358,13 @@ class AsyncItemsClient:
             Maximum number of records to be returned (max limit: 100)
 
         name : typing.Optional[str]
-            The name of the item(s)
+            Filter by the exact name of the item(s)
 
         slug : typing.Optional[str]
-            The slug of the item
+            Filter by the exact slug of the item
+
+        last_published : typing.Optional[ItemsListItemsRequestLastPublished]
+            Filter by the last published date of the item(s)
 
         sort_by : typing.Optional[ItemsListItemsRequestSortBy]
             Sort results by the provided value
@@ -2229,6 +2394,13 @@ class AsyncItemsClient:
         async def main() -> None:
             await client.collections.items.list_items(
                 collection_id="580e63fc8c9a982ac9b8b745",
+                cms_locale_id="cmsLocaleId",
+                offset=1.1,
+                limit=1.1,
+                name="name",
+                slug="slug",
+                sort_by="lastPublished",
+                sort_order="asc",
             )
 
 
@@ -2236,6 +2408,7 @@ class AsyncItemsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "cmsLocaleId": cms_locale_id,
@@ -2243,6 +2416,9 @@ class AsyncItemsClient:
                 "limit": limit,
                 "name": name,
                 "slug": slug,
+                "lastPublished": convert_and_respect_annotation_metadata(
+                    object_=last_published, annotation=ItemsListItemsRequestLastPublished, direction="write"
+                ),
                 "sortBy": sort_by,
                 "sortOrder": sort_order,
             },
@@ -2316,14 +2492,15 @@ class AsyncItemsClient:
         self,
         collection_id: str,
         *,
-        request: ItemsCreateItemRequest,
+        request: ItemsCreateItemRequestBody,
+        skip_invalid_files: typing.Optional[bool] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CollectionItem:
         """
         Create Item(s) in a Collection.
 
 
-        To create items across multiple locales, please use [this endpoint.](/v2.0.0/data/reference/cms/collection-items/staged-items/create-items)
+        To create items across multiple locales, please use [this endpoint.](/data/reference/cms/collection-items/staged-items/create-items)
 
         Required scope | `CMS:write`
 
@@ -2332,7 +2509,10 @@ class AsyncItemsClient:
         collection_id : str
             Unique identifier for a Collection
 
-        request : ItemsCreateItemRequest
+        request : ItemsCreateItemRequestBody
+
+        skip_invalid_files : typing.Optional[bool]
+            When true, invalid files are skipped and processing continues. When false, the entire request fails if any file is invalid.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -2360,12 +2540,13 @@ class AsyncItemsClient:
         async def main() -> None:
             await client.collections.items.create_item(
                 collection_id="580e63fc8c9a982ac9b8b745",
+                skip_invalid_files=True,
                 request=CollectionItemPostSingle(
                     is_archived=False,
                     is_draft=False,
                     field_data=CollectionItemPostSingleFieldData(
-                        name="Pan Galactic Gargle Blaster Recipe",
-                        slug="pan-galactic-gargle-blaster",
+                        name="The Hitchhiker's Guide to the Galaxy",
+                        slug="hitchhikers-guide-to-the-galaxy",
                     ),
                 ),
             )
@@ -2375,9 +2556,13 @@ class AsyncItemsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
+            params={
+                "skipInvalidFiles": skip_invalid_files,
+            },
             json=convert_and_respect_annotation_metadata(
-                object_=request, annotation=ItemsCreateItemRequest, direction="write"
+                object_=request, annotation=ItemsCreateItemRequestBody, direction="write"
             ),
             request_options=request_options,
             omit=OMIT,
@@ -2450,13 +2635,13 @@ class AsyncItemsClient:
         self,
         collection_id: str,
         *,
-        items: typing.Optional[typing.Sequence[ItemsDeleteItemsRequestItemsItem]] = OMIT,
+        items: typing.Sequence[ItemsDeleteItemsRequestItemsItem],
         request_options: typing.Optional[RequestOptions] = None,
     ) -> None:
         """
         Delete Items from a Collection.
 
-        **Note:** If the `cmsLocaleId` parameter is undefined or empty and the items are localized, items will be deleted only in the primary locale.
+        <Tip title="Localization Tip">Items will only be deleted in the primary locale unless a `cmsLocaleId` is included in the request.</Tip>
 
         Required scope | `CMS:write`
 
@@ -2465,7 +2650,7 @@ class AsyncItemsClient:
         collection_id : str
             Unique identifier for a Collection
 
-        items : typing.Optional[typing.Sequence[ItemsDeleteItemsRequestItemsItem]]
+        items : typing.Sequence[ItemsDeleteItemsRequestItemsItem]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -2479,6 +2664,9 @@ class AsyncItemsClient:
         import asyncio
 
         from webflow import AsyncWebflow
+        from webflow.resources.collections.resources.items import (
+            ItemsDeleteItemsRequestItemsItem,
+        )
 
         client = AsyncWebflow(
             access_token="YOUR_ACCESS_TOKEN",
@@ -2488,6 +2676,11 @@ class AsyncItemsClient:
         async def main() -> None:
             await client.collections.items.delete_items(
                 collection_id="580e63fc8c9a982ac9b8b745",
+                items=[
+                    ItemsDeleteItemsRequestItemsItem(
+                        id="580e64008c9a982ac9b8b754",
+                    )
+                ],
             )
 
 
@@ -2495,6 +2688,7 @@ class AsyncItemsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items",
+            base_url=self._client_wrapper.get_environment().base,
             method="DELETE",
             json={
                 "items": convert_and_respect_annotation_metadata(
@@ -2579,13 +2773,16 @@ class AsyncItemsClient:
         self,
         collection_id: str,
         *,
+        skip_invalid_files: typing.Optional[bool] = None,
         items: typing.Optional[typing.Sequence[CollectionItemWithIdInput]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> CollectionItem:
+    ) -> ItemsUpdateItemsResponse:
         """
-        Update a single item or multiple items (up to 100) in a Collection.
+        Update a single item or multiple items in a Collection.
 
-        **Note:** If the `cmsLocaleId` parameter is undefined or empty and the items are localized, items will be updated only in the primary locale.
+        The limit for this endpoint is 100 items.
+
+        <Tip title="Localization Tip">Items will only be updated in the primary locale, unless a `cmsLocaleId` is included in the request.</Tip>
 
         Required scope | `CMS:write`
 
@@ -2594,6 +2791,9 @@ class AsyncItemsClient:
         collection_id : str
             Unique identifier for a Collection
 
+        skip_invalid_files : typing.Optional[bool]
+            When true, invalid files are skipped and processing continues. When false, the entire request fails if any file is invalid.
+
         items : typing.Optional[typing.Sequence[CollectionItemWithIdInput]]
 
         request_options : typing.Optional[RequestOptions]
@@ -2601,7 +2801,7 @@ class AsyncItemsClient:
 
         Returns
         -------
-        CollectionItem
+        ItemsUpdateItemsResponse
             Request was successful
 
         Examples
@@ -2622,6 +2822,7 @@ class AsyncItemsClient:
         async def main() -> None:
             await client.collections.items.update_items(
                 collection_id="580e63fc8c9a982ac9b8b745",
+                skip_invalid_files=True,
                 items=[
                     CollectionItemWithIdInput(
                         id="66f6ed9576ddacf3149d5ea6",
@@ -2663,7 +2864,11 @@ class AsyncItemsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items",
+            base_url=self._client_wrapper.get_environment().base,
             method="PATCH",
+            params={
+                "skipInvalidFiles": skip_invalid_files,
+            },
             json={
                 "items": convert_and_respect_annotation_metadata(
                     object_=items, annotation=typing.Sequence[CollectionItemWithIdInput], direction="write"
@@ -2678,9 +2883,9 @@ class AsyncItemsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    CollectionItem,
+                    ItemsUpdateItemsResponse,
                     parse_obj_as(
-                        type_=CollectionItem,  # type: ignore
+                        type_=ItemsUpdateItemsResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -2748,12 +2953,18 @@ class AsyncItemsClient:
         limit: typing.Optional[float] = None,
         name: typing.Optional[str] = None,
         slug: typing.Optional[str] = None,
+        last_published: typing.Optional[ItemsListItemsLiveRequestLastPublished] = None,
         sort_by: typing.Optional[ItemsListItemsLiveRequestSortBy] = None,
         sort_order: typing.Optional[ItemsListItemsLiveRequestSortOrder] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CollectionItemList:
         """
-        List of all live Items within a Collection.
+        List all published items in a collection.
+
+        <Note title="Serve data with the Content Delivery API">
+          To serve content to your other frontends applications, enterprise sites have access to a dedicated [content delivery API](/data/docs/cms-content-delivery), available at api-cdn.webflow.com.
+
+        </Note>
 
         Required scope | `CMS:read`
 
@@ -2772,10 +2983,13 @@ class AsyncItemsClient:
             Maximum number of records to be returned (max limit: 100)
 
         name : typing.Optional[str]
-            The name of the item(s)
+            Filter by the exact name of the item(s)
 
         slug : typing.Optional[str]
-            The slug of the item
+            Filter by the exact slug of the item
+
+        last_published : typing.Optional[ItemsListItemsLiveRequestLastPublished]
+            Filter by the last published date of the item(s)
 
         sort_by : typing.Optional[ItemsListItemsLiveRequestSortBy]
             Sort results by the provided value
@@ -2805,6 +3019,13 @@ class AsyncItemsClient:
         async def main() -> None:
             await client.collections.items.list_items_live(
                 collection_id="580e63fc8c9a982ac9b8b745",
+                cms_locale_id="cmsLocaleId",
+                offset=1.1,
+                limit=1.1,
+                name="name",
+                slug="slug",
+                sort_by="lastPublished",
+                sort_order="asc",
             )
 
 
@@ -2812,6 +3033,7 @@ class AsyncItemsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/live",
+            base_url=self._client_wrapper.get_environment().data_api,
             method="GET",
             params={
                 "cmsLocaleId": cms_locale_id,
@@ -2819,6 +3041,9 @@ class AsyncItemsClient:
                 "limit": limit,
                 "name": name,
                 "slug": slug,
+                "lastPublished": convert_and_respect_annotation_metadata(
+                    object_=last_published, annotation=ItemsListItemsLiveRequestLastPublished, direction="write"
+                ),
                 "sortBy": sort_by,
                 "sortOrder": sort_order,
             },
@@ -2892,14 +3117,15 @@ class AsyncItemsClient:
         self,
         collection_id: str,
         *,
-        request: ItemsCreateItemLiveRequest,
+        request: ItemsCreateItemLiveRequestBody,
+        skip_invalid_files: typing.Optional[bool] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CollectionItem:
         """
-        Create live Item(s) in a Collection. The Item(s) will be published to the live site.
+        Create item(s) in a collection that will be immediately published to the live site.
 
 
-        To create items across multiple locales, [please use this endpoint.](/v2.0.0/data/reference/cms/collection-items/staged-items/create-items)
+        To create items across multiple locales, [please use this endpoint.](/data/reference/cms/collection-items/staged-items/create-items)
 
 
         Required scope | `CMS:write`
@@ -2909,7 +3135,10 @@ class AsyncItemsClient:
         collection_id : str
             Unique identifier for a Collection
 
-        request : ItemsCreateItemLiveRequest
+        request : ItemsCreateItemLiveRequestBody
+
+        skip_invalid_files : typing.Optional[bool]
+            When true, invalid files are skipped and processing continues. When false, the entire request fails if any file is invalid.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -2933,12 +3162,13 @@ class AsyncItemsClient:
         async def main() -> None:
             await client.collections.items.create_item_live(
                 collection_id="580e63fc8c9a982ac9b8b745",
+                skip_invalid_files=True,
                 request=CollectionItem(
                     is_archived=False,
                     is_draft=False,
                     field_data=CollectionItemFieldData(
-                        name="Pan Galactic Gargle Blaster Recipe",
-                        slug="pan-galactic-gargle-blaster",
+                        name="The Hitchhiker's Guide to the Galaxy",
+                        slug="hitchhikers-guide-to-the-galaxy",
                     ),
                 ),
             )
@@ -2948,9 +3178,13 @@ class AsyncItemsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/live",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
+            params={
+                "skipInvalidFiles": skip_invalid_files,
+            },
             json=convert_and_respect_annotation_metadata(
-                object_=request, annotation=ItemsCreateItemLiveRequest, direction="write"
+                object_=request, annotation=ItemsCreateItemLiveRequestBody, direction="write"
             ),
             request_options=request_options,
             omit=OMIT,
@@ -3023,13 +3257,13 @@ class AsyncItemsClient:
         self,
         collection_id: str,
         *,
-        items: typing.Optional[typing.Sequence[ItemsDeleteItemsLiveRequestItemsItem]] = OMIT,
+        items: typing.Sequence[ItemsDeleteItemsLiveRequestItemsItem],
         request_options: typing.Optional[RequestOptions] = None,
     ) -> None:
         """
-        Remove an item or multiple items (up to 100 items) from the live site. Deleting published items will unpublish the items from the live site and set them to draft.
+        Unpublish up to 100 items from the live site and set the `isDraft` property to `true`.
 
-        **Note:** If the `cmsLocaleId` parameter is undefined or empty and the items are localized, items will be unpublished only in the primary locale.
+        <Tip title="Localization Tip">Items will only be unpublished in the primary locale unless a `cmsLocaleId` is included in the request.</Tip>
 
         Required scope | `CMS:write`
 
@@ -3038,7 +3272,7 @@ class AsyncItemsClient:
         collection_id : str
             Unique identifier for a Collection
 
-        items : typing.Optional[typing.Sequence[ItemsDeleteItemsLiveRequestItemsItem]]
+        items : typing.Sequence[ItemsDeleteItemsLiveRequestItemsItem]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -3052,6 +3286,9 @@ class AsyncItemsClient:
         import asyncio
 
         from webflow import AsyncWebflow
+        from webflow.resources.collections.resources.items import (
+            ItemsDeleteItemsLiveRequestItemsItem,
+        )
 
         client = AsyncWebflow(
             access_token="YOUR_ACCESS_TOKEN",
@@ -3061,6 +3298,11 @@ class AsyncItemsClient:
         async def main() -> None:
             await client.collections.items.delete_items_live(
                 collection_id="580e63fc8c9a982ac9b8b745",
+                items=[
+                    ItemsDeleteItemsLiveRequestItemsItem(
+                        id="580e64008c9a982ac9b8b754",
+                    )
+                ],
             )
 
 
@@ -3068,6 +3310,7 @@ class AsyncItemsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/live",
+            base_url=self._client_wrapper.get_environment().base,
             method="DELETE",
             json={
                 "items": convert_and_respect_annotation_metadata(
@@ -3142,13 +3385,14 @@ class AsyncItemsClient:
         self,
         collection_id: str,
         *,
+        skip_invalid_files: typing.Optional[bool] = None,
         items: typing.Optional[typing.Sequence[CollectionItemWithIdInput]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CollectionItemListNoPagination:
         """
-        Update a single live item or multiple live items (up to 100) in a Collection
+        Update a single published item or multiple published items (up to 100) in a Collection
 
-        **Note:** If the `cmsLocaleId` parameter is undefined or empty and the items are localized, items will be updated only in the primary locale.
+        <Tip title="Localization Tip">Items will only be updated in the primary locale, unless a `cmsLocaleId` is included in the request.</Tip>
 
         Required scope | `CMS:write`
 
@@ -3156,6 +3400,9 @@ class AsyncItemsClient:
         ----------
         collection_id : str
             Unique identifier for a Collection
+
+        skip_invalid_files : typing.Optional[bool]
+            When true, invalid files are skipped and processing continues. When false, the entire request fails if any file is invalid.
 
         items : typing.Optional[typing.Sequence[CollectionItemWithIdInput]]
 
@@ -3185,6 +3432,7 @@ class AsyncItemsClient:
         async def main() -> None:
             await client.collections.items.update_items_live(
                 collection_id="580e63fc8c9a982ac9b8b745",
+                skip_invalid_files=True,
                 items=[
                     CollectionItemWithIdInput(
                         id="66f6ed9576ddacf3149d5ea6",
@@ -3226,7 +3474,11 @@ class AsyncItemsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/live",
+            base_url=self._client_wrapper.get_environment().base,
             method="PATCH",
+            params={
+                "skipInvalidFiles": skip_invalid_files,
+            },
             json={
                 "items": convert_and_respect_annotation_metadata(
                     object_=items, annotation=typing.Sequence[CollectionItemWithIdInput], direction="write"
@@ -3277,6 +3529,16 @@ class AsyncItemsClient:
                         ),
                     )
                 )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    typing.cast(
+                        typing.Optional[typing.Any],
+                        parse_obj_as(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
             if _response.status_code == 429:
                 raise TooManyRequestsError(
                     typing.cast(
@@ -3307,6 +3569,7 @@ class AsyncItemsClient:
         collection_id: str,
         *,
         field_data: CreateBulkCollectionItemRequestBodyFieldData,
+        skip_invalid_files: typing.Optional[bool] = None,
         cms_locale_ids: typing.Optional[typing.Sequence[str]] = OMIT,
         is_archived: typing.Optional[bool] = OMIT,
         is_draft: typing.Optional[bool] = OMIT,
@@ -3315,9 +3578,10 @@ class AsyncItemsClient:
         """
         Create an item or multiple items in a CMS Collection across multiple corresponding locales.
 
-        **Notes:**
+        <Note>
           - This endpoint can create up to 100 items in a request.
-          - If the `cmsLocaleIds` parameter is undefined or empty and localization is enabled, items will only be created in the primary locale.
+          - If the `cmsLocaleIds` parameter is not included in the request, an item will only be created in the primary locale.
+        </Note>
 
         Required scope | `CMS:write`
 
@@ -3327,6 +3591,9 @@ class AsyncItemsClient:
             Unique identifier for a Collection
 
         field_data : CreateBulkCollectionItemRequestBodyFieldData
+
+        skip_invalid_files : typing.Optional[bool]
+            When true, invalid files are skipped and processing continues. When false, the entire request fails if any file is invalid.
 
         cms_locale_ids : typing.Optional[typing.Sequence[str]]
             Array of identifiers for the locales where the item will be created
@@ -3360,6 +3627,7 @@ class AsyncItemsClient:
         async def main() -> None:
             await client.collections.items.create_items(
                 collection_id="580e63fc8c9a982ac9b8b745",
+                skip_invalid_files=True,
                 cms_locale_ids=[
                     "66f6e966c9e1dc700a857ca3",
                     "66f6e966c9e1dc700a857ca4",
@@ -3378,7 +3646,11 @@ class AsyncItemsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/bulk",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
+            params={
+                "skipInvalidFiles": skip_invalid_files,
+            },
             json={
                 "cmsLocaleIds": cms_locale_ids,
                 "isArchived": is_archived,
@@ -3504,6 +3776,7 @@ class AsyncItemsClient:
             await client.collections.items.get_item(
                 collection_id="580e63fc8c9a982ac9b8b745",
                 item_id="580e64008c9a982ac9b8b754",
+                cms_locale_id="cmsLocaleId",
             )
 
 
@@ -3511,6 +3784,7 @@ class AsyncItemsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/{jsonable_encoder(item_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "cmsLocaleId": cms_locale_id,
@@ -3590,7 +3864,7 @@ class AsyncItemsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> None:
         """
-        Delete an Item from a Collection. This endpoint does not currently support bulk deletion.
+        Delete an item from a collection.
 
         Required scope | `CMS:write`
 
@@ -3627,6 +3901,7 @@ class AsyncItemsClient:
             await client.collections.items.delete_item(
                 collection_id="580e63fc8c9a982ac9b8b745",
                 item_id="580e64008c9a982ac9b8b754",
+                cms_locale_id="cmsLocaleId",
             )
 
 
@@ -3634,6 +3909,7 @@ class AsyncItemsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/{jsonable_encoder(item_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="DELETE",
             params={
                 "cmsLocaleId": cms_locale_id,
@@ -3703,6 +3979,7 @@ class AsyncItemsClient:
         collection_id: str,
         item_id: str,
         *,
+        skip_invalid_files: typing.Optional[bool] = None,
         id: typing.Optional[str] = OMIT,
         cms_locale_id: typing.Optional[str] = OMIT,
         last_published: typing.Optional[str] = OMIT,
@@ -3725,6 +4002,9 @@ class AsyncItemsClient:
 
         item_id : str
             Unique identifier for an Item
+
+        skip_invalid_files : typing.Optional[bool]
+            When true, invalid files are skipped and processing continues. When false, the entire request fails if any file is invalid.
 
         id : typing.Optional[str]
             Unique identifier for the Item
@@ -3772,11 +4052,12 @@ class AsyncItemsClient:
             await client.collections.items.update_item(
                 collection_id="580e63fc8c9a982ac9b8b745",
                 item_id="580e64008c9a982ac9b8b754",
+                skip_invalid_files=True,
                 is_archived=False,
                 is_draft=False,
                 field_data=CollectionItemPatchSingleFieldData(
-                    name="Pan Galactic Gargle Blaster Recipe",
-                    slug="pan-galactic-gargle-blaster",
+                    name="The Hitchhiker's Guide to the Galaxy",
+                    slug="hitchhikers-guide-to-the-galaxy",
                 ),
             )
 
@@ -3785,7 +4066,11 @@ class AsyncItemsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/{jsonable_encoder(item_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="PATCH",
+            params={
+                "skipInvalidFiles": skip_invalid_files,
+            },
             json={
                 "id": id,
                 "cmsLocaleId": cms_locale_id,
@@ -3876,6 +4161,11 @@ class AsyncItemsClient:
         """
         Get details of a selected Collection live Item.
 
+        <Note title="Serve data with the Content Delivery API">
+          To serve content to your other frontends applications, enterprise sites have access to a dedicated [content delivery API](/data/docs/cms-content-delivery), available at api-cdn.webflow.com.
+
+        </Note>
+
         Required scope | `CMS:read`
 
         Parameters
@@ -3912,6 +4202,7 @@ class AsyncItemsClient:
             await client.collections.items.get_item_live(
                 collection_id="580e63fc8c9a982ac9b8b745",
                 item_id="580e64008c9a982ac9b8b754",
+                cms_locale_id="cmsLocaleId",
             )
 
 
@@ -3919,6 +4210,7 @@ class AsyncItemsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/{jsonable_encoder(item_id)}/live",
+            base_url=self._client_wrapper.get_environment().data_api,
             method="GET",
             params={
                 "cmsLocaleId": cms_locale_id,
@@ -3998,9 +4290,9 @@ class AsyncItemsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> None:
         """
-        Remove a live item from the site. Removing a published item will unpublish the item from the live site and set it to draft.
+        Unpublish a live item from the site and set the `isDraft` property to `true`.
 
-        This endpoint does not currently support bulk deletion.
+        For bulk unpublishing, please use [this endpoint.](/data/v2.0.0/reference/cms/collection-items/live-items/delete-items-live)
 
         Required scope | `CMS:write`
 
@@ -4037,6 +4329,7 @@ class AsyncItemsClient:
             await client.collections.items.delete_item_live(
                 collection_id="580e63fc8c9a982ac9b8b745",
                 item_id="580e64008c9a982ac9b8b754",
+                cms_locale_id="cmsLocaleId",
             )
 
 
@@ -4044,6 +4337,7 @@ class AsyncItemsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/{jsonable_encoder(item_id)}/live",
+            base_url=self._client_wrapper.get_environment().base,
             method="DELETE",
             params={
                 "cmsLocaleId": cms_locale_id,
@@ -4113,6 +4407,7 @@ class AsyncItemsClient:
         collection_id: str,
         item_id: str,
         *,
+        skip_invalid_files: typing.Optional[bool] = None,
         id: typing.Optional[str] = OMIT,
         cms_locale_id: typing.Optional[str] = OMIT,
         last_published: typing.Optional[str] = OMIT,
@@ -4135,6 +4430,9 @@ class AsyncItemsClient:
 
         item_id : str
             Unique identifier for an Item
+
+        skip_invalid_files : typing.Optional[bool]
+            When true, invalid files are skipped and processing continues. When false, the entire request fails if any file is invalid.
 
         id : typing.Optional[str]
             Unique identifier for the Item
@@ -4182,11 +4480,12 @@ class AsyncItemsClient:
             await client.collections.items.update_item_live(
                 collection_id="580e63fc8c9a982ac9b8b745",
                 item_id="580e64008c9a982ac9b8b754",
+                skip_invalid_files=True,
                 is_archived=False,
                 is_draft=False,
                 field_data=CollectionItemPatchSingleFieldData(
-                    name="Pan Galactic Gargle Blaster Recipe",
-                    slug="pan-galactic-gargle-blaster",
+                    name="The Hitchhiker's Guide to the Galaxy",
+                    slug="hitchhikers-guide-to-the-galaxy",
                 ),
             )
 
@@ -4195,7 +4494,11 @@ class AsyncItemsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/{jsonable_encoder(item_id)}/live",
+            base_url=self._client_wrapper.get_environment().base,
             method="PATCH",
+            params={
+                "skipInvalidFiles": skip_invalid_files,
+            },
             json={
                 "id": id,
                 "cmsLocaleId": cms_locale_id,
@@ -4250,6 +4553,16 @@ class AsyncItemsClient:
                         ),
                     )
                 )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    typing.cast(
+                        typing.Optional[typing.Any],
+                        parse_obj_as(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
             if _response.status_code == 429:
                 raise TooManyRequestsError(
                     typing.cast(
@@ -4279,7 +4592,7 @@ class AsyncItemsClient:
         self,
         collection_id: str,
         *,
-        item_ids: typing.Sequence[str],
+        request: ItemsPublishItemRequest,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ItemsPublishItemResponse:
         """
@@ -4292,7 +4605,7 @@ class AsyncItemsClient:
         collection_id : str
             Unique identifier for a Collection
 
-        item_ids : typing.Sequence[str]
+        request : ItemsPublishItemRequest
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -4307,6 +4620,7 @@ class AsyncItemsClient:
         import asyncio
 
         from webflow import AsyncWebflow
+        from webflow.resources.collections.resources.items import ItemIDs
 
         client = AsyncWebflow(
             access_token="YOUR_ACCESS_TOKEN",
@@ -4316,7 +4630,13 @@ class AsyncItemsClient:
         async def main() -> None:
             await client.collections.items.publish_item(
                 collection_id="580e63fc8c9a982ac9b8b745",
-                item_ids=["itemIds"],
+                request=ItemIDs(
+                    item_ids=[
+                        "643fd856d66b6528195ee2ca",
+                        "643fd856d66b6528195ee2cb",
+                        "643fd856d66b6528195ee2cc",
+                    ],
+                ),
             )
 
 
@@ -4324,13 +4644,11 @@ class AsyncItemsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"collections/{jsonable_encoder(collection_id)}/items/publish",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
-            json={
-                "itemIds": item_ids,
-            },
-            headers={
-                "content-type": "application/json",
-            },
+            json=convert_and_respect_annotation_metadata(
+                object_=request, annotation=ItemsPublishItemRequest, direction="write"
+            ),
             request_options=request_options,
             omit=OMIT,
         )

@@ -6,12 +6,15 @@ import typing
 from ..utilities import validate_response
 from webflow import CollectionItemPostSingle
 from webflow import CollectionItemPostSingleFieldData
+from webflow.resources.collections.resources.items import ItemsDeleteItemsRequestItemsItem
 from webflow import CollectionItemWithIdInput
 from webflow import CollectionItemWithIdInputFieldData
 from webflow import CollectionItem
 from webflow import CollectionItemFieldData
+from webflow.resources.collections.resources.items import ItemsDeleteItemsLiveRequestItemsItem
 from webflow.resources.collections.resources.items import SingleCmsItem
 from webflow import CollectionItemPatchSingleFieldData
+from webflow.resources.collections.resources.items import ItemIDs
 
 
 async def test_list_items(client: Webflow, async_client: AsyncWebflow) -> None:
@@ -78,10 +81,28 @@ async def test_list_items(client: Webflow, async_client: AsyncWebflow) -> None:
         ),
         "pagination": {"limit": None, "offset": None, "total": None},
     }
-    response = client.collections.items.list_items(collection_id="580e63fc8c9a982ac9b8b745")
+    response = client.collections.items.list_items(
+        collection_id="580e63fc8c9a982ac9b8b745",
+        cms_locale_id="cmsLocaleId",
+        offset=1.1,
+        limit=1.1,
+        name="name",
+        slug="slug",
+        sort_by="lastPublished",
+        sort_order="asc",
+    )
     validate_response(response, expected_response, expected_types)
 
-    async_response = await async_client.collections.items.list_items(collection_id="580e63fc8c9a982ac9b8b745")
+    async_response = await async_client.collections.items.list_items(
+        collection_id="580e63fc8c9a982ac9b8b745",
+        cms_locale_id="cmsLocaleId",
+        offset=1.1,
+        limit=1.1,
+        name="name",
+        slug="slug",
+        sort_by="lastPublished",
+        sort_order="asc",
+    )
     validate_response(async_response, expected_response, expected_types)
 
 
@@ -95,11 +116,30 @@ async def test_create_item(client: Webflow, async_client: AsyncWebflow) -> None:
         "isArchived": False,
         "isDraft": False,
         "fieldData": {
-            "name": "Pan Galactic Gargle Blaster Recipe",
-            "slug": "pan-galactic-gargle-blaster",
-            "color": "#db4b68",
-            "date": "2022-11-18T00:00:00.000Z",
-            "featured": True,
+            "name": "The Hitchhiker's Guide to the Galaxy",
+            "slug": "hitchhikers-guide-to-the-galaxy",
+            "plain-text": "Don't Panic.",
+            "rich-text": "<h3>A Guide to Interstellar Travel</h3><p>A towel is about the most massively useful thing an interstellar hitchhiker can have. <strong>Don't forget yours!</strong></p>",
+            "main-image": {"fileId": "62b720ef280c7a7a3be8cabe", "url": "/files/62b720ef280c7a7a3be8cabe_image.png"},
+            "image-gallery": [
+                {"fileId": "62b720ef280c7a7a3be8cabd", "url": "/files/62b720ef280c7a7a3be8cabd_image.png"},
+                {"fileId": "62b720ef280c7a7a3be8cabe", "url": "/files/62b720ef280c7a7a3be8cabe_image.png"},
+            ],
+            "intro-video": "https://www.youtube.com/watch?v=aJ83KAggd-4",
+            "official-site": "https://hitchhikers.fandom.com/wiki/The_Hitchhiker%27s_Guide_to_the_Galaxy",
+            "contact-email": "zaphod.beeblebrox@heartofgold.gov",
+            "support-phone": "424-242-4242",
+            "answer-to-everything": 42,
+            "release-date": "1979-10-12T00:00:00.000Z",
+            "is-featured": True,
+            "brand-color": "#000000",
+            "category": "62b720ef280c7a7a3be8cabf",
+            "author": "62b720ef280c7a7a3be8cab0",
+            "tags": ["62b720ef280c7a7a3be8cab1", "62b720ef280c7a7a3be8cab2"],
+            "downloadable-asset": {
+                "fileId": "62b720ef280c7a7a3be8cab3",
+                "url": "/files/62b720ef280c7a7a3be8cab3_document.pdf",
+            },
         },
     }
     expected_types: typing.Any = {
@@ -114,11 +154,12 @@ async def test_create_item(client: Webflow, async_client: AsyncWebflow) -> None:
     }
     response = client.collections.items.create_item(
         collection_id="580e63fc8c9a982ac9b8b745",
+        skip_invalid_files=True,
         request=CollectionItemPostSingle(
             is_archived=False,
             is_draft=False,
             field_data=CollectionItemPostSingleFieldData(
-                name="Pan Galactic Gargle Blaster Recipe", slug="pan-galactic-gargle-blaster"
+                name="The Hitchhiker's Guide to the Galaxy", slug="hitchhikers-guide-to-the-galaxy"
             ),
         ),
     )
@@ -126,11 +167,12 @@ async def test_create_item(client: Webflow, async_client: AsyncWebflow) -> None:
 
     async_response = await async_client.collections.items.create_item(
         collection_id="580e63fc8c9a982ac9b8b745",
+        skip_invalid_files=True,
         request=CollectionItemPostSingle(
             is_archived=False,
             is_draft=False,
             field_data=CollectionItemPostSingleFieldData(
-                name="Pan Galactic Gargle Blaster Recipe", slug="pan-galactic-gargle-blaster"
+                name="The Hitchhiker's Guide to the Galaxy", slug="hitchhikers-guide-to-the-galaxy"
             ),
         ),
     )
@@ -140,45 +182,127 @@ async def test_create_item(client: Webflow, async_client: AsyncWebflow) -> None:
 async def test_delete_items(client: Webflow, async_client: AsyncWebflow) -> None:
     # Type ignore to avoid mypy complaining about the function not being meant to return a value
     assert (
-        client.collections.items.delete_items(collection_id="580e63fc8c9a982ac9b8b745")  # type: ignore[func-returns-value]
+        client.collections.items.delete_items(
+            collection_id="580e63fc8c9a982ac9b8b745",
+            items=[ItemsDeleteItemsRequestItemsItem(id="580e64008c9a982ac9b8b754")],
+        )  # type: ignore[func-returns-value]
         is None
     )
 
     assert (
-        await async_client.collections.items.delete_items(collection_id="580e63fc8c9a982ac9b8b745")  # type: ignore[func-returns-value]
+        await async_client.collections.items.delete_items(
+            collection_id="580e63fc8c9a982ac9b8b745",
+            items=[ItemsDeleteItemsRequestItemsItem(id="580e64008c9a982ac9b8b754")],
+        )  # type: ignore[func-returns-value]
         is None
     )
 
 
 async def test_update_items(client: Webflow, async_client: AsyncWebflow) -> None:
     expected_response: typing.Any = {
-        "id": "id",
-        "cmsLocaleId": "653ad57de882f528b32e810e",
-        "lastPublished": "2023-03-17T18:47:35.560Z",
-        "lastUpdated": "2023-03-17T18:47:35.560Z",
-        "createdOn": "2023-03-17T18:47:35.560Z",
-        "isArchived": True,
-        "isDraft": True,
-        "fieldData": {
-            "name": "My new item",
-            "slug": "my-new-item",
-            "date": "2022-11-18T00:00:00.000Z",
-            "featured": False,
-            "color": "#db4b68",
-        },
+        "items": [
+            {
+                "id": "66f6ed9576ddacf3149d5ea6",
+                "cmsLocaleId": "66f6e966c9e1dc700a857ca5",
+                "lastPublished": "2024-09-27T17:38:29.066Z",
+                "lastUpdated": "2024-09-27T17:38:29.066Z",
+                "createdOn": "2024-09-27T17:38:29.066Z",
+                "isArchived": False,
+                "isDraft": False,
+                "fieldData": {"name": "Ne Paniquez Pas", "slug": "ne-paniquez-pas", "featured": False},
+            },
+            {
+                "id": "66f6ed9576ddacf3149d5ea6",
+                "cmsLocaleId": "66f6e966c9e1dc700a857ca4",
+                "lastPublished": "2024-09-27T17:38:29.066Z",
+                "lastUpdated": "2024-09-27T17:38:29.066Z",
+                "createdOn": "2024-09-27T17:38:29.066Z",
+                "isArchived": False,
+                "isDraft": False,
+                "fieldData": {"name": "No Entrar en Pánico", "slug": "no-entrar-en-panico", "featured": False},
+            },
+            {
+                "id": "66f6ed9576ddacf3149d5eaa",
+                "cmsLocaleId": "66f6e966c9e1dc700a857ca5",
+                "lastPublished": "2024-09-27T17:38:29.066Z",
+                "lastUpdated": "2024-09-27T17:38:29.066Z",
+                "createdOn": "2024-09-27T17:38:29.066Z",
+                "isArchived": False,
+                "isDraft": False,
+                "fieldData": {
+                    "name": "Au Revoir et Merci pour Tous les Poissons",
+                    "slug": "au-revoir-et-merci",
+                    "featured": False,
+                },
+            },
+            {
+                "id": "66f6ed9576ddacf3149d5eaa",
+                "cmsLocaleId": "66f6e966c9e1dc700a857ca4",
+                "lastPublished": "2024-09-27T17:38:29.066Z",
+                "lastUpdated": "2024-09-27T17:38:29.066Z",
+                "createdOn": "2024-09-27T17:38:29.066Z",
+                "isArchived": False,
+                "isDraft": False,
+                "fieldData": {
+                    "name": "Hasta Luego y Gracias por Todo el Pescado",
+                    "slug": "hasta-luego-y-gracias",
+                    "featured": False,
+                },
+            },
+        ],
+        "pagination": {"limit": 25, "offset": 0, "total": 4},
     }
     expected_types: typing.Any = {
-        "id": None,
-        "cmsLocaleId": None,
-        "lastPublished": None,
-        "lastUpdated": None,
-        "createdOn": None,
-        "isArchived": None,
-        "isDraft": None,
-        "fieldData": {"name": None, "slug": None},
+        "items": (
+            "list",
+            {
+                0: {
+                    "id": None,
+                    "cmsLocaleId": None,
+                    "lastPublished": None,
+                    "lastUpdated": None,
+                    "createdOn": None,
+                    "isArchived": None,
+                    "isDraft": None,
+                    "fieldData": {"name": None, "slug": None},
+                },
+                1: {
+                    "id": None,
+                    "cmsLocaleId": None,
+                    "lastPublished": None,
+                    "lastUpdated": None,
+                    "createdOn": None,
+                    "isArchived": None,
+                    "isDraft": None,
+                    "fieldData": {"name": None, "slug": None},
+                },
+                2: {
+                    "id": None,
+                    "cmsLocaleId": None,
+                    "lastPublished": None,
+                    "lastUpdated": None,
+                    "createdOn": None,
+                    "isArchived": None,
+                    "isDraft": None,
+                    "fieldData": {"name": None, "slug": None},
+                },
+                3: {
+                    "id": None,
+                    "cmsLocaleId": None,
+                    "lastPublished": None,
+                    "lastUpdated": None,
+                    "createdOn": None,
+                    "isArchived": None,
+                    "isDraft": None,
+                    "fieldData": {"name": None, "slug": None},
+                },
+            },
+        ),
+        "pagination": {"limit": None, "offset": None, "total": None},
     }
     response = client.collections.items.update_items(
         collection_id="580e63fc8c9a982ac9b8b745",
+        skip_invalid_files=True,
         items=[
             CollectionItemWithIdInput(
                 id="66f6ed9576ddacf3149d5ea6",
@@ -210,6 +334,7 @@ async def test_update_items(client: Webflow, async_client: AsyncWebflow) -> None
 
     async_response = await async_client.collections.items.update_items(
         collection_id="580e63fc8c9a982ac9b8b745",
+        skip_invalid_files=True,
         items=[
             CollectionItemWithIdInput(
                 id="66f6ed9576ddacf3149d5ea6",
@@ -304,10 +429,28 @@ async def test_list_items_live(client: Webflow, async_client: AsyncWebflow) -> N
         ),
         "pagination": {"limit": None, "offset": None, "total": None},
     }
-    response = client.collections.items.list_items_live(collection_id="580e63fc8c9a982ac9b8b745")
+    response = client.collections.items.list_items_live(
+        collection_id="580e63fc8c9a982ac9b8b745",
+        cms_locale_id="cmsLocaleId",
+        offset=1.1,
+        limit=1.1,
+        name="name",
+        slug="slug",
+        sort_by="lastPublished",
+        sort_order="asc",
+    )
     validate_response(response, expected_response, expected_types)
 
-    async_response = await async_client.collections.items.list_items_live(collection_id="580e63fc8c9a982ac9b8b745")
+    async_response = await async_client.collections.items.list_items_live(
+        collection_id="580e63fc8c9a982ac9b8b745",
+        cms_locale_id="cmsLocaleId",
+        offset=1.1,
+        limit=1.1,
+        name="name",
+        slug="slug",
+        sort_by="lastPublished",
+        sort_order="asc",
+    )
     validate_response(async_response, expected_response, expected_types)
 
 
@@ -321,11 +464,30 @@ async def test_create_item_live(client: Webflow, async_client: AsyncWebflow) -> 
         "isArchived": False,
         "isDraft": False,
         "fieldData": {
-            "name": "Pan Galactic Gargle Blaster Recipe",
-            "slug": "pan-galactic-gargle-blaster",
-            "color": "#db4b68",
-            "date": "2022-11-18T00:00:00.000Z",
-            "featured": True,
+            "name": "The Hitchhiker's Guide to the Galaxy",
+            "slug": "hitchhikers-guide-to-the-galaxy",
+            "plain-text": "Don't Panic.",
+            "rich-text": "<h3>A Guide to Interstellar Travel</h3><p>A towel is about the most massively useful thing an interstellar hitchhiker can have. <strong>Don't forget yours!</strong></p>",
+            "main-image": {"fileId": "62b720ef280c7a7a3be8cabe", "url": "/files/62b720ef280c7a7a3be8cabe_image.png"},
+            "image-gallery": [
+                {"fileId": "62b720ef280c7a7a3be8cabd", "url": "/files/62b720ef280c7a7a3be8cabd_image.png"},
+                {"fileId": "62b720ef280c7a7a3be8cabe", "url": "/files/62b720ef280c7a7a3be8cabe_image.png"},
+            ],
+            "intro-video": "https://www.youtube.com/watch?v=aJ83KAggd-4",
+            "official-site": "https://hitchhikers.fandom.com/wiki/The_Hitchhiker%27s_Guide_to_the_Galaxy",
+            "contact-email": "zaphod.beeblebrox@heartofgold.gov",
+            "support-phone": "424-242-4242",
+            "answer-to-everything": 42,
+            "release-date": "1979-10-12T00:00:00.000Z",
+            "is-featured": True,
+            "brand-color": "#000000",
+            "category": "62b720ef280c7a7a3be8cabf",
+            "author": "62b720ef280c7a7a3be8cab0",
+            "tags": ["62b720ef280c7a7a3be8cab1", "62b720ef280c7a7a3be8cab2"],
+            "downloadable-asset": {
+                "fileId": "62b720ef280c7a7a3be8cab3",
+                "url": "/files/62b720ef280c7a7a3be8cab3_document.pdf",
+            },
         },
     }
     expected_types: typing.Any = {
@@ -340,11 +502,12 @@ async def test_create_item_live(client: Webflow, async_client: AsyncWebflow) -> 
     }
     response = client.collections.items.create_item_live(
         collection_id="580e63fc8c9a982ac9b8b745",
+        skip_invalid_files=True,
         request=CollectionItem(
             is_archived=False,
             is_draft=False,
             field_data=CollectionItemFieldData(
-                name="Pan Galactic Gargle Blaster Recipe", slug="pan-galactic-gargle-blaster"
+                name="The Hitchhiker's Guide to the Galaxy", slug="hitchhikers-guide-to-the-galaxy"
             ),
         ),
     )
@@ -352,11 +515,12 @@ async def test_create_item_live(client: Webflow, async_client: AsyncWebflow) -> 
 
     async_response = await async_client.collections.items.create_item_live(
         collection_id="580e63fc8c9a982ac9b8b745",
+        skip_invalid_files=True,
         request=CollectionItem(
             is_archived=False,
             is_draft=False,
             field_data=CollectionItemFieldData(
-                name="Pan Galactic Gargle Blaster Recipe", slug="pan-galactic-gargle-blaster"
+                name="The Hitchhiker's Guide to the Galaxy", slug="hitchhikers-guide-to-the-galaxy"
             ),
         ),
     )
@@ -366,12 +530,18 @@ async def test_create_item_live(client: Webflow, async_client: AsyncWebflow) -> 
 async def test_delete_items_live(client: Webflow, async_client: AsyncWebflow) -> None:
     # Type ignore to avoid mypy complaining about the function not being meant to return a value
     assert (
-        client.collections.items.delete_items_live(collection_id="580e63fc8c9a982ac9b8b745")  # type: ignore[func-returns-value]
+        client.collections.items.delete_items_live(
+            collection_id="580e63fc8c9a982ac9b8b745",
+            items=[ItemsDeleteItemsLiveRequestItemsItem(id="580e64008c9a982ac9b8b754")],
+        )  # type: ignore[func-returns-value]
         is None
     )
 
     assert (
-        await async_client.collections.items.delete_items_live(collection_id="580e63fc8c9a982ac9b8b745")  # type: ignore[func-returns-value]
+        await async_client.collections.items.delete_items_live(
+            collection_id="580e63fc8c9a982ac9b8b745",
+            items=[ItemsDeleteItemsLiveRequestItemsItem(id="580e64008c9a982ac9b8b754")],
+        )  # type: ignore[func-returns-value]
         is None
     )
 
@@ -382,31 +552,31 @@ async def test_update_items_live(client: Webflow, async_client: AsyncWebflow) ->
             {
                 "id": "66f6ed9576ddacf3149d5ea6",
                 "cmsLocaleId": "66f6e966c9e1dc700a857ca5",
-                "lastPublished": "2023-03-17T18:47:35.560Z",
+                "lastPublished": "2024-09-27T17:38:29.066Z",
                 "lastUpdated": "2024-09-27T17:38:29.066Z",
                 "createdOn": "2024-09-27T17:38:29.066Z",
-                "isArchived": True,
-                "isDraft": True,
+                "isArchived": False,
+                "isDraft": False,
                 "fieldData": {"name": "Ne Paniquez Pas", "slug": "ne-paniquez-pas", "featured": False},
             },
             {
                 "id": "66f6ed9576ddacf3149d5ea6",
                 "cmsLocaleId": "66f6e966c9e1dc700a857ca4",
-                "lastPublished": "2023-03-17T18:47:35.560Z",
+                "lastPublished": "2024-09-27T17:38:29.066Z",
                 "lastUpdated": "2024-09-27T17:38:29.066Z",
                 "createdOn": "2024-09-27T17:38:29.066Z",
-                "isArchived": True,
-                "isDraft": True,
+                "isArchived": False,
+                "isDraft": False,
                 "fieldData": {"name": "No Entrar en Pánico", "slug": "no-entrar-en-panico", "featured": False},
             },
             {
                 "id": "66f6ed9576ddacf3149d5eaa",
                 "cmsLocaleId": "66f6e966c9e1dc700a857ca5",
-                "lastPublished": "2023-03-17T18:47:35.560Z",
+                "lastPublished": "2024-09-27T17:38:29.066Z",
                 "lastUpdated": "2024-09-27T17:38:29.066Z",
                 "createdOn": "2024-09-27T17:38:29.066Z",
-                "isArchived": True,
-                "isDraft": True,
+                "isArchived": False,
+                "isDraft": False,
                 "fieldData": {
                     "name": "Au Revoir et Merci pour Tous les Poissons",
                     "slug": "au-revoir-et-merci",
@@ -416,11 +586,11 @@ async def test_update_items_live(client: Webflow, async_client: AsyncWebflow) ->
             {
                 "id": "66f6ed9576ddacf3149d5eaa",
                 "cmsLocaleId": "66f6e966c9e1dc700a857ca4",
-                "lastPublished": "2023-03-17T18:47:35.560Z",
+                "lastPublished": "2024-09-27T17:38:29.066Z",
                 "lastUpdated": "2024-09-27T17:38:29.066Z",
                 "createdOn": "2024-09-27T17:38:29.066Z",
-                "isArchived": True,
-                "isDraft": True,
+                "isArchived": False,
+                "isDraft": False,
                 "fieldData": {
                     "name": "Hasta Luego y Gracias por Todo el Pescado",
                     "slug": "hasta-luego-y-gracias",
@@ -478,6 +648,7 @@ async def test_update_items_live(client: Webflow, async_client: AsyncWebflow) ->
     }
     response = client.collections.items.update_items_live(
         collection_id="580e63fc8c9a982ac9b8b745",
+        skip_invalid_files=True,
         items=[
             CollectionItemWithIdInput(
                 id="66f6ed9576ddacf3149d5ea6",
@@ -509,6 +680,7 @@ async def test_update_items_live(client: Webflow, async_client: AsyncWebflow) ->
 
     async_response = await async_client.collections.items.update_items_live(
         collection_id="580e63fc8c9a982ac9b8b745",
+        skip_invalid_files=True,
         items=[
             CollectionItemWithIdInput(
                 id="66f6ed9576ddacf3149d5ea6",
@@ -568,6 +740,7 @@ async def test_create_items(client: Webflow, async_client: AsyncWebflow) -> None
     }
     response = client.collections.items.create_items(
         collection_id="580e63fc8c9a982ac9b8b745",
+        skip_invalid_files=True,
         cms_locale_ids=["66f6e966c9e1dc700a857ca3", "66f6e966c9e1dc700a857ca4", "66f6e966c9e1dc700a857ca5"],
         is_archived=False,
         is_draft=False,
@@ -577,6 +750,7 @@ async def test_create_items(client: Webflow, async_client: AsyncWebflow) -> None
 
     async_response = await async_client.collections.items.create_items(
         collection_id="580e63fc8c9a982ac9b8b745",
+        skip_invalid_files=True,
         cms_locale_ids=["66f6e966c9e1dc700a857ca3", "66f6e966c9e1dc700a857ca4", "66f6e966c9e1dc700a857ca5"],
         is_archived=False,
         is_draft=False,
@@ -595,11 +769,30 @@ async def test_get_item(client: Webflow, async_client: AsyncWebflow) -> None:
         "isArchived": False,
         "isDraft": False,
         "fieldData": {
-            "name": "Pan Galactic Gargle Blaster Recipe",
-            "slug": "pan-galactic-gargle-blaster",
-            "color": "#db4b68",
-            "date": "2022-11-18T00:00:00.000Z",
-            "featured": True,
+            "name": "The Hitchhiker's Guide to the Galaxy",
+            "slug": "hitchhikers-guide-to-the-galaxy",
+            "plain-text": "Don't Panic.",
+            "rich-text": "<h3>A Guide to Interstellar Travel</h3><p>A towel is about the most massively useful thing an interstellar hitchhiker can have. <strong>Don't forget yours!</strong></p>",
+            "main-image": {"fileId": "62b720ef280c7a7a3be8cabe", "url": "/files/62b720ef280c7a7a3be8cabe_image.png"},
+            "image-gallery": [
+                {"fileId": "62b720ef280c7a7a3be8cabd", "url": "/files/62b720ef280c7a7a3be8cabd_image.png"},
+                {"fileId": "62b720ef280c7a7a3be8cabe", "url": "/files/62b720ef280c7a7a3be8cabe_image.png"},
+            ],
+            "intro-video": "https://www.youtube.com/watch?v=aJ83KAggd-4",
+            "official-site": "https://hitchhikers.fandom.com/wiki/The_Hitchhiker%27s_Guide_to_the_Galaxy",
+            "contact-email": "zaphod.beeblebrox@heartofgold.gov",
+            "support-phone": "424-242-4242",
+            "answer-to-everything": 42,
+            "release-date": "1979-10-12T00:00:00.000Z",
+            "is-featured": True,
+            "brand-color": "#000000",
+            "category": "62b720ef280c7a7a3be8cabf",
+            "author": "62b720ef280c7a7a3be8cab0",
+            "tags": ["62b720ef280c7a7a3be8cab1", "62b720ef280c7a7a3be8cab2"],
+            "downloadable-asset": {
+                "fileId": "62b720ef280c7a7a3be8cab3",
+                "url": "/files/62b720ef280c7a7a3be8cab3_document.pdf",
+            },
         },
     }
     expected_types: typing.Any = {
@@ -613,12 +806,12 @@ async def test_get_item(client: Webflow, async_client: AsyncWebflow) -> None:
         "fieldData": {"name": None, "slug": None},
     }
     response = client.collections.items.get_item(
-        collection_id="580e63fc8c9a982ac9b8b745", item_id="580e64008c9a982ac9b8b754"
+        collection_id="580e63fc8c9a982ac9b8b745", item_id="580e64008c9a982ac9b8b754", cms_locale_id="cmsLocaleId"
     )
     validate_response(response, expected_response, expected_types)
 
     async_response = await async_client.collections.items.get_item(
-        collection_id="580e63fc8c9a982ac9b8b745", item_id="580e64008c9a982ac9b8b754"
+        collection_id="580e63fc8c9a982ac9b8b745", item_id="580e64008c9a982ac9b8b754", cms_locale_id="cmsLocaleId"
     )
     validate_response(async_response, expected_response, expected_types)
 
@@ -627,14 +820,14 @@ async def test_delete_item(client: Webflow, async_client: AsyncWebflow) -> None:
     # Type ignore to avoid mypy complaining about the function not being meant to return a value
     assert (
         client.collections.items.delete_item(
-            collection_id="580e63fc8c9a982ac9b8b745", item_id="580e64008c9a982ac9b8b754"
+            collection_id="580e63fc8c9a982ac9b8b745", item_id="580e64008c9a982ac9b8b754", cms_locale_id="cmsLocaleId"
         )  # type: ignore[func-returns-value]
         is None
     )
 
     assert (
         await async_client.collections.items.delete_item(
-            collection_id="580e63fc8c9a982ac9b8b745", item_id="580e64008c9a982ac9b8b754"
+            collection_id="580e63fc8c9a982ac9b8b745", item_id="580e64008c9a982ac9b8b754", cms_locale_id="cmsLocaleId"
         )  # type: ignore[func-returns-value]
         is None
     )
@@ -650,11 +843,30 @@ async def test_update_item(client: Webflow, async_client: AsyncWebflow) -> None:
         "isArchived": False,
         "isDraft": False,
         "fieldData": {
-            "name": "Pan Galactic Gargle Blaster Recipe",
-            "slug": "pan-galactic-gargle-blaster",
-            "color": "#db4b68",
-            "date": "2022-11-18T00:00:00.000Z",
-            "featured": True,
+            "name": "The Hitchhiker's Guide to the Galaxy",
+            "slug": "hitchhikers-guide-to-the-galaxy",
+            "plain-text": "Don't Panic.",
+            "rich-text": "<h3>A Guide to Interstellar Travel</h3><p>A towel is about the most massively useful thing an interstellar hitchhiker can have. <strong>Don't forget yours!</strong></p>",
+            "main-image": {"fileId": "62b720ef280c7a7a3be8cabe", "url": "/files/62b720ef280c7a7a3be8cabe_image.png"},
+            "image-gallery": [
+                {"fileId": "62b720ef280c7a7a3be8cabd", "url": "/files/62b720ef280c7a7a3be8cabd_image.png"},
+                {"fileId": "62b720ef280c7a7a3be8cabe", "url": "/files/62b720ef280c7a7a3be8cabe_image.png"},
+            ],
+            "intro-video": "https://www.youtube.com/watch?v=aJ83KAggd-4",
+            "official-site": "https://hitchhikers.fandom.com/wiki/The_Hitchhiker%27s_Guide_to_the_Galaxy",
+            "contact-email": "zaphod.beeblebrox@heartofgold.gov",
+            "support-phone": "424-242-4242",
+            "answer-to-everything": 42,
+            "release-date": "1979-10-12T00:00:00.000Z",
+            "is-featured": True,
+            "brand-color": "#000000",
+            "category": "62b720ef280c7a7a3be8cabf",
+            "author": "62b720ef280c7a7a3be8cab0",
+            "tags": ["62b720ef280c7a7a3be8cab1", "62b720ef280c7a7a3be8cab2"],
+            "downloadable-asset": {
+                "fileId": "62b720ef280c7a7a3be8cab3",
+                "url": "/files/62b720ef280c7a7a3be8cab3_document.pdf",
+            },
         },
     }
     expected_types: typing.Any = {
@@ -670,10 +882,11 @@ async def test_update_item(client: Webflow, async_client: AsyncWebflow) -> None:
     response = client.collections.items.update_item(
         collection_id="580e63fc8c9a982ac9b8b745",
         item_id="580e64008c9a982ac9b8b754",
+        skip_invalid_files=True,
         is_archived=False,
         is_draft=False,
         field_data=CollectionItemPatchSingleFieldData(
-            name="Pan Galactic Gargle Blaster Recipe", slug="pan-galactic-gargle-blaster"
+            name="The Hitchhiker's Guide to the Galaxy", slug="hitchhikers-guide-to-the-galaxy"
         ),
     )
     validate_response(response, expected_response, expected_types)
@@ -681,10 +894,11 @@ async def test_update_item(client: Webflow, async_client: AsyncWebflow) -> None:
     async_response = await async_client.collections.items.update_item(
         collection_id="580e63fc8c9a982ac9b8b745",
         item_id="580e64008c9a982ac9b8b754",
+        skip_invalid_files=True,
         is_archived=False,
         is_draft=False,
         field_data=CollectionItemPatchSingleFieldData(
-            name="Pan Galactic Gargle Blaster Recipe", slug="pan-galactic-gargle-blaster"
+            name="The Hitchhiker's Guide to the Galaxy", slug="hitchhikers-guide-to-the-galaxy"
         ),
     )
     validate_response(async_response, expected_response, expected_types)
@@ -700,11 +914,30 @@ async def test_get_item_live(client: Webflow, async_client: AsyncWebflow) -> Non
         "isArchived": False,
         "isDraft": False,
         "fieldData": {
-            "name": "Pan Galactic Gargle Blaster Recipe",
-            "slug": "pan-galactic-gargle-blaster",
-            "color": "#db4b68",
-            "date": "2022-11-18T00:00:00.000Z",
-            "featured": True,
+            "name": "The Hitchhiker's Guide to the Galaxy",
+            "slug": "hitchhikers-guide-to-the-galaxy",
+            "plain-text": "Don't Panic.",
+            "rich-text": "<h3>A Guide to Interstellar Travel</h3><p>A towel is about the most massively useful thing an interstellar hitchhiker can have. <strong>Don't forget yours!</strong></p>",
+            "main-image": {"fileId": "62b720ef280c7a7a3be8cabe", "url": "/files/62b720ef280c7a7a3be8cabe_image.png"},
+            "image-gallery": [
+                {"fileId": "62b720ef280c7a7a3be8cabd", "url": "/files/62b720ef280c7a7a3be8cabd_image.png"},
+                {"fileId": "62b720ef280c7a7a3be8cabe", "url": "/files/62b720ef280c7a7a3be8cabe_image.png"},
+            ],
+            "intro-video": "https://www.youtube.com/watch?v=aJ83KAggd-4",
+            "official-site": "https://hitchhikers.fandom.com/wiki/The_Hitchhiker%27s_Guide_to_the_Galaxy",
+            "contact-email": "zaphod.beeblebrox@heartofgold.gov",
+            "support-phone": "424-242-4242",
+            "answer-to-everything": 42,
+            "release-date": "1979-10-12T00:00:00.000Z",
+            "is-featured": True,
+            "brand-color": "#000000",
+            "category": "62b720ef280c7a7a3be8cabf",
+            "author": "62b720ef280c7a7a3be8cab0",
+            "tags": ["62b720ef280c7a7a3be8cab1", "62b720ef280c7a7a3be8cab2"],
+            "downloadable-asset": {
+                "fileId": "62b720ef280c7a7a3be8cab3",
+                "url": "/files/62b720ef280c7a7a3be8cab3_document.pdf",
+            },
         },
     }
     expected_types: typing.Any = {
@@ -718,12 +951,12 @@ async def test_get_item_live(client: Webflow, async_client: AsyncWebflow) -> Non
         "fieldData": {"name": None, "slug": None},
     }
     response = client.collections.items.get_item_live(
-        collection_id="580e63fc8c9a982ac9b8b745", item_id="580e64008c9a982ac9b8b754"
+        collection_id="580e63fc8c9a982ac9b8b745", item_id="580e64008c9a982ac9b8b754", cms_locale_id="cmsLocaleId"
     )
     validate_response(response, expected_response, expected_types)
 
     async_response = await async_client.collections.items.get_item_live(
-        collection_id="580e63fc8c9a982ac9b8b745", item_id="580e64008c9a982ac9b8b754"
+        collection_id="580e63fc8c9a982ac9b8b745", item_id="580e64008c9a982ac9b8b754", cms_locale_id="cmsLocaleId"
     )
     validate_response(async_response, expected_response, expected_types)
 
@@ -732,14 +965,14 @@ async def test_delete_item_live(client: Webflow, async_client: AsyncWebflow) -> 
     # Type ignore to avoid mypy complaining about the function not being meant to return a value
     assert (
         client.collections.items.delete_item_live(
-            collection_id="580e63fc8c9a982ac9b8b745", item_id="580e64008c9a982ac9b8b754"
+            collection_id="580e63fc8c9a982ac9b8b745", item_id="580e64008c9a982ac9b8b754", cms_locale_id="cmsLocaleId"
         )  # type: ignore[func-returns-value]
         is None
     )
 
     assert (
         await async_client.collections.items.delete_item_live(
-            collection_id="580e63fc8c9a982ac9b8b745", item_id="580e64008c9a982ac9b8b754"
+            collection_id="580e63fc8c9a982ac9b8b745", item_id="580e64008c9a982ac9b8b754", cms_locale_id="cmsLocaleId"
         )  # type: ignore[func-returns-value]
         is None
     )
@@ -755,11 +988,30 @@ async def test_update_item_live(client: Webflow, async_client: AsyncWebflow) -> 
         "isArchived": False,
         "isDraft": False,
         "fieldData": {
-            "name": "Pan Galactic Gargle Blaster Recipe",
-            "slug": "pan-galactic-gargle-blaster",
-            "color": "#db4b68",
-            "date": "2022-11-18T00:00:00.000Z",
-            "featured": True,
+            "name": "The Hitchhiker's Guide to the Galaxy",
+            "slug": "hitchhikers-guide-to-the-galaxy",
+            "plain-text": "Don't Panic.",
+            "rich-text": "<h3>A Guide to Interstellar Travel</h3><p>A towel is about the most massively useful thing an interstellar hitchhiker can have. <strong>Don't forget yours!</strong></p>",
+            "main-image": {"fileId": "62b720ef280c7a7a3be8cabe", "url": "/files/62b720ef280c7a7a3be8cabe_image.png"},
+            "image-gallery": [
+                {"fileId": "62b720ef280c7a7a3be8cabd", "url": "/files/62b720ef280c7a7a3be8cabd_image.png"},
+                {"fileId": "62b720ef280c7a7a3be8cabe", "url": "/files/62b720ef280c7a7a3be8cabe_image.png"},
+            ],
+            "intro-video": "https://www.youtube.com/watch?v=aJ83KAggd-4",
+            "official-site": "https://hitchhikers.fandom.com/wiki/The_Hitchhiker%27s_Guide_to_the_Galaxy",
+            "contact-email": "zaphod.beeblebrox@heartofgold.gov",
+            "support-phone": "424-242-4242",
+            "answer-to-everything": 42,
+            "release-date": "1979-10-12T00:00:00.000Z",
+            "is-featured": True,
+            "brand-color": "#000000",
+            "category": "62b720ef280c7a7a3be8cabf",
+            "author": "62b720ef280c7a7a3be8cab0",
+            "tags": ["62b720ef280c7a7a3be8cab1", "62b720ef280c7a7a3be8cab2"],
+            "downloadable-asset": {
+                "fileId": "62b720ef280c7a7a3be8cab3",
+                "url": "/files/62b720ef280c7a7a3be8cab3_document.pdf",
+            },
         },
     }
     expected_types: typing.Any = {
@@ -775,10 +1027,11 @@ async def test_update_item_live(client: Webflow, async_client: AsyncWebflow) -> 
     response = client.collections.items.update_item_live(
         collection_id="580e63fc8c9a982ac9b8b745",
         item_id="580e64008c9a982ac9b8b754",
+        skip_invalid_files=True,
         is_archived=False,
         is_draft=False,
         field_data=CollectionItemPatchSingleFieldData(
-            name="Pan Galactic Gargle Blaster Recipe", slug="pan-galactic-gargle-blaster"
+            name="The Hitchhiker's Guide to the Galaxy", slug="hitchhikers-guide-to-the-galaxy"
         ),
     )
     validate_response(response, expected_response, expected_types)
@@ -786,10 +1039,11 @@ async def test_update_item_live(client: Webflow, async_client: AsyncWebflow) -> 
     async_response = await async_client.collections.items.update_item_live(
         collection_id="580e63fc8c9a982ac9b8b745",
         item_id="580e64008c9a982ac9b8b754",
+        skip_invalid_files=True,
         is_archived=False,
         is_draft=False,
         field_data=CollectionItemPatchSingleFieldData(
-            name="Pan Galactic Gargle Blaster Recipe", slug="pan-galactic-gargle-blaster"
+            name="The Hitchhiker's Guide to the Galaxy", slug="hitchhikers-guide-to-the-galaxy"
         ),
     )
     validate_response(async_response, expected_response, expected_types)
@@ -801,10 +1055,14 @@ async def test_publish_item(client: Webflow, async_client: AsyncWebflow) -> None
         "errors": ["Staging item ID 643fd856d66b6528195ee2cf not found."],
     }
     expected_types: typing.Any = {"publishedItemIds": ("list", {0: None, 1: None}), "errors": ("list", {0: None})}
-    response = client.collections.items.publish_item(collection_id="580e63fc8c9a982ac9b8b745", item_ids=["itemIds"])
+    response = client.collections.items.publish_item(
+        collection_id="580e63fc8c9a982ac9b8b745",
+        request=ItemIDs(item_ids=["643fd856d66b6528195ee2ca", "643fd856d66b6528195ee2cb", "643fd856d66b6528195ee2cc"]),
+    )
     validate_response(response, expected_response, expected_types)
 
     async_response = await async_client.collections.items.publish_item(
-        collection_id="580e63fc8c9a982ac9b8b745", item_ids=["itemIds"]
+        collection_id="580e63fc8c9a982ac9b8b745",
+        request=ItemIDs(item_ids=["643fd856d66b6528195ee2ca", "643fd856d66b6528195ee2cb", "643fd856d66b6528195ee2cc"]),
     )
     validate_response(async_response, expected_response, expected_types)
