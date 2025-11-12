@@ -10,6 +10,8 @@ import datetime as dt
 from .order_dispute_last_status import OrderDisputeLastStatus
 from .order_price import OrderPrice
 from .order_address import OrderAddress
+from .order_shipping_address import OrderShippingAddress
+from .order_billing_address import OrderBillingAddress
 from .order_customer_info import OrderCustomerInfo
 from .order_purchased_item import OrderPurchasedItem
 from .stripe_details import StripeDetails
@@ -119,14 +121,14 @@ class Order(UniversalBaseModel):
     """
 
     shipping_address: typing_extensions.Annotated[
-        typing.Optional[OrderAddress], FieldMetadata(alias="shippingAddress")
+        typing.Optional[OrderShippingAddress], FieldMetadata(alias="shippingAddress")
     ] = pydantic.Field(default=None)
     """
     The shipping address
     """
 
     billing_address: typing_extensions.Annotated[
-        typing.Optional[OrderAddress], FieldMetadata(alias="billingAddress")
+        typing.Optional[OrderBillingAddress], FieldMetadata(alias="billingAddress")
     ] = pydantic.Field(default=None)
     """
     The billing address

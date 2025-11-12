@@ -42,8 +42,10 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
             },
         ),
     }
-    response = client.access_groups.list(site_id="580e63e98c9a982ac9b8b741")
+    response = client.access_groups.list(site_id="580e63e98c9a982ac9b8b741", offset=1.1, limit=1.1, sort="CreatedOn")
     validate_response(response, expected_response, expected_types)
 
-    async_response = await async_client.access_groups.list(site_id="580e63e98c9a982ac9b8b741")
+    async_response = await async_client.access_groups.list(
+        site_id="580e63e98c9a982ac9b8b741", offset=1.1, limit=1.1, sort="CreatedOn"
+    )
     validate_response(async_response, expected_response, expected_types)
