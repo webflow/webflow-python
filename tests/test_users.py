@@ -4,7 +4,8 @@ from webflow import Webflow
 from webflow import AsyncWebflow
 import typing
 from .utilities import validate_response
-from webflow.resources.users import UsersUpdateRequestData
+import datetime
+from webflow import UserAccessGroupsItem
 
 
 async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
@@ -127,10 +128,12 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
             },
         ),
     }
-    response = client.users.list(site_id="580e63e98c9a982ac9b8b741")
+    response = client.users.list(site_id="580e63e98c9a982ac9b8b741", offset=1.1, limit=1.1, sort="CreatedOn")
     validate_response(response, expected_response, expected_types)
 
-    async_response = await async_client.users.list(site_id="580e63e98c9a982ac9b8b741")
+    async_response = await async_client.users.list(
+        site_id="580e63e98c9a982ac9b8b741", offset=1.1, limit=1.1, sort="CreatedOn"
+    )
     validate_response(async_response, expected_response, expected_types)
 
 
@@ -237,16 +240,28 @@ async def test_update(client: Webflow, async_client: AsyncWebflow) -> None:
     response = client.users.update(
         site_id="580e63e98c9a982ac9b8b741",
         user_id="580e63e98c9a982ac9b8b741",
-        data=UsersUpdateRequestData(name="Some One", accept_privacy=False, accept_communications=False),
-        access_groups=["webflowers", "platinum", "free-tier"],
+        id="6287ec36a841b25637c663df",
+        is_email_verified=True,
+        last_updated=datetime.datetime.fromisoformat("2022-05-20 13:46:12+00:00"),
+        invited_on=datetime.datetime.fromisoformat("2022-05-20 13:46:12+00:00"),
+        created_on=datetime.datetime.fromisoformat("2022-05-20 13:46:12+00:00"),
+        last_login=datetime.datetime.fromisoformat("2022-05-20 13:46:12+00:00"),
+        status="verified",
+        access_groups=[UserAccessGroupsItem(slug="webflowers", type="admin")],
     )
     validate_response(response, expected_response, expected_types)
 
     async_response = await async_client.users.update(
         site_id="580e63e98c9a982ac9b8b741",
         user_id="580e63e98c9a982ac9b8b741",
-        data=UsersUpdateRequestData(name="Some One", accept_privacy=False, accept_communications=False),
-        access_groups=["webflowers", "platinum", "free-tier"],
+        id="6287ec36a841b25637c663df",
+        is_email_verified=True,
+        last_updated=datetime.datetime.fromisoformat("2022-05-20 13:46:12+00:00"),
+        invited_on=datetime.datetime.fromisoformat("2022-05-20 13:46:12+00:00"),
+        created_on=datetime.datetime.fromisoformat("2022-05-20 13:46:12+00:00"),
+        last_login=datetime.datetime.fromisoformat("2022-05-20 13:46:12+00:00"),
+        status="verified",
+        access_groups=[UserAccessGroupsItem(slug="webflowers", type="admin")],
     )
     validate_response(async_response, expected_response, expected_types)
 
@@ -291,11 +306,11 @@ async def test_invite(client: Webflow, async_client: AsyncWebflow) -> None:
         },
     }
     response = client.users.invite(
-        site_id="580e63e98c9a982ac9b8b741", email="some.one@home.com", access_groups=["webflowers"]
+        site_id="580e63e98c9a982ac9b8b741", email="some.one@home.com", access_groups=["accessGroups"]
     )
     validate_response(response, expected_response, expected_types)
 
     async_response = await async_client.users.invite(
-        site_id="580e63e98c9a982ac9b8b741", email="some.one@home.com", access_groups=["webflowers"]
+        site_id="580e63e98c9a982ac9b8b741", email="some.one@home.com", access_groups=["accessGroups"]
     )
     validate_response(async_response, expected_response, expected_types)

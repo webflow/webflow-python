@@ -36,6 +36,7 @@ class ComponentsClient:
         self,
         site_id: str,
         *,
+        branch_id: typing.Optional[str] = None,
         limit: typing.Optional[float] = None,
         offset: typing.Optional[float] = None,
         request_options: typing.Optional[RequestOptions] = None,
@@ -49,6 +50,9 @@ class ComponentsClient:
         ----------
         site_id : str
             Unique identifier for a Site
+
+        branch_id : typing.Optional[str]
+            Scope the operation to work on a specific branch.
 
         limit : typing.Optional[float]
             Maximum number of records to be returned (max limit: 100)
@@ -73,12 +77,17 @@ class ComponentsClient:
         )
         client.components.list(
             site_id="580e63e98c9a982ac9b8b741",
+            branch_id="68026fa68ef6dc744c75b833",
+            limit=1.1,
+            offset=1.1,
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/components",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
+                "branchId": branch_id,
                 "limit": limit,
                 "offset": offset,
             },
@@ -154,12 +163,13 @@ class ComponentsClient:
         component_id: str,
         *,
         locale_id: typing.Optional[str] = None,
+        branch_id: typing.Optional[str] = None,
         limit: typing.Optional[float] = None,
         offset: typing.Optional[float] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ComponentDom:
         """
-        Get static content from a component definition. This includes text nodes, image nodes and nested component instances.
+        Get static content from a component definition. This includes text nodes, image nodes, select nodes, text input nodes, submit button nodes, and nested component instances.
         To retrieve dynamic content set by component properties, use the [get component properties](/data/reference/pages-and-components/components/get-properties) endpoint.
 
         <Note>If you do not provide a Locale ID in your request, the response will return any content that can be localized from the Primary locale.</Note>
@@ -175,7 +185,12 @@ class ComponentsClient:
             Unique identifier for a Component
 
         locale_id : typing.Optional[str]
-            Unique identifier for a specific locale. Applicable, when using localization.
+            Unique identifier for a specific Locale.
+
+            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+
+        branch_id : typing.Optional[str]
+            Scope the operation to work on a specific branch.
 
         limit : typing.Optional[float]
             Maximum number of records to be returned (max limit: 100)
@@ -202,13 +217,18 @@ class ComponentsClient:
             site_id="580e63e98c9a982ac9b8b741",
             component_id="8505ba55-ef72-629e-f85c-33e4b703d48b",
             locale_id="65427cf400e02b306eaa04a0",
+            branch_id="68026fa68ef6dc744c75b833",
+            limit=1.1,
+            offset=1.1,
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/components/{jsonable_encoder(component_id)}/dom",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "localeId": locale_id,
+                "branchId": branch_id,
                 "limit": limit,
                 "offset": offset,
             },
@@ -285,14 +305,16 @@ class ComponentsClient:
         *,
         nodes: typing.Sequence[ComponentDomWriteNodesItem],
         locale_id: typing.Optional[str] = None,
+        branch_id: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ComponentsUpdateContentResponse:
         """
         This endpoint updates content within a component defintion for **secondary locales**. It supports updating up to 1000 nodes in a single request.
 
         Before making updates:
-        1. Use the [get component content](/data/reference/pages-and-components/components/get-content) endpoint to identify available content nodes and their types
-        2. If your component definition has a component instance nested within it, retrieve the nested component instance's properties that you'll override using the [get component properties](/data/reference/pages-and-components/components/get-properties) endpoint
+        1. Use the [get component content](/data/reference/pages-and-components/components/get-content) endpoint to identify available content nodes and their types.
+        2. If your component definition has a component instance nested within it, retrieve the nested component instance's properties that you'll override using the [get component properties](/data/reference/pages-and-components/components/get-properties) endpoint.
+        3. DOM elements may include a `data-w-id` attribute. This attribute is used by Webflow to maintain custom attributes and links across locales. Always include the original `data-w-id` value in your update requests to ensure consistent behavior across all locales.
 
         <Note>
           This endpoint is specifically for localizing component definitions. Ensure that the specified `localeId` is a valid **secondary locale** for the site otherwise the request will fail.
@@ -312,7 +334,12 @@ class ComponentsClient:
             List of DOM Nodes with the new content that will be updated in each node.
 
         locale_id : typing.Optional[str]
-            Unique identifier for a specific locale. Applicable, when using localization.
+            Unique identifier for a specific Locale.
+
+            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+
+        branch_id : typing.Optional[str]
+            Scope the operation to work on a specific branch.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -327,6 +354,10 @@ class ComponentsClient:
         from webflow import (
             ComponentInstanceNodePropertyOverridesWrite,
             ComponentInstanceNodePropertyOverridesWritePropertyOverridesItem,
+            Select,
+            SelectNodeWriteChoicesItem,
+            SubmitButtonNodeWrite,
+            TextInputNodeWrite,
             TextNodeWrite,
             Webflow,
         )
@@ -338,6 +369,7 @@ class ComponentsClient:
             site_id="580e63e98c9a982ac9b8b741",
             component_id="8505ba55-ef72-629e-f85c-33e4b703d48b",
             locale_id="65427cf400e02b306eaa04a0",
+            branch_id="68026fa68ef6dc744c75b833",
             nodes=[
                 TextNodeWrite(
                     node_id="a245c12d-995b-55ee-5ec7-aa36a6cad623",
@@ -346,6 +378,28 @@ class ComponentsClient:
                 TextNodeWrite(
                     node_id="a245c12d-995b-55ee-5ec7-aa36a6cad627",
                     text="<div><h3>Don't Panic!</h3><p>Always know where your towel is.</p></div>",
+                ),
+                Select(
+                    node_id="a245c12d-995b-55ee-5ec7-aa36a6cad635",
+                    choices=[
+                        SelectNodeWriteChoicesItem(
+                            value="choice-1",
+                            text="First choice",
+                        ),
+                        SelectNodeWriteChoicesItem(
+                            value="choice-2",
+                            text="Second choice",
+                        ),
+                    ],
+                ),
+                TextInputNodeWrite(
+                    node_id="a245c12d-995b-55ee-5ec7-aa36a6cad642",
+                    placeholder="Enter something here...",
+                ),
+                SubmitButtonNodeWrite(
+                    node_id="a245c12d-995b-55ee-5ec7-aa36a6cad671",
+                    value="Submit",
+                    waiting_text="Submitting...",
                 ),
                 ComponentInstanceNodePropertyOverridesWrite(
                     node_id="a245c12d-995b-55ee-5ec7-aa36a6cad629",
@@ -365,9 +419,11 @@ class ComponentsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/components/{jsonable_encoder(component_id)}/dom",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             params={
                 "localeId": locale_id,
+                "branchId": branch_id,
             },
             json={
                 "nodes": convert_and_respect_annotation_metadata(
@@ -460,14 +516,15 @@ class ComponentsClient:
         component_id: str,
         *,
         locale_id: typing.Optional[str] = None,
+        branch_id: typing.Optional[str] = None,
         limit: typing.Optional[float] = None,
         offset: typing.Optional[float] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ComponentProperties:
         """
-        Get the property default values of a component definition.
+        Get the default property values of a component definition.
 
-        <Note>If you do not provide a Locale ID in your request, the response will return any properties that can be localized from the Primary locale.</Note>
+        <Note>If you do not include a `localeId` in your request, the response will return any properties that can be localized from the Primary locale.</Note>
 
         Required scope | `components:read`
 
@@ -480,7 +537,12 @@ class ComponentsClient:
             Unique identifier for a Component
 
         locale_id : typing.Optional[str]
-            Unique identifier for a specific locale. Applicable, when using localization.
+            Unique identifier for a specific Locale.
+
+            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+
+        branch_id : typing.Optional[str]
+            Scope the operation to work on a specific branch.
 
         limit : typing.Optional[float]
             Maximum number of records to be returned (max limit: 100)
@@ -507,13 +569,18 @@ class ComponentsClient:
             site_id="580e63e98c9a982ac9b8b741",
             component_id="8505ba55-ef72-629e-f85c-33e4b703d48b",
             locale_id="65427cf400e02b306eaa04a0",
+            branch_id="68026fa68ef6dc744c75b833",
+            limit=1.1,
+            offset=1.1,
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/components/{jsonable_encoder(component_id)}/properties",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "localeId": locale_id,
+                "branchId": branch_id,
                 "limit": limit,
                 "offset": offset,
             },
@@ -590,15 +657,17 @@ class ComponentsClient:
         *,
         properties: typing.Sequence[ComponentPropertiesWritePropertiesItem],
         locale_id: typing.Optional[str] = None,
+        branch_id: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ComponentsUpdatePropertiesResponse:
         """
-        Update the property default values of a component definition in a specificed locale.
+        Update the default property values of a component definition in a specificed locale.
 
         Before making updates:
-        1. Use the [get component properties](/data/reference/pages-and-components/components/get-properties) endpoint to identify available properties
+        1. Use the [get component properties](/data/reference/pages-and-components/components/get-properties) endpoint to identify properties that can be updated in a secondary locale.
+        2. Rich Text properties may include a `data-w-id` attribute. This attribute is used by Webflow to maintain links across locales. Always include the original `data-w-id` value in your update requests to ensure consistent behavior across all locales.
 
-        <Note>The request requires a secondary locale ID. If a locale is missing, the request will not be processed and will result in an error.</Note>
+        <Note>The request requires a secondary locale ID. If a `localeId` is missing, the request will not be processed and will result in an error.</Note>
 
         Required scope | `components:write`
 
@@ -614,7 +683,12 @@ class ComponentsClient:
             A list of component properties to update within the specified secondary locale.
 
         locale_id : typing.Optional[str]
-            Unique identifier for a specific locale. Applicable, when using localization.
+            Unique identifier for a specific Locale.
+
+            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+
+        branch_id : typing.Optional[str]
+            Scope the operation to work on a specific branch.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -636,6 +710,7 @@ class ComponentsClient:
             site_id="580e63e98c9a982ac9b8b741",
             component_id="8505ba55-ef72-629e-f85c-33e4b703d48b",
             locale_id="65427cf400e02b306eaa04a0",
+            branch_id="68026fa68ef6dc744c75b833",
             properties=[
                 ComponentPropertiesWritePropertiesItem(
                     property_id="a245c12d-995b-55ee-5ec7-aa36a6cad623",
@@ -650,9 +725,11 @@ class ComponentsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/components/{jsonable_encoder(component_id)}/properties",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             params={
                 "localeId": locale_id,
+                "branchId": branch_id,
             },
             json={
                 "properties": convert_and_respect_annotation_metadata(
@@ -740,6 +817,7 @@ class AsyncComponentsClient:
         self,
         site_id: str,
         *,
+        branch_id: typing.Optional[str] = None,
         limit: typing.Optional[float] = None,
         offset: typing.Optional[float] = None,
         request_options: typing.Optional[RequestOptions] = None,
@@ -753,6 +831,9 @@ class AsyncComponentsClient:
         ----------
         site_id : str
             Unique identifier for a Site
+
+        branch_id : typing.Optional[str]
+            Scope the operation to work on a specific branch.
 
         limit : typing.Optional[float]
             Maximum number of records to be returned (max limit: 100)
@@ -782,6 +863,9 @@ class AsyncComponentsClient:
         async def main() -> None:
             await client.components.list(
                 site_id="580e63e98c9a982ac9b8b741",
+                branch_id="68026fa68ef6dc744c75b833",
+                limit=1.1,
+                offset=1.1,
             )
 
 
@@ -789,8 +873,10 @@ class AsyncComponentsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/components",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
+                "branchId": branch_id,
                 "limit": limit,
                 "offset": offset,
             },
@@ -866,12 +952,13 @@ class AsyncComponentsClient:
         component_id: str,
         *,
         locale_id: typing.Optional[str] = None,
+        branch_id: typing.Optional[str] = None,
         limit: typing.Optional[float] = None,
         offset: typing.Optional[float] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ComponentDom:
         """
-        Get static content from a component definition. This includes text nodes, image nodes and nested component instances.
+        Get static content from a component definition. This includes text nodes, image nodes, select nodes, text input nodes, submit button nodes, and nested component instances.
         To retrieve dynamic content set by component properties, use the [get component properties](/data/reference/pages-and-components/components/get-properties) endpoint.
 
         <Note>If you do not provide a Locale ID in your request, the response will return any content that can be localized from the Primary locale.</Note>
@@ -887,7 +974,12 @@ class AsyncComponentsClient:
             Unique identifier for a Component
 
         locale_id : typing.Optional[str]
-            Unique identifier for a specific locale. Applicable, when using localization.
+            Unique identifier for a specific Locale.
+
+            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+
+        branch_id : typing.Optional[str]
+            Scope the operation to work on a specific branch.
 
         limit : typing.Optional[float]
             Maximum number of records to be returned (max limit: 100)
@@ -919,6 +1011,9 @@ class AsyncComponentsClient:
                 site_id="580e63e98c9a982ac9b8b741",
                 component_id="8505ba55-ef72-629e-f85c-33e4b703d48b",
                 locale_id="65427cf400e02b306eaa04a0",
+                branch_id="68026fa68ef6dc744c75b833",
+                limit=1.1,
+                offset=1.1,
             )
 
 
@@ -926,9 +1021,11 @@ class AsyncComponentsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/components/{jsonable_encoder(component_id)}/dom",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "localeId": locale_id,
+                "branchId": branch_id,
                 "limit": limit,
                 "offset": offset,
             },
@@ -1005,14 +1102,16 @@ class AsyncComponentsClient:
         *,
         nodes: typing.Sequence[ComponentDomWriteNodesItem],
         locale_id: typing.Optional[str] = None,
+        branch_id: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ComponentsUpdateContentResponse:
         """
         This endpoint updates content within a component defintion for **secondary locales**. It supports updating up to 1000 nodes in a single request.
 
         Before making updates:
-        1. Use the [get component content](/data/reference/pages-and-components/components/get-content) endpoint to identify available content nodes and their types
-        2. If your component definition has a component instance nested within it, retrieve the nested component instance's properties that you'll override using the [get component properties](/data/reference/pages-and-components/components/get-properties) endpoint
+        1. Use the [get component content](/data/reference/pages-and-components/components/get-content) endpoint to identify available content nodes and their types.
+        2. If your component definition has a component instance nested within it, retrieve the nested component instance's properties that you'll override using the [get component properties](/data/reference/pages-and-components/components/get-properties) endpoint.
+        3. DOM elements may include a `data-w-id` attribute. This attribute is used by Webflow to maintain custom attributes and links across locales. Always include the original `data-w-id` value in your update requests to ensure consistent behavior across all locales.
 
         <Note>
           This endpoint is specifically for localizing component definitions. Ensure that the specified `localeId` is a valid **secondary locale** for the site otherwise the request will fail.
@@ -1032,7 +1131,12 @@ class AsyncComponentsClient:
             List of DOM Nodes with the new content that will be updated in each node.
 
         locale_id : typing.Optional[str]
-            Unique identifier for a specific locale. Applicable, when using localization.
+            Unique identifier for a specific Locale.
+
+            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+
+        branch_id : typing.Optional[str]
+            Scope the operation to work on a specific branch.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1050,6 +1154,10 @@ class AsyncComponentsClient:
             AsyncWebflow,
             ComponentInstanceNodePropertyOverridesWrite,
             ComponentInstanceNodePropertyOverridesWritePropertyOverridesItem,
+            Select,
+            SelectNodeWriteChoicesItem,
+            SubmitButtonNodeWrite,
+            TextInputNodeWrite,
             TextNodeWrite,
         )
 
@@ -1063,6 +1171,7 @@ class AsyncComponentsClient:
                 site_id="580e63e98c9a982ac9b8b741",
                 component_id="8505ba55-ef72-629e-f85c-33e4b703d48b",
                 locale_id="65427cf400e02b306eaa04a0",
+                branch_id="68026fa68ef6dc744c75b833",
                 nodes=[
                     TextNodeWrite(
                         node_id="a245c12d-995b-55ee-5ec7-aa36a6cad623",
@@ -1071,6 +1180,28 @@ class AsyncComponentsClient:
                     TextNodeWrite(
                         node_id="a245c12d-995b-55ee-5ec7-aa36a6cad627",
                         text="<div><h3>Don't Panic!</h3><p>Always know where your towel is.</p></div>",
+                    ),
+                    Select(
+                        node_id="a245c12d-995b-55ee-5ec7-aa36a6cad635",
+                        choices=[
+                            SelectNodeWriteChoicesItem(
+                                value="choice-1",
+                                text="First choice",
+                            ),
+                            SelectNodeWriteChoicesItem(
+                                value="choice-2",
+                                text="Second choice",
+                            ),
+                        ],
+                    ),
+                    TextInputNodeWrite(
+                        node_id="a245c12d-995b-55ee-5ec7-aa36a6cad642",
+                        placeholder="Enter something here...",
+                    ),
+                    SubmitButtonNodeWrite(
+                        node_id="a245c12d-995b-55ee-5ec7-aa36a6cad671",
+                        value="Submit",
+                        waiting_text="Submitting...",
                     ),
                     ComponentInstanceNodePropertyOverridesWrite(
                         node_id="a245c12d-995b-55ee-5ec7-aa36a6cad629",
@@ -1093,9 +1224,11 @@ class AsyncComponentsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/components/{jsonable_encoder(component_id)}/dom",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             params={
                 "localeId": locale_id,
+                "branchId": branch_id,
             },
             json={
                 "nodes": convert_and_respect_annotation_metadata(
@@ -1188,14 +1321,15 @@ class AsyncComponentsClient:
         component_id: str,
         *,
         locale_id: typing.Optional[str] = None,
+        branch_id: typing.Optional[str] = None,
         limit: typing.Optional[float] = None,
         offset: typing.Optional[float] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ComponentProperties:
         """
-        Get the property default values of a component definition.
+        Get the default property values of a component definition.
 
-        <Note>If you do not provide a Locale ID in your request, the response will return any properties that can be localized from the Primary locale.</Note>
+        <Note>If you do not include a `localeId` in your request, the response will return any properties that can be localized from the Primary locale.</Note>
 
         Required scope | `components:read`
 
@@ -1208,7 +1342,12 @@ class AsyncComponentsClient:
             Unique identifier for a Component
 
         locale_id : typing.Optional[str]
-            Unique identifier for a specific locale. Applicable, when using localization.
+            Unique identifier for a specific Locale.
+
+            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+
+        branch_id : typing.Optional[str]
+            Scope the operation to work on a specific branch.
 
         limit : typing.Optional[float]
             Maximum number of records to be returned (max limit: 100)
@@ -1240,6 +1379,9 @@ class AsyncComponentsClient:
                 site_id="580e63e98c9a982ac9b8b741",
                 component_id="8505ba55-ef72-629e-f85c-33e4b703d48b",
                 locale_id="65427cf400e02b306eaa04a0",
+                branch_id="68026fa68ef6dc744c75b833",
+                limit=1.1,
+                offset=1.1,
             )
 
 
@@ -1247,9 +1389,11 @@ class AsyncComponentsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/components/{jsonable_encoder(component_id)}/properties",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "localeId": locale_id,
+                "branchId": branch_id,
                 "limit": limit,
                 "offset": offset,
             },
@@ -1326,15 +1470,17 @@ class AsyncComponentsClient:
         *,
         properties: typing.Sequence[ComponentPropertiesWritePropertiesItem],
         locale_id: typing.Optional[str] = None,
+        branch_id: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ComponentsUpdatePropertiesResponse:
         """
-        Update the property default values of a component definition in a specificed locale.
+        Update the default property values of a component definition in a specificed locale.
 
         Before making updates:
-        1. Use the [get component properties](/data/reference/pages-and-components/components/get-properties) endpoint to identify available properties
+        1. Use the [get component properties](/data/reference/pages-and-components/components/get-properties) endpoint to identify properties that can be updated in a secondary locale.
+        2. Rich Text properties may include a `data-w-id` attribute. This attribute is used by Webflow to maintain links across locales. Always include the original `data-w-id` value in your update requests to ensure consistent behavior across all locales.
 
-        <Note>The request requires a secondary locale ID. If a locale is missing, the request will not be processed and will result in an error.</Note>
+        <Note>The request requires a secondary locale ID. If a `localeId` is missing, the request will not be processed and will result in an error.</Note>
 
         Required scope | `components:write`
 
@@ -1350,7 +1496,12 @@ class AsyncComponentsClient:
             A list of component properties to update within the specified secondary locale.
 
         locale_id : typing.Optional[str]
-            Unique identifier for a specific locale. Applicable, when using localization.
+            Unique identifier for a specific Locale.
+
+            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+
+        branch_id : typing.Optional[str]
+            Scope the operation to work on a specific branch.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1377,6 +1528,7 @@ class AsyncComponentsClient:
                 site_id="580e63e98c9a982ac9b8b741",
                 component_id="8505ba55-ef72-629e-f85c-33e4b703d48b",
                 locale_id="65427cf400e02b306eaa04a0",
+                branch_id="68026fa68ef6dc744c75b833",
                 properties=[
                     ComponentPropertiesWritePropertiesItem(
                         property_id="a245c12d-995b-55ee-5ec7-aa36a6cad623",
@@ -1394,9 +1546,11 @@ class AsyncComponentsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/components/{jsonable_encoder(component_id)}/properties",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             params={
                 "localeId": locale_id,
+                "branchId": branch_id,
             },
             json={
                 "properties": convert_and_respect_annotation_metadata(
