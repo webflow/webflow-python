@@ -11,6 +11,10 @@ from ..core.pydantic_utilities import IS_PYDANTIC_V2
 
 
 class Asset(UniversalBaseModel):
+    """
+    Asset details
+    """
+
     id: typing.Optional[str] = pydantic.Field(default=None)
     """
     Unique identifier for this asset
@@ -49,9 +53,7 @@ class Asset(UniversalBaseModel):
     Original file name at the time of upload
     """
 
-    display_name: typing_extensions.Annotated[typing.Optional[str], FieldMetadata(alias="displayName")] = (
-        pydantic.Field(default=None)
-    )
+    display_name: typing_extensions.Annotated[str, FieldMetadata(alias="displayName")] = pydantic.Field()
     """
     Display name of the asset
     """
@@ -70,7 +72,11 @@ class Asset(UniversalBaseModel):
     Date the asset metadata was created
     """
 
-    variants: typing.Optional[typing.List[AssetVariant]] = None
+    variants: typing.List[AssetVariant] = pydantic.Field()
+    """
+    A list of [asset variants](https://help.webflow.com/hc/en-us/articles/33961378697107-Responsive-images) created by Webflow to serve your site responsively.
+    """
+
     alt_text: typing_extensions.Annotated[typing.Optional[str], FieldMetadata(alias="altText")] = pydantic.Field(
         default=None
     )

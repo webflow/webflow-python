@@ -11,11 +11,11 @@ async def test_create(client: Webflow, async_client: AsyncWebflow) -> None:
         "id": "670ecf86817e3cc7a510eb6a",
         "workspaceId": "625860a7a6c16d624927122f",
         "createdOn": "2024-10-15T20:24:38Z",
-        "displayName": "The Hitchiker‘s Guide",
+        "displayName": "The Hitchiker's Guide",
         "shortName": "hitchikers-guide",
         "lastPublished": "2016-10-24T19:43:17Z",
         "lastUpdated": "2024-10-15T20:24:38Z",
-        "previewUrl": "https://d1otoma47x30pg.cloudfront.net/580e63e98c9a982ac9b8b741/201610241243.png",
+        "previewUrl": "https://dev-assets.website-files.com/580e63e98c9a982ac9b8b741/201610241243.png",
         "timeZone": "America/Los_Angeles",
         "parentFolderId": "670ece123598db72d9648be1",
         "customDomains": [
@@ -44,7 +44,7 @@ async def test_create(client: Webflow, async_client: AsyncWebflow) -> None:
                 }
             ],
         },
-        "dataCollectionEnabled": False,
+        "dataCollectionEnabled": True,
         "dataCollectionType": "always",
     }
     expected_types: typing.Any = {
@@ -108,7 +108,7 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                 "shortName": "heart-of-gold",
                 "lastPublished": "2023-04-02T12:42:00Z",
                 "lastUpdated": "2016-10-24T19:43:17Z",
-                "previewUrl": "https://d1otoma47x30pg.cloudfront.net/42e63e98c9a982ac9b8b741/197910121200.png",
+                "previewUrl": "https://dev-assets.website-files.com/42e63e98c9a982ac9b8b741/197910121200.png",
                 "timeZone": "DeepSpace/InfiniteImprobability",
                 "parentFolderId": "1as2d3f4g5h6j7k8l9z0x1c2v3b4n5m6",
                 "customDomains": [
@@ -160,7 +160,7 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                 "shortName": "paranoid-android",
                 "lastPublished": "2023-04-02T12:45:00Z",
                 "lastUpdated": "2016-10-24T19:43:17Z",
-                "previewUrl": "https://d1otoma47x30pg.cloudfront.net/42e63e98c9a982ac9b8b742/198110121200.png",
+                "previewUrl": "https://dev-assets.website-files.com/42e63e98c9a982ac9b8b742/198110121200.png",
                 "timeZone": "DeepSpace/Depression",
                 "parentFolderId": "1as2d3f4g5h6j7k8l9z0x1c2v3b4n5m6",
                 "customDomains": [
@@ -199,7 +199,7 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                 "shortName": "vogon-poetry",
                 "lastPublished": "2023-04-02T12:50:00Z",
                 "lastUpdated": "2016-10-24T19:43:17Z",
-                "previewUrl": "https://d1otoma47x30pg.cloudfront.net/42e63e98c9a982ac9b8b743/198210121200.png",
+                "previewUrl": "https://dev-assets.website-files.com/42e63e98c9a982ac9b8b743/198210121200.png",
                 "timeZone": "Vogsphere/PoetryHall",
                 "parentFolderId": "1as2d3f4g5h6j7k8l9z0x1c2v3b4n5m6",
                 "customDomains": [
@@ -630,8 +630,16 @@ async def test_publish(client: Webflow, async_client: AsyncWebflow) -> None:
         "customDomains": ("list", {0: {"id": None, "url": None, "lastPublished": "datetime"}}),
         "publishToWebflowSubdomain": None,
     }
-    response = client.sites.publish(site_id="580e63e98c9a982ac9b8b741")
+    response = client.sites.publish(
+        site_id="580e63e98c9a982ac9b8b741",
+        custom_domains=["660c6449dd97ebc7346ac629", "660c6449dd97ebc7346ac62f"],
+        publish_to_webflow_subdomain=False,
+    )
     validate_response(response, expected_response, expected_types)
 
-    async_response = await async_client.sites.publish(site_id="580e63e98c9a982ac9b8b741")
+    async_response = await async_client.sites.publish(
+        site_id="580e63e98c9a982ac9b8b741",
+        custom_domains=["660c6449dd97ebc7346ac629", "660c6449dd97ebc7346ac62f"],
+        publish_to_webflow_subdomain=False,
+    )
     validate_response(async_response, expected_response, expected_types)

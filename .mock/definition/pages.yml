@@ -7,7 +7,9 @@ service:
     list:
       path: /sites/{site_id}/pages
       method: GET
-      auth: true
+      auth:
+        - OAuth2:
+            - page:read
       docs: |
         List of all pages for a site.
 
@@ -24,9 +26,12 @@ service:
         query-parameters:
           localeId:
             type: optional<string>
-            docs: >-
-              Unique identifier for a specific locale. Applicable, when using
-              localization.
+            docs: >
+              Unique identifier for a specific Locale.
+
+
+              [Lear more about
+              localization.](/data/v2.0.0/docs/working-with-localization)
           limit:
             type: optional<double>
             docs: 'Maximum number of records to be returned (max limit: 100)'
@@ -38,6 +43,7 @@ service:
       response:
         docs: Request was successful
         type: root.PageList
+        status-code: 200
       errors:
         - root.BadRequestError
         - root.UnauthorizedError
@@ -49,6 +55,8 @@ service:
             site_id: 580e63e98c9a982ac9b8b741
           query-parameters:
             localeId: 65427cf400e02b306eaa04a0
+            limit: 1.1
+            offset: 1.1
           response:
             body:
               pages:
@@ -62,9 +70,9 @@ service:
                   lastUpdated: '2024-03-11T10:42:42Z'
                   archived: false
                   draft: false
-                  canBranch: true
-                  isBranch: false
-                  isMembersOnly: false
+                  canBranch: false
+                  isBranch: true
+                  branchId: 68026fa68ef6dc744c75b833
                   seo:
                     title: The Ultimate Hitchhiker's Guide to the Galaxy
                     description: >-
@@ -91,7 +99,7 @@ service:
                   draft: false
                   canBranch: true
                   isBranch: false
-                  isMembersOnly: false
+                  branchId: 68026fa68ef6dc744c75b833
                   seo:
                     title: Celebrate Towel Day - The Hitchhiker's Guide to the Galaxy
                     description: >-
@@ -115,7 +123,9 @@ service:
     get-metadata:
       path: /pages/{page_id}
       method: GET
-      auth: true
+      auth:
+        - OAuth2:
+            - page:read
       docs: |
         Get metadata information for a single page.
 
@@ -132,12 +142,16 @@ service:
         query-parameters:
           localeId:
             type: optional<string>
-            docs: >-
-              Unique identifier for a specific locale. Applicable, when using
-              localization.
+            docs: >
+              Unique identifier for a specific Locale.
+
+
+              [Lear more about
+              localization.](/data/v2.0.0/docs/working-with-localization)
       response:
         docs: Request was successful
         type: root.Page
+        status-code: 200
       errors:
         - root.BadRequestError
         - root.UnauthorizedError
@@ -161,9 +175,9 @@ service:
               lastUpdated: '2024-03-11T10:42:42Z'
               archived: false
               draft: false
-              canBranch: true
-              isBranch: false
-              isMembersOnly: false
+              canBranch: false
+              isBranch: true
+              branchId: 68026fa68ef6dc744c75b833
               seo:
                 title: The Ultimate Hitchhiker's Guide to the Galaxy
                 description: >-
@@ -181,7 +195,9 @@ service:
     update-page-settings:
       path: /pages/{page_id}
       method: PUT
-      auth: true
+      auth:
+        - OAuth2:
+            - page:write
       docs: |
         Update Page-level metadata, including SEO and Open Graph fields.
 
@@ -194,18 +210,42 @@ service:
           docs: Unique identifier for a Page
       display-name: Update Page Metadata
       request:
-        body: root.Page
+        name: PageMetadataWrite
         query-parameters:
           localeId:
             type: optional<string>
-            docs: >-
-              Unique identifier for a specific locale. Applicable, when using
-              localization.
-        name: UpdatePageSettingsRequest
+            docs: >
+              Unique identifier for a specific Locale.
+
+
+              [Lear more about
+              localization.](/data/v2.0.0/docs/working-with-localization)
+        body:
+          properties:
+            title:
+              type: optional<string>
+              docs: Title for the page
+            slug:
+              type: optional<string>
+              docs: >
+                Slug for the page. 
+
+
+
+                **Note:** Updating slugs in secondary locales is only supported
+                in <a href="https://webflow.com/localization">Advanced and
+                Enterprise localization add-on plans.</a>
+            seo:
+              type: optional<PageMetadataWriteSeo>
+              docs: SEO-related fields for the Page
+            openGraph:
+              type: optional<PageMetadataWriteOpenGraph>
+              docs: Open Graph fields for the Page
         content-type: application/json
       response:
         docs: Request was successful
         type: root.Page
+        status-code: 200
       errors:
         - root.BadRequestError
         - root.UnauthorizedError
@@ -218,16 +258,8 @@ service:
           query-parameters:
             localeId: 65427cf400e02b306eaa04a0
           request:
-            id: 6596da6045e56dee495bcbba
-            siteId: 6258612d1ee792848f805dcf
             title: Guide to the Galaxy
             slug: guide-to-the-galaxy
-            createdOn: '2024-03-11T10:42:00Z'
-            lastUpdated: '2024-03-11T10:42:42Z'
-            archived: false
-            draft: false
-            canBranch: true
-            isBranch: false
             seo:
               title: The Ultimate Hitchhiker's Guide to the Galaxy
               description: >-
@@ -240,8 +272,6 @@ service:
                 Dive deep into the mysteries of the universe with your guide to
                 everything galactic.
               descriptionCopied: false
-            localeId: 653fd9af6a07fc9cfd7a5e57
-            publishedPath: /en-us/guide-to-the-galaxy
           response:
             body:
               id: 6596da6045e56dee495bcbba
@@ -254,9 +284,9 @@ service:
               lastUpdated: '2024-03-11T10:42:42Z'
               archived: false
               draft: false
-              canBranch: true
-              isBranch: false
-              isMembersOnly: false
+              canBranch: false
+              isBranch: true
+              branchId: 68026fa68ef6dc744c75b833
               seo:
                 title: The Ultimate Hitchhiker's Guide to the Galaxy
                 description: >-
@@ -274,21 +304,13 @@ service:
     get-content:
       path: /pages/{page_id}/dom
       method: GET
-      auth: true
-      docs: >
-        Get static content from a static page. This includes text nodes, image
-        nodes and component instances.
+      auth:
+        - OAuth2:
+            - page:read
+      docs: |
+        Get text and component instance content from a static page.
 
-        To retrieve the contents of components in the page use the [get
-        component
-        content](/data/reference/pages-and-components/components/get-content)
-        endpoint.
-
-
-        <Note>If you do not provide a Locale ID in your request, the response
-        will return any content that can be localized from the Primary
-        locale.</Note>
-
+        <Badge intent="info">Localization</Badge> 
 
         Required scope | `pages:read`
       source:
@@ -303,9 +325,12 @@ service:
         query-parameters:
           localeId:
             type: optional<string>
-            docs: >-
-              Unique identifier for a specific locale. Applicable, when using
-              localization.
+            docs: >
+              Unique identifier for a specific Locale.
+
+
+              [Lear more about
+              localization.](/data/v2.0.0/docs/working-with-localization)
           limit:
             type: optional<double>
             docs: 'Maximum number of records to be returned (max limit: 100)'
@@ -317,6 +342,7 @@ service:
       response:
         docs: Request was successful
         type: root.Dom
+        status-code: 200
       errors:
         - root.BadRequestError
         - root.UnauthorizedError
@@ -325,52 +351,65 @@ service:
         - root.TooManyRequestsError
         - root.InternalServerError
       examples:
-        - name: PageDOM
-          path-parameters:
+        - path-parameters:
             page_id: 63c720f9347c2139b248e552
           query-parameters:
             localeId: 65427cf400e02b306eaa04a0
+            limit: 1.1
+            offset: 1.1
           response:
             body:
               pageId: 658205daa3e8206a523b5ad4
+              branchId: 68026fa68ef6dc744c75b833
               nodes:
-                - type: component-instance
-                  id: a245c12d-995b-55ee-5ec7-aa36a6cad623
-                  componentId: nodes
+                - id: id
+                  text: {}
+                  attributes:
+                    key: value
+                  type: text
+                - id: id
+                  text: {}
+                  attributes:
+                    key: value
+                  type: text
+                - id: id
+                  image: {}
+                  attributes:
+                    key: value
+                  type: image
+                - id: id
+                  choices:
+                    - value: value
+                      text: text
+                  attributes:
+                    key: value
+                  type: select
+                - id: id
+                  placeholder: placeholder
+                  attributes:
+                    key: value
+                  type: text-input
+                - id: id
+                  text: {}
+                  attributes:
+                    key: value
+                  type: text
+                - id: id
+                  componentId: componentId
                   propertyOverrides:
                     - propertyId: 7dd14c08-2e96-8d3d-2b19-b5c03642a0f0
-                - type: component-instance
-                  id: a245c12d-995b-55ee-5ec7-aa36a6cad627
-                  componentId: nodes
-                  propertyOverrides:
-                    - propertyId: 7dd14c08-2e96-8d3d-2b19-b5c03642a0f0
-                - type: component-instance
-                  id: a245c12d-995b-55ee-5ec7-aa36a6cad629
-                  componentId: nodes
-                  propertyOverrides:
-                    - propertyId: 7dd14c08-2e96-8d3d-2b19-b5c03642a0f0
-                - type: component-instance
-                  id: a245c12d-995b-55ee-5ec7-aa36a6cad631
-                  componentId: 6258612d1ee792848f805dcf
-                  propertyOverrides:
-                    - propertyId: a245c12d-995b-55ee-5ec7-aa36a6cad633
-                      type: Plain Text
-                      label: Catchphrase
-                      text:
-                        text: Don't Panic!
-                    - propertyId: a245c12d-995b-55ee-5ec7-aa36a6cad635
-                      type: Rich Text
-                      label: Tagline
-                      text:
-                        html: <div><p>Always know where your towel is.</p></div>
+                  type: component-instance
               pagination:
                 limit: 4
                 offset: 0
                 total: 4
+              lastUpdated: '2016-10-24T19:42:38Z'
     update-static-content:
       path: /pages/{page_id}/dom
       method: POST
-      auth: true
+      auth:
+        - OAuth2:
+            - page:write
       docs: >
         This endpoint updates content on a static page in **secondary locales**.
         It supports updating up to 1000 nodes in a single request.
@@ -380,12 +419,17 @@ service:
 
         1. Use the [get page
         content](/data/reference/pages-and-components/pages/get-content)
-        endpoint to identify available content nodes and their types
+        endpoint to identify available content nodes and their types.
 
         2. If the page has component instances, retrieve the component's
         properties that you'll override using the [get component
         properties](/data/reference/pages-and-components/components/get-properties)
-        endpoint
+        endpoint.
+
+        3. DOM elements may include a `data-w-id` attribute. This attribute is
+        used by Webflow to maintain custom attributes and links across locales.
+        Always include the original `data-w-id` value in your update requests to
+        ensure consistent behavior across all locales.
 
 
         <Note>
@@ -418,6 +462,7 @@ service:
       response:
         docs: Request was successful
         type: UpdateStaticContentResponse
+        status-code: 200
       errors:
         - root.BadRequestError
         - root.UnauthorizedError
@@ -438,6 +483,17 @@ service:
                 text: >-
                   <div><h3>Don't Panic!</h3><p>Always know where your towel
                   is.</p></div>
+              - nodeId: a245c12d-995b-55ee-5ec7-aa36a6cad635
+                choices:
+                  - value: choice-1
+                    text: First choice
+                  - value: choice-2
+                    text: Second choice
+              - nodeId: a245c12d-995b-55ee-5ec7-aa36a6cad642
+                placeholder: Enter something here...
+              - nodeId: a245c12d-995b-55ee-5ec7-aa36a6cad671
+                value: Submit
+                waitingText: Submitting...
               - nodeId: a245c12d-995b-55ee-5ec7-aa36a6cad629
                 propertyOverrides:
                   - propertyId: 7dd14c08-2e96-8d3d-2b19-b5c03642a0f0
@@ -453,11 +509,47 @@ service:
   display-name: Pages
 docs: Pages are the pages in your Webflow site.
 types:
+  PageMetadataWriteSeo:
+    docs: SEO-related fields for the Page
+    properties:
+      title:
+        type: optional<string>
+        docs: The Page title shown in search engine results
+      description:
+        type: optional<string>
+        docs: The Page description shown in search engine results
+    source:
+      openapi: ../../../openapi/referenced-specs/v2.yml
+    inline: true
+  PageMetadataWriteOpenGraph:
+    docs: Open Graph fields for the Page
+    properties:
+      title:
+        type: optional<string>
+        docs: The title supplied to Open Graph annotations
+      titleCopied:
+        type: optional<boolean>
+        docs: Indicates the Open Graph title was copied from the SEO title
+      description:
+        type: optional<string>
+        docs: The description supplied to Open Graph annotations
+      descriptionCopied:
+        type: optional<boolean>
+        docs: >-
+          Indicates the Open Graph description was copied from the SEO
+          description
+    source:
+      openapi: ../../../openapi/referenced-specs/v2.yml
+    inline: true
   PageDomWriteNodesItem:
     discriminated: false
     union:
-      - root.TextNodeWrite
-      - root.ComponentInstanceNodePropertyOverridesWrite
+      - type: root.TextNodeWrite
+      - type: root.ComponentInstanceNodePropertyOverridesWrite
+      - type: root.Select
+      - type: root.TextInputNodeWrite
+      - type: root.SubmitButtonNodeWrite
+      - type: root.SearchButtonNodeWrite
     source:
       openapi: ../../../openapi/referenced-specs/v2.yml
     inline: true
@@ -468,3 +560,52 @@ types:
         type: list<string>
     source:
       openapi: ../../../openapi/referenced-specs/v2.yml
+webhooks:
+  page_created:
+    audiences: []
+    method: POST
+    display-name: Page Created
+    headers: {}
+    payload: root.PageCreatedWebhook
+    examples:
+      - payload:
+          triggerType: page_created
+          payload:
+            siteId: 65427cf400e02b306eaa049c
+            pageId: 66a3cfb276641574f5d58311
+            pageTitle: Heart of Gold Specs
+            createdOn: '2024-07-26T16:32:50Z'
+            publishedPath: /blog/earth
+    docs: Information about a new pages
+  page_metadata_updated:
+    audiences: []
+    method: POST
+    display-name: Page Metadata Updated
+    headers: {}
+    payload: root.PageMetadataUpdatedWebhook
+    examples:
+      - payload:
+          triggerType: page_metadata_updated
+          payload:
+            siteId: 65427cf400e02b306eaa049c
+            pageId: 66a3cfb276641574f5d58311
+            pageTitle: Heart of Gold Specs
+            lastUpdated: '2024-07-26T16:32:50Z'
+            publishedPath: /blog/earth
+    docs: Information about a page's updated metadata and/or settings
+  page_deleted:
+    audiences: []
+    method: POST
+    display-name: Page Deleted
+    headers: {}
+    payload: root.PageDeletedWebhook
+    examples:
+      - payload:
+          triggerType: page_deleted
+          payload:
+            siteId: 65427cf400e02b306eaa049c
+            pageId: 66a3cfb276641574f5d58311
+            pageTitle: Heart of Gold Specs
+            deletedOn: '2024-07-26T16:32:50Z'
+            publishedPath: /blog/earth
+    docs: Information about a page that was deleted
