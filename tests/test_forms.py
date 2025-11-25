@@ -14,12 +14,13 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                 "createdOn": "2016-10-24T19:41:29Z",
                 "lastUpdated": "2016-10-24T19:43:17Z",
                 "fields": {
-                    "0": {"displayName": "Email", "userVisible": True},
-                    "1": {"displayName": "Email", "userVisible": True},
+                    "0": {"displayName": "Email", "placeholder": "Enter your email", "userVisible": True},
+                    "1": {"displayName": "Email", "placeholder": "Enter your email", "userVisible": True},
                 },
                 "responseSettings": {
                     "redirectUrl": "https://example.com",
                     "redirectMethod": "GET",
+                    "redirectAction": "POST https://example.com",
                     "sendEmailConfirmation": True,
                 },
                 "id": "589a331aa51e760df7ccb89e",
@@ -34,10 +35,11 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                 "displayName": "Name Form",
                 "createdOn": "2016-10-24T19:41:29Z",
                 "lastUpdated": "2016-10-24T19:43:17Z",
-                "fields": {"0": {"displayName": "Email", "userVisible": True}},
+                "fields": {"0": {"displayName": "Email", "placeholder": "Enter your email", "userVisible": True}},
                 "responseSettings": {
                     "redirectUrl": "https://example.com",
                     "redirectMethod": "GET",
+                    "redirectAction": "POST https://example.com",
                     "sendEmailConfirmation": False,
                 },
                 "id": "580ff8d7ba3e45ba9fe588e9",
@@ -62,11 +64,16 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                     "fields": (
                         "dict",
                         {
-                            0: (None, {"displayName": None, "userVisible": None}),
-                            1: (None, {"displayName": None, "userVisible": None}),
+                            0: (None, {"displayName": None, "placeholder": None, "userVisible": None}),
+                            1: (None, {"displayName": None, "placeholder": None, "userVisible": None}),
                         },
                     ),
-                    "responseSettings": {"redirectUrl": None, "redirectMethod": None, "sendEmailConfirmation": None},
+                    "responseSettings": {
+                        "redirectUrl": None,
+                        "redirectMethod": None,
+                        "redirectAction": None,
+                        "sendEmailConfirmation": None,
+                    },
                     "id": None,
                     "siteId": None,
                     "siteDomainId": None,
@@ -79,8 +86,13 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                     "displayName": None,
                     "createdOn": "datetime",
                     "lastUpdated": "datetime",
-                    "fields": ("dict", {0: (None, {"displayName": None, "userVisible": None})}),
-                    "responseSettings": {"redirectUrl": None, "redirectMethod": None, "sendEmailConfirmation": None},
+                    "fields": ("dict", {0: (None, {"displayName": None, "placeholder": None, "userVisible": None})}),
+                    "responseSettings": {
+                        "redirectUrl": None,
+                        "redirectMethod": None,
+                        "redirectAction": None,
+                        "sendEmailConfirmation": None,
+                    },
                     "id": None,
                     "siteId": None,
                     "siteDomainId": None,
@@ -93,10 +105,10 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
         ),
         "pagination": {"limit": None, "offset": None, "total": None},
     }
-    response = client.forms.list(site_id="580e63e98c9a982ac9b8b741")
+    response = client.forms.list(site_id="580e63e98c9a982ac9b8b741", limit=1.1, offset=1.1)
     validate_response(response, expected_response, expected_types)
 
-    async_response = await async_client.forms.list(site_id="580e63e98c9a982ac9b8b741")
+    async_response = await async_client.forms.list(site_id="580e63e98c9a982ac9b8b741", limit=1.1, offset=1.1)
     validate_response(async_response, expected_response, expected_types)
 
 
@@ -211,10 +223,12 @@ async def test_list_submissions(client: Webflow, async_client: AsyncWebflow) -> 
         ),
         "pagination": {"limit": None, "offset": None, "total": None},
     }
-    response = client.forms.list_submissions(form_id="580e63e98c9a982ac9b8b741")
+    response = client.forms.list_submissions(form_id="580e63e98c9a982ac9b8b741", offset=1.1, limit=1.1)
     validate_response(response, expected_response, expected_types)
 
-    async_response = await async_client.forms.list_submissions(form_id="580e63e98c9a982ac9b8b741")
+    async_response = await async_client.forms.list_submissions(
+        form_id="580e63e98c9a982ac9b8b741", offset=1.1, limit=1.1
+    )
     validate_response(async_response, expected_response, expected_types)
 
 
@@ -242,6 +256,19 @@ async def test_get_submission(client: Webflow, async_client: AsyncWebflow) -> No
     validate_response(async_response, expected_response, expected_types)
 
 
+async def test_delete_submission(client: Webflow, async_client: AsyncWebflow) -> None:
+    # Type ignore to avoid mypy complaining about the function not being meant to return a value
+    assert (
+        client.forms.delete_submission(form_submission_id="580e63e98c9a982ac9b8b741")  # type: ignore[func-returns-value]
+        is None
+    )
+
+    assert (
+        await async_client.forms.delete_submission(form_submission_id="580e63e98c9a982ac9b8b741")  # type: ignore[func-returns-value]
+        is None
+    )
+
+
 async def test_update_submission(client: Webflow, async_client: AsyncWebflow) -> None:
     expected_response: typing.Any = {
         "id": "6321ca84df3949bfc6752327",
@@ -263,4 +290,191 @@ async def test_update_submission(client: Webflow, async_client: AsyncWebflow) ->
     validate_response(response, expected_response, expected_types)
 
     async_response = await async_client.forms.update_submission(form_submission_id="580e63e98c9a982ac9b8b741")
+    validate_response(async_response, expected_response, expected_types)
+
+
+async def test_list_submissions_by_site(client: Webflow, async_client: AsyncWebflow) -> None:
+    expected_response: typing.Any = {
+        "formSubmissions": [
+            {
+                "id": "6321ca84df3949bfc6752327",
+                "displayName": "Sample Form",
+                "siteId": "62749158efef318abc8d5a0f",
+                "workspaceId": "62749158efef318abc8d5a0f",
+                "dateSubmitted": "2022-09-14T12:35:16Z",
+                "formResponse": {"First Name": "Arthur", "Last Name": "Dent"},
+            },
+            {
+                "id": "660d64fabf6e0a0d4edab981",
+                "displayName": "Sample Form",
+                "siteId": "62749158efef318abc8d5a0f",
+                "workspaceId": "62749158efef318abc8d5a0f",
+                "dateSubmitted": "2022-09-14T12:35:16Z",
+                "formResponse": {"First Name": "Ford", "Last Name": "Prefect"},
+            },
+        ],
+        "pagination": {"limit": 25, "offset": 0, "total": 2},
+    }
+    expected_types: typing.Any = {
+        "formSubmissions": (
+            "list",
+            {
+                0: {
+                    "id": None,
+                    "displayName": None,
+                    "siteId": None,
+                    "workspaceId": None,
+                    "dateSubmitted": "datetime",
+                    "formResponse": ("dict", {0: (None, None), 1: (None, None)}),
+                },
+                1: {
+                    "id": None,
+                    "displayName": None,
+                    "siteId": None,
+                    "workspaceId": None,
+                    "dateSubmitted": "datetime",
+                    "formResponse": ("dict", {0: (None, None), 1: (None, None)}),
+                },
+            },
+        ),
+        "pagination": {"limit": None, "offset": None, "total": None},
+    }
+    response = client.forms.list_submissions_by_site(
+        site_id="580e63e98c9a982ac9b8b741", element_id="18259716-3e5a-646a-5f41-5dc4b9405aa0", offset=1.1, limit=1.1
+    )
+    validate_response(response, expected_response, expected_types)
+
+    async_response = await async_client.forms.list_submissions_by_site(
+        site_id="580e63e98c9a982ac9b8b741", element_id="18259716-3e5a-646a-5f41-5dc4b9405aa0", offset=1.1, limit=1.1
+    )
+    validate_response(async_response, expected_response, expected_types)
+
+
+async def test_list_submissions_by_form_and_site(client: Webflow, async_client: AsyncWebflow) -> None:
+    expected_response: typing.Any = {
+        "formSubmissions": [
+            {
+                "id": "6321ca84df3949bfc6752327",
+                "displayName": "Sample Form",
+                "siteId": "62749158efef318abc8d5a0f",
+                "workspaceId": "62749158efef318abc8d5a0f",
+                "dateSubmitted": "2022-09-14T12:35:16Z",
+                "formResponse": {"First Name": "Arthur", "Last Name": "Dent"},
+            },
+            {
+                "id": "660d64fabf6e0a0d4edab981",
+                "displayName": "Sample Form",
+                "siteId": "62749158efef318abc8d5a0f",
+                "workspaceId": "62749158efef318abc8d5a0f",
+                "dateSubmitted": "2022-09-14T12:35:16Z",
+                "formResponse": {"First Name": "Ford", "Last Name": "Prefect"},
+            },
+        ],
+        "pagination": {"limit": 25, "offset": 0, "total": 2},
+    }
+    expected_types: typing.Any = {
+        "formSubmissions": (
+            "list",
+            {
+                0: {
+                    "id": None,
+                    "displayName": None,
+                    "siteId": None,
+                    "workspaceId": None,
+                    "dateSubmitted": "datetime",
+                    "formResponse": ("dict", {0: (None, None), 1: (None, None)}),
+                },
+                1: {
+                    "id": None,
+                    "displayName": None,
+                    "siteId": None,
+                    "workspaceId": None,
+                    "dateSubmitted": "datetime",
+                    "formResponse": ("dict", {0: (None, None), 1: (None, None)}),
+                },
+            },
+        ),
+        "pagination": {"limit": None, "offset": None, "total": None},
+    }
+    response = client.forms.list_submissions_by_form_and_site(
+        site_id="580e63e98c9a982ac9b8b741", form_id="580e63e98c9a982ac9b8b741", offset=1.1, limit=1.1
+    )
+    validate_response(response, expected_response, expected_types)
+
+    async_response = await async_client.forms.list_submissions_by_form_and_site(
+        site_id="580e63e98c9a982ac9b8b741", form_id="580e63e98c9a982ac9b8b741", offset=1.1, limit=1.1
+    )
+    validate_response(async_response, expected_response, expected_types)
+
+
+async def test_get_submission_by_site(client: Webflow, async_client: AsyncWebflow) -> None:
+    expected_response: typing.Any = {
+        "id": "6321ca84df3949bfc6752327",
+        "displayName": "Sample Form",
+        "siteId": "62749158efef318abc8d5a0f",
+        "workspaceId": "62749158efef318abc8d5a0f",
+        "dateSubmitted": "2022-09-14T12:35:16Z",
+        "formResponse": {"First Name": "Arthur", "Last Name": "Dent"},
+    }
+    expected_types: typing.Any = {
+        "id": None,
+        "displayName": None,
+        "siteId": None,
+        "workspaceId": None,
+        "dateSubmitted": "datetime",
+        "formResponse": ("dict", {0: (None, None), 1: (None, None)}),
+    }
+    response = client.forms.get_submission_by_site(
+        site_id="580e63e98c9a982ac9b8b741", form_submission_id="580e63e98c9a982ac9b8b741"
+    )
+    validate_response(response, expected_response, expected_types)
+
+    async_response = await async_client.forms.get_submission_by_site(
+        site_id="580e63e98c9a982ac9b8b741", form_submission_id="580e63e98c9a982ac9b8b741"
+    )
+    validate_response(async_response, expected_response, expected_types)
+
+
+async def test_delete_submission_by_site(client: Webflow, async_client: AsyncWebflow) -> None:
+    # Type ignore to avoid mypy complaining about the function not being meant to return a value
+    assert (
+        client.forms.delete_submission_by_site(
+            site_id="580e63e98c9a982ac9b8b741", form_submission_id="580e63e98c9a982ac9b8b741"
+        )  # type: ignore[func-returns-value]
+        is None
+    )
+
+    assert (
+        await async_client.forms.delete_submission_by_site(
+            site_id="580e63e98c9a982ac9b8b741", form_submission_id="580e63e98c9a982ac9b8b741"
+        )  # type: ignore[func-returns-value]
+        is None
+    )
+
+
+async def test_update_submission_by_site(client: Webflow, async_client: AsyncWebflow) -> None:
+    expected_response: typing.Any = {
+        "id": "6321ca84df3949bfc6752327",
+        "displayName": "Sample Form",
+        "siteId": "62749158efef318abc8d5a0f",
+        "workspaceId": "62749158efef318abc8d5a0f",
+        "dateSubmitted": "2022-09-14T12:35:16Z",
+        "formResponse": {"First Name": "Arthur", "Last Name": "Dent"},
+    }
+    expected_types: typing.Any = {
+        "id": None,
+        "displayName": None,
+        "siteId": None,
+        "workspaceId": None,
+        "dateSubmitted": "datetime",
+        "formResponse": ("dict", {0: (None, None), 1: (None, None)}),
+    }
+    response = client.forms.update_submission_by_site(
+        site_id="580e63e98c9a982ac9b8b741", form_submission_id="580e63e98c9a982ac9b8b741"
+    )
+    validate_response(response, expected_response, expected_types)
+
+    async_response = await async_client.forms.update_submission_by_site(
+        site_id="580e63e98c9a982ac9b8b741", form_submission_id="580e63e98c9a982ac9b8b741"
+    )
     validate_response(async_response, expected_response, expected_types)
