@@ -21,6 +21,11 @@ class SkuFieldDataPrice(UniversalBaseModel):
     Currency of Item
     """
 
+    currency: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Currency of Item (alternative representation)
+    """
+
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2
     else:
