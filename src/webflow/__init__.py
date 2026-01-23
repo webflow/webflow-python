@@ -277,6 +277,7 @@ from .types import (
     WorkspaceMembership,
     WorkspaceMembershipAuditLogItem,
     WorkspaceMembershipAuditLogItemEventSubType,
+    OauthScope,
 )
 from .errors import (
     BadRequestError,
@@ -473,6 +474,7 @@ __all__ = [
     "NotEnterprisePlanSite",
     "NotEnterprisePlanWorkspace",
     "NotFoundError",
+    "OauthScope",
     "OptionField",
     "Order",
     "OrderAddress",

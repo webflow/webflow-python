@@ -27,7 +27,7 @@ poetry add webflow
 Simply import `Webflow` and start making calls to our API. 
 
 ```python
-from webflow.client import Webflow
+from webflow import Webflow
 
 client = Webflow(
   access_token="YOUR_ACCESS_TOKEN"
@@ -40,7 +40,8 @@ The SDK also exports an async client so that you can make non-blocking
 calls to our API. 
 
 ```python
-from webflow.client import AsyncWebflow
+import asyncio
+from webflow import AsyncWebflow
 
 client = AsyncWebflow(
   access_token="YOUR_ACCESS_TOKEN"
@@ -95,7 +96,7 @@ access_token = get_access_token(
 Instantiate the client using your `access_token`. 
 
 ```python
-from webflow.client import Webflow
+from webflow import Webflow
 
 client = Webflow(
   access_token=access_token
@@ -112,14 +113,17 @@ guide you!
 All errors thrown by the SDK will be subclasses of [`ApiError`](./src/webflow/core/api_error.py).
 
 ```python
-import webflow
+from webflow import Webflow, BadRequestError
+from webflow.core.api_error import ApiError
+
+client = Webflow(access_token="YOUR_ACCESS_TOKEN")
 
 try:
-  client.sites.get(...)
-except webflow.core.ApiError as e: # Handle all errors
+  client.sites.get("site-id")
+except BadRequestError as e:  # Handle specific error
   print(e.status_code)
   print(e.body)
-except webflow.BadRequestError as e: # Handle specific error
+except ApiError as e:  # Handle all API errors
   print(e.status_code)
   print(e.body)
 ```
@@ -131,25 +135,25 @@ By default, requests time out after 60 seconds. You can configure this with a
 timeout option, which accepts a float.
 
 ```python
-from webflow.client import Webflow
+from webflow import Webflow
 
 client = Webflow(
-    # 20 seconds
-    timeout=20.0,
+    access_token="YOUR_ACCESS_TOKEN",
+    timeout=20.0,  # 20 seconds
 )
 ```
 
 ### Custom HTTP client
 You can override the httpx client to customize it for your use-case. Some common use-cases 
-include support for proxies and transports.
+include support for proxies, transports, or custom base URLs.
 
 ```python
 import httpx
-
-from webflow.client import Webflow
+from webflow import Webflow
 
 client = Webflow(
-    http_client=httpx.Client(
+    access_token="YOUR_ACCESS_TOKEN",
+    httpx_client=httpx.Client(
         proxies="http://my.test.proxy.example.com",
         transport=httpx.HTTPTransport(local_address="0.0.0.0"),
     ),

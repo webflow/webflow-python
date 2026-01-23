@@ -304,6 +304,7 @@ from .workspace_invitation_audit_log_item_event_sub_type import WorkspaceInvitat
 from .workspace_membership import WorkspaceMembership
 from .workspace_membership_audit_log_item import WorkspaceMembershipAuditLogItem
 from .workspace_membership_audit_log_item_event_sub_type import WorkspaceMembershipAuditLogItemEventSubType
+from .oauth_scope import OauthScope
 
 __all__ = [
     "AccessGroup",
@@ -429,6 +430,7 @@ __all__ = [
     "Node_TextInput",
     "NotEnterprisePlanSite",
     "NotEnterprisePlanWorkspace",
+    "OauthScope",
     "OptionField",
     "Order",
     "OrderAddress",
