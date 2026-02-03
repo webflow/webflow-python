@@ -7,17 +7,17 @@ from ..core.pydantic_utilities import IS_PYDANTIC_V2
 
 
 class CollectionItemListPagination(UniversalBaseModel):
-    limit: typing.Optional[float] = pydantic.Field(default=None)
+    limit: typing.Optional[int] = pydantic.Field(default=None)
     """
     The limit specified in the request
     """
 
-    offset: typing.Optional[float] = pydantic.Field(default=None)
+    offset: typing.Optional[int] = pydantic.Field(default=None)
     """
     The offset specified for pagination
     """
 
-    total: typing.Optional[float] = pydantic.Field(default=None)
+    total: typing.Optional[int] = pydantic.Field(default=None)
     """
     Total number of items in the collection
     """

@@ -5,6 +5,10 @@ from webflow import AsyncWebflow
 import typing
 from .utilities import validate_response
 from webflow import TextNodeWrite
+from webflow import Select
+from webflow import SelectNodeWriteChoicesItem
+from webflow import TextInputNodeWrite
+from webflow import SubmitButtonNodeWrite
 from webflow import ComponentInstanceNodePropertyOverridesWrite
 from webflow import ComponentInstanceNodePropertyOverridesWritePropertyOverridesItem
 from webflow.resources.components import ComponentPropertiesWritePropertiesItem
@@ -54,12 +58,16 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                 3: {"id": None, "name": None, "group": None, "description": None, "readonly": None},
             },
         ),
-        "pagination": {"limit": None, "offset": None, "total": None},
+        "pagination": {"limit": "integer", "offset": "integer", "total": "integer"},
     }
-    response = client.components.list(site_id="580e63e98c9a982ac9b8b741")
+    response = client.components.list(
+        site_id="580e63e98c9a982ac9b8b741", branch_id="68026fa68ef6dc744c75b833", limit=1, offset=1
+    )
     validate_response(response, expected_response, expected_types)
 
-    async_response = await async_client.components.list(site_id="580e63e98c9a982ac9b8b741")
+    async_response = await async_client.components.list(
+        site_id="580e63e98c9a982ac9b8b741", branch_id="68026fa68ef6dc744c75b833", limit=1, offset=1
+    )
     validate_response(async_response, expected_response, expected_types)
 
 
@@ -67,53 +75,55 @@ async def test_get_content(client: Webflow, async_client: AsyncWebflow) -> None:
     expected_response: typing.Any = {
         "componentId": "69118560-d0bc-15fc-bbf8-b8fe5f6535b5",
         "nodes": [
+            {"id": "id", "text": {}, "attributes": {"key": "value"}, "type": "text"},
+            {"id": "id", "text": {}, "attributes": {"key": "value"}, "type": "text"},
+            {"id": "id", "image": {}, "attributes": {"key": "value"}, "type": "image"},
+            {"id": "id", "placeholder": "placeholder", "attributes": {"key": "value"}, "type": "text-input"},
             {
-                "type": "component-instance",
-                "id": "a245c12d-995b-55ee-5ec7-aa36a6cad623",
-                "componentId": "nodes",
-                "propertyOverrides": [{"propertyId": "7dd14c08-2e96-8d3d-2b19-b5c03642a0f0"}],
+                "id": "id",
+                "choices": [{"value": "value", "text": "text"}],
+                "attributes": {"key": "value"},
+                "type": "select",
             },
             {
-                "type": "component-instance",
-                "id": "a245c12d-995b-55ee-5ec7-aa36a6cad627",
-                "componentId": "nodes",
-                "propertyOverrides": [{"propertyId": "7dd14c08-2e96-8d3d-2b19-b5c03642a0f0"}],
+                "id": "id",
+                "value": "value",
+                "waitingText": "waitingText",
+                "attributes": {"key": "value"},
+                "type": "submit-button",
             },
             {
-                "type": "component-instance",
-                "id": "a245c12d-995b-55ee-5ec7-aa36a6cad629",
-                "componentId": "nodes",
+                "id": "id",
+                "componentId": "componentId",
                 "propertyOverrides": [{"propertyId": "7dd14c08-2e96-8d3d-2b19-b5c03642a0f0"}],
-            },
-            {
                 "type": "component-instance",
-                "id": "a245c12d-995b-55ee-5ec7-aa36a6cad631",
-                "componentId": "6258612d1ee792848f805dcf",
-                "propertyOverrides": [
-                    {
-                        "propertyId": "a245c12d-995b-55ee-5ec7-aa36a6cad633",
-                        "type": "Plain Text",
-                        "text": {"text": "Don't Panic!"},
-                    },
-                    {
-                        "propertyId": "a245c12d-995b-55ee-5ec7-aa36a6cad635",
-                        "type": "Rich Text",
-                        "text": {"html": "<div><p>Always know where your towel is.</p></div>"},
-                    },
-                ],
             },
         ],
-        "pagination": {"limit": 4, "offset": 0, "total": 4},
+        "pagination": {"limit": 7, "offset": 0, "total": 7},
     }
     expected_types: typing.Any = {
         "componentId": None,
-        "nodes": ("list", {0: "no_validate", 1: "no_validate", 2: "no_validate", 3: "no_validate"}),
-        "pagination": {"limit": None, "offset": None, "total": None},
+        "nodes": (
+            "list",
+            {
+                0: "no_validate",
+                1: "no_validate",
+                2: "no_validate",
+                3: "no_validate",
+                4: "no_validate",
+                5: "no_validate",
+                6: "no_validate",
+            },
+        ),
+        "pagination": {"limit": "integer", "offset": "integer", "total": "integer"},
     }
     response = client.components.get_content(
         site_id="580e63e98c9a982ac9b8b741",
         component_id="8505ba55-ef72-629e-f85c-33e4b703d48b",
         locale_id="65427cf400e02b306eaa04a0",
+        branch_id="68026fa68ef6dc744c75b833",
+        limit=1,
+        offset=1,
     )
     validate_response(response, expected_response, expected_types)
 
@@ -121,6 +131,9 @@ async def test_get_content(client: Webflow, async_client: AsyncWebflow) -> None:
         site_id="580e63e98c9a982ac9b8b741",
         component_id="8505ba55-ef72-629e-f85c-33e4b703d48b",
         locale_id="65427cf400e02b306eaa04a0",
+        branch_id="68026fa68ef6dc744c75b833",
+        limit=1,
+        offset=1,
     )
     validate_response(async_response, expected_response, expected_types)
 
@@ -132,6 +145,7 @@ async def test_update_content(client: Webflow, async_client: AsyncWebflow) -> No
         site_id="580e63e98c9a982ac9b8b741",
         component_id="8505ba55-ef72-629e-f85c-33e4b703d48b",
         locale_id="65427cf400e02b306eaa04a0",
+        branch_id="68026fa68ef6dc744c75b833",
         nodes=[
             TextNodeWrite(
                 node_id="a245c12d-995b-55ee-5ec7-aa36a6cad623", text="<h1>The Hitchhiker's Guide to the Galaxy</h1>"
@@ -139,6 +153,17 @@ async def test_update_content(client: Webflow, async_client: AsyncWebflow) -> No
             TextNodeWrite(
                 node_id="a245c12d-995b-55ee-5ec7-aa36a6cad627",
                 text="<div><h3>Don't Panic!</h3><p>Always know where your towel is.</p></div>",
+            ),
+            Select(
+                node_id="a245c12d-995b-55ee-5ec7-aa36a6cad635",
+                choices=[
+                    SelectNodeWriteChoicesItem(value="choice-1", text="First choice"),
+                    SelectNodeWriteChoicesItem(value="choice-2", text="Second choice"),
+                ],
+            ),
+            TextInputNodeWrite(node_id="a245c12d-995b-55ee-5ec7-aa36a6cad642", placeholder="Enter something here..."),
+            SubmitButtonNodeWrite(
+                node_id="a245c12d-995b-55ee-5ec7-aa36a6cad671", value="Submit", waiting_text="Submitting..."
             ),
             ComponentInstanceNodePropertyOverridesWrite(
                 node_id="a245c12d-995b-55ee-5ec7-aa36a6cad629",
@@ -160,6 +185,7 @@ async def test_update_content(client: Webflow, async_client: AsyncWebflow) -> No
         site_id="580e63e98c9a982ac9b8b741",
         component_id="8505ba55-ef72-629e-f85c-33e4b703d48b",
         locale_id="65427cf400e02b306eaa04a0",
+        branch_id="68026fa68ef6dc744c75b833",
         nodes=[
             TextNodeWrite(
                 node_id="a245c12d-995b-55ee-5ec7-aa36a6cad623", text="<h1>The Hitchhiker's Guide to the Galaxy</h1>"
@@ -167,6 +193,17 @@ async def test_update_content(client: Webflow, async_client: AsyncWebflow) -> No
             TextNodeWrite(
                 node_id="a245c12d-995b-55ee-5ec7-aa36a6cad627",
                 text="<div><h3>Don't Panic!</h3><p>Always know where your towel is.</p></div>",
+            ),
+            Select(
+                node_id="a245c12d-995b-55ee-5ec7-aa36a6cad635",
+                choices=[
+                    SelectNodeWriteChoicesItem(value="choice-1", text="First choice"),
+                    SelectNodeWriteChoicesItem(value="choice-2", text="Second choice"),
+                ],
+            ),
+            TextInputNodeWrite(node_id="a245c12d-995b-55ee-5ec7-aa36a6cad642", placeholder="Enter something here..."),
+            SubmitButtonNodeWrite(
+                node_id="a245c12d-995b-55ee-5ec7-aa36a6cad671", value="Submit", waiting_text="Submitting..."
             ),
             ComponentInstanceNodePropertyOverridesWrite(
                 node_id="a245c12d-995b-55ee-5ec7-aa36a6cad629",
@@ -213,12 +250,15 @@ async def test_get_properties(client: Webflow, async_client: AsyncWebflow) -> No
                 1: {"propertyId": None, "type": None, "label": None, "text": {"html": None}},
             },
         ),
-        "pagination": {"limit": None, "offset": None, "total": None},
+        "pagination": {"limit": "integer", "offset": "integer", "total": "integer"},
     }
     response = client.components.get_properties(
         site_id="580e63e98c9a982ac9b8b741",
         component_id="8505ba55-ef72-629e-f85c-33e4b703d48b",
         locale_id="65427cf400e02b306eaa04a0",
+        branch_id="68026fa68ef6dc744c75b833",
+        limit=1,
+        offset=1,
     )
     validate_response(response, expected_response, expected_types)
 
@@ -226,6 +266,9 @@ async def test_get_properties(client: Webflow, async_client: AsyncWebflow) -> No
         site_id="580e63e98c9a982ac9b8b741",
         component_id="8505ba55-ef72-629e-f85c-33e4b703d48b",
         locale_id="65427cf400e02b306eaa04a0",
+        branch_id="68026fa68ef6dc744c75b833",
+        limit=1,
+        offset=1,
     )
     validate_response(async_response, expected_response, expected_types)
 
@@ -237,6 +280,7 @@ async def test_update_properties(client: Webflow, async_client: AsyncWebflow) ->
         site_id="580e63e98c9a982ac9b8b741",
         component_id="8505ba55-ef72-629e-f85c-33e4b703d48b",
         locale_id="65427cf400e02b306eaa04a0",
+        branch_id="68026fa68ef6dc744c75b833",
         properties=[
             ComponentPropertiesWritePropertiesItem(
                 property_id="a245c12d-995b-55ee-5ec7-aa36a6cad623", text="The Hitchhiker’s Guide to the Galaxy"
@@ -253,6 +297,7 @@ async def test_update_properties(client: Webflow, async_client: AsyncWebflow) ->
         site_id="580e63e98c9a982ac9b8b741",
         component_id="8505ba55-ef72-629e-f85c-33e4b703d48b",
         locale_id="65427cf400e02b306eaa04a0",
+        branch_id="68026fa68ef6dc744c75b833",
         properties=[
             ComponentPropertiesWritePropertiesItem(
                 property_id="a245c12d-995b-55ee-5ec7-aa36a6cad623", text="The Hitchhiker’s Guide to the Galaxy"
