@@ -27,12 +27,14 @@ class AccessGroupsClient:
         self,
         site_id: str,
         *,
-        offset: typing.Optional[float] = None,
-        limit: typing.Optional[float] = None,
+        offset: typing.Optional[int] = None,
+        limit: typing.Optional[int] = None,
         sort: typing.Optional[AccessGroupsListRequestSort] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AccessGroupList:
         """
+        <Warning>As of **January 29, 2026**, User Accounts functionality has been disabled on all Webflow sites. This endpoint is no longer available.</Warning>
+
         Get a list of access groups for a site
 
         Required scope | `users:read`
@@ -42,10 +44,10 @@ class AccessGroupsClient:
         site_id : str
             Unique identifier for a Site
 
-        offset : typing.Optional[float]
+        offset : typing.Optional[int]
             Offset used for pagination if the results have more than limit records
 
-        limit : typing.Optional[float]
+        limit : typing.Optional[int]
             Maximum number of records to be returned (max limit: 100)
 
         sort : typing.Optional[AccessGroupsListRequestSort]
@@ -69,10 +71,14 @@ class AccessGroupsClient:
         )
         client.access_groups.list(
             site_id="580e63e98c9a982ac9b8b741",
+            offset=1,
+            limit=1,
+            sort="CreatedOn",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/accessgroups",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "offset": offset,
@@ -164,12 +170,14 @@ class AsyncAccessGroupsClient:
         self,
         site_id: str,
         *,
-        offset: typing.Optional[float] = None,
-        limit: typing.Optional[float] = None,
+        offset: typing.Optional[int] = None,
+        limit: typing.Optional[int] = None,
         sort: typing.Optional[AccessGroupsListRequestSort] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AccessGroupList:
         """
+        <Warning>As of **January 29, 2026**, User Accounts functionality has been disabled on all Webflow sites. This endpoint is no longer available.</Warning>
+
         Get a list of access groups for a site
 
         Required scope | `users:read`
@@ -179,10 +187,10 @@ class AsyncAccessGroupsClient:
         site_id : str
             Unique identifier for a Site
 
-        offset : typing.Optional[float]
+        offset : typing.Optional[int]
             Offset used for pagination if the results have more than limit records
 
-        limit : typing.Optional[float]
+        limit : typing.Optional[int]
             Maximum number of records to be returned (max limit: 100)
 
         sort : typing.Optional[AccessGroupsListRequestSort]
@@ -211,6 +219,9 @@ class AsyncAccessGroupsClient:
         async def main() -> None:
             await client.access_groups.list(
                 site_id="580e63e98c9a982ac9b8b741",
+                offset=1,
+                limit=1,
+                sort="CreatedOn",
             )
 
 
@@ -218,6 +229,7 @@ class AsyncAccessGroupsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/accessgroups",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "offset": offset,

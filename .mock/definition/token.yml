@@ -7,7 +7,9 @@ service:
     authorized-by:
       path: /token/authorized_by
       method: GET
-      auth: true
+      auth:
+        - OAuth2:
+            - authorized_user:read
       docs: |
         Information about the Authorized User
 
@@ -18,6 +20,7 @@ service:
       response:
         docs: Request was successful
         type: root.AuthorizedUser
+        status-code: 200
       errors:
         - root.UnauthorizedError
         - root.ForbiddenError
@@ -31,7 +34,6 @@ service:
     introspect:
       path: /token/introspect
       method: GET
-      auth: true
       docs: >
         Information about the authorization token
 
@@ -44,6 +46,7 @@ service:
       response:
         docs: Request was successful
         type: root.Authorization
+        status-code: 200
       errors:
         - root.UnauthorizedError
       examples:

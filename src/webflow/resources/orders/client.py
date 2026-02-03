@@ -34,8 +34,8 @@ class OrdersClient:
         site_id: str,
         *,
         status: typing.Optional[OrdersListRequestStatus] = None,
-        offset: typing.Optional[float] = None,
-        limit: typing.Optional[float] = None,
+        offset: typing.Optional[int] = None,
+        limit: typing.Optional[int] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> OrderList:
         """
@@ -51,10 +51,10 @@ class OrdersClient:
         status : typing.Optional[OrdersListRequestStatus]
             Filter the orders by status
 
-        offset : typing.Optional[float]
+        offset : typing.Optional[int]
             Offset used for pagination if the results have more than limit records
 
-        limit : typing.Optional[float]
+        limit : typing.Optional[int]
             Maximum number of records to be returned (max limit: 100)
 
         request_options : typing.Optional[RequestOptions]
@@ -74,10 +74,14 @@ class OrdersClient:
         )
         client.orders.list(
             site_id="580e63e98c9a982ac9b8b741",
+            status="pending",
+            offset=1,
+            limit=1,
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/orders",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "status": status,
@@ -207,6 +211,7 @@ class OrdersClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/orders/{jsonable_encoder(order_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -354,6 +359,7 @@ class OrdersClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/orders/{jsonable_encoder(order_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="PATCH",
             json={
                 "comment": comment,
@@ -497,6 +503,7 @@ class OrdersClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/orders/{jsonable_encoder(order_id)}/fulfill",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             json={
                 "sendOrderFulfilledEmail": send_order_fulfilled_email,
@@ -629,6 +636,7 @@ class OrdersClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/orders/{jsonable_encoder(order_id)}/unfulfill",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             request_options=request_options,
         )
@@ -763,6 +771,7 @@ class OrdersClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/orders/{jsonable_encoder(order_id)}/refund",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             json={
                 "reason": reason,
@@ -867,8 +876,8 @@ class AsyncOrdersClient:
         site_id: str,
         *,
         status: typing.Optional[OrdersListRequestStatus] = None,
-        offset: typing.Optional[float] = None,
-        limit: typing.Optional[float] = None,
+        offset: typing.Optional[int] = None,
+        limit: typing.Optional[int] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> OrderList:
         """
@@ -884,10 +893,10 @@ class AsyncOrdersClient:
         status : typing.Optional[OrdersListRequestStatus]
             Filter the orders by status
 
-        offset : typing.Optional[float]
+        offset : typing.Optional[int]
             Offset used for pagination if the results have more than limit records
 
-        limit : typing.Optional[float]
+        limit : typing.Optional[int]
             Maximum number of records to be returned (max limit: 100)
 
         request_options : typing.Optional[RequestOptions]
@@ -912,6 +921,9 @@ class AsyncOrdersClient:
         async def main() -> None:
             await client.orders.list(
                 site_id="580e63e98c9a982ac9b8b741",
+                status="pending",
+                offset=1,
+                limit=1,
             )
 
 
@@ -919,6 +931,7 @@ class AsyncOrdersClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/orders",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "status": status,
@@ -1058,6 +1071,7 @@ class AsyncOrdersClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/orders/{jsonable_encoder(order_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -1213,6 +1227,7 @@ class AsyncOrdersClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/orders/{jsonable_encoder(order_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="PATCH",
             json={
                 "comment": comment,
@@ -1364,6 +1379,7 @@ class AsyncOrdersClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/orders/{jsonable_encoder(order_id)}/fulfill",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             json={
                 "sendOrderFulfilledEmail": send_order_fulfilled_email,
@@ -1504,6 +1520,7 @@ class AsyncOrdersClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/orders/{jsonable_encoder(order_id)}/unfulfill",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             request_options=request_options,
         )
@@ -1646,6 +1663,7 @@ class AsyncOrdersClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/orders/{jsonable_encoder(order_id)}/refund",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             json={
                 "reason": reason,
