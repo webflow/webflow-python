@@ -17,7 +17,10 @@ from ...errors.internal_server_error import InternalServerError
 from json.decoder import JSONDecodeError
 from ...core.api_error import ApiError
 from ...types.user import User
-from .types.users_update_request_data import UsersUpdateRequestData
+import datetime as dt
+from ...types.user_status import UserStatus
+from ...types.user_access_groups_item import UserAccessGroupsItem
+from ...types.user_data import UserData
 from ...core.serialization import convert_and_respect_annotation_metadata
 from ...errors.conflict_error import ConflictError
 from ...core.client_wrapper import AsyncClientWrapper
@@ -34,12 +37,14 @@ class UsersClient:
         self,
         site_id: str,
         *,
-        offset: typing.Optional[float] = None,
-        limit: typing.Optional[float] = None,
+        offset: typing.Optional[int] = None,
+        limit: typing.Optional[int] = None,
         sort: typing.Optional[UsersListRequestSort] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> UserList:
         """
+        <Warning>As of **January 29, 2026**, User Accounts functionality has been disabled on all Webflow sites. This endpoint is no longer available.</Warning>
+
         Get a list of users for a site
 
         Required scope | `users:read`
@@ -49,10 +54,10 @@ class UsersClient:
         site_id : str
             Unique identifier for a Site
 
-        offset : typing.Optional[float]
+        offset : typing.Optional[int]
             Offset used for pagination if the results have more than limit records
 
-        limit : typing.Optional[float]
+        limit : typing.Optional[int]
             Maximum number of records to be returned (max limit: 100)
 
         sort : typing.Optional[UsersListRequestSort]
@@ -79,10 +84,14 @@ class UsersClient:
         )
         client.users.list(
             site_id="580e63e98c9a982ac9b8b741",
+            offset=1,
+            limit=1,
+            sort="CreatedOn",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/users",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "offset": offset,
@@ -167,6 +176,8 @@ class UsersClient:
 
     def get(self, site_id: str, user_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> User:
         """
+        <Warning>As of **January 29, 2026**, User Accounts functionality has been disabled on all Webflow sites. This endpoint is no longer available.</Warning>
+
         Get a User by ID
 
         Required scope | `users:read`
@@ -201,6 +212,7 @@ class UsersClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/users/{jsonable_encoder(user_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -280,6 +292,8 @@ class UsersClient:
 
     def delete(self, site_id: str, user_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
         """
+        <Warning>As of **January 29, 2026**, User Accounts functionality has been disabled on all Webflow sites. This endpoint is no longer available.</Warning>
+
         Delete a User by ID
 
         Required scope | `users:write`
@@ -313,6 +327,7 @@ class UsersClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/users/{jsonable_encoder(user_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="DELETE",
             request_options=request_options,
         )
@@ -389,11 +404,20 @@ class UsersClient:
         site_id: str,
         user_id: str,
         *,
-        data: typing.Optional[UsersUpdateRequestData] = OMIT,
-        access_groups: typing.Optional[typing.Sequence[str]] = OMIT,
+        id: typing.Optional[str] = OMIT,
+        is_email_verified: typing.Optional[bool] = OMIT,
+        last_updated: typing.Optional[dt.datetime] = OMIT,
+        invited_on: typing.Optional[dt.datetime] = OMIT,
+        created_on: typing.Optional[dt.datetime] = OMIT,
+        last_login: typing.Optional[dt.datetime] = OMIT,
+        status: typing.Optional[UserStatus] = OMIT,
+        access_groups: typing.Optional[typing.Sequence[UserAccessGroupsItem]] = OMIT,
+        data: typing.Optional[UserData] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> User:
         """
+        <Warning>As of **January 29, 2026**, User Accounts functionality has been disabled on all Webflow sites. This endpoint is no longer available.</Warning>
+
         Update a User by ID
 
           Required scope | `users:write`
@@ -409,11 +433,30 @@ class UsersClient:
         user_id : str
             Unique identifier for a User
 
-        data : typing.Optional[UsersUpdateRequestData]
+        id : typing.Optional[str]
+            Unique identifier for the User
 
-        access_groups : typing.Optional[typing.Sequence[str]]
-            An array of access group slugs. Access groups are assigned to the user as type `admin` and the user remains in the group until removed.
+        is_email_verified : typing.Optional[bool]
+            Shows whether the user has verified their email address
 
+        last_updated : typing.Optional[dt.datetime]
+            The timestamp the user was updated
+
+        invited_on : typing.Optional[dt.datetime]
+            The timestamp the user was invited
+
+        created_on : typing.Optional[dt.datetime]
+            The timestamp the user was created
+
+        last_login : typing.Optional[dt.datetime]
+            The timestamp the user was logged in
+
+        status : typing.Optional[UserStatus]
+
+        access_groups : typing.Optional[typing.Sequence[UserAccessGroupsItem]]
+            Access groups the user belongs to
+
+        data : typing.Optional[UserData]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -425,8 +468,9 @@ class UsersClient:
 
         Examples
         --------
-        from webflow import Webflow
-        from webflow.resources.users import UsersUpdateRequestData
+        import datetime
+
+        from webflow import UserAccessGroupsItem, Webflow
 
         client = Webflow(
             access_token="YOUR_ACCESS_TOKEN",
@@ -434,25 +478,45 @@ class UsersClient:
         client.users.update(
             site_id="580e63e98c9a982ac9b8b741",
             user_id="580e63e98c9a982ac9b8b741",
-            data=UsersUpdateRequestData(
-                name="Some One",
-                accept_privacy=False,
-                accept_communications=False,
+            id="6287ec36a841b25637c663df",
+            is_email_verified=True,
+            last_updated=datetime.datetime.fromisoformat(
+                "2022-05-20 13:46:12+00:00",
             ),
-            access_groups=["webflowers", "platinum", "free-tier"],
+            invited_on=datetime.datetime.fromisoformat(
+                "2022-05-20 13:46:12+00:00",
+            ),
+            created_on=datetime.datetime.fromisoformat(
+                "2022-05-20 13:46:12+00:00",
+            ),
+            last_login=datetime.datetime.fromisoformat(
+                "2022-05-20 13:46:12+00:00",
+            ),
+            status="verified",
+            access_groups=[
+                UserAccessGroupsItem(
+                    slug="webflowers",
+                    type="admin",
+                )
+            ],
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/users/{jsonable_encoder(user_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="PATCH",
             json={
-                "data": convert_and_respect_annotation_metadata(
-                    object_=data, annotation=UsersUpdateRequestData, direction="write"
+                "id": id,
+                "isEmailVerified": is_email_verified,
+                "lastUpdated": last_updated,
+                "invitedOn": invited_on,
+                "createdOn": created_on,
+                "lastLogin": last_login,
+                "status": status,
+                "accessGroups": convert_and_respect_annotation_metadata(
+                    object_=access_groups, annotation=typing.Sequence[UserAccessGroupsItem], direction="write"
                 ),
-                "accessGroups": access_groups,
-            },
-            headers={
-                "content-type": "application/json",
+                "data": convert_and_respect_annotation_metadata(object_=data, annotation=UserData, direction="write"),
             },
             request_options=request_options,
             omit=OMIT,
@@ -540,6 +604,8 @@ class UsersClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> User:
         """
+        <Warning>As of **January 29, 2026**, User Accounts functionality has been disabled on all Webflow sites. This endpoint is no longer available.</Warning>
+
         Create and invite a user with an email address.
 
         The user will be sent and invite via email, which they will need to accept in order to join paid any paid access group.
@@ -556,7 +622,6 @@ class UsersClient:
 
         access_groups : typing.Optional[typing.Sequence[str]]
             An array of access group slugs. Access groups are assigned to the user as type `admin` and the user remains in the group until removed.
-
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -576,11 +641,12 @@ class UsersClient:
         client.users.invite(
             site_id="580e63e98c9a982ac9b8b741",
             email="some.one@home.com",
-            access_groups=["webflowers"],
+            access_groups=["accessGroups"],
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/users/invite",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             json={
                 "email": email,
@@ -685,12 +751,14 @@ class AsyncUsersClient:
         self,
         site_id: str,
         *,
-        offset: typing.Optional[float] = None,
-        limit: typing.Optional[float] = None,
+        offset: typing.Optional[int] = None,
+        limit: typing.Optional[int] = None,
         sort: typing.Optional[UsersListRequestSort] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> UserList:
         """
+        <Warning>As of **January 29, 2026**, User Accounts functionality has been disabled on all Webflow sites. This endpoint is no longer available.</Warning>
+
         Get a list of users for a site
 
         Required scope | `users:read`
@@ -700,10 +768,10 @@ class AsyncUsersClient:
         site_id : str
             Unique identifier for a Site
 
-        offset : typing.Optional[float]
+        offset : typing.Optional[int]
             Offset used for pagination if the results have more than limit records
 
-        limit : typing.Optional[float]
+        limit : typing.Optional[int]
             Maximum number of records to be returned (max limit: 100)
 
         sort : typing.Optional[UsersListRequestSort]
@@ -735,6 +803,9 @@ class AsyncUsersClient:
         async def main() -> None:
             await client.users.list(
                 site_id="580e63e98c9a982ac9b8b741",
+                offset=1,
+                limit=1,
+                sort="CreatedOn",
             )
 
 
@@ -742,6 +813,7 @@ class AsyncUsersClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/users",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "offset": offset,
@@ -826,6 +898,8 @@ class AsyncUsersClient:
 
     async def get(self, site_id: str, user_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> User:
         """
+        <Warning>As of **January 29, 2026**, User Accounts functionality has been disabled on all Webflow sites. This endpoint is no longer available.</Warning>
+
         Get a User by ID
 
         Required scope | `users:read`
@@ -868,6 +942,7 @@ class AsyncUsersClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/users/{jsonable_encoder(user_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -949,6 +1024,8 @@ class AsyncUsersClient:
         self, site_id: str, user_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> None:
         """
+        <Warning>As of **January 29, 2026**, User Accounts functionality has been disabled on all Webflow sites. This endpoint is no longer available.</Warning>
+
         Delete a User by ID
 
         Required scope | `users:write`
@@ -990,6 +1067,7 @@ class AsyncUsersClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/users/{jsonable_encoder(user_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="DELETE",
             request_options=request_options,
         )
@@ -1066,11 +1144,20 @@ class AsyncUsersClient:
         site_id: str,
         user_id: str,
         *,
-        data: typing.Optional[UsersUpdateRequestData] = OMIT,
-        access_groups: typing.Optional[typing.Sequence[str]] = OMIT,
+        id: typing.Optional[str] = OMIT,
+        is_email_verified: typing.Optional[bool] = OMIT,
+        last_updated: typing.Optional[dt.datetime] = OMIT,
+        invited_on: typing.Optional[dt.datetime] = OMIT,
+        created_on: typing.Optional[dt.datetime] = OMIT,
+        last_login: typing.Optional[dt.datetime] = OMIT,
+        status: typing.Optional[UserStatus] = OMIT,
+        access_groups: typing.Optional[typing.Sequence[UserAccessGroupsItem]] = OMIT,
+        data: typing.Optional[UserData] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> User:
         """
+        <Warning>As of **January 29, 2026**, User Accounts functionality has been disabled on all Webflow sites. This endpoint is no longer available.</Warning>
+
         Update a User by ID
 
           Required scope | `users:write`
@@ -1086,11 +1173,30 @@ class AsyncUsersClient:
         user_id : str
             Unique identifier for a User
 
-        data : typing.Optional[UsersUpdateRequestData]
+        id : typing.Optional[str]
+            Unique identifier for the User
 
-        access_groups : typing.Optional[typing.Sequence[str]]
-            An array of access group slugs. Access groups are assigned to the user as type `admin` and the user remains in the group until removed.
+        is_email_verified : typing.Optional[bool]
+            Shows whether the user has verified their email address
 
+        last_updated : typing.Optional[dt.datetime]
+            The timestamp the user was updated
+
+        invited_on : typing.Optional[dt.datetime]
+            The timestamp the user was invited
+
+        created_on : typing.Optional[dt.datetime]
+            The timestamp the user was created
+
+        last_login : typing.Optional[dt.datetime]
+            The timestamp the user was logged in
+
+        status : typing.Optional[UserStatus]
+
+        access_groups : typing.Optional[typing.Sequence[UserAccessGroupsItem]]
+            Access groups the user belongs to
+
+        data : typing.Optional[UserData]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1103,9 +1209,9 @@ class AsyncUsersClient:
         Examples
         --------
         import asyncio
+        import datetime
 
-        from webflow import AsyncWebflow
-        from webflow.resources.users import UsersUpdateRequestData
+        from webflow import AsyncWebflow, UserAccessGroupsItem
 
         client = AsyncWebflow(
             access_token="YOUR_ACCESS_TOKEN",
@@ -1116,12 +1222,27 @@ class AsyncUsersClient:
             await client.users.update(
                 site_id="580e63e98c9a982ac9b8b741",
                 user_id="580e63e98c9a982ac9b8b741",
-                data=UsersUpdateRequestData(
-                    name="Some One",
-                    accept_privacy=False,
-                    accept_communications=False,
+                id="6287ec36a841b25637c663df",
+                is_email_verified=True,
+                last_updated=datetime.datetime.fromisoformat(
+                    "2022-05-20 13:46:12+00:00",
                 ),
-                access_groups=["webflowers", "platinum", "free-tier"],
+                invited_on=datetime.datetime.fromisoformat(
+                    "2022-05-20 13:46:12+00:00",
+                ),
+                created_on=datetime.datetime.fromisoformat(
+                    "2022-05-20 13:46:12+00:00",
+                ),
+                last_login=datetime.datetime.fromisoformat(
+                    "2022-05-20 13:46:12+00:00",
+                ),
+                status="verified",
+                access_groups=[
+                    UserAccessGroupsItem(
+                        slug="webflowers",
+                        type="admin",
+                    )
+                ],
             )
 
 
@@ -1129,15 +1250,20 @@ class AsyncUsersClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/users/{jsonable_encoder(user_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="PATCH",
             json={
-                "data": convert_and_respect_annotation_metadata(
-                    object_=data, annotation=UsersUpdateRequestData, direction="write"
+                "id": id,
+                "isEmailVerified": is_email_verified,
+                "lastUpdated": last_updated,
+                "invitedOn": invited_on,
+                "createdOn": created_on,
+                "lastLogin": last_login,
+                "status": status,
+                "accessGroups": convert_and_respect_annotation_metadata(
+                    object_=access_groups, annotation=typing.Sequence[UserAccessGroupsItem], direction="write"
                 ),
-                "accessGroups": access_groups,
-            },
-            headers={
-                "content-type": "application/json",
+                "data": convert_and_respect_annotation_metadata(object_=data, annotation=UserData, direction="write"),
             },
             request_options=request_options,
             omit=OMIT,
@@ -1225,6 +1351,8 @@ class AsyncUsersClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> User:
         """
+        <Warning>As of **January 29, 2026**, User Accounts functionality has been disabled on all Webflow sites. This endpoint is no longer available.</Warning>
+
         Create and invite a user with an email address.
 
         The user will be sent and invite via email, which they will need to accept in order to join paid any paid access group.
@@ -1241,7 +1369,6 @@ class AsyncUsersClient:
 
         access_groups : typing.Optional[typing.Sequence[str]]
             An array of access group slugs. Access groups are assigned to the user as type `admin` and the user remains in the group until removed.
-
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1266,7 +1393,7 @@ class AsyncUsersClient:
             await client.users.invite(
                 site_id="580e63e98c9a982ac9b8b741",
                 email="some.one@home.com",
-                access_groups=["webflowers"],
+                access_groups=["accessGroups"],
             )
 
 
@@ -1274,6 +1401,7 @@ class AsyncUsersClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/users/invite",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             json={
                 "email": email,
