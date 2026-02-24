@@ -137,7 +137,9 @@ client.token.introspect()
 <dl>
 <dd>
 
-Create a site. This endpoint requires an Enterprise workspace.
+Create a site. 
+
+<Warning title="Enterprise Only">This endpoint requires an Enterprise workspace.</Warning>
 
 Required scope | `workspace:write`
 </dd>
@@ -368,7 +370,9 @@ client.sites.get(
 <dl>
 <dd>
 
-Delete a site. This endpoint requires an Enterprise workspace.
+Delete a site. 
+
+<Warning title="Enterprise Only">This endpoint requires an Enterprise workspace.</Warning>
 
 Required scope | `sites:write`
 </dd>
@@ -440,7 +444,9 @@ client.sites.delete(
 <dl>
 <dd>
 
-Update a site. This endpoint requires an Enterprise workspace.
+Update a site. 
+
+<Warning title="Enterprise Only">This endpoint requires an Enterprise workspace.</Warning>
 
 Required scope | `sites:write`
 </dd>
@@ -600,9 +606,11 @@ client.sites.get_custom_domain(
 <dl>
 <dd>
 
-Publishes a site to one or more more domains.
+Publishes a site to one or more more domains. 
 
-<Note title="Endpoint-specific rate limit">This endpoint has a limit of one successful publish queue per minute.</Note>
+To publish to a specific custom domain, use the domain IDs from the [Get Custom Domains](/data/reference/sites/get-custom-domain) endpoint.
+
+<Note title="Rate limit: 1 publish per minute">This endpoint has a specific rate limit of one successful publish queue per minute.</Note>
 
 Required scope | `sites:write`
 </dd>
@@ -626,6 +634,8 @@ client = Webflow(
 )
 client.sites.publish(
     site_id="580e63e98c9a982ac9b8b741",
+    custom_domains=["660c6449dd97ebc7346ac629", "660c6449dd97ebc7346ac62f"],
+    publish_to_webflow_subdomain=False,
 )
 
 ```
@@ -763,7 +773,9 @@ client.collections.list(
 <dl>
 <dd>
 
-Create a Collection for a site.
+Create a Collection for a site with collection fields.
+
+Each collection includes the required _name_ and _slug_ fields, which are generated automatically. You can update the `displayName` of these fields, but the slug for them cannot be changed. Fields slugs are automatically converted to lowercase. Spaces in slugs are replaced with hyphens.
 
 Required scope | `cms:write`
 </dd>
@@ -780,7 +792,7 @@ Required scope | `cms:write`
 <dd>
 
 ```python
-from webflow import Webflow
+from webflow import ReferenceField, ReferenceFieldMetadata, StaticField, Webflow
 
 client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
@@ -790,6 +802,29 @@ client.collections.create(
     display_name="Blog Posts",
     singular_name="Blog Post",
     slug="posts",
+    fields=[
+        StaticField(
+            is_required=True,
+            type="PlainText",
+            display_name="Title",
+            help_text="The title of the blog post",
+        ),
+        StaticField(
+            is_required=True,
+            type="RichText",
+            display_name="Content",
+            help_text="The content of the blog post",
+        ),
+        ReferenceField(
+            is_required=True,
+            type="Reference",
+            display_name="Author",
+            help_text="The author of the blog post",
+            metadata=ReferenceFieldMetadata(
+                collection_id="23cc2d952d4e4631ffd4345d2743db4e",
+            ),
+        ),
+    ],
 )
 
 ```
@@ -831,6 +866,14 @@ client.collections.create(
 <dd>
 
 **slug:** `typing.Optional[str]` — Part of a URL that identifier
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**fields:** `typing.Optional[typing.Sequence[FieldCreate]]` — An array of custom fields to add to the collection
     
 </dd>
 </dl>
@@ -1032,6 +1075,8 @@ client = Webflow(
 client.pages.list(
     site_id="580e63e98c9a982ac9b8b741",
     locale_id="65427cf400e02b306eaa04a0",
+    limit=1,
+    offset=1,
 )
 
 ```
@@ -1056,7 +1101,11 @@ client.pages.list(
 <dl>
 <dd>
 
-**locale_id:** `typing.Optional[str]` — Unique identifier for a specific locale. Applicable, when using localization.
+**locale_id:** `typing.Optional[str]` 
+
+Unique identifier for a specific Locale.
+
+[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -1064,7 +1113,7 @@ client.pages.list(
 <dl>
 <dd>
 
-**limit:** `typing.Optional[float]` — Maximum number of records to be returned (max limit: 100)
+**limit:** `typing.Optional[int]` — Maximum number of records to be returned (max limit: 100)
     
 </dd>
 </dl>
@@ -1072,7 +1121,7 @@ client.pages.list(
 <dl>
 <dd>
 
-**offset:** `typing.Optional[float]` — Offset used for pagination if the results have more than limit records
+**offset:** `typing.Optional[int]` — Offset used for pagination if the results have more than limit records
     
 </dd>
 </dl>
@@ -1153,7 +1202,11 @@ client.pages.get_metadata(
 <dl>
 <dd>
 
-**locale_id:** `typing.Optional[str]` — Unique identifier for a specific locale. Applicable, when using localization.
+**locale_id:** `typing.Optional[str]` 
+
+Unique identifier for a specific Locale.
+
+[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -1202,9 +1255,11 @@ Required scope | `pages:write`
 <dd>
 
 ```python
-import datetime
-
-from webflow import PageOpenGraph, PageSeo, Webflow
+from webflow import Webflow
+from webflow.resources.pages import (
+    PageMetadataWriteOpenGraph,
+    PageMetadataWriteSeo,
+)
 
 client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
@@ -1212,32 +1267,18 @@ client = Webflow(
 client.pages.update_page_settings(
     page_id="63c720f9347c2139b248e552",
     locale_id="65427cf400e02b306eaa04a0",
-    id="6596da6045e56dee495bcbba",
-    site_id="6258612d1ee792848f805dcf",
     title="Guide to the Galaxy",
     slug="guide-to-the-galaxy",
-    created_on=datetime.datetime.fromisoformat(
-        "2024-03-11 10:42:00+00:00",
-    ),
-    last_updated=datetime.datetime.fromisoformat(
-        "2024-03-11 10:42:42+00:00",
-    ),
-    archived=False,
-    draft=False,
-    can_branch=True,
-    is_branch=False,
-    seo=PageSeo(
+    seo=PageMetadataWriteSeo(
         title="The Ultimate Hitchhiker's Guide to the Galaxy",
         description="Everything you need to know about the galaxy, from avoiding Vogon poetry to the importance of towels.",
     ),
-    open_graph=PageOpenGraph(
+    open_graph=PageMetadataWriteOpenGraph(
         title="Explore the Cosmos with The Ultimate Guide",
         title_copied=False,
         description="Dive deep into the mysteries of the universe with your guide to everything galactic.",
         description_copied=False,
     ),
-    page_locale_id="653fd9af6a07fc9cfd7a5e57",
-    published_path="/en-us/guide-to-the-galaxy",
 )
 
 ```
@@ -1262,7 +1303,11 @@ client.pages.update_page_settings(
 <dl>
 <dd>
 
-**id:** `str` — Unique identifier for the Page
+**locale_id:** `typing.Optional[str]` 
+
+Unique identifier for a specific Locale.
+
+[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -1270,7 +1315,7 @@ client.pages.update_page_settings(
 <dl>
 <dd>
 
-**locale_id:** `typing.Optional[str]` — Unique identifier for a specific locale. Applicable, when using localization.
+**title:** `typing.Optional[str]` — Title for the page
     
 </dd>
 </dl>
@@ -1278,7 +1323,12 @@ client.pages.update_page_settings(
 <dl>
 <dd>
 
-**site_id:** `typing.Optional[str]` — Unique identifier for the Site
+**slug:** `typing.Optional[str]` 
+
+Slug for the page. 
+
+
+**Note:** Updating slugs in secondary locales is only supported in <a href="https://webflow.com/localization">Advanced and Enterprise localization add-on plans.</a>
     
 </dd>
 </dl>
@@ -1286,7 +1336,7 @@ client.pages.update_page_settings(
 <dl>
 <dd>
 
-**title:** `typing.Optional[str]` — Title of the Page
+**seo:** `typing.Optional[PageMetadataWriteSeo]` — SEO-related fields for the Page
     
 </dd>
 </dl>
@@ -1294,111 +1344,7 @@ client.pages.update_page_settings(
 <dl>
 <dd>
 
-**slug:** `typing.Optional[str]` — slug of the Page (derived from title)
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**parent_id:** `typing.Optional[str]` — Identifier of the parent folder
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**collection_id:** `typing.Optional[str]` — Unique identifier for a linked Collection, value will be null if the Page is not part of a Collection.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**created_on:** `typing.Optional[dt.datetime]` — The date the Page was created
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**last_updated:** `typing.Optional[dt.datetime]` — The date the Page was most recently updated
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**archived:** `typing.Optional[bool]` — Whether the Page has been archived
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**draft:** `typing.Optional[bool]` — Whether the Page is a draft
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**can_branch:** `typing.Optional[bool]` — Indicates whether the Page supports [Page Branching](https://university.webflow.com/lesson/page-branching)
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**is_branch:** `typing.Optional[bool]` — Indicates whether the Page is a Branch of another Page [Page Branching](https://university.webflow.com/lesson/page-branching)
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**is_members_only:** `typing.Optional[bool]` — Indicates whether the Page is restricted by [Memberships Controls](https://university.webflow.com/lesson/webflow-memberships-overview#how-to-manage-page-restrictions)
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**seo:** `typing.Optional[PageSeo]` — SEO-related fields for the Page
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**open_graph:** `typing.Optional[PageOpenGraph]` — Open Graph fields for the Page
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**page_locale_id:** `typing.Optional[str]` — Unique ID of the page locale
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**published_path:** `typing.Optional[str]` — Relative path of the published page URL
+**open_graph:** `typing.Optional[PageMetadataWriteOpenGraph]` — Open Graph fields for the Page
     
 </dd>
 </dl>
@@ -1430,10 +1376,9 @@ client.pages.update_page_settings(
 <dl>
 <dd>
 
-Get static content from a static page. This includes text nodes, image nodes and component instances.
-To retrieve the contents of components in the page use the [get component content](/data/reference/pages-and-components/components/get-content) endpoint.
+Get text and component instance content from a static page.
 
-<Note>If you do not provide a Locale ID in your request, the response will return any content that can be localized from the Primary locale.</Note>
+<Badge intent="info">Localization</Badge> 
 
 Required scope | `pages:read`
 </dd>
@@ -1458,6 +1403,8 @@ client = Webflow(
 client.pages.get_content(
     page_id="63c720f9347c2139b248e552",
     locale_id="65427cf400e02b306eaa04a0",
+    limit=1,
+    offset=1,
 )
 
 ```
@@ -1482,7 +1429,11 @@ client.pages.get_content(
 <dl>
 <dd>
 
-**locale_id:** `typing.Optional[str]` — Unique identifier for a specific locale. Applicable, when using localization.
+**locale_id:** `typing.Optional[str]` 
+
+Unique identifier for a specific Locale.
+
+[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -1490,7 +1441,7 @@ client.pages.get_content(
 <dl>
 <dd>
 
-**limit:** `typing.Optional[float]` — Maximum number of records to be returned (max limit: 100)
+**limit:** `typing.Optional[int]` — Maximum number of records to be returned (max limit: 100)
     
 </dd>
 </dl>
@@ -1498,7 +1449,7 @@ client.pages.get_content(
 <dl>
 <dd>
 
-**offset:** `typing.Optional[float]` — Offset used for pagination if the results have more than limit records
+**offset:** `typing.Optional[int]` — Offset used for pagination if the results have more than limit records
     
 </dd>
 </dl>
@@ -1533,8 +1484,9 @@ client.pages.get_content(
 This endpoint updates content on a static page in **secondary locales**. It supports updating up to 1000 nodes in a single request.
 
 Before making updates:
-1. Use the [get page content](/data/reference/pages-and-components/pages/get-content) endpoint to identify available content nodes and their types
-2. If the page has component instances, retrieve the component's properties that you'll override using the [get component properties](/data/reference/pages-and-components/components/get-properties) endpoint
+1. Use the [get page content](/data/reference/pages-and-components/pages/get-content) endpoint to identify available content nodes and their types.
+2. If the page has component instances, retrieve the component's properties that you'll override using the [get component properties](/data/reference/pages-and-components/components/get-properties) endpoint.
+3. DOM elements may include a `data-w-id` attribute. This attribute is used by Webflow to maintain custom attributes and links across locales. Always include the original `data-w-id` value in your update requests to ensure consistent behavior across all locales.
 
 <Note>
   This endpoint is specifically for localized pages. Ensure that the specified `localeId` is a valid **secondary locale** for the site otherwise the request will fail.
@@ -1558,6 +1510,10 @@ Required scope | `pages:write`
 from webflow import (
     ComponentInstanceNodePropertyOverridesWrite,
     ComponentInstanceNodePropertyOverridesWritePropertyOverridesItem,
+    Select,
+    SelectNodeWriteChoicesItem,
+    SubmitButtonNodeWrite,
+    TextInputNodeWrite,
     TextNodeWrite,
     Webflow,
 )
@@ -1576,6 +1532,28 @@ client.pages.update_static_content(
         TextNodeWrite(
             node_id="a245c12d-995b-55ee-5ec7-aa36a6cad627",
             text="<div><h3>Don't Panic!</h3><p>Always know where your towel is.</p></div>",
+        ),
+        Select(
+            node_id="a245c12d-995b-55ee-5ec7-aa36a6cad635",
+            choices=[
+                SelectNodeWriteChoicesItem(
+                    value="choice-1",
+                    text="First choice",
+                ),
+                SelectNodeWriteChoicesItem(
+                    value="choice-2",
+                    text="Second choice",
+                ),
+            ],
+        ),
+        TextInputNodeWrite(
+            node_id="a245c12d-995b-55ee-5ec7-aa36a6cad642",
+            placeholder="Enter something here...",
+        ),
+        SubmitButtonNodeWrite(
+            node_id="a245c12d-995b-55ee-5ec7-aa36a6cad671",
+            value="Submit",
+            waiting_text="Submitting...",
         ),
         ComponentInstanceNodePropertyOverridesWrite(
             node_id="a245c12d-995b-55ee-5ec7-aa36a6cad629",
@@ -1680,6 +1658,9 @@ client = Webflow(
 )
 client.components.list(
     site_id="580e63e98c9a982ac9b8b741",
+    branch_id="68026fa68ef6dc744c75b833",
+    limit=1,
+    offset=1,
 )
 
 ```
@@ -1704,7 +1685,7 @@ client.components.list(
 <dl>
 <dd>
 
-**limit:** `typing.Optional[float]` — Maximum number of records to be returned (max limit: 100)
+**branch_id:** `typing.Optional[str]` — Scope the operation to work on a specific branch.
     
 </dd>
 </dl>
@@ -1712,7 +1693,15 @@ client.components.list(
 <dl>
 <dd>
 
-**offset:** `typing.Optional[float]` — Offset used for pagination if the results have more than limit records
+**limit:** `typing.Optional[int]` — Maximum number of records to be returned (max limit: 100)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**offset:** `typing.Optional[int]` — Offset used for pagination if the results have more than limit records
     
 </dd>
 </dl>
@@ -1744,7 +1733,7 @@ client.components.list(
 <dl>
 <dd>
 
-Get static content from a component definition. This includes text nodes, image nodes and nested component instances.
+Get static content from a component definition. This includes text nodes, image nodes, select nodes, text input nodes, submit button nodes, and nested component instances.
 To retrieve dynamic content set by component properties, use the [get component properties](/data/reference/pages-and-components/components/get-properties) endpoint.
 
 <Note>If you do not provide a Locale ID in your request, the response will return any content that can be localized from the Primary locale.</Note>
@@ -1773,6 +1762,9 @@ client.components.get_content(
     site_id="580e63e98c9a982ac9b8b741",
     component_id="8505ba55-ef72-629e-f85c-33e4b703d48b",
     locale_id="65427cf400e02b306eaa04a0",
+    branch_id="68026fa68ef6dc744c75b833",
+    limit=1,
+    offset=1,
 )
 
 ```
@@ -1805,7 +1797,11 @@ client.components.get_content(
 <dl>
 <dd>
 
-**locale_id:** `typing.Optional[str]` — Unique identifier for a specific locale. Applicable, when using localization.
+**locale_id:** `typing.Optional[str]` 
+
+Unique identifier for a specific Locale.
+
+[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -1813,7 +1809,7 @@ client.components.get_content(
 <dl>
 <dd>
 
-**limit:** `typing.Optional[float]` — Maximum number of records to be returned (max limit: 100)
+**branch_id:** `typing.Optional[str]` — Scope the operation to work on a specific branch.
     
 </dd>
 </dl>
@@ -1821,7 +1817,15 @@ client.components.get_content(
 <dl>
 <dd>
 
-**offset:** `typing.Optional[float]` — Offset used for pagination if the results have more than limit records
+**limit:** `typing.Optional[int]` — Maximum number of records to be returned (max limit: 100)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**offset:** `typing.Optional[int]` — Offset used for pagination if the results have more than limit records
     
 </dd>
 </dl>
@@ -1856,8 +1860,9 @@ client.components.get_content(
 This endpoint updates content within a component defintion for **secondary locales**. It supports updating up to 1000 nodes in a single request.
 
 Before making updates:
-1. Use the [get component content](/data/reference/pages-and-components/components/get-content) endpoint to identify available content nodes and their types
-2. If your component definition has a component instance nested within it, retrieve the nested component instance's properties that you'll override using the [get component properties](/data/reference/pages-and-components/components/get-properties) endpoint
+1. Use the [get component content](/data/reference/pages-and-components/components/get-content) endpoint to identify available content nodes and their types.
+2. If your component definition has a component instance nested within it, retrieve the nested component instance's properties that you'll override using the [get component properties](/data/reference/pages-and-components/components/get-properties) endpoint.
+3. DOM elements may include a `data-w-id` attribute. This attribute is used by Webflow to maintain custom attributes and links across locales. Always include the original `data-w-id` value in your update requests to ensure consistent behavior across all locales.
 
 <Note>
   This endpoint is specifically for localizing component definitions. Ensure that the specified `localeId` is a valid **secondary locale** for the site otherwise the request will fail.
@@ -1881,6 +1886,10 @@ Required scope | `components:write`
 from webflow import (
     ComponentInstanceNodePropertyOverridesWrite,
     ComponentInstanceNodePropertyOverridesWritePropertyOverridesItem,
+    Select,
+    SelectNodeWriteChoicesItem,
+    SubmitButtonNodeWrite,
+    TextInputNodeWrite,
     TextNodeWrite,
     Webflow,
 )
@@ -1892,6 +1901,7 @@ client.components.update_content(
     site_id="580e63e98c9a982ac9b8b741",
     component_id="8505ba55-ef72-629e-f85c-33e4b703d48b",
     locale_id="65427cf400e02b306eaa04a0",
+    branch_id="68026fa68ef6dc744c75b833",
     nodes=[
         TextNodeWrite(
             node_id="a245c12d-995b-55ee-5ec7-aa36a6cad623",
@@ -1900,6 +1910,28 @@ client.components.update_content(
         TextNodeWrite(
             node_id="a245c12d-995b-55ee-5ec7-aa36a6cad627",
             text="<div><h3>Don't Panic!</h3><p>Always know where your towel is.</p></div>",
+        ),
+        Select(
+            node_id="a245c12d-995b-55ee-5ec7-aa36a6cad635",
+            choices=[
+                SelectNodeWriteChoicesItem(
+                    value="choice-1",
+                    text="First choice",
+                ),
+                SelectNodeWriteChoicesItem(
+                    value="choice-2",
+                    text="Second choice",
+                ),
+            ],
+        ),
+        TextInputNodeWrite(
+            node_id="a245c12d-995b-55ee-5ec7-aa36a6cad642",
+            placeholder="Enter something here...",
+        ),
+        SubmitButtonNodeWrite(
+            node_id="a245c12d-995b-55ee-5ec7-aa36a6cad671",
+            value="Submit",
+            waiting_text="Submitting...",
         ),
         ComponentInstanceNodePropertyOverridesWrite(
             node_id="a245c12d-995b-55ee-5ec7-aa36a6cad629",
@@ -1955,7 +1987,19 @@ client.components.update_content(
 <dl>
 <dd>
 
-**locale_id:** `typing.Optional[str]` — Unique identifier for a specific locale. Applicable, when using localization.
+**locale_id:** `typing.Optional[str]` 
+
+Unique identifier for a specific Locale.
+
+[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**branch_id:** `typing.Optional[str]` — Scope the operation to work on a specific branch.
     
 </dd>
 </dl>
@@ -1987,9 +2031,9 @@ client.components.update_content(
 <dl>
 <dd>
 
-Get the property default values of a component definition.
+Get the default property values of a component definition.
 
-<Note>If you do not provide a Locale ID in your request, the response will return any properties that can be localized from the Primary locale.</Note>
+<Note>If you do not include a `localeId` in your request, the response will return any properties that can be localized from the Primary locale.</Note>
 
 Required scope | `components:read`
 </dd>
@@ -2015,6 +2059,9 @@ client.components.get_properties(
     site_id="580e63e98c9a982ac9b8b741",
     component_id="8505ba55-ef72-629e-f85c-33e4b703d48b",
     locale_id="65427cf400e02b306eaa04a0",
+    branch_id="68026fa68ef6dc744c75b833",
+    limit=1,
+    offset=1,
 )
 
 ```
@@ -2047,7 +2094,11 @@ client.components.get_properties(
 <dl>
 <dd>
 
-**locale_id:** `typing.Optional[str]` — Unique identifier for a specific locale. Applicable, when using localization.
+**locale_id:** `typing.Optional[str]` 
+
+Unique identifier for a specific Locale.
+
+[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -2055,7 +2106,7 @@ client.components.get_properties(
 <dl>
 <dd>
 
-**limit:** `typing.Optional[float]` — Maximum number of records to be returned (max limit: 100)
+**branch_id:** `typing.Optional[str]` — Scope the operation to work on a specific branch.
     
 </dd>
 </dl>
@@ -2063,7 +2114,15 @@ client.components.get_properties(
 <dl>
 <dd>
 
-**offset:** `typing.Optional[float]` — Offset used for pagination if the results have more than limit records
+**limit:** `typing.Optional[int]` — Maximum number of records to be returned (max limit: 100)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**offset:** `typing.Optional[int]` — Offset used for pagination if the results have more than limit records
     
 </dd>
 </dl>
@@ -2095,12 +2154,13 @@ client.components.get_properties(
 <dl>
 <dd>
 
-Update the property default values of a component definition in a specificed locale.
+Update the default property values of a component definition in a specificed locale.
 
 Before making updates:
-1. Use the [get component properties](/data/reference/pages-and-components/components/get-properties) endpoint to identify available properties
+1. Use the [get component properties](/data/reference/pages-and-components/components/get-properties) endpoint to identify properties that can be updated in a secondary locale.
+2. Rich Text properties may include a `data-w-id` attribute. This attribute is used by Webflow to maintain links across locales. Always include the original `data-w-id` value in your update requests to ensure consistent behavior across all locales.
 
-<Note>The request requires a secondary locale ID. If a locale is missing, the request will not be processed and will result in an error.</Note>
+<Note>The request requires a secondary locale ID. If a `localeId` is missing, the request will not be processed and will result in an error.</Note>
 
 Required scope | `components:write`
 </dd>
@@ -2127,6 +2187,7 @@ client.components.update_properties(
     site_id="580e63e98c9a982ac9b8b741",
     component_id="8505ba55-ef72-629e-f85c-33e4b703d48b",
     locale_id="65427cf400e02b306eaa04a0",
+    branch_id="68026fa68ef6dc744c75b833",
     properties=[
         ComponentPropertiesWritePropertiesItem(
             property_id="a245c12d-995b-55ee-5ec7-aa36a6cad623",
@@ -2177,7 +2238,19 @@ client.components.update_properties(
 <dl>
 <dd>
 
-**locale_id:** `typing.Optional[str]` — Unique identifier for a specific locale. Applicable, when using localization.
+**locale_id:** `typing.Optional[str]` 
+
+Unique identifier for a specific Locale.
+
+[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**branch_id:** `typing.Optional[str]` — Scope the operation to work on a specific branch.
     
 </dd>
 </dl>
@@ -2210,14 +2283,11 @@ client.components.update_properties(
 <dl>
 <dd>
 
-List of scripts registered to a Site. 
+Get a list of scripts that have been registered to a site. A site can have a maximum of 800 registered scripts.
 
-In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered 
-to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate
-`custom_code` endpoints. 
-Additionally, Scripts can be remotely hosted, or registered as inline snippets.
-
-<Note>Access to this endpoint requires a bearer token from a [Data Client App](/data/docs/getting-started-data-clients).</Note>    
+<Note title="Script Registration">
+  To apply a script to a site or page, the script must first be registered to a site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints. See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
+</Note>
 
 Required scope | `custom_code:read`
 </dd>
@@ -2289,14 +2359,11 @@ client.scripts.list(
 <dl>
 <dd>
 
-Add a script to a Site's Custom Code registry.
+Register a hosted script to a site.
 
-In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered 
-to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate
-`custom_code` endpoints. 
-Additionally, Scripts can be remotely hosted, or registered as inline snippets.  
-
-<Note>Access to this endpoint requires a bearer token from a [Data Client App](/data/docs/getting-started-data-clients).</Note>    
+<Note title="Script Registration">
+  To apply a script to a site or page, the script must first be registered to a site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints. See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
+</Note>
 
 Required scope | `custom_code:write`
 </dd>
@@ -2412,13 +2479,11 @@ client.scripts.register_hosted(
 <dl>
 <dd>
 
-Add a script to a Site's Custom Code registry. Inline scripts can be between 1 and 2000 characters.
+Register an inline script to a site. Inline scripts are limited to 2000 characters.
 
-In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered 
-to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate
-`custom_code` endpoints. 
-
-<Note>Access to this endpoint requires a bearer token from a [Data Client App](/data/docs/getting-started-data-clients).</Note>    
+<Note title="Script Registration">
+  To apply a script to a site or page, the script must first be registered to a site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints. See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
+</Note>
 
 Required scope | `custom_code:write`
 </dd>
@@ -2534,7 +2599,7 @@ client.scripts.register_inline(
 <dl>
 <dd>
 
-List assets for a given site
+List of assets uploaded to a site
 
 Required scope | `assets:read`
 </dd>
@@ -2558,6 +2623,8 @@ client = Webflow(
 )
 client.assets.list(
     site_id="580e63e98c9a982ac9b8b741",
+    offset=1,
+    limit=1,
 )
 
 ```
@@ -2575,6 +2642,22 @@ client.assets.list(
 <dd>
 
 **site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**offset:** `typing.Optional[int]` — Offset used for pagination if the results have more than limit records
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[int]` — Maximum number of records to be returned (max limit: 100)
     
 </dd>
 </dl>
@@ -2606,15 +2689,18 @@ client.assets.list(
 <dl>
 <dd>
 
-Create a new asset entry. 
+The first step in uploading an asset to a site. 
 
 
-This endpoint generates a response with the following information: `uploadUrl` and `uploadDetails`. 
-You can use these two properties to [upload the file to Amazon s3 by making a POST](https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPOST.html)
-request to the `uploadUrl` with the `uploadDetails` object as your header information in the request.
+This endpoint generates a response with the following information: `uploadUrl` and `uploadDetails`.
 
- 
-Required scope | `assets:write`
+
+Use these properties in the header of a [POST request to Amazson s3](https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPOST.html) to complete the upload.
+
+
+To learn more about how to upload assets to Webflow, see our [assets guide](/data/docs/working-with-assets).
+  
+ Required scope | `assets:write`
 </dd>
 </dl>
 </dd>
@@ -2710,7 +2796,7 @@ client.assets.create(
 <dl>
 <dd>
 
-Get an Asset
+Get details about an asset
 
 Required scope | `assets:read`
 </dd>
@@ -2854,7 +2940,7 @@ client.assets.delete(
 <dl>
 <dd>
 
-Update an Asset
+Update details of an Asset.
 
 Required scope | `assets:write`
 </dd>
@@ -3569,6 +3655,8 @@ client = Webflow(
 )
 client.forms.list(
     site_id="580e63e98c9a982ac9b8b741",
+    limit=1,
+    offset=1,
 )
 
 ```
@@ -3593,7 +3681,7 @@ client.forms.list(
 <dl>
 <dd>
 
-**limit:** `typing.Optional[float]` — Maximum number of records to be returned (max limit: 100)
+**limit:** `typing.Optional[int]` — Maximum number of records to be returned (max limit: 100)
     
 </dd>
 </dl>
@@ -3601,7 +3689,7 @@ client.forms.list(
 <dl>
 <dd>
 
-**offset:** `typing.Optional[float]` — Offset used for pagination if the results have more than limit records
+**offset:** `typing.Optional[int]` — Offset used for pagination if the results have more than limit records
     
 </dd>
 </dl>
@@ -3707,6 +3795,12 @@ client.forms.get(
 
 List form submissions for a given form
 
+<Note title="Forms in components">
+  When a form is used in a component definition, each instance of the form is considered a unique form.
+  
+  To get a combined list of submissions for a form that appears across multiple component instances, use the [List Form Submissions by Site](/data/reference/forms/form-submissions/list-submissions-by-site) endpoint.
+</Note>
+
 Required scope | `forms:read`
 </dd>
 </dl>
@@ -3729,6 +3823,8 @@ client = Webflow(
 )
 client.forms.list_submissions(
     form_id="580e63e98c9a982ac9b8b741",
+    offset=1,
+    limit=1,
 )
 
 ```
@@ -3753,7 +3849,7 @@ client.forms.list_submissions(
 <dl>
 <dd>
 
-**offset:** `typing.Optional[float]` — Offset used for pagination if the results have more than limit records
+**offset:** `typing.Optional[int]` — Offset used for pagination if the results have more than limit records
     
 </dd>
 </dl>
@@ -3761,7 +3857,7 @@ client.forms.list_submissions(
 <dl>
 <dd>
 
-**limit:** `typing.Optional[float]` — Maximum number of records to be returned (max limit: 100)
+**limit:** `typing.Optional[int]` — Maximum number of records to be returned (max limit: 100)
     
 </dd>
 </dl>
@@ -3816,6 +3912,79 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.forms.get_submission(
+    form_submission_id="580e63e98c9a982ac9b8b741",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**form_submission_id:** `str` — Unique identifier for a Form Submission
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.forms.<a href="src/webflow/resources/forms/client.py">delete_submission</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Delete a form submission
+
+
+Required scope | `forms:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow
+
+client = Webflow(
+    access_token="YOUR_ACCESS_TOKEN",
+)
+client.forms.delete_submission(
     form_submission_id="580e63e98c9a982ac9b8b741",
 )
 
@@ -3946,6 +4115,8 @@ client.forms.update_submission(
 <dl>
 <dd>
 
+<Warning>As of **January 29, 2026**, User Accounts functionality has been disabled on all Webflow sites. This endpoint is no longer available.</Warning>
+
 Get a list of users for a site
 
 Required scope | `users:read`
@@ -3970,6 +4141,9 @@ client = Webflow(
 )
 client.users.list(
     site_id="580e63e98c9a982ac9b8b741",
+    offset=1,
+    limit=1,
+    sort="CreatedOn",
 )
 
 ```
@@ -3994,7 +4168,7 @@ client.users.list(
 <dl>
 <dd>
 
-**offset:** `typing.Optional[float]` — Offset used for pagination if the results have more than limit records
+**offset:** `typing.Optional[int]` — Offset used for pagination if the results have more than limit records
     
 </dd>
 </dl>
@@ -4002,7 +4176,7 @@ client.users.list(
 <dl>
 <dd>
 
-**limit:** `typing.Optional[float]` — Maximum number of records to be returned (max limit: 100)
+**limit:** `typing.Optional[int]` — Maximum number of records to be returned (max limit: 100)
     
 </dd>
 </dl>
@@ -4047,6 +4221,8 @@ Can be prefixed with a `-` to reverse the sort (ex. `-CreatedOn`)
 
 <dl>
 <dd>
+
+<Warning>As of **January 29, 2026**, User Accounts functionality has been disabled on all Webflow sites. This endpoint is no longer available.</Warning>
 
 Get a User by ID
 
@@ -4129,6 +4305,8 @@ client.users.get(
 <dl>
 <dd>
 
+<Warning>As of **January 29, 2026**, User Accounts functionality has been disabled on all Webflow sites. This endpoint is no longer available.</Warning>
+
 Delete a User by ID
 
 Required scope | `users:write`
@@ -4210,7 +4388,9 @@ client.users.delete(
 <dl>
 <dd>
 
-Update a User by ID 
+<Warning>As of **January 29, 2026**, User Accounts functionality has been disabled on all Webflow sites. This endpoint is no longer available.</Warning>
+
+Update a User by ID
 
   Required scope | `users:write`
 
@@ -4230,8 +4410,9 @@ fields cannot be updated using this endpoint</Note>
 <dd>
 
 ```python
-from webflow import Webflow
-from webflow.resources.users import UsersUpdateRequestData
+import datetime
+
+from webflow import UserAccessGroupsItem, Webflow
 
 client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
@@ -4239,12 +4420,27 @@ client = Webflow(
 client.users.update(
     site_id="580e63e98c9a982ac9b8b741",
     user_id="580e63e98c9a982ac9b8b741",
-    data=UsersUpdateRequestData(
-        name="Some One",
-        accept_privacy=False,
-        accept_communications=False,
+    id="6287ec36a841b25637c663df",
+    is_email_verified=True,
+    last_updated=datetime.datetime.fromisoformat(
+        "2022-05-20 13:46:12+00:00",
     ),
-    access_groups=["webflowers", "platinum", "free-tier"],
+    invited_on=datetime.datetime.fromisoformat(
+        "2022-05-20 13:46:12+00:00",
+    ),
+    created_on=datetime.datetime.fromisoformat(
+        "2022-05-20 13:46:12+00:00",
+    ),
+    last_login=datetime.datetime.fromisoformat(
+        "2022-05-20 13:46:12+00:00",
+    ),
+    status="verified",
+    access_groups=[
+        UserAccessGroupsItem(
+            slug="webflowers",
+            type="admin",
+        )
+    ],
 )
 
 ```
@@ -4277,7 +4473,7 @@ client.users.update(
 <dl>
 <dd>
 
-**data:** `typing.Optional[UsersUpdateRequestData]` 
+**id:** `typing.Optional[str]` — Unique identifier for the User
     
 </dd>
 </dl>
@@ -4285,8 +4481,63 @@ client.users.update(
 <dl>
 <dd>
 
-**access_groups:** `typing.Optional[typing.Sequence[str]]` — An array of access group slugs. Access groups are assigned to the user as type `admin` and the user remains in the group until removed.
+**is_email_verified:** `typing.Optional[bool]` — Shows whether the user has verified their email address
+    
+</dd>
+</dl>
 
+<dl>
+<dd>
+
+**last_updated:** `typing.Optional[dt.datetime]` — The timestamp the user was updated
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**invited_on:** `typing.Optional[dt.datetime]` — The timestamp the user was invited
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**created_on:** `typing.Optional[dt.datetime]` — The timestamp the user was created
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**last_login:** `typing.Optional[dt.datetime]` — The timestamp the user was logged in
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**status:** `typing.Optional[UserStatus]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**access_groups:** `typing.Optional[typing.Sequence[UserAccessGroupsItem]]` — Access groups the user belongs to
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**data:** `typing.Optional[UserData]` 
     
 </dd>
 </dl>
@@ -4318,9 +4569,11 @@ client.users.update(
 <dl>
 <dd>
 
-Create and invite a user with an email address. 
+<Warning>As of **January 29, 2026**, User Accounts functionality has been disabled on all Webflow sites. This endpoint is no longer available.</Warning>
 
-The user will be sent and invite via email, which they will need to accept in order to join paid any paid access group. 
+Create and invite a user with an email address.
+
+The user will be sent and invite via email, which they will need to accept in order to join paid any paid access group.
 
 Required scope | `users:write`
 </dd>
@@ -4345,7 +4598,7 @@ client = Webflow(
 client.users.invite(
     site_id="580e63e98c9a982ac9b8b741",
     email="some.one@home.com",
-    access_groups=["webflowers"],
+    access_groups=["accessGroups"],
 )
 
 ```
@@ -4379,7 +4632,6 @@ client.users.invite(
 <dd>
 
 **access_groups:** `typing.Optional[typing.Sequence[str]]` — An array of access group slugs. Access groups are assigned to the user as type `admin` and the user remains in the group until removed.
-
     
 </dd>
 </dl>
@@ -4412,6 +4664,8 @@ client.users.invite(
 <dl>
 <dd>
 
+<Warning>As of **January 29, 2026**, User Accounts functionality has been disabled on all Webflow sites. This endpoint is no longer available.</Warning>
+
 Get a list of access groups for a site
 
 Required scope | `users:read`
@@ -4436,6 +4690,9 @@ client = Webflow(
 )
 client.access_groups.list(
     site_id="580e63e98c9a982ac9b8b741",
+    offset=1,
+    limit=1,
+    sort="CreatedOn",
 )
 
 ```
@@ -4460,7 +4717,7 @@ client.access_groups.list(
 <dl>
 <dd>
 
-**offset:** `typing.Optional[float]` — Offset used for pagination if the results have more than limit records
+**offset:** `typing.Optional[int]` — Offset used for pagination if the results have more than limit records
     
 </dd>
 </dl>
@@ -4468,7 +4725,7 @@ client.access_groups.list(
 <dl>
 <dd>
 
-**limit:** `typing.Optional[float]` — Maximum number of records to be returned (max limit: 100)
+**limit:** `typing.Optional[int]` — Maximum number of records to be returned (max limit: 100)
     
 </dd>
 </dl>
@@ -4539,6 +4796,8 @@ client = Webflow(
 )
 client.products.list(
     site_id="580e63e98c9a982ac9b8b741",
+    offset=1,
+    limit=1,
 )
 
 ```
@@ -4563,7 +4822,7 @@ client.products.list(
 <dl>
 <dd>
 
-**offset:** `typing.Optional[float]` — Offset used for pagination if the results have more than limit records
+**offset:** `typing.Optional[int]` — Offset used for pagination if the results have more than limit records
     
 </dd>
 </dl>
@@ -4571,7 +4830,7 @@ client.products.list(
 <dl>
 <dd>
 
-**limit:** `typing.Optional[float]` — Maximum number of records to be returned (max limit: 100)
+**limit:** `typing.Optional[int]` — Maximum number of records to be returned (max limit: 100)
     
 </dd>
 </dl>
@@ -4603,16 +4862,12 @@ client.products.list(
 <dl>
 <dd>
 
-Create a new product and SKU.
+Create a new ecommerce product and defaultSKU. A product, at minimum, must have a single SKU.
 
-When you create a product, you will always create a SKU, since a Product Item must have, at minimum, a single SKU.
-
-To create a Product with multiple SKUs - for example a T-shirt in sizes small, medium and large:
-  - Create parameters in `sku-properties`, also known as [product options and variants.](https://help.webflow.com/hc/en-us/articles/33961334531347-Create-product-options-and-variants).
-  - A single `sku-property` would be `color`. Within the `color` property, list the various colors of T-shirts as an array of `enum` values: `royal-blue`, `crimson-red`, and `forrest-green`. 
-  - Once, you've created a Product and its `sku-properties` with `enum` values, Webflow will create a **default SKU**, which will automatically be a combination of the first `sku-properties` you've created.
-  - In our example, the default SKU will be a Royal Blue T-Shirt, because our first `enum` of our Color `sku-property` is Royal Blue. 
-  - After you've created your product, you can create additional SKUs using the [Create SKU endpoint.](/data/reference/ecommerce/products/create-sku)
+To create a product with multiple SKUs:
+  - First, create a list of `sku-properties`, also known as [product options](https://help.webflow.com/hc/en-us/articles/33961334531347-Create-product-options-and-variants). For example, a T-shirt product may have a "color" `sku-property`, with a list of enum values: red, yellow, and blue, another `sku-property` may be "size", with a list of enum values: small, medium, and large.
+  - Once, a product is created with a list of `sku-properties`, Webflow will create a **default SKU**, which is always a combination of the first `enum` values of each `sku-property`. (e.g. Small - Red - T-Shirt)
+  - After creation, you can create additional SKUs for the product, using the [Create SKUs endpoint.](/data/reference/ecommerce/products/create-sku)
 
 Upon creation, the default product type will be `Advanced`, which ensures all Product and SKU fields will be shown to users in the Designer.
 
@@ -4631,13 +4886,88 @@ Required scope | `ecommerce:write`
 <dd>
 
 ```python
-from webflow import Webflow
+from webflow import (
+    ProductFieldData,
+    SkuFieldData,
+    SkuFieldDataPrice,
+    SkuPropertyList,
+    SkuPropertyListEnumItem,
+    Webflow,
+)
+from webflow.resources.products import (
+    ProductSkuCreateProduct,
+    ProductSkuCreateSku,
+)
 
 client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.products.create(
     site_id="580e63e98c9a982ac9b8b741",
+    publish_status="staging",
+    product=ProductSkuCreateProduct(
+        field_data=ProductFieldData(
+            name="Colorful T-shirt",
+            slug="colorful-t-shirt",
+            description="Our best-selling t-shirt available in multiple colors and sizes",
+            sku_properties=[
+                SkuPropertyList(
+                    id="color",
+                    name="Color",
+                    enum=[
+                        SkuPropertyListEnumItem(
+                            id="red",
+                            name="Red",
+                            slug="red",
+                        ),
+                        SkuPropertyListEnumItem(
+                            id="yellow",
+                            name="Yellow",
+                            slug="yellow",
+                        ),
+                        SkuPropertyListEnumItem(
+                            id="blue",
+                            name="Blue",
+                            slug="blue",
+                        ),
+                    ],
+                ),
+                SkuPropertyList(
+                    id="size",
+                    name="Size",
+                    enum=[
+                        SkuPropertyListEnumItem(
+                            id="small",
+                            name="Small",
+                            slug="small",
+                        ),
+                        SkuPropertyListEnumItem(
+                            id="medium",
+                            name="Medium",
+                            slug="medium",
+                        ),
+                        SkuPropertyListEnumItem(
+                            id="large",
+                            name="Large",
+                            slug="large",
+                        ),
+                    ],
+                ),
+            ],
+        ),
+    ),
+    sku=ProductSkuCreateSku(
+        field_data=SkuFieldData(
+            name="Colorful T-shirt - Red Small",
+            slug="colorful-t-shirt-red-small",
+            price=SkuFieldDataPrice(
+                value=2499.0,
+                unit="USD",
+                currency="USD",
+            ),
+            main_image="https://rocketamp-sample-store.myshopify.com/cdn/shop/products/Gildan_2000_Antique_Cherry_Red_Front_1024x1024.jpg?v=1527232987",
+        ),
+    ),
 )
 
 ```
@@ -4662,23 +4992,23 @@ client.products.create(
 <dl>
 <dd>
 
+**product:** `ProductSkuCreateProduct` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sku:** `ProductSkuCreateSku` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **publish_status:** `typing.Optional[PublishStatus]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**product:** `typing.Optional[Product]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**sku:** `typing.Optional[Sku]` 
     
 </dd>
 </dl>
@@ -4918,7 +5248,9 @@ Required scope | `ecommerce:write`
 <dd>
 
 ```python
-from webflow import Sku, Webflow
+import datetime
+
+from webflow import Sku, SkuFieldData, SkuFieldDataPrice, Webflow
 
 client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
@@ -4926,7 +5258,30 @@ client = Webflow(
 client.products.create_sku(
     site_id="580e63e98c9a982ac9b8b741",
     product_id="580e63fc8c9a982ac9b8b745",
-    skus=[Sku()],
+    skus=[
+        Sku(
+            id="66072fb71b89448912e2681c",
+            cms_locale_id="653ad57de882f528b32e810e",
+            last_published=datetime.datetime.fromisoformat(
+                "2023-03-17 18:47:35+00:00",
+            ),
+            last_updated=datetime.datetime.fromisoformat(
+                "2023-03-17 18:47:35+00:00",
+            ),
+            created_on=datetime.datetime.fromisoformat(
+                "2023-03-17 18:47:35+00:00",
+            ),
+            field_data=SkuFieldData(
+                name="Colorful T-shirt - Default",
+                slug="colorful-t-shirt-default",
+                price=SkuFieldDataPrice(
+                    value=2499.0,
+                    unit="USD",
+                    currency="USD",
+                ),
+            ),
+        )
+    ],
 )
 
 ```
@@ -5018,7 +5373,9 @@ Required scope | `ecommerce:write`
 <dd>
 
 ```python
-from webflow import Sku, Webflow
+import datetime
+
+from webflow import Sku, SkuFieldData, SkuFieldDataPrice, Webflow
 
 client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
@@ -5027,7 +5384,28 @@ client.products.update_sku(
     site_id="580e63e98c9a982ac9b8b741",
     product_id="580e63fc8c9a982ac9b8b745",
     sku_id="5e8518516e147040726cc415",
-    sku=Sku(),
+    sku=Sku(
+        id="66072fb71b89448912e2681c",
+        cms_locale_id="653ad57de882f528b32e810e",
+        last_published=datetime.datetime.fromisoformat(
+            "2023-03-17 18:47:35+00:00",
+        ),
+        last_updated=datetime.datetime.fromisoformat(
+            "2023-03-17 18:47:35+00:00",
+        ),
+        created_on=datetime.datetime.fromisoformat(
+            "2023-03-17 18:47:35+00:00",
+        ),
+        field_data=SkuFieldData(
+            name="Colorful T-shirt - Default",
+            slug="colorful-t-shirt-default",
+            price=SkuFieldDataPrice(
+                value=2499.0,
+                unit="USD",
+                currency="USD",
+            ),
+        ),
+    ),
 )
 
 ```
@@ -5133,6 +5511,9 @@ client = Webflow(
 )
 client.orders.list(
     site_id="580e63e98c9a982ac9b8b741",
+    status="pending",
+    offset=1,
+    limit=1,
 )
 
 ```
@@ -5165,7 +5546,7 @@ client.orders.list(
 <dl>
 <dd>
 
-**offset:** `typing.Optional[float]` — Offset used for pagination if the results have more than limit records
+**offset:** `typing.Optional[int]` — Offset used for pagination if the results have more than limit records
     
 </dd>
 </dl>
@@ -5173,7 +5554,7 @@ client.orders.list(
 <dl>
 <dd>
 
-**limit:** `typing.Optional[float]` — Maximum number of records to be returned (max limit: 100)
+**limit:** `typing.Optional[int]` — Maximum number of records to be returned (max limit: 100)
     
 </dd>
 </dl>
@@ -5686,8 +6067,8 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.inventory.list(
-    collection_id="580e63fc8c9a982ac9b8b745",
-    item_id="580e64008c9a982ac9b8b754",
+    sku_collection_id="6377a7c4b7a79608c34a46f7",
+    sku_id="5e8518516e147040726cc415",
 )
 
 ```
@@ -5704,7 +6085,7 @@ client.inventory.list(
 <dl>
 <dd>
 
-**collection_id:** `str` — Unique identifier for a Collection
+**sku_collection_id:** `str` — Unique identifier for a SKU collection. Use the List Collections API to find this ID.
     
 </dd>
 </dl>
@@ -5712,7 +6093,7 @@ client.inventory.list(
 <dl>
 <dd>
 
-**item_id:** `str` — Unique identifier for an Item
+**sku_id:** `str` — Unique identifier for a SKU
     
 </dd>
 </dl>
@@ -5771,8 +6152,8 @@ client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.inventory.update(
-    collection_id="580e63fc8c9a982ac9b8b745",
-    item_id="580e64008c9a982ac9b8b754",
+    sku_collection_id="6377a7c4b7a79608c34a46f7",
+    sku_id="5e8518516e147040726cc415",
     inventory_type="infinite",
 )
 
@@ -5790,7 +6171,7 @@ client.inventory.update(
 <dl>
 <dd>
 
-**collection_id:** `str` — Unique identifier for a Collection
+**sku_collection_id:** `str` — Unique identifier for a SKU collection. Use the List Collections API to find this ID.
     
 </dd>
 </dl>
@@ -5798,7 +6179,7 @@ client.inventory.update(
 <dl>
 <dd>
 
-**item_id:** `str` — Unique identifier for an Item
+**sku_id:** `str` — Unique identifier for a SKU
     
 </dd>
 </dl>
@@ -5928,14 +6309,11 @@ client.ecommerce.get_settings(
 <dl>
 <dd>
 
-Create a custom field in a collection. 
+Create a custom field in a collection.
 
-Slugs must be all lowercase letters without spaces.
-If you pass a string with uppercase letters and/or spaces to the "Slug" property, Webflow will
-convert the slug to lowercase and replace spaces with "-."
+Field validation is currently not available through the API.
 
-Only some field types can be created through the API. 
-This endpoint does not currently support bulk creation. 
+Bulk creation of fields is not supported with this endpoint. To add multiple fields at once, include them when you [create the collection.](/data/v2.0.0/reference/cms/collections/create)
 
 Required scope | `cms:write`
 </dd>
@@ -5952,17 +6330,24 @@ Required scope | `cms:write`
 <dd>
 
 ```python
-from webflow import Webflow
+from webflow import ReferenceField, ReferenceFieldMetadata, Webflow
 
 client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.collections.fields.create(
     collection_id="580e63fc8c9a982ac9b8b745",
-    is_required=False,
-    type="RichText",
-    display_name="Post Body",
-    help_text="Add the body of your post here",
+    request=ReferenceField(
+        id="562ac0395358780a1f5e6fbd",
+        is_editable=True,
+        is_required=False,
+        type="Reference",
+        display_name="Author",
+        help_text="Add the post author here",
+        metadata=ReferenceFieldMetadata(
+            collection_id="63692ab61fb2852f582ba8f5",
+        ),
+    ),
 )
 
 ```
@@ -5987,31 +6372,7 @@ client.collections.fields.create(
 <dl>
 <dd>
 
-**type:** `FieldCreateType` — Choose these appropriate field type for your collection data
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**display_name:** `str` — The name of a field
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**is_required:** `typing.Optional[bool]` — define whether a field is required in a collection
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**help_text:** `typing.Optional[str]` — Additional text to help anyone filling out this field
+**request:** `FieldCreate` 
     
 </dd>
 </dl>
@@ -6257,6 +6618,13 @@ client = Webflow(
 )
 client.collections.items.list_items(
     collection_id="580e63fc8c9a982ac9b8b745",
+    cms_locale_id="cmsLocaleId",
+    offset=1,
+    limit=1,
+    name="name",
+    slug="slug",
+    sort_by="lastPublished",
+    sort_order="asc",
 )
 
 ```
@@ -6289,7 +6657,7 @@ client.collections.items.list_items(
 <dl>
 <dd>
 
-**offset:** `typing.Optional[float]` — Offset used for pagination if the results have more than limit records
+**offset:** `typing.Optional[int]` — Offset used for pagination if the results have more than limit records
     
 </dd>
 </dl>
@@ -6297,7 +6665,7 @@ client.collections.items.list_items(
 <dl>
 <dd>
 
-**limit:** `typing.Optional[float]` — Maximum number of records to be returned (max limit: 100)
+**limit:** `typing.Optional[int]` — Maximum number of records to be returned (max limit: 100)
     
 </dd>
 </dl>
@@ -6305,7 +6673,7 @@ client.collections.items.list_items(
 <dl>
 <dd>
 
-**name:** `typing.Optional[str]` — The name of the item(s)
+**name:** `typing.Optional[str]` — Filter by the exact name of the item(s)
     
 </dd>
 </dl>
@@ -6313,7 +6681,15 @@ client.collections.items.list_items(
 <dl>
 <dd>
 
-**slug:** `typing.Optional[str]` — The slug of the item
+**slug:** `typing.Optional[str]` — Filter by the exact slug of the item
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**last_published:** `typing.Optional[ItemsListItemsRequestLastPublished]` — Filter by the last published date of the item(s)
     
 </dd>
 </dl>
@@ -6364,7 +6740,7 @@ client.collections.items.list_items(
 Create Item(s) in a Collection.
 
 
-To create items across multiple locales, please use [this endpoint.](/v2.0.0/data/reference/cms/collection-items/staged-items/create-items)
+To create items across multiple locales, please use [this endpoint.](/data/reference/cms/collection-items/staged-items/create-items)
 
 Required scope | `CMS:write`
 </dd>
@@ -6393,6 +6769,7 @@ client = Webflow(
 )
 client.collections.items.create_item(
     collection_id="580e63fc8c9a982ac9b8b745",
+    skip_invalid_files=True,
     request=MultipleItems(
         items=[
             CollectionItemPostSingle(
@@ -6437,7 +6814,15 @@ client.collections.items.create_item(
 <dl>
 <dd>
 
-**request:** `ItemsCreateItemRequest` 
+**request:** `ItemsCreateItemRequestBody` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**skip_invalid_files:** `typing.Optional[bool]` — When true, invalid files are skipped and processing continues. When false, the entire request fails if any file is invalid.
     
 </dd>
 </dl>
@@ -6471,7 +6856,7 @@ client.collections.items.create_item(
 
 Delete Items from a Collection.
 
-**Note:** If the `cmsLocaleId` parameter is undefined or empty and the items are localized, items will be deleted only in the primary locale.
+<Tip title="Localization Tip">Items will only be deleted in the primary locale unless a `cmsLocaleId` is included in the request.</Tip>
 
 Required scope | `CMS:write`
 </dd>
@@ -6489,12 +6874,20 @@ Required scope | `CMS:write`
 
 ```python
 from webflow import Webflow
+from webflow.resources.collections.resources.items import (
+    ItemsDeleteItemsRequestItemsItem,
+)
 
 client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.collections.items.delete_items(
     collection_id="580e63fc8c9a982ac9b8b745",
+    items=[
+        ItemsDeleteItemsRequestItemsItem(
+            id="580e64008c9a982ac9b8b754",
+        )
+    ],
 )
 
 ```
@@ -6519,7 +6912,7 @@ client.collections.items.delete_items(
 <dl>
 <dd>
 
-**items:** `typing.Optional[typing.Sequence[ItemsDeleteItemsRequestItemsItem]]` 
+**items:** `typing.Sequence[ItemsDeleteItemsRequestItemsItem]` 
     
 </dd>
 </dl>
@@ -6551,9 +6944,11 @@ client.collections.items.delete_items(
 <dl>
 <dd>
 
-Update a single item or multiple items (up to 100) in a Collection.
+Update a single item or multiple items in a Collection.
 
-**Note:** If the `cmsLocaleId` parameter is undefined or empty and the items are localized, items will be updated only in the primary locale.
+The limit for this endpoint is 100 items.
+
+<Tip title="Localization Tip">Items will only be updated in the primary locale, unless a `cmsLocaleId` is included in the request.</Tip>
 
 Required scope | `CMS:write`
 </dd>
@@ -6581,37 +6976,24 @@ client = Webflow(
 )
 client.collections.items.update_items(
     collection_id="580e63fc8c9a982ac9b8b745",
+    skip_invalid_files=True,
     items=[
         CollectionItemWithIdInput(
-            id="66f6ed9576ddacf3149d5ea6",
-            cms_locale_id="66f6e966c9e1dc700a857ca5",
+            id="580e64008c9a982ac9b8b754",
+            is_archived=False,
+            is_draft=False,
             field_data=CollectionItemWithIdInputFieldData(
-                name="Ne Paniquez Pas",
-                slug="ne-paniquez-pas",
+                name="Senior Data Analyst",
+                slug="senior-data-analyst",
             ),
         ),
         CollectionItemWithIdInput(
-            id="66f6ed9576ddacf3149d5ea6",
-            cms_locale_id="66f6e966c9e1dc700a857ca4",
+            id="580e64008c9a982ac9b8b754",
+            is_archived=False,
+            is_draft=False,
             field_data=CollectionItemWithIdInputFieldData(
-                name="No Entrar en Pánico",
-                slug="no-entrar-en-panico",
-            ),
-        ),
-        CollectionItemWithIdInput(
-            id="66f6ed9576ddacf3149d5eaa",
-            cms_locale_id="66f6e966c9e1dc700a857ca5",
-            field_data=CollectionItemWithIdInputFieldData(
-                name="Au Revoir et Merci pour Tous les Poissons",
-                slug="au-revoir-et-merci",
-            ),
-        ),
-        CollectionItemWithIdInput(
-            id="66f6ed9576ddacf3149d5eaa",
-            cms_locale_id="66f6e966c9e1dc700a857ca4",
-            field_data=CollectionItemWithIdInputFieldData(
-                name="Hasta Luego y Gracias por Todo el Pescado",
-                slug="hasta-luego-y-gracias",
+                name="Product Manager",
+                slug="product-manager",
             ),
         ),
     ],
@@ -6632,6 +7014,14 @@ client.collections.items.update_items(
 <dd>
 
 **collection_id:** `str` — Unique identifier for a Collection
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**skip_invalid_files:** `typing.Optional[bool]` — When true, invalid files are skipped and processing continues. When false, the entire request fails if any file is invalid.
     
 </dd>
 </dl>
@@ -6671,7 +7061,11 @@ client.collections.items.update_items(
 <dl>
 <dd>
 
-List of all live Items within a Collection.
+List all published items in a collection.
+
+<Tip title="Serve data with the Content Delivery API">
+  Serving data to applications in real-time? Use the Content Delivery API at `api-cdn.webflow.com` for better performance. The CDN-backed endpoint is optimized for high-volume reads, while the Data API is designed for writes and management operations.
+</Tip>
 
 Required scope | `CMS:read`
 </dd>
@@ -6695,6 +7089,13 @@ client = Webflow(
 )
 client.collections.items.list_items_live(
     collection_id="580e63fc8c9a982ac9b8b745",
+    cms_locale_id="cmsLocaleId",
+    offset=1,
+    limit=1,
+    name="name",
+    slug="slug",
+    sort_by="lastPublished",
+    sort_order="asc",
 )
 
 ```
@@ -6727,7 +7128,7 @@ client.collections.items.list_items_live(
 <dl>
 <dd>
 
-**offset:** `typing.Optional[float]` — Offset used for pagination if the results have more than limit records
+**offset:** `typing.Optional[int]` — Offset used for pagination if the results have more than limit records
     
 </dd>
 </dl>
@@ -6735,7 +7136,7 @@ client.collections.items.list_items_live(
 <dl>
 <dd>
 
-**limit:** `typing.Optional[float]` — Maximum number of records to be returned (max limit: 100)
+**limit:** `typing.Optional[int]` — Maximum number of records to be returned (max limit: 100)
     
 </dd>
 </dl>
@@ -6743,7 +7144,7 @@ client.collections.items.list_items_live(
 <dl>
 <dd>
 
-**name:** `typing.Optional[str]` — The name of the item(s)
+**name:** `typing.Optional[str]` — Filter by the exact name of the item(s)
     
 </dd>
 </dl>
@@ -6751,7 +7152,15 @@ client.collections.items.list_items_live(
 <dl>
 <dd>
 
-**slug:** `typing.Optional[str]` — The slug of the item
+**slug:** `typing.Optional[str]` — Filter by the exact slug of the item
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**last_published:** `typing.Optional[ItemsListItemsLiveRequestLastPublished]` — Filter by the last published date of the item(s)
     
 </dd>
 </dl>
@@ -6799,10 +7208,10 @@ client.collections.items.list_items_live(
 <dl>
 <dd>
 
-Create live Item(s) in a Collection. The Item(s) will be published to the live site.
+Create item(s) in a collection that will be immediately published to the live site.
 
 
-To create items across multiple locales, [please use this endpoint.](/v2.0.0/data/reference/cms/collection-items/staged-items/create-items)
+To create items across multiple locales, [please use this endpoint.](/data/reference/cms/collection-items/staged-items/create-items)
 
 
 Required scope | `CMS:write`
@@ -6828,6 +7237,7 @@ client = Webflow(
 )
 client.collections.items.create_item_live(
     collection_id="580e63fc8c9a982ac9b8b745",
+    skip_invalid_files=True,
     request=MultipleLiveItems(
         items=[
             CollectionItem(
@@ -6872,7 +7282,15 @@ client.collections.items.create_item_live(
 <dl>
 <dd>
 
-**request:** `ItemsCreateItemLiveRequest` 
+**request:** `ItemsCreateItemLiveRequestBody` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**skip_invalid_files:** `typing.Optional[bool]` — When true, invalid files are skipped and processing continues. When false, the entire request fails if any file is invalid.
     
 </dd>
 </dl>
@@ -6904,9 +7322,9 @@ client.collections.items.create_item_live(
 <dl>
 <dd>
 
-Remove an item or multiple items (up to 100 items) from the live site. Deleting published items will unpublish the items from the live site and set them to draft. 
+Unpublish up to 100 items from the live site and set the `isDraft` property to `true`. 
 
-**Note:** If the `cmsLocaleId` parameter is undefined or empty and the items are localized, items will be unpublished only in the primary locale.
+<Tip title="Localization Tip">Items will only be unpublished in the primary locale unless a `cmsLocaleId` is included in the request.</Tip>
 
 Required scope | `CMS:write`
 </dd>
@@ -6924,12 +7342,20 @@ Required scope | `CMS:write`
 
 ```python
 from webflow import Webflow
+from webflow.resources.collections.resources.items import (
+    ItemsDeleteItemsLiveRequestItemsItem,
+)
 
 client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.collections.items.delete_items_live(
     collection_id="580e63fc8c9a982ac9b8b745",
+    items=[
+        ItemsDeleteItemsLiveRequestItemsItem(
+            id="580e64008c9a982ac9b8b754",
+        )
+    ],
 )
 
 ```
@@ -6954,7 +7380,7 @@ client.collections.items.delete_items_live(
 <dl>
 <dd>
 
-**items:** `typing.Optional[typing.Sequence[ItemsDeleteItemsLiveRequestItemsItem]]` 
+**items:** `typing.Sequence[ItemsDeleteItemsLiveRequestItemsItem]` 
     
 </dd>
 </dl>
@@ -6986,9 +7412,9 @@ client.collections.items.delete_items_live(
 <dl>
 <dd>
 
-Update a single live item or multiple live items (up to 100) in a Collection
+Update a single published item or multiple published items (up to 100) in a Collection
 
-**Note:** If the `cmsLocaleId` parameter is undefined or empty and the items are localized, items will be updated only in the primary locale. 
+<Tip title="Localization Tip">Items will only be updated in the primary locale, unless a `cmsLocaleId` is included in the request.</Tip>
 
 Required scope | `CMS:write`
 </dd>
@@ -7016,6 +7442,7 @@ client = Webflow(
 )
 client.collections.items.update_items_live(
     collection_id="580e63fc8c9a982ac9b8b745",
+    skip_invalid_files=True,
     items=[
         CollectionItemWithIdInput(
             id="66f6ed9576ddacf3149d5ea6",
@@ -7074,6 +7501,14 @@ client.collections.items.update_items_live(
 <dl>
 <dd>
 
+**skip_invalid_files:** `typing.Optional[bool]` — When true, invalid files are skipped and processing continues. When false, the entire request fails if any file is invalid.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **items:** `typing.Optional[typing.Sequence[CollectionItemWithIdInput]]` 
     
 </dd>
@@ -7108,9 +7543,10 @@ client.collections.items.update_items_live(
 
 Create an item or multiple items in a CMS Collection across multiple corresponding locales.
 
-**Notes:**
+<Note>
   - This endpoint can create up to 100 items in a request.
-  - If the `cmsLocaleIds` parameter is undefined or empty and localization is enabled, items will only be created in the primary locale.
+  - If the `cmsLocaleIds` parameter is not included in the request, an item will only be created in the primary locale.
+</Note>
 
 Required scope | `CMS:write`
 </dd>
@@ -7135,6 +7571,7 @@ client = Webflow(
 )
 client.collections.items.create_items(
     collection_id="580e63fc8c9a982ac9b8b745",
+    skip_invalid_files=True,
     cms_locale_ids=[
         "66f6e966c9e1dc700a857ca3",
         "66f6e966c9e1dc700a857ca4",
@@ -7171,6 +7608,14 @@ client.collections.items.create_items(
 <dd>
 
 **field_data:** `CreateBulkCollectionItemRequestBodyFieldData` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**skip_invalid_files:** `typing.Optional[bool]` — When true, invalid files are skipped and processing continues. When false, the entire request fails if any file is invalid.
     
 </dd>
 </dl>
@@ -7251,6 +7696,7 @@ client = Webflow(
 client.collections.items.get_item(
     collection_id="580e63fc8c9a982ac9b8b745",
     item_id="580e64008c9a982ac9b8b754",
+    cms_locale_id="cmsLocaleId",
 )
 
 ```
@@ -7315,7 +7761,7 @@ client.collections.items.get_item(
 <dl>
 <dd>
 
-Delete an Item from a Collection. This endpoint does not currently support bulk deletion.
+Delete an item from a collection. 
 
 Required scope | `CMS:write`
 </dd>
@@ -7340,6 +7786,7 @@ client = Webflow(
 client.collections.items.delete_item(
     collection_id="580e63fc8c9a982ac9b8b745",
     item_id="580e64008c9a982ac9b8b754",
+    cms_locale_id="cmsLocaleId",
 )
 
 ```
@@ -7429,11 +7876,12 @@ client = Webflow(
 client.collections.items.update_item(
     collection_id="580e63fc8c9a982ac9b8b745",
     item_id="580e64008c9a982ac9b8b754",
+    skip_invalid_files=True,
     is_archived=False,
     is_draft=False,
     field_data=CollectionItemPatchSingleFieldData(
-        name="Pan Galactic Gargle Blaster Recipe",
-        slug="pan-galactic-gargle-blaster",
+        name="The Hitchhiker's Guide to the Galaxy",
+        slug="hitchhikers-guide-to-the-galaxy",
     ),
 )
 
@@ -7460,6 +7908,14 @@ client.collections.items.update_item(
 <dd>
 
 **item_id:** `str` — Unique identifier for an Item
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**skip_invalid_files:** `typing.Optional[bool]` — When true, invalid files are skipped and processing continues. When false, the entire request fails if any file is invalid.
     
 </dd>
 </dl>
@@ -7557,6 +8013,10 @@ client.collections.items.update_item(
 
 Get details of a selected Collection live Item.
 
+<Tip title="Serve data with the Content Delivery API">
+  Serving data to applications in real-time? Use the Content Delivery API at `api-cdn.webflow.com` for better performance. The CDN-backed endpoint is optimized for high-volume reads, while the Data API is designed for writes and management operations.
+</Tip>
+
 Required scope | `CMS:read`
 </dd>
 </dl>
@@ -7580,6 +8040,7 @@ client = Webflow(
 client.collections.items.get_item_live(
     collection_id="580e63fc8c9a982ac9b8b745",
     item_id="580e64008c9a982ac9b8b754",
+    cms_locale_id="cmsLocaleId",
 )
 
 ```
@@ -7644,9 +8105,9 @@ client.collections.items.get_item_live(
 <dl>
 <dd>
 
-Remove a live item from the site. Removing a published item will unpublish the item from the live site and set it to draft. 
+Unpublish a live item from the site and set the `isDraft` property to `true`. 
 
-This endpoint does not currently support bulk deletion.
+For bulk unpublishing, please use [this endpoint.](/data/v2.0.0/reference/cms/collection-items/live-items/delete-items-live)
 
 Required scope | `CMS:write`
 </dd>
@@ -7671,6 +8132,7 @@ client = Webflow(
 client.collections.items.delete_item_live(
     collection_id="580e63fc8c9a982ac9b8b745",
     item_id="580e64008c9a982ac9b8b754",
+    cms_locale_id="cmsLocaleId",
 )
 
 ```
@@ -7760,11 +8222,12 @@ client = Webflow(
 client.collections.items.update_item_live(
     collection_id="580e63fc8c9a982ac9b8b745",
     item_id="580e64008c9a982ac9b8b754",
+    skip_invalid_files=True,
     is_archived=False,
     is_draft=False,
     field_data=CollectionItemPatchSingleFieldData(
-        name="Pan Galactic Gargle Blaster Recipe",
-        slug="pan-galactic-gargle-blaster",
+        name="The Hitchhiker's Guide to the Galaxy",
+        slug="hitchhikers-guide-to-the-galaxy",
     ),
 )
 
@@ -7791,6 +8254,14 @@ client.collections.items.update_item_live(
 <dd>
 
 **item_id:** `str` — Unique identifier for an Item
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**skip_invalid_files:** `typing.Optional[bool]` — When true, invalid files are skipped and processing continues. When false, the entire request fails if any file is invalid.
     
 </dd>
 </dl>
@@ -7904,13 +8375,28 @@ Required scope | `cms:write`
 
 ```python
 from webflow import Webflow
+from webflow.resources.collections.resources.items import (
+    ItemIDsWithLocales,
+    ItemsPublishItemRequestItemsItemsItem,
+)
 
 client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
 client.collections.items.publish_item(
     collection_id="580e63fc8c9a982ac9b8b745",
-    item_ids=["itemIds"],
+    request=ItemIDsWithLocales(
+        items=[
+            ItemsPublishItemRequestItemsItemsItem(
+                id="643fd856d66b6528195ee2ca",
+                cms_locale_ids=[
+                    "653ad57de882f528b32e810e",
+                    "6514390aea353fc691d69827",
+                    "65143930ea353fc691d69cd8",
+                ],
+            )
+        ],
+    ),
 )
 
 ```
@@ -7935,7 +8421,7 @@ client.collections.items.publish_item(
 <dl>
 <dd>
 
-**item_ids:** `typing.Sequence[str]` 
+**request:** `ItemsPublishItemRequest` 
     
 </dd>
 </dl>
@@ -7968,13 +8454,7 @@ client.collections.items.publish_item(
 <dl>
 <dd>
 
-Get all registered scripts that have been applied to a specific Page. 
-
-In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered 
-to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate
-`custom_code` endpoints. 
-
-<Note>Access to this endpoint requires a bearer token from a [Data Client App](/data/docs/getting-started-data-clients).</Note>
+Get all scripts applied to a page. 
 
 Required scope | `custom_code:read`
 </dd>
@@ -8046,15 +8526,11 @@ client.pages.scripts.get_custom_code(
 <dl>
 <dd>
 
-Add a registered script to a Page. 
+Apply registered scripts to a page. If you have multiple scripts your App needs to apply or maintain on a page, ensure they are always included in the request body for this endpoint. To remove individual scripts, simply call this endpoint without the script in the request body.
 
-In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered 
-to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate
-`custom_code` endpoints.
-
-A site can have a maximum of 800 registered scripts.
-
-<Note>Access to this endpoint requires a bearer token from a [Data Client App](/data/docs/getting-started-data-clients).</Note>
+<Note title="Script Registration">
+  To apply a script to a page, the script must first be registered to a Site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints. See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
+</Note>
 
 Required scope | `custom_code:write`
 </dd>
@@ -8163,13 +8639,11 @@ client.pages.scripts.upsert_custom_code(
 <dl>
 <dd>
 
-Delete the custom code block that an app has created for a page
+Remove all scripts from a page applied by the App. This endpoint will not remove scripts from the site's registered scripts.
 
-In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered 
-to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate
-`custom_code` endpoints. 
+To remove individual scripts applied by the App, use the [Add/Update Custom Code](/data/reference/custom-code/custom-code-pages/upsert-custom-code) endpoint.
 
-<Note>Access to this endpoint requires a bearer token from a [Data Client App](/data/docs/getting-started-data-clients).</Note>
+<Note>Access to this endpoint requires a bearer token obtained from an [OAuth Code Grant Flow](/data/reference/oauth-app).</Note>
 
 Required scope | `custom_code:write`
 </dd>
@@ -8242,10 +8716,11 @@ client.pages.scripts.delete_custom_code(
 <dl>
 <dd>
 
-Fetch a list of all URL redirect rules configured for a specific site.
+Fetch a list of all 301 redirect rules configured for a specific site.
 
 Use this endpoint to review, audit, or manage the redirection rules that control how traffic is rerouted on your site.
 
+<Warning title="Enterprise Only">This endpoint requires an Enterprise workspace.</Warning>
 
 Required scope: `sites:read`
 </dd>
@@ -8317,9 +8792,11 @@ client.sites.redirects.list(
 <dl>
 <dd>
 
-Add a new URL redirection rule to a site.
+Add a new 301 redirection rule to a site.
 
 This endpoint allows you to define a source path (`fromUrl`) and its corresponding destination path (`toUrl`), which will dictate how traffic is rerouted on your site. This is useful for managing site changes, restructuring URLs, or handling outdated links.
+
+<Warning title="Enterprise Only">This endpoint requires an Enterprise workspace.</Warning>
 
 Required scope: `sites:write`
 </dd>
@@ -8418,8 +8895,12 @@ client.sites.redirects.create(
 <dl>
 <dd>
 
-Remove a URL redirection rule from a site.
+Remove a 301 redirection rule from a site.
+
 This is useful for cleaning up outdated or unnecessary redirects, ensuring that your site's routing behavior remains efficient and up-to-date.
+
+<Warning title="Enterprise Only">This endpoint requires an Enterprise workspace.</Warning>
+
 Required scope: `sites:write`
 </dd>
 </dl>
@@ -8499,7 +8980,10 @@ client.sites.redirects.delete(
 <dl>
 <dd>
 
-Update a URL redirection rule from a site.
+Update a 301 redirection rule from a site.
+
+<Warning title="Enterprise Only">This endpoint requires an Enterprise workspace.</Warning>
+
 Required scope: `sites:write`
 </dd>
 </dl>
@@ -8609,6 +9093,8 @@ client.sites.redirects.update(
 
 Get site plan details for the specified Site.
 
+<Warning title="Enterprise Only">This endpoint requires an Enterprise workspace.</Warning>
+
 Required scope | `sites:read`
 </dd>
 </dl>
@@ -8667,8 +9153,8 @@ client.sites.plans.get_site_plan(
 </dl>
 </details>
 
-## Sites ActivityLogs
-<details><summary><code>client.sites.activity_logs.<a href="src/webflow/resources/sites/resources/activity_logs/client.py">list</a>(...)</code></summary>
+## Sites RobotsTxt
+<details><summary><code>client.sites.robots_txt.<a href="src/webflow/resources/sites/resources/robots_txt/client.py">get</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -8680,7 +9166,11 @@ client.sites.plans.get_site_plan(
 <dl>
 <dd>
 
-Retrieve Activity Logs for a specific Site. Requires Site to be on an Enterprise plan. </br></br>  Required scope | `site_activity:read`
+Retrieve the robots.txt configuration for various user agents.
+
+<Warning title="Enterprise Only">This endpoint requires an Enterprise workspace.</Warning>
+
+Required scope: `site_config:read`
 </dd>
 </dl>
 </dd>
@@ -8700,7 +9190,7 @@ from webflow import Webflow
 client = Webflow(
     access_token="YOUR_ACCESS_TOKEN",
 )
-client.sites.activity_logs.list(
+client.sites.robots_txt.get(
     site_id="580e63e98c9a982ac9b8b741",
 )
 
@@ -8726,7 +9216,81 @@ client.sites.activity_logs.list(
 <dl>
 <dd>
 
-**limit:** `typing.Optional[float]` — Maximum number of records to be returned (max limit: 100)
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sites.robots_txt.<a href="src/webflow/resources/sites/resources/robots_txt/client.py">put</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Replace the `robots.txt` configuration for various user agents.
+
+<Warning title="Enterprise Only">This endpoint requires an Enterprise workspace.</Warning>
+
+Required scope | `site_config:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import RobotsRulesItem, Webflow
+
+client = Webflow(
+    access_token="YOUR_ACCESS_TOKEN",
+)
+client.sites.robots_txt.put(
+    site_id="580e63e98c9a982ac9b8b741",
+    rules=[
+        RobotsRulesItem(
+            user_agent="googlebot",
+            allows=["/public"],
+            disallows=["/vogon-poetry", "/total-perspective-vortex"],
+        )
+    ],
+    sitemap="https://heartofgold.ship/sitemap.xml",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
     
 </dd>
 </dl>
@@ -8734,7 +9298,892 @@ client.sites.activity_logs.list(
 <dl>
 <dd>
 
-**offset:** `typing.Optional[float]` — Offset used for pagination if the results have more than limit records
+**rules:** `typing.Optional[typing.Sequence[RobotsRulesItem]]` — List of rules for user agents.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sitemap:** `typing.Optional[str]` — URL to the sitemap.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sites.robots_txt.<a href="src/webflow/resources/sites/resources/robots_txt/client.py">delete</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Remove specific rules for a user-agent in your `robots.txt` file. To delete all rules for a user-agent, provide an empty rule set. This will remove the user-agent's entry entirely, leaving it subject to your site's default crawling behavior.
+
+**Note:** Deleting a user-agent with no rules will make the user-agent's access unrestricted unless other directives apply.
+
+<Warning title="Enterprise Only">This endpoint requires an Enterprise workspace.</Warning>
+
+Required scope: `site_config:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import RobotsRulesItem, Webflow
+
+client = Webflow(
+    access_token="YOUR_ACCESS_TOKEN",
+)
+client.sites.robots_txt.delete(
+    site_id="580e63e98c9a982ac9b8b741",
+    rules=[
+        RobotsRulesItem(
+            user_agent="*",
+            allows=["/public"],
+            disallows=["/bubbles"],
+        )
+    ],
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**rules:** `typing.Optional[typing.Sequence[RobotsRulesItem]]` — List of rules for user agents.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sitemap:** `typing.Optional[str]` — URL to the sitemap.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sites.robots_txt.<a href="src/webflow/resources/sites/resources/robots_txt/client.py">patch</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Update the `robots.txt` configuration for various user agents.
+
+<Warning title="Enterprise Only">This endpoint requires an Enterprise workspace.</Warning>
+
+Required scope | `site_config:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import RobotsRulesItem, Webflow
+
+client = Webflow(
+    access_token="YOUR_ACCESS_TOKEN",
+)
+client.sites.robots_txt.patch(
+    site_id="580e63e98c9a982ac9b8b741",
+    rules=[
+        RobotsRulesItem(
+            user_agent="googlebot",
+            allows=["/public"],
+            disallows=["/vogon-poetry", "/total-perspective-vortex"],
+        )
+    ],
+    sitemap="https://heartofgold.ship/sitemap.xml",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**rules:** `typing.Optional[typing.Sequence[RobotsRulesItem]]` — List of rules for user agents.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sitemap:** `typing.Optional[str]` — URL to the sitemap.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## Sites WellKnown
+<details><summary><code>client.sites.well_known.<a href="src/webflow/resources/sites/resources/well_known/client.py">put</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Upload a supported well-known file to a site.
+
+The current restrictions on well-known files are as follows:
+  - Each file must be smaller than 100kb
+  - Less than 30 total files
+  - Have one of the following file extensions (or no extension): `.txt`, `.json`, `.noext` 
+  
+  <Note title=".noext">
+    `.noext` is a special file extension that removes other extensions. For example, `apple-app-site-association.noext.txt` will be uploaded as `apple-app-site-association`. Use this extension for tools that have trouble uploading extensionless files.
+  </Note>
+
+<Warning title="Enterprise Only">This endpoint requires an Enterprise workspace.</Warning>
+
+Required scope: `site_config:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow
+
+client = Webflow(
+    access_token="YOUR_ACCESS_TOKEN",
+)
+client.sites.well_known.put(
+    site_id="580e63e98c9a982ac9b8b741",
+    file_name="apple-app-site-association.txt",
+    file_data='{\n  "applinks": {\n    "apps": [],\n    "details": [\n  {\n    "appID": "ABCDE12345.com.example.app",\n    "paths": [ "/*", "/some/path/*" ]\n      }\n    ]\n  }\n}\n',
+    content_type="application/json",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**file_name:** `str` — The name of the file
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**file_data:** `str` — The contents of the file
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**content_type:** `typing.Optional[WellKnownFileContentType]` — The content type of the file. Defaults to application/json
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sites.well_known.<a href="src/webflow/resources/sites/resources/well_known/client.py">delete</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Delete existing well-known files from a site.
+
+<Warning title="Enterprise Only">This endpoint requires an Enterprise workspace.</Warning>
+
+Required scope: `site_config:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow
+
+client = Webflow(
+    access_token="YOUR_ACCESS_TOKEN",
+)
+client.sites.well_known.delete(
+    site_id="580e63e98c9a982ac9b8b741",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**file_names:** `typing.Optional[typing.Sequence[str]]` — A list of file names to delete
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## Sites ActivityLogs
+<details><summary><code>client.sites.activity_logs.<a href="src/webflow/resources/sites/resources/activity_logs/client.py">list</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Retrieve Activity Logs for a specific Site. 
+
+<Warning title="Enterprise Only">This endpoint requires an Enterprise workspace.</Warning>
+
+Required scope: `site_activity:read`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow
+
+client = Webflow(
+    access_token="YOUR_ACCESS_TOKEN",
+)
+client.sites.activity_logs.list(
+    site_id="580e63e98c9a982ac9b8b741",
+    limit=1,
+    offset=1,
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[int]` — Maximum number of records to be returned (max limit: 100)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**offset:** `typing.Optional[int]` — Offset used for pagination if the results have more than limit records
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## Sites Comments
+<details><summary><code>client.sites.comments.<a href="src/webflow/resources/sites/resources/comments/client.py">list_comment_threads</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+List all comment threads for a site.
+
+<Note title="Timing of comment threads">
+  There may be a delay of up to 5 minutes before new comments appear in the system.
+</Note>
+
+Required scope | `comments:read`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow
+
+client = Webflow(
+    access_token="YOUR_ACCESS_TOKEN",
+)
+client.sites.comments.list_comment_threads(
+    site_id="580e63e98c9a982ac9b8b741",
+    locale_id="65427cf400e02b306eaa04a0",
+    offset=1,
+    limit=1,
+    sort_by="createdOn",
+    sort_order="asc",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**locale_id:** `typing.Optional[str]` 
+
+Unique identifier for a specific Locale.
+
+[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**offset:** `typing.Optional[int]` — Offset used for pagination if the results have more than limit records
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[int]` — Maximum number of records to be returned (max limit: 100)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sort_by:** `typing.Optional[CommentsListCommentThreadsRequestSortBy]` — Sort results by the provided value. Only allowed when sortOrder is provided.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sort_order:** `typing.Optional[CommentsListCommentThreadsRequestSortOrder]` — Sorts the results by asc or desc
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sites.comments.<a href="src/webflow/resources/sites/resources/comments/client.py">get_comment_thread</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Get details of a specific comment thread.
+
+  <Note title="Timing of comment threads">
+    There may be a delay of up to 5 minutes before new comments appear in the system.
+  </Note>
+
+Required scope | `comments:read`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow
+
+client = Webflow(
+    access_token="YOUR_ACCESS_TOKEN",
+)
+client.sites.comments.get_comment_thread(
+    site_id="580e63e98c9a982ac9b8b741",
+    comment_thread_id="580e63e98c9a982ac9b8b741",
+    locale_id="65427cf400e02b306eaa04a0",
+    offset=1,
+    limit=1,
+    sort_by="createdOn",
+    sort_order="asc",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**comment_thread_id:** `str` — Unique identifier for a Comment Thread
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**locale_id:** `typing.Optional[str]` 
+
+Unique identifier for a specific Locale.
+
+[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**offset:** `typing.Optional[int]` — Offset used for pagination if the results have more than limit records
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[int]` — Maximum number of records to be returned (max limit: 100)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sort_by:** `typing.Optional[CommentsGetCommentThreadRequestSortBy]` — Sort results by the provided value. Only allowed when sortOrder is provided.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sort_order:** `typing.Optional[CommentsGetCommentThreadRequestSortOrder]` — Sorts the results by asc or desc
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sites.comments.<a href="src/webflow/resources/sites/resources/comments/client.py">list_comment_replies</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+List all replies to a specific comment thread.
+
+<Note title="Timing of comment threads">
+  There may be a delay of up to 5 minutes before new comments appear in the system.
+</Note>
+
+Required scope | `comments:read`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow
+
+client = Webflow(
+    access_token="YOUR_ACCESS_TOKEN",
+)
+client.sites.comments.list_comment_replies(
+    site_id="580e63e98c9a982ac9b8b741",
+    comment_thread_id="580e63e98c9a982ac9b8b741",
+    locale_id="65427cf400e02b306eaa04a0",
+    offset=1,
+    limit=1,
+    sort_by="createdOn",
+    sort_order="asc",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**comment_thread_id:** `str` — Unique identifier for a Comment Thread
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**locale_id:** `typing.Optional[str]` 
+
+Unique identifier for a specific Locale.
+
+[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**offset:** `typing.Optional[int]` — Offset used for pagination if the results have more than limit records
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[int]` — Maximum number of records to be returned (max limit: 100)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sort_by:** `typing.Optional[CommentsListCommentRepliesRequestSortBy]` — Sort results by the provided value. Only allowed when sortOrder is provided.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sort_order:** `typing.Optional[CommentsListCommentRepliesRequestSortOrder]` — Sorts the results by asc or desc
     
 </dd>
 </dl>
@@ -8767,9 +10216,11 @@ client.sites.activity_logs.list(
 <dl>
 <dd>
 
-Get all registered scripts that have been applied to a specific Site. 
+Get all scripts applied to a site by the App. 
 
-<Note>Access to this endpoint requires a bearer token from a [Data Client App](/data/docs/getting-started-data-clients).</Note>    
+<Note title="Script Registration">
+  To apply a script to a site or page, the script must first be registered to a site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints. See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
+</Note> 
 
 Required scope | `custom_code:read`
 </dd>
@@ -8841,13 +10292,11 @@ client.sites.scripts.get_custom_code(
 <dl>
 <dd>
 
-Add a registered script to a Site. 
+Apply registered scripts to a site. If you have multiple scripts your App needs to apply or maintain on a site, ensure they are always included in the request body for this endpoint. To remove individual scripts, simply call this endpoint without the script in the request body.
 
-In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered 
-to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate
-`custom_code` endpoints. 
-
-<Note>Access to this endpoint requires a bearer token from a [Data Client App](/data/docs/getting-started-data-clients).</Note>    
+<Note title="Script Registration">
+  To apply a script to a site or page, the script must first be registered to a site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints. See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
+</Note>
 
 Required scope | `custom_code:write`
 </dd>
@@ -8956,9 +10405,11 @@ client.sites.scripts.upsert_custom_code(
 <dl>
 <dd>
 
-Delete the custom code block that an app created for a Site
+Remove all scripts from a site applied by the App. This endpoint will not remove scripts from the site's registered scripts.
 
-<Note>Access to this endpoint requires a bearer token from a [Data Client App](/data/docs/getting-started-data-clients).</Note>    
+To remove individual scripts applied by the App, use the [Add/Update Custom Code](/data/reference/custom-code/custom-code-sites/upsert-custom-code) endpoint.
+
+<Note>Access to this endpoint requires a bearer token obtained from an [OAuth Code Grant Flow](/data/reference/oauth-app).</Note>
 
 Required scope | `custom_code:write`
 </dd>
@@ -9030,9 +10481,13 @@ client.sites.scripts.delete_custom_code(
 <dl>
 <dd>
 
-Get all instances of Custom Code applied to a Site or Pages. 
+Get a list of scripts that have been applied to a site and/or individual pages. 
 
-<Note>Access to this endpoint requires a bearer token from a [Data Client App](/data/docs/getting-started-data-clients).</Note>    
+<Note title="Script Registration">
+  To apply a script to a site or page, the script must first be registered to a site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints. 
+  
+  See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
+</Note>
 
 Required scope | `custom_code:read`
 </dd>
@@ -9056,6 +10511,8 @@ client = Webflow(
 )
 client.sites.scripts.list_custom_code_blocks(
     site_id="580e63e98c9a982ac9b8b741",
+    offset=1,
+    limit=1,
 )
 
 ```
@@ -9080,7 +10537,7 @@ client.sites.scripts.list_custom_code_blocks(
 <dl>
 <dd>
 
-**offset:** `typing.Optional[float]` — Offset used for pagination if the results have more than limit records
+**offset:** `typing.Optional[int]` — Offset used for pagination if the results have more than limit records
     
 </dd>
 </dl>
@@ -9088,7 +10545,602 @@ client.sites.scripts.list_custom_code_blocks(
 <dl>
 <dd>
 
-**limit:** `typing.Optional[float]` — Maximum number of records to be returned (max limit: 100)
+**limit:** `typing.Optional[int]` — Maximum number of records to be returned (max limit: 100)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## Sites Forms
+<details><summary><code>client.sites.forms.<a href="src/webflow/resources/sites/resources/forms/client.py">list_submissions_by_site</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+List all form submissions for a given site with the ability to filter submissions by a centralized `elementId`.
+
+Add `elementId` when you want to filter form submissions to a specific form in a site. You can get the `elementId` from the [List forms endpoint](/data/reference/forms/forms/list) (displayed as `formElementId` in the response). 
+
+<Note title="Forms in components">
+When a form is used in a Webflow component definition, each instance of the component will yield a unique form. Adding the `elementId` in this request ensures this API response includes all submissions from that core form, wherever that form is used in instantiated components.
+</Note>
+
+Use the [List Form Submissions endpoint](/data/reference/forms/form-submissions/list-submissions) to list form submissions for a given form ID.
+
+Required scope | `forms:read`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow
+
+client = Webflow(
+    access_token="YOUR_ACCESS_TOKEN",
+)
+client.sites.forms.list_submissions_by_site(
+    site_id="580e63e98c9a982ac9b8b741",
+    element_id="18259716-3e5a-646a-5f41-5dc4b9405aa0",
+    offset=1,
+    limit=1,
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**element_id:** `typing.Optional[str]` — Identifier for an element
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**offset:** `typing.Optional[int]` — Offset used for pagination if the results have more than limit records
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[int]` — Maximum number of records to be returned (max limit: 100)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sites.forms.<a href="src/webflow/resources/sites/resources/forms/client.py">list_submissions</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+List form submissions for a given form ID within a specific site. 
+
+Use the [List Form Submissions by Site endpoint](/data/reference/forms/form-submissions/list-submissions-by-site) to list form submissions for a given site with the ability to filter by a `formElementId`.
+
+Required scope | `forms:read`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow
+
+client = Webflow(
+    access_token="YOUR_ACCESS_TOKEN",
+)
+client.sites.forms.list_submissions(
+    site_id="580e63e98c9a982ac9b8b741",
+    form_id="580e63e98c9a982ac9b8b741",
+    offset=1,
+    limit=1,
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**form_id:** `str` — Unique identifier for a Form
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**offset:** `typing.Optional[int]` — Offset used for pagination if the results have more than limit records
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[int]` — Maximum number of records to be returned (max limit: 100)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sites.forms.<a href="src/webflow/resources/sites/resources/forms/client.py">get_submission</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Get information about a form submission within a specific site.
+
+Required scope | `forms:read`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow
+
+client = Webflow(
+    access_token="YOUR_ACCESS_TOKEN",
+)
+client.sites.forms.get_submission(
+    site_id="580e63e98c9a982ac9b8b741",
+    form_submission_id="580e63e98c9a982ac9b8b741",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**form_submission_id:** `str` — Unique identifier for a Form Submission
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sites.forms.<a href="src/webflow/resources/sites/resources/forms/client.py">delete_submission</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Delete a form submission within a specific site.
+
+Required scope | `forms:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow
+
+client = Webflow(
+    access_token="YOUR_ACCESS_TOKEN",
+)
+client.sites.forms.delete_submission(
+    site_id="580e63e98c9a982ac9b8b741",
+    form_submission_id="580e63e98c9a982ac9b8b741",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**form_submission_id:** `str` — Unique identifier for a Form Submission
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sites.forms.<a href="src/webflow/resources/sites/resources/forms/client.py">update_submission</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Update hidden fields on a form submission within a specific site.
+
+Required scope | `forms:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow
+
+client = Webflow(
+    access_token="YOUR_ACCESS_TOKEN",
+)
+client.sites.forms.update_submission(
+    site_id="580e63e98c9a982ac9b8b741",
+    form_submission_id="580e63e98c9a982ac9b8b741",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**form_submission_id:** `str` — Unique identifier for a Form Submission
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**form_submission_data:** `typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]` — An existing **hidden field** defined on the form schema, and the corresponding value to set
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## Workspaces AuditLogs
+<details><summary><code>client.workspaces.audit_logs.<a href="src/webflow/resources/workspaces/resources/audit_logs/client.py">get_workspace_audit_logs</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Get audit logs for a workspace.
+
+<Warning title="Enterprise & workspace API token only">This endpoint requires an Enterprise workspace and a workspace token with the `workspace_activity:read` scope. Create a workspace token from your workspace dashboard integrations page to use this endpoint.</Warning>
+
+Required scope | `workspace_activity:read`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+import datetime
+
+from webflow import Webflow
+
+client = Webflow(
+    access_token="YOUR_ACCESS_TOKEN",
+)
+client.workspaces.audit_logs.get_workspace_audit_logs(
+    workspace_id_or_slug="hitchhikers-workspace",
+    limit=1,
+    offset=1,
+    sort_order="asc",
+    event_type="user_access",
+    from_=datetime.datetime.fromisoformat(
+        "2025-06-22 16:00:31+00:00",
+    ),
+    to=datetime.datetime.fromisoformat(
+        "2025-07-22 16:00:31+00:00",
+    ),
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**workspace_id_or_slug:** `str` — Unique identifier or slug for a Workspace
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[int]` — Maximum number of records to be returned (max limit: 100)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**offset:** `typing.Optional[int]` — Offset used for pagination if the results have more than limit records
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sort_order:** `typing.Optional[AuditLogsGetWorkspaceAuditLogsRequestSortOrder]` — Sorts the results by asc or desc
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**event_type:** `typing.Optional[AuditLogsGetWorkspaceAuditLogsRequestEventType]` — The event type to filter by
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**from_:** `typing.Optional[dt.datetime]` — The start date to filter by
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**to:** `typing.Optional[dt.datetime]` — The end date to filter by
     
 </dd>
 </dl>
