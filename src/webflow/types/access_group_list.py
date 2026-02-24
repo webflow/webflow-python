@@ -14,22 +14,22 @@ class AccessGroupList(UniversalBaseModel):
     The list access groups results
     """
 
-    count: typing.Optional[float] = pydantic.Field(default=None)
+    count: typing.Optional[int] = pydantic.Field(default=None)
     """
     Number of access groups returned
     """
 
-    limit: typing.Optional[float] = pydantic.Field(default=None)
+    limit: typing.Optional[int] = pydantic.Field(default=None)
     """
     The limit specified in the request
     """
 
-    offset: typing.Optional[float] = pydantic.Field(default=None)
+    offset: typing.Optional[int] = pydantic.Field(default=None)
     """
     The offset specified for pagination
     """
 
-    total: typing.Optional[float] = pydantic.Field(default=None)
+    total: typing.Optional[int] = pydantic.Field(default=None)
     """
     Total number of access groups in the collection
     """

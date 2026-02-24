@@ -33,23 +33,144 @@ types:
         docs: Sorts users in descending order based on their update date
     source:
       openapi: ../../../openapi/referenced-specs/v2.yml
-  UsersUpdateRequestData:
+  UserAccountAddedPayloadPayloadData:
+    docs: The data about the user account that was added
     properties:
-      name:
-        type: optional<string>
-        docs: |
-          The name of the user
-      accept-privacy:
-        type: optional<boolean>
-        docs: |
-          Boolean indicating if the user has accepted the privacy policy
-      accept-communications:
-        type: optional<boolean>
-        docs: |
-          Boolean indicating if the user has accepted to receive communications
+      accept-privacy-policy: optional<boolean>
+      accept-communications: optional<boolean>
+      email: optional<string>
+      name: optional<string>
     source:
       openapi: ../../../openapi/referenced-specs/v2.yml
     inline: true
+  UserAccountAddedPayloadPayload:
+    properties:
+      data:
+        type: optional<UserAccountAddedPayloadPayloadData>
+        docs: The data about the user account that was added
+      id:
+        type: optional<string>
+        docs: Unique identifier for the User
+      isEmailVerified:
+        type: optional<boolean>
+        docs: Shows whether the user has verified their email address
+      lastUpdated:
+        type: optional<datetime>
+        docs: The timestamp the user was updated
+      invitedOn:
+        type: optional<datetime>
+        docs: The timestamp the user was invited
+      createdOn:
+        type: optional<datetime>
+        docs: The timestamp the user was created
+      lastLogin:
+        type: optional<datetime>
+        docs: The timestamp the user was logged in
+      status: optional<root.UserStatus>
+      accessGroups:
+        type: optional<list<root.UserAccessGroupsItem>>
+        docs: Access groups the user belongs to
+    source:
+      openapi: ../../../openapi/referenced-specs/v2.yml
+    inline: true
+  UserAccountAddedPayload:
+    properties:
+      triggerType: optional<literal<"user_account_added">>
+      payload: optional<UserAccountAddedPayloadPayload>
+    source:
+      openapi: ../../../openapi/referenced-specs/v2.yml
+  UserAccountUpdatedPayloadPayloadData:
+    docs: The data about the user account that was added
+    properties:
+      accept-privacy-policy: optional<boolean>
+      accept-communications: optional<boolean>
+      email: optional<string>
+      name: optional<string>
+    source:
+      openapi: ../../../openapi/referenced-specs/v2.yml
+    inline: true
+  UserAccountUpdatedPayloadPayload:
+    properties:
+      data:
+        type: optional<UserAccountUpdatedPayloadPayloadData>
+        docs: The data about the user account that was added
+      id:
+        type: optional<string>
+        docs: Unique identifier for the User
+      isEmailVerified:
+        type: optional<boolean>
+        docs: Shows whether the user has verified their email address
+      lastUpdated:
+        type: optional<datetime>
+        docs: The timestamp the user was updated
+      invitedOn:
+        type: optional<datetime>
+        docs: The timestamp the user was invited
+      createdOn:
+        type: optional<datetime>
+        docs: The timestamp the user was created
+      lastLogin:
+        type: optional<datetime>
+        docs: The timestamp the user was logged in
+      status: optional<root.UserStatus>
+      accessGroups:
+        type: optional<list<root.UserAccessGroupsItem>>
+        docs: Access groups the user belongs to
+    source:
+      openapi: ../../../openapi/referenced-specs/v2.yml
+    inline: true
+  UserAccountUpdatedPayload:
+    properties:
+      triggerType: optional<literal<"user_account_updated">>
+      payload: optional<UserAccountUpdatedPayloadPayload>
+    source:
+      openapi: ../../../openapi/referenced-specs/v2.yml
+  UserAccountDeletedPayloadPayloadData:
+    docs: The data about the user account that was added
+    properties:
+      accept-privacy-policy: optional<boolean>
+      accept-communications: optional<boolean>
+      email: optional<string>
+      name: optional<string>
+    source:
+      openapi: ../../../openapi/referenced-specs/v2.yml
+    inline: true
+  UserAccountDeletedPayloadPayload:
+    properties:
+      data:
+        type: optional<UserAccountDeletedPayloadPayloadData>
+        docs: The data about the user account that was added
+      id:
+        type: optional<string>
+        docs: Unique identifier for the User
+      isEmailVerified:
+        type: optional<boolean>
+        docs: Shows whether the user has verified their email address
+      lastUpdated:
+        type: optional<datetime>
+        docs: The timestamp the user was updated
+      invitedOn:
+        type: optional<datetime>
+        docs: The timestamp the user was invited
+      createdOn:
+        type: optional<datetime>
+        docs: The timestamp the user was created
+      lastLogin:
+        type: optional<datetime>
+        docs: The timestamp the user was logged in
+      status: optional<root.UserStatus>
+      accessGroups:
+        type: optional<list<root.UserAccessGroupsItem>>
+        docs: Access groups the user belongs to
+    source:
+      openapi: ../../../openapi/referenced-specs/v2.yml
+    inline: true
+  UserAccountDeletedPayload:
+    properties:
+      triggerType: optional<literal<"user_account_deleted">>
+      payload: optional<UserAccountDeletedPayloadPayload>
+    source:
+      openapi: ../../../openapi/referenced-specs/v2.yml
 imports:
   root: __package__.yml
 service:
@@ -59,9 +180,17 @@ service:
     list:
       path: /sites/{site_id}/users
       method: GET
-      auth: true
-      docs: |
+      auth:
+        - OAuth2:
+            - users:read
+      docs: >
+        <Warning>As of **January 29, 2026**, User Accounts functionality has
+        been disabled on all Webflow sites. This endpoint is no longer
+        available.</Warning>
+
+
         Get a list of users for a site
+
 
         Required scope | `users:read`
       source:
@@ -75,12 +204,12 @@ service:
         name: UsersListRequest
         query-parameters:
           offset:
-            type: optional<double>
+            type: optional<integer>
             docs: >-
               Offset used for pagination if the results have more than limit
               records
           limit:
-            type: optional<double>
+            type: optional<integer>
             docs: 'Maximum number of records to be returned (max limit: 100)'
           sort:
             type: optional<UsersListRequestSort>
@@ -93,6 +222,8 @@ service:
       response:
         docs: Request was successful
         type: root.UserList
+        status-code: 200
+      availability: deprecated
       errors:
         - root.BadRequestError
         - root.UnauthorizedError
@@ -103,6 +234,10 @@ service:
       examples:
         - path-parameters:
             site_id: 580e63e98c9a982ac9b8b741
+          query-parameters:
+            offset: 1
+            limit: 1
+            sort: CreatedOn
           response:
             body:
               count: 5
@@ -163,9 +298,17 @@ service:
     get:
       path: /sites/{site_id}/users/{user_id}
       method: GET
-      auth: true
-      docs: |
+      auth:
+        - OAuth2:
+            - users:read
+      docs: >
+        <Warning>As of **January 29, 2026**, User Accounts functionality has
+        been disabled on all Webflow sites. This endpoint is no longer
+        available.</Warning>
+
+
         Get a User by ID
+
 
         Required scope | `users:read`
       source:
@@ -181,6 +324,8 @@ service:
       response:
         docs: Request was successful
         type: root.User
+        status-code: 200
+      availability: deprecated
       errors:
         - root.BadRequestError
         - root.UnauthorizedError
@@ -214,9 +359,17 @@ service:
     delete:
       path: /sites/{site_id}/users/{user_id}
       method: DELETE
-      auth: true
-      docs: |
+      auth:
+        - OAuth2:
+            - users:write
+      docs: >
+        <Warning>As of **January 29, 2026**, User Accounts functionality has
+        been disabled on all Webflow sites. This endpoint is no longer
+        available.</Warning>
+
+
         Delete a User by ID
+
 
         Required scope | `users:write`
       source:
@@ -229,6 +382,7 @@ service:
           type: string
           docs: Unique identifier for a User
       display-name: Delete User
+      availability: deprecated
       errors:
         - root.BadRequestError
         - root.UnauthorizedError
@@ -243,13 +397,21 @@ service:
     update:
       path: /sites/{site_id}/users/{user_id}
       method: PATCH
-      auth: true
-      docs: |
-        Update a User by ID 
+      auth:
+        - OAuth2:
+            - users:write
+      docs: >
+        <Warning>As of **January 29, 2026**, User Accounts functionality has
+        been disabled on all Webflow sites. This endpoint is no longer
+        available.</Warning>
+
+
+        Update a User by ID
 
           Required scope | `users:write`
 
         <Note class="notice">The <code>email</code> and <code>password</code>
+
         fields cannot be updated using this endpoint</Note>
       source:
         openapi: ../../../openapi/referenced-specs/v2.yml
@@ -262,20 +424,13 @@ service:
           docs: Unique identifier for a User
       display-name: Update User
       request:
-        name: UsersUpdateRequest
-        body:
-          properties:
-            data: optional<UsersUpdateRequestData>
-            accessGroups:
-              type: optional<list<string>>
-              docs: >
-                An array of access group slugs. Access groups are assigned to
-                the user as type `admin` and the user remains in the group until
-                removed.
+        body: root.User
         content-type: application/json
       response:
         docs: Request was successful
         type: root.User
+        status-code: 200
+      availability: deprecated
       errors:
         - root.BadRequestError
         - root.UnauthorizedError
@@ -288,14 +443,16 @@ service:
             site_id: 580e63e98c9a982ac9b8b741
             user_id: 580e63e98c9a982ac9b8b741
           request:
-            data:
-              name: Some One
-              accept-privacy: false
-              accept-communications: false
+            id: 6287ec36a841b25637c663df
+            isEmailVerified: true
+            lastUpdated: '2022-05-20T13:46:12Z'
+            invitedOn: '2022-05-20T13:46:12Z'
+            createdOn: '2022-05-20T13:46:12Z'
+            lastLogin: '2022-05-20T13:46:12Z'
+            status: verified
             accessGroups:
-              - webflowers
-              - platinum
-              - free-tier
+              - slug: webflowers
+                type: admin
           response:
             body:
               id: 6287ec36a841b25637c663df
@@ -318,13 +475,20 @@ service:
     invite:
       path: /sites/{site_id}/users/invite
       method: POST
-      auth: true
+      auth:
+        - OAuth2:
+            - users:write
       docs: >
-        Create and invite a user with an email address. 
+        <Warning>As of **January 29, 2026**, User Accounts functionality has
+        been disabled on all Webflow sites. This endpoint is no longer
+        available.</Warning>
+
+
+        Create and invite a user with an email address.
 
 
         The user will be sent and invite via email, which they will need to
-        accept in order to join paid any paid access group. 
+        accept in order to join paid any paid access group.
 
 
         Required scope | `users:write`
@@ -354,6 +518,8 @@ service:
       response:
         docs: Request was successful
         type: root.User
+        status-code: 200
+      availability: deprecated
       errors:
         - root.BadRequestError
         - root.UnauthorizedError
@@ -368,7 +534,7 @@ service:
           request:
             email: some.one@home.com
             accessGroups:
-              - webflowers
+              - accessGroups
           response:
             body:
               id: 6287ec36a841b25637c663df
@@ -390,3 +556,91 @@ service:
                   additionalProperties: additionalProperties
   source:
     openapi: ../../../openapi/referenced-specs/v2.yml
+webhooks:
+  user_account_added:
+    audiences: []
+    method: POST
+    display-name: New User Added
+    headers: {}
+    payload: UserAccountAddedPayload
+    examples:
+      - payload:
+          triggerType: user_account_added
+          payload:
+            id: 6287ec36a841b25637c663df
+            lastUpdated: '2022-05-20T13:46:12.093Z'
+            createdOn: '2022-05-20T13:46:12.093Z'
+            isEmailVerified: false
+            data:
+              accept-privacy: false
+              accept-communications: false
+              email: arthur.dent@heartofgold.ship
+              name: Arthur Dent
+            accessGroups:
+              - slug: webflowers
+                type: admin
+    docs: >
+      <Warning>As of **January 29, 2026**, User Accounts functionality has been
+      disabled on all Webflow sites. This webhook is no longer
+      available.</Warning>
+
+
+      Information about a new user account
+  user_account_updated:
+    audiences: []
+    method: POST
+    display-name: Account Updated
+    headers: {}
+    payload: UserAccountUpdatedPayload
+    examples:
+      - payload:
+          triggerType: user_account_updated
+          payload:
+            id: 6287ec36a841b25637c663df
+            lastUpdated: '2022-05-20T13:46:12.093Z'
+            createdOn: '2022-05-20T13:46:12.093Z'
+            isEmailVerified: false
+            data:
+              accept-privacy: false
+              accept-communications: false
+              email: arthur.dent@heartofgold.ship
+              name: Arthur Dent
+            accessGroups:
+              - slug: webflowers
+                type: admin
+    docs: >
+      <Warning>As of **January 29, 2026**, User Accounts functionality has been
+      disabled on all Webflow sites. This webhook is no longer
+      available.</Warning>
+
+
+      Information about an updated user account
+  user_account_deleted:
+    audiences: []
+    method: POST
+    display-name: Account Deleted
+    headers: {}
+    payload: UserAccountDeletedPayload
+    examples:
+      - payload:
+          triggerType: user_account_deleted
+          payload:
+            id: 6287ec36a841b25637c663df
+            lastUpdated: '2022-05-20T13:46:12.093Z'
+            createdOn: '2022-05-20T13:46:12.093Z'
+            isEmailVerified: false
+            data:
+              accept-privacy: false
+              accept-communications: false
+              email: arthur.dent@heartofgold.ship
+              name: Arthur Dent
+            accessGroups:
+              - slug: webflowers
+                type: admin
+    docs: >
+      <Warning>As of **January 29, 2026**, User Accounts functionality has been
+      disabled on all Webflow sites. This webhook is no longer
+      available.</Warning>
+
+
+      Information about a deleted user account
