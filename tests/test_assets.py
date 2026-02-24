@@ -30,9 +30,33 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                         "quality": 100,
                     }
                 ],
-                "altText": "A red chair",
-            }
-        ]
+                "altText": "A single candy wrapper",
+            },
+            {
+                "id": "63e5889e7fe4eafa7384cea5",
+                "contentType": "image/png",
+                "size": 2212772,
+                "siteId": "63938b302ea6b0aa6f3d8745",
+                "hostedUrl": "https://s3.amazonaws.com/webflow-prod-assets/63938b302ea6b0aa6f3d8745/63e5889e7fe4eafa7384cea4_Vectors-Wrapper.svg",
+                "originalFileName": "Gum-Wrapper.svg",
+                "displayName": "63e5889e7fe4eafa7384cea5_Gum-Wrapper.png",
+                "lastUpdated": "2023-03-01T23:42:57Z",
+                "createdOn": "2023-02-09T23:58:22Z",
+                "variants": [
+                    {
+                        "hostedUrl": "https://s3.amazonaws.com/webflow-prod-assets/6258612d1ee792848f805dcf/660d83ce30f3a599ddb0bdb3_Screenshot%202024-03-20%20at%209.03.24%E2%80%AFPM-p-500.png",
+                        "originalFileName": "Screenshot%202024-03-20%20at%209.03.24%E2%80%AFPM-p-500.png",
+                        "displayName": "660d83ce30f3a599ddb0bdb3_Screenshot%202024-03-20%20at%209.03.24%E2%80%AFPM-p-500.png",
+                        "format": "png",
+                        "width": 500,
+                        "height": 900,
+                        "quality": 100,
+                    }
+                ],
+                "altText": "A single gum wrapper",
+            },
+        ],
+        "pagination": {"limit": 2, "offset": 0, "total": 2},
     }
     expected_types: typing.Any = {
         "assets": (
@@ -63,14 +87,41 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                         },
                     ),
                     "altText": None,
-                }
+                },
+                1: {
+                    "id": None,
+                    "contentType": None,
+                    "size": "integer",
+                    "siteId": None,
+                    "hostedUrl": None,
+                    "originalFileName": None,
+                    "displayName": None,
+                    "lastUpdated": "datetime",
+                    "createdOn": "datetime",
+                    "variants": (
+                        "list",
+                        {
+                            0: {
+                                "hostedUrl": None,
+                                "originalFileName": None,
+                                "displayName": None,
+                                "format": None,
+                                "width": "integer",
+                                "height": "integer",
+                                "quality": "integer",
+                            }
+                        },
+                    ),
+                    "altText": None,
+                },
             },
-        )
+        ),
+        "pagination": {"limit": "integer", "offset": "integer", "total": "integer"},
     }
-    response = client.assets.list(site_id="580e63e98c9a982ac9b8b741")
+    response = client.assets.list(site_id="580e63e98c9a982ac9b8b741", offset=1, limit=1)
     validate_response(response, expected_response, expected_types)
 
-    async_response = await async_client.assets.list(site_id="580e63e98c9a982ac9b8b741")
+    async_response = await async_client.assets.list(site_id="580e63e98c9a982ac9b8b741", offset=1, limit=1)
     validate_response(async_response, expected_response, expected_types)
 
 
@@ -94,7 +145,7 @@ async def test_create(client: Webflow, async_client: AsyncWebflow) -> None:
         "parentFolder": "6436b1ce5281cace05b65aea",
         "uploadUrl": "https://s3.amazonaws.com/webflow-dev-assets/643021114e290e0d3a0602b2/64358b9544249dc43d37d2b7_Screenshot%202023-04-11%20at%209.50.42%20AM.png",
         "assetUrl": "https://s3.amazonaws.com/webflow-prod-assets/6258612d1ee792848f805dcf/660d907ab9e91e3e9f56385e_paranoidAndroid-2024.png",
-        "hostedUrl": "https://d1otoma47x30pg.cloudfront.net/643021114e290e0d3a0602b2/64358b9544249dc43d37d2b7_Screenshot%202023-04-11%20at%209.50.42%20AM.png",
+        "hostedUrl": "https://dev-assets.website-files.com/643021114e290e0d3a0602b2/64358b9544249dc43d37d2b7_Screenshot%202023-04-11%20at%209.50.42%20AM.png",
         "originalFileName": "file.png",
         "createdOn": "2023-04-11T16:32:21Z",
         "lastUpdated": "2023-04-12T20:31:03Z",
@@ -136,28 +187,28 @@ async def test_create(client: Webflow, async_client: AsyncWebflow) -> None:
 
 async def test_get(client: Webflow, async_client: AsyncWebflow) -> None:
     expected_response: typing.Any = {
-        "id": "55131cd036c09f7d07883dfc",
+        "id": "63e5889e7fe4eafa7384cea4",
         "contentType": "image/png",
-        "size": 1500,
-        "siteId": "62749158efef318abc8d5a0f",
-        "hostedUrl": "example.com/hostedimage.png",
-        "originalFileName": "image.png",
-        "displayName": "example-image-123.png",
-        "lastUpdated": "2016-09-06T21:12:22Z",
-        "createdOn": "2016-09-02T23:26:22Z",
+        "size": 2212772,
+        "siteId": "63938b302ea6b0aa6f3d8745",
+        "hostedUrl": "https://s3.amazonaws.com/webflow-prod-assets/63938b302ea6b0aa6f3d8745/63e5889e7fe4eafa7384cea4_Vectors-Wrapper.svg",
+        "originalFileName": "Candy-Wrapper.svg",
+        "displayName": "63e5889e7fe4eafa7384cea4_Candy-Wrapper.png",
+        "lastUpdated": "2023-03-01T23:42:57Z",
+        "createdOn": "2023-02-09T23:58:22Z",
         "variants": [
             {
-                "hostedUrl": "example.com/hostedimage.png",
-                "originalFileName": "image.png",
-                "displayName": "A brown dog",
-                "format": "format",
-                "width": 1500,
+                "hostedUrl": "https://s3.amazonaws.com/webflow-prod-assets/6258612d1ee792848f805dcf/660d83ce30f3a599ddb0bdb3_Screenshot%202024-03-20%20at%209.03.24%E2%80%AFPM-p-500.png",
+                "originalFileName": "Screenshot%202024-03-20%20at%209.03.24%E2%80%AFPM-p-500.png",
+                "displayName": "660d83ce30f3a599ddb0bdb3_Screenshot%202024-03-20%20at%209.03.24%E2%80%AFPM-p-500.png",
+                "format": "png",
+                "width": 500,
                 "height": 900,
-                "quality": 1,
+                "quality": 100,
                 "error": "error",
             }
         ],
-        "altText": "A red chair",
+        "altText": "A single candy wrapper",
     }
     expected_types: typing.Any = {
         "id": None,
@@ -208,28 +259,28 @@ async def test_delete(client: Webflow, async_client: AsyncWebflow) -> None:
 
 async def test_update(client: Webflow, async_client: AsyncWebflow) -> None:
     expected_response: typing.Any = {
-        "id": "55131cd036c09f7d07883dfc",
+        "id": "63e5889e7fe4eafa7384cea4",
         "contentType": "image/png",
-        "size": 1500,
-        "siteId": "62749158efef318abc8d5a0f",
-        "hostedUrl": "example.com/hostedimage.png",
-        "originalFileName": "image.png",
-        "displayName": "example-image-123.png",
-        "lastUpdated": "2016-09-06T21:12:22Z",
-        "createdOn": "2016-09-02T23:26:22Z",
+        "size": 2212772,
+        "siteId": "63938b302ea6b0aa6f3d8745",
+        "hostedUrl": "https://s3.amazonaws.com/webflow-prod-assets/63938b302ea6b0aa6f3d8745/63e5889e7fe4eafa7384cea4_Vectors-Wrapper.svg",
+        "originalFileName": "Candy-Wrapper.svg",
+        "displayName": "63e5889e7fe4eafa7384cea4_Candy-Wrapper.png",
+        "lastUpdated": "2023-03-01T23:42:57Z",
+        "createdOn": "2023-02-09T23:58:22Z",
         "variants": [
             {
-                "hostedUrl": "example.com/hostedimage.png",
-                "originalFileName": "image.png",
-                "displayName": "A brown dog",
-                "format": "format",
-                "width": 1500,
+                "hostedUrl": "https://s3.amazonaws.com/webflow-prod-assets/6258612d1ee792848f805dcf/660d83ce30f3a599ddb0bdb3_Screenshot%202024-03-20%20at%209.03.24%E2%80%AFPM-p-500.png",
+                "originalFileName": "Screenshot%202024-03-20%20at%209.03.24%E2%80%AFPM-p-500.png",
+                "displayName": "660d83ce30f3a599ddb0bdb3_Screenshot%202024-03-20%20at%209.03.24%E2%80%AFPM-p-500.png",
+                "format": "png",
+                "width": 500,
                 "height": 900,
-                "quality": 1,
+                "quality": 100,
                 "error": "error",
             }
         ],
-        "altText": "A red chair",
+        "altText": "A single candy wrapper",
     }
     expected_types: typing.Any = {
         "id": None,
@@ -295,7 +346,7 @@ async def test_list_folders(client: Webflow, async_client: AsyncWebflow) -> None
                 }
             },
         ),
-        "pagination": {"limit": None, "offset": None, "total": None},
+        "pagination": {"limit": "integer", "offset": "integer", "total": "integer"},
     }
     response = client.assets.list_folders(site_id="580e63e98c9a982ac9b8b741")
     validate_response(response, expected_response, expected_types)
