@@ -6,6 +6,7 @@ import typing_extensions
 from ..core.serialization import FieldMetadata
 import typing
 from .field_type import FieldType
+from .field_validations import FieldValidations
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 
 
@@ -51,6 +52,11 @@ class Field(UniversalBaseModel):
     )
     """
     Additional text to help anyone filling out this field
+    """
+
+    validations: typing.Optional[FieldValidations] = pydantic.Field(default=None)
+    """
+    The validations for the field
     """
 
     if IS_PYDANTIC_V2:
