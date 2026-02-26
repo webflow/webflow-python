@@ -19,7 +19,7 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
             "list",
             {0: {"id": None, "fromUrl": None, "toUrl": None}, 1: {"id": None, "fromUrl": None, "toUrl": None}},
         ),
-        "pagination": {"limit": None, "offset": None, "total": None},
+        "pagination": {"limit": "integer", "offset": "integer", "total": "integer"},
     }
     response = client.sites.redirects.list(site_id="580e63e98c9a982ac9b8b741")
     validate_response(response, expected_response, expected_types)
@@ -55,7 +55,7 @@ async def test_delete(client: Webflow, async_client: AsyncWebflow) -> None:
             "list",
             {0: {"id": None, "fromUrl": None, "toUrl": None}, 1: {"id": None, "fromUrl": None, "toUrl": None}},
         ),
-        "pagination": {"limit": None, "offset": None, "total": None},
+        "pagination": {"limit": "integer", "offset": "integer", "total": "integer"},
     }
     response = client.sites.redirects.delete(site_id="580e63e98c9a982ac9b8b741", redirect_id="66c4cb9a20cac35ed19500e6")
     validate_response(response, expected_response, expected_types)

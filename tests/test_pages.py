@@ -4,10 +4,13 @@ from webflow import Webflow
 from webflow import AsyncWebflow
 import typing
 from .utilities import validate_response
-import datetime
-from webflow import PageSeo
-from webflow import PageOpenGraph
+from webflow.resources.pages import PageMetadataWriteSeo
+from webflow.resources.pages import PageMetadataWriteOpenGraph
 from webflow import TextNodeWrite
+from webflow import Select
+from webflow import SelectNodeWriteChoicesItem
+from webflow import TextInputNodeWrite
+from webflow import SubmitButtonNodeWrite
 from webflow import ComponentInstanceNodePropertyOverridesWrite
 from webflow import ComponentInstanceNodePropertyOverridesWritePropertyOverridesItem
 
@@ -26,9 +29,9 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                 "lastUpdated": "2024-03-11T10:42:42Z",
                 "archived": False,
                 "draft": False,
-                "canBranch": True,
-                "isBranch": False,
-                "isMembersOnly": False,
+                "canBranch": False,
+                "isBranch": True,
+                "branchId": "68026fa68ef6dc744c75b833",
                 "seo": {
                     "title": "The Ultimate Hitchhiker's Guide to the Galaxy",
                     "description": "Everything you need to know about the galaxy, from avoiding Vogon poetry to the importance of towels.",
@@ -55,7 +58,7 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                 "draft": False,
                 "canBranch": True,
                 "isBranch": False,
-                "isMembersOnly": False,
+                "branchId": "68026fa68ef6dc744c75b833",
                 "seo": {
                     "title": "Celebrate Towel Day - The Hitchhiker's Guide to the Galaxy",
                     "description": "A guide to celebrating Towel Day, in honor of the most massively useful thing an interstellar hitchhiker can have.",
@@ -89,7 +92,7 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                     "draft": None,
                     "canBranch": None,
                     "isBranch": None,
-                    "isMembersOnly": None,
+                    "branchId": None,
                     "seo": {"title": None, "description": None},
                     "openGraph": {"title": None, "titleCopied": None, "description": None, "descriptionCopied": None},
                     "localeId": None,
@@ -108,7 +111,7 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                     "draft": None,
                     "canBranch": None,
                     "isBranch": None,
-                    "isMembersOnly": None,
+                    "branchId": None,
                     "seo": {"title": None, "description": None},
                     "openGraph": {"title": None, "titleCopied": None, "description": None, "descriptionCopied": None},
                     "localeId": None,
@@ -116,13 +119,15 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                 },
             },
         ),
-        "pagination": {"limit": None, "offset": None, "total": None},
+        "pagination": {"limit": "integer", "offset": "integer", "total": "integer"},
     }
-    response = client.pages.list(site_id="580e63e98c9a982ac9b8b741", locale_id="65427cf400e02b306eaa04a0")
+    response = client.pages.list(
+        site_id="580e63e98c9a982ac9b8b741", locale_id="65427cf400e02b306eaa04a0", limit=1, offset=1
+    )
     validate_response(response, expected_response, expected_types)
 
     async_response = await async_client.pages.list(
-        site_id="580e63e98c9a982ac9b8b741", locale_id="65427cf400e02b306eaa04a0"
+        site_id="580e63e98c9a982ac9b8b741", locale_id="65427cf400e02b306eaa04a0", limit=1, offset=1
     )
     validate_response(async_response, expected_response, expected_types)
 
@@ -139,9 +144,9 @@ async def test_get_metadata(client: Webflow, async_client: AsyncWebflow) -> None
         "lastUpdated": "2024-03-11T10:42:42Z",
         "archived": False,
         "draft": False,
-        "canBranch": True,
-        "isBranch": False,
-        "isMembersOnly": False,
+        "canBranch": False,
+        "isBranch": True,
+        "branchId": "68026fa68ef6dc744c75b833",
         "seo": {
             "title": "The Ultimate Hitchhiker's Guide to the Galaxy",
             "description": "Everything you need to know about the galaxy, from avoiding Vogon poetry to the importance of towels.",
@@ -168,7 +173,7 @@ async def test_get_metadata(client: Webflow, async_client: AsyncWebflow) -> None
         "draft": None,
         "canBranch": None,
         "isBranch": None,
-        "isMembersOnly": None,
+        "branchId": None,
         "seo": {"title": None, "description": None},
         "openGraph": {"title": None, "titleCopied": None, "description": None, "descriptionCopied": None},
         "localeId": None,
@@ -195,9 +200,9 @@ async def test_update_page_settings(client: Webflow, async_client: AsyncWebflow)
         "lastUpdated": "2024-03-11T10:42:42Z",
         "archived": False,
         "draft": False,
-        "canBranch": True,
-        "isBranch": False,
-        "isMembersOnly": False,
+        "canBranch": False,
+        "isBranch": True,
+        "branchId": "68026fa68ef6dc744c75b833",
         "seo": {
             "title": "The Ultimate Hitchhiker's Guide to the Galaxy",
             "description": "Everything you need to know about the galaxy, from avoiding Vogon poetry to the importance of towels.",
@@ -224,7 +229,7 @@ async def test_update_page_settings(client: Webflow, async_client: AsyncWebflow)
         "draft": None,
         "canBranch": None,
         "isBranch": None,
-        "isMembersOnly": None,
+        "branchId": None,
         "seo": {"title": None, "description": None},
         "openGraph": {"title": None, "titleCopied": None, "description": None, "descriptionCopied": None},
         "localeId": None,
@@ -233,56 +238,36 @@ async def test_update_page_settings(client: Webflow, async_client: AsyncWebflow)
     response = client.pages.update_page_settings(
         page_id="63c720f9347c2139b248e552",
         locale_id="65427cf400e02b306eaa04a0",
-        id="6596da6045e56dee495bcbba",
-        site_id="6258612d1ee792848f805dcf",
         title="Guide to the Galaxy",
         slug="guide-to-the-galaxy",
-        created_on=datetime.datetime.fromisoformat("2024-03-11 10:42:00+00:00"),
-        last_updated=datetime.datetime.fromisoformat("2024-03-11 10:42:42+00:00"),
-        archived=False,
-        draft=False,
-        can_branch=True,
-        is_branch=False,
-        seo=PageSeo(
+        seo=PageMetadataWriteSeo(
             title="The Ultimate Hitchhiker's Guide to the Galaxy",
             description="Everything you need to know about the galaxy, from avoiding Vogon poetry to the importance of towels.",
         ),
-        open_graph=PageOpenGraph(
+        open_graph=PageMetadataWriteOpenGraph(
             title="Explore the Cosmos with The Ultimate Guide",
             title_copied=False,
             description="Dive deep into the mysteries of the universe with your guide to everything galactic.",
             description_copied=False,
         ),
-        page_locale_id="653fd9af6a07fc9cfd7a5e57",
-        published_path="/en-us/guide-to-the-galaxy",
     )
     validate_response(response, expected_response, expected_types)
 
     async_response = await async_client.pages.update_page_settings(
         page_id="63c720f9347c2139b248e552",
         locale_id="65427cf400e02b306eaa04a0",
-        id="6596da6045e56dee495bcbba",
-        site_id="6258612d1ee792848f805dcf",
         title="Guide to the Galaxy",
         slug="guide-to-the-galaxy",
-        created_on=datetime.datetime.fromisoformat("2024-03-11 10:42:00+00:00"),
-        last_updated=datetime.datetime.fromisoformat("2024-03-11 10:42:42+00:00"),
-        archived=False,
-        draft=False,
-        can_branch=True,
-        is_branch=False,
-        seo=PageSeo(
+        seo=PageMetadataWriteSeo(
             title="The Ultimate Hitchhiker's Guide to the Galaxy",
             description="Everything you need to know about the galaxy, from avoiding Vogon poetry to the importance of towels.",
         ),
-        open_graph=PageOpenGraph(
+        open_graph=PageMetadataWriteOpenGraph(
             title="Explore the Cosmos with The Ultimate Guide",
             title_copied=False,
             description="Dive deep into the mysteries of the universe with your guide to everything galactic.",
             description_copied=False,
         ),
-        page_locale_id="653fd9af6a07fc9cfd7a5e57",
-        published_path="/en-us/guide-to-the-galaxy",
     )
     validate_response(async_response, expected_response, expected_types)
 
@@ -290,57 +275,54 @@ async def test_update_page_settings(client: Webflow, async_client: AsyncWebflow)
 async def test_get_content(client: Webflow, async_client: AsyncWebflow) -> None:
     expected_response: typing.Any = {
         "pageId": "658205daa3e8206a523b5ad4",
+        "branchId": "68026fa68ef6dc744c75b833",
         "nodes": [
+            {"id": "id", "text": {}, "attributes": {"key": "value"}, "type": "text"},
+            {"id": "id", "text": {}, "attributes": {"key": "value"}, "type": "text"},
+            {"id": "id", "image": {}, "attributes": {"key": "value"}, "type": "image"},
             {
-                "type": "component-instance",
-                "id": "a245c12d-995b-55ee-5ec7-aa36a6cad623",
-                "componentId": "nodes",
-                "propertyOverrides": [{"propertyId": "7dd14c08-2e96-8d3d-2b19-b5c03642a0f0"}],
+                "id": "id",
+                "choices": [{"value": "value", "text": "text"}],
+                "attributes": {"key": "value"},
+                "type": "select",
             },
+            {"id": "id", "placeholder": "placeholder", "attributes": {"key": "value"}, "type": "text-input"},
+            {"id": "id", "text": {}, "attributes": {"key": "value"}, "type": "text"},
             {
-                "type": "component-instance",
-                "id": "a245c12d-995b-55ee-5ec7-aa36a6cad627",
-                "componentId": "nodes",
+                "id": "id",
+                "componentId": "componentId",
                 "propertyOverrides": [{"propertyId": "7dd14c08-2e96-8d3d-2b19-b5c03642a0f0"}],
-            },
-            {
                 "type": "component-instance",
-                "id": "a245c12d-995b-55ee-5ec7-aa36a6cad629",
-                "componentId": "nodes",
-                "propertyOverrides": [{"propertyId": "7dd14c08-2e96-8d3d-2b19-b5c03642a0f0"}],
-            },
-            {
-                "type": "component-instance",
-                "id": "a245c12d-995b-55ee-5ec7-aa36a6cad631",
-                "componentId": "6258612d1ee792848f805dcf",
-                "propertyOverrides": [
-                    {
-                        "propertyId": "a245c12d-995b-55ee-5ec7-aa36a6cad633",
-                        "type": "Plain Text",
-                        "label": "Catchphrase",
-                        "text": {"text": "Don't Panic!"},
-                    },
-                    {
-                        "propertyId": "a245c12d-995b-55ee-5ec7-aa36a6cad635",
-                        "type": "Rich Text",
-                        "label": "Tagline",
-                        "text": {"html": "<div><p>Always know where your towel is.</p></div>"},
-                    },
-                ],
             },
         ],
         "pagination": {"limit": 4, "offset": 0, "total": 4},
+        "lastUpdated": "2016-10-24T19:42:38Z",
     }
     expected_types: typing.Any = {
         "pageId": None,
-        "nodes": ("list", {0: "no_validate", 1: "no_validate", 2: "no_validate", 3: "no_validate"}),
-        "pagination": {"limit": None, "offset": None, "total": None},
+        "branchId": None,
+        "nodes": (
+            "list",
+            {
+                0: "no_validate",
+                1: "no_validate",
+                2: "no_validate",
+                3: "no_validate",
+                4: "no_validate",
+                5: "no_validate",
+                6: "no_validate",
+            },
+        ),
+        "pagination": {"limit": "integer", "offset": "integer", "total": "integer"},
+        "lastUpdated": "datetime",
     }
-    response = client.pages.get_content(page_id="63c720f9347c2139b248e552", locale_id="65427cf400e02b306eaa04a0")
+    response = client.pages.get_content(
+        page_id="63c720f9347c2139b248e552", locale_id="65427cf400e02b306eaa04a0", limit=1, offset=1
+    )
     validate_response(response, expected_response, expected_types)
 
     async_response = await async_client.pages.get_content(
-        page_id="63c720f9347c2139b248e552", locale_id="65427cf400e02b306eaa04a0"
+        page_id="63c720f9347c2139b248e552", locale_id="65427cf400e02b306eaa04a0", limit=1, offset=1
     )
     validate_response(async_response, expected_response, expected_types)
 
@@ -358,6 +340,17 @@ async def test_update_static_content(client: Webflow, async_client: AsyncWebflow
             TextNodeWrite(
                 node_id="a245c12d-995b-55ee-5ec7-aa36a6cad627",
                 text="<div><h3>Don't Panic!</h3><p>Always know where your towel is.</p></div>",
+            ),
+            Select(
+                node_id="a245c12d-995b-55ee-5ec7-aa36a6cad635",
+                choices=[
+                    SelectNodeWriteChoicesItem(value="choice-1", text="First choice"),
+                    SelectNodeWriteChoicesItem(value="choice-2", text="Second choice"),
+                ],
+            ),
+            TextInputNodeWrite(node_id="a245c12d-995b-55ee-5ec7-aa36a6cad642", placeholder="Enter something here..."),
+            SubmitButtonNodeWrite(
+                node_id="a245c12d-995b-55ee-5ec7-aa36a6cad671", value="Submit", waiting_text="Submitting..."
             ),
             ComponentInstanceNodePropertyOverridesWrite(
                 node_id="a245c12d-995b-55ee-5ec7-aa36a6cad629",
@@ -385,6 +378,17 @@ async def test_update_static_content(client: Webflow, async_client: AsyncWebflow
             TextNodeWrite(
                 node_id="a245c12d-995b-55ee-5ec7-aa36a6cad627",
                 text="<div><h3>Don't Panic!</h3><p>Always know where your towel is.</p></div>",
+            ),
+            Select(
+                node_id="a245c12d-995b-55ee-5ec7-aa36a6cad635",
+                choices=[
+                    SelectNodeWriteChoicesItem(value="choice-1", text="First choice"),
+                    SelectNodeWriteChoicesItem(value="choice-2", text="Second choice"),
+                ],
+            ),
+            TextInputNodeWrite(node_id="a245c12d-995b-55ee-5ec7-aa36a6cad642", placeholder="Enter something here..."),
+            SubmitButtonNodeWrite(
+                node_id="a245c12d-995b-55ee-5ec7-aa36a6cad671", value="Submit", waiting_text="Submitting..."
             ),
             ComponentInstanceNodePropertyOverridesWrite(
                 node_id="a245c12d-995b-55ee-5ec7-aa36a6cad629",

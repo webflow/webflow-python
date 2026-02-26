@@ -2,6 +2,6 @@
 
 import typing
 from .invalid_scopes import InvalidScopes
-from .users_not_enabled import UsersNotEnabled
+from .not_enterprise_plan_site import NotEnterprisePlanSite
 
-ForbiddenErrorBody = typing.Union[InvalidScopes, UsersNotEnabled]
+ForbiddenErrorBody = typing.Union[InvalidScopes, NotEnterprisePlanSite]
