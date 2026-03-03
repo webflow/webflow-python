@@ -7,14 +7,15 @@ service:
     get-custom-code:
       path: /sites/{site_id}/custom_code
       method: GET
-      auth: true
-      docs: >
-        Get all registered scripts that have been applied to a specific Site. 
+      auth:
+        - OAuth2:
+            - custom_code:read
+      docs: |
+        Get all scripts applied to a site by the App. 
 
-
-        <Note>Access to this endpoint requires a bearer token from a [Data
-        Client App](/data/docs/getting-started-data-clients).</Note>    
-
+        <Note title="Script Registration">
+          To apply a script to a site or page, the script must first be registered to a site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints. See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
+        </Note> 
 
         Required scope | `custom_code:read`
       source:
@@ -27,6 +28,7 @@ service:
       response:
         docs: Request was successful
         type: root.ScriptApplyList
+        status-code: 200
       errors:
         - root.BadRequestError
         - root.UnauthorizedError
@@ -54,22 +56,20 @@ service:
     upsert-custom-code:
       path: /sites/{site_id}/custom_code
       method: PUT
-      auth: true
+      auth:
+        - OAuth2:
+            - custom_code:write
       docs: >
-        Add a registered script to a Site. 
+        Apply registered scripts to a site. If you have multiple scripts your
+        App needs to apply or maintain on a site, ensure they are always
+        included in the request body for this endpoint. To remove individual
+        scripts, simply call this endpoint without the script in the request
+        body.
 
 
-        In order to use the Custom Code APIs for Sites and Pages, Custom Code
-        Scripts must first be registered 
-
-        to a Site via the `registered_scripts` endpoints, and then applied to a
-        Site or Page using the appropriate
-
-        `custom_code` endpoints. 
-
-
-        <Note>Access to this endpoint requires a bearer token from a [Data
-        Client App](/data/docs/getting-started-data-clients).</Note>    
+        <Note title="Script Registration">
+          To apply a script to a site or page, the script must first be registered to a site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints. See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
+        </Note>
 
 
         Required scope | `custom_code:write`
@@ -86,6 +86,7 @@ service:
       response:
         docs: Request was successful
         type: root.ScriptApplyList
+        status-code: 200
       errors:
         - root.BadRequestError
         - root.UnauthorizedError
@@ -123,13 +124,22 @@ service:
     delete-custom-code:
       path: /sites/{site_id}/custom_code
       method: DELETE
-      auth: true
+      auth:
+        - OAuth2:
+            - custom_code:write
       docs: >
-        Delete the custom code block that an app created for a Site
+        Remove all scripts from a site applied by the App. This endpoint will
+        not remove scripts from the site's registered scripts.
 
 
-        <Note>Access to this endpoint requires a bearer token from a [Data
-        Client App](/data/docs/getting-started-data-clients).</Note>    
+        To remove individual scripts applied by the App, use the [Add/Update
+        Custom
+        Code](/data/reference/custom-code/custom-code-sites/upsert-custom-code)
+        endpoint.
+
+
+        <Note>Access to this endpoint requires a bearer token obtained from an
+        [OAuth Code Grant Flow](/data/reference/oauth-app).</Note>
 
 
         Required scope | `custom_code:write`
@@ -152,13 +162,19 @@ service:
     list-custom-code-blocks:
       path: /sites/{site_id}/custom_code/blocks
       method: GET
-      auth: true
+      auth:
+        - OAuth2:
+            - custom_code:read
       docs: >
-        Get all instances of Custom Code applied to a Site or Pages. 
+        Get a list of scripts that have been applied to a site and/or individual
+        pages. 
 
 
-        <Note>Access to this endpoint requires a bearer token from a [Data
-        Client App](/data/docs/getting-started-data-clients).</Note>    
+        <Note title="Script Registration">
+          To apply a script to a site or page, the script must first be registered to a site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints. 
+          
+          See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
+        </Note>
 
 
         Required scope | `custom_code:read`
@@ -173,16 +189,17 @@ service:
         name: ScriptsListCustomCodeBlocksRequest
         query-parameters:
           offset:
-            type: optional<double>
+            type: optional<integer>
             docs: >-
               Offset used for pagination if the results have more than limit
               records
           limit:
-            type: optional<double>
+            type: optional<integer>
             docs: 'Maximum number of records to be returned (max limit: 100)'
       response:
         docs: Request was successful
         type: root.ListCustomCodeBlocks
+        status-code: 200
       errors:
         - root.BadRequestError
         - root.UnauthorizedError
@@ -192,6 +209,9 @@ service:
       examples:
         - path-parameters:
             site_id: 580e63e98c9a982ac9b8b741
+          query-parameters:
+            offset: 1
+            limit: 1
           response:
             body:
               blocks:
