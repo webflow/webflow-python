@@ -20,9 +20,9 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                 "disputedOn": "2018-12-03T22:06:15Z",
                 "disputeUpdatedOn": "2018-12-03T22:06:15Z",
                 "disputeLastStatus": "warning_needs_response",
-                "customerPaid": {"unit": "USD", "value": "5892", "string": " 211.55 USD"},
-                "netAmount": {"unit": "USD", "value": "5892", "string": " 200.89 USD"},
-                "applicationFee": {"unit": "USD", "value": "5892", "string": " 4.23 USD"},
+                "customerPaid": {"unit": "USD", "value": "5892", "string": "$ 211.55 USD"},
+                "netAmount": {"unit": "USD", "value": "5892", "string": "$ 200.89 USD"},
+                "applicationFee": {"unit": "USD", "value": "5892", "string": "$ 4.23 USD"},
                 "allAddresses": [
                     {
                         "type": "billing",
@@ -73,7 +73,7 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                 "purchasedItems": [
                     {
                         "count": 2,
-                        "rowTotal": {"unit": "USD", "value": "5892", "string": " 111.22 USD"},
+                        "rowTotal": {"unit": "USD", "value": "5892", "string": "$ 111.22 USD"},
                         "productId": "66072fb61b89448912e26791",
                         "productName": "Luxurious Fresh Ball",
                         "productSlug": "luxurious-fresh-ball",
@@ -82,9 +82,9 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                         "variantSlug": "luxurious-fresh-ball-generic-bronze-practical-plastic",
                         "variantSKU": "luxurious-fresh-ball-generic-bronze-practical-plastic",
                         "variantImage": {
-                            "url": "https://d1otoma47x30pg.cloudfront.net/66072f39417a2a35b2589cc7/66072fb51b89448912e2672c_image14.jpeg"
+                            "url": "https://dev-assets.website-files.com/66072f39417a2a35b2589cc7/66072fb51b89448912e2672c_image14.jpeg"
                         },
-                        "variantPrice": {"unit": "USD", "value": "5892", "string": " 55.61 USD"},
+                        "variantPrice": {"unit": "USD", "value": "5892", "string": "$ 55.61 USD"},
                         "weight": 11,
                         "width": 82,
                         "height": 70,
@@ -92,7 +92,7 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                     },
                     {
                         "count": 1,
-                        "rowTotal": {"unit": "USD", "value": "5892", "string": " 83.09 USD"},
+                        "rowTotal": {"unit": "USD", "value": "5892", "string": "$ 83.09 USD"},
                         "productId": "66072fb61b89448912e2678b",
                         "productName": "Incredible Bronze Towels",
                         "productSlug": "incredible-bronze-towels",
@@ -101,9 +101,10 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                         "variantSlug": "incredible-bronze-towels-sleek-frozen-incredible-metal",
                         "variantSKU": "incredible-bronze-towels-sleek-frozen-incredible-metal",
                         "variantImage": {
-                            "url": "https://d1otoma47x30pg.cloudfront.net/66072f39417a2a35b2589cc7/66072fb51b89448912e26729_image16.jpeg"
+                            "url": "https://dev-assets.website-files.com/66072f39417a2a35b2589cc7/66072fb51b89448912e26729_image16.jpeg"
                         },
-                        "variantPrice": {"unit": "USD", "value": "5892", "string": " 83.09 USD"},
+                        "variantPrice": {"unit": "USD", "value": "5892", "string": "$ 83.09 USD"},
+                        "weight": 5,
                         "width": 19,
                         "height": 72,
                         "length": 18,
@@ -111,10 +112,12 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                 ],
                 "purchasedItemsCount": 3,
                 "stripeDetails": {
+                    "subscriptionId": "sub_1J6xwG2eZvKYlo2CXu9Zt0Tn",
                     "paymentMethod": "pm_1P410gJYFi4lcbXWbeKghqjK",
                     "paymentIntentId": "pi_3P410iJYFi4lcbXW0EKKgcVg",
                     "customerId": "cus_Ptod8KJBiiPgnH",
                     "chargeId": "ch_3P410iJYFi4lcbXW0DxUkzCH",
+                    "refundReason": "requested_by_customer",
                 },
                 "stripeCard": {
                     "last4": "4242",
@@ -142,7 +145,7 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                             "type": "tax",
                             "name": "State Taxes",
                             "description": "CA Taxes (6.25%)",
-                            "price": {"unit": "USD", "value": "5892", "string": "3.44"},
+                            "price": {"unit": "USD", "value": "5892", "string": "$3.44"},
                         }
                     ]
                 },
@@ -165,9 +168,9 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                 "disputedOn": "2018-12-03T22:06:15Z",
                 "disputeUpdatedOn": "2018-12-03T22:06:15Z",
                 "disputeLastStatus": "warning_needs_response",
-                "customerPaid": {"unit": "USD", "value": "5892", "string": " 118.73 USD"},
-                "netAmount": {"unit": "USD", "value": "5892", "string": " 112.62 USD"},
-                "applicationFee": {"unit": "USD", "value": "5892", "string": " 2.37 USD"},
+                "customerPaid": {"unit": "USD", "value": "5892", "string": "$ 118.73 USD"},
+                "netAmount": {"unit": "USD", "value": "5892", "string": "$ 112.62 USD"},
+                "applicationFee": {"unit": "USD", "value": "5892", "string": "$ 2.37 USD"},
                 "allAddresses": [
                     {
                         "type": "billing",
@@ -217,7 +220,7 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                 "purchasedItems": [
                     {
                         "count": 1,
-                        "rowTotal": {"unit": "USD", "value": "5892", "string": " 55.61 USD"},
+                        "rowTotal": {"unit": "USD", "value": "5892", "string": "$ 55.61 USD"},
                         "productId": "66072fb61b89448912e26791",
                         "productName": "Luxurious Fresh Ball",
                         "productSlug": "luxurious-fresh-ball",
@@ -226,9 +229,9 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                         "variantSlug": "luxurious-fresh-ball-generic-bronze-practical-plastic",
                         "variantSKU": "luxurious-fresh-ball-generic-bronze-practical-plastic",
                         "variantImage": {
-                            "url": "https://d1otoma47x30pg.cloudfront.net/66072f39417a2a35b2589cc7/66072fb51b89448912e2672c_image14.jpeg"
+                            "url": "https://dev-assets.website-files.com/66072f39417a2a35b2589cc7/66072fb51b89448912e2672c_image14.jpeg"
                         },
-                        "variantPrice": {"unit": "USD", "value": "5892", "string": " 55.61 USD"},
+                        "variantPrice": {"unit": "USD", "value": "5892", "string": "$ 55.61 USD"},
                         "weight": 11,
                         "width": 82,
                         "height": 70,
@@ -236,7 +239,7 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                     },
                     {
                         "count": 1,
-                        "rowTotal": {"unit": "USD", "value": "5892", "string": " 53.44 USD"},
+                        "rowTotal": {"unit": "USD", "value": "5892", "string": "$ 53.44 USD"},
                         "productId": "66072fb61b89448912e26799",
                         "productName": "Recycled Steel Gloves",
                         "productSlug": "recycled-steel-gloves",
@@ -245,9 +248,9 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                         "variantSlug": "recycled-steel-gloves-electronic-granite-handcrafted-grey",
                         "variantSKU": "recycled-steel-gloves-electronic-granite-handcrafted-grey",
                         "variantImage": {
-                            "url": "https://d1otoma47x30pg.cloudfront.net/66072f39417a2a35b2589cc7/66072fb51b89448912e2671e_image2.jpeg"
+                            "url": "https://dev-assets.website-files.com/66072f39417a2a35b2589cc7/66072fb51b89448912e2671e_image2.jpeg"
                         },
-                        "variantPrice": {"unit": "USD", "value": "5892", "string": " 53.44 USD"},
+                        "variantPrice": {"unit": "USD", "value": "5892", "string": "$ 53.44 USD"},
                         "weight": 38,
                         "width": 76,
                         "height": 85,
@@ -256,6 +259,7 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                 ],
                 "purchasedItemsCount": 2,
                 "stripeDetails": {
+                    "subscriptionId": "sub_1J6xwG2eZvKYlo2CXu9Zt0Tn",
                     "paymentMethod": "pm_1OzmzBJYFi4lcbXWHKNdXU7j",
                     "paymentIntentId": "pi_3OzmzDJYFi4lcbXW1hTBW6ft",
                     "customerId": "cus_PpRsNHwWdUoRKR",
@@ -284,28 +288,28 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                 "hasDownloads": False,
                 "paymentProcessor": "stripe",
                 "totals": {
-                    "subtotal": {"unit": "USD", "value": "5892", "string": " 109.05 USD"},
+                    "subtotal": {"unit": "USD", "value": "5892", "string": "$ 109.05 USD"},
                     "extras": [
                         {
                             "type": "tax",
                             "name": "State Taxes",
                             "description": "NY Taxes (4.00%)",
-                            "price": {"unit": "USD", "value": "5892", "string": " 4.36 USD"},
+                            "price": {"unit": "USD", "value": "5892", "string": "$ 4.36 USD"},
                         },
                         {
                             "type": "tax",
                             "name": "City Taxes",
                             "description": "NEW YORK Taxes (4.88%)",
-                            "price": {"unit": "USD", "value": "5892", "string": " 5.32 USD"},
+                            "price": {"unit": "USD", "value": "5892", "string": "$ 5.32 USD"},
                         },
                         {
                             "type": "shipping",
                             "name": "Flat",
                             "description": "",
-                            "price": {"unit": "USD", "value": "5892", "string": " 0.00 USD"},
+                            "price": {"unit": "USD", "value": "5892", "string": "$ 0.00 USD"},
                         },
                     ],
-                    "total": {"unit": "USD", "value": "5892", "string": " 118.73 USD"},
+                    "total": {"unit": "USD", "value": "5892", "string": "$ 118.73 USD"},
                 },
                 "downloadFiles": [
                     {
@@ -418,6 +422,7 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                                 "variantSKU": None,
                                 "variantImage": {"url": None},
                                 "variantPrice": {"unit": None, "value": None, "string": None},
+                                "weight": None,
                                 "width": None,
                                 "height": None,
                                 "length": None,
@@ -426,10 +431,12 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                     ),
                     "purchasedItemsCount": None,
                     "stripeDetails": {
+                        "subscriptionId": None,
                         "paymentMethod": None,
                         "paymentIntentId": None,
                         "customerId": None,
                         "chargeId": None,
+                        "refundReason": None,
                     },
                     "stripeCard": {
                         "last4": None,
@@ -570,6 +577,7 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                     ),
                     "purchasedItemsCount": None,
                     "stripeDetails": {
+                        "subscriptionId": None,
                         "paymentMethod": None,
                         "paymentIntentId": None,
                         "customerId": None,
@@ -628,12 +636,14 @@ async def test_list_(client: Webflow, async_client: AsyncWebflow) -> None:
                 },
             },
         ),
-        "pagination": {"limit": None, "offset": None, "total": None},
+        "pagination": {"limit": "integer", "offset": "integer", "total": "integer"},
     }
-    response = client.orders.list(site_id="580e63e98c9a982ac9b8b741")
+    response = client.orders.list(site_id="580e63e98c9a982ac9b8b741", status="pending", offset=1, limit=1)
     validate_response(response, expected_response, expected_types)
 
-    async_response = await async_client.orders.list(site_id="580e63e98c9a982ac9b8b741")
+    async_response = await async_client.orders.list(
+        site_id="580e63e98c9a982ac9b8b741", status="pending", offset=1, limit=1
+    )
     validate_response(async_response, expected_response, expected_types)
 
 
@@ -649,9 +659,9 @@ async def test_get(client: Webflow, async_client: AsyncWebflow) -> None:
         "disputedOn": "2024-03-29T21:29:21Z",
         "disputeUpdatedOn": "2024-03-29T21:29:21Z",
         "disputeLastStatus": "charge_refunded",
-        "customerPaid": {"unit": "USD", "value": "5892", "string": " 118.73 USD"},
-        "netAmount": {"unit": "USD", "value": "5892", "string": " 112.62 USD"},
-        "applicationFee": {"unit": "USD", "value": "5892", "string": " 2.37 USD"},
+        "customerPaid": {"unit": "USD", "value": "5892", "string": "$ 118.73 USD"},
+        "netAmount": {"unit": "USD", "value": "5892", "string": "$ 112.62 USD"},
+        "applicationFee": {"unit": "USD", "value": "5892", "string": "$ 2.37 USD"},
         "allAddresses": [
             {
                 "type": "billing",
@@ -705,7 +715,7 @@ async def test_get(client: Webflow, async_client: AsyncWebflow) -> None:
         "purchasedItems": [
             {
                 "count": 1,
-                "rowTotal": {"unit": "USD", "value": "5892", "string": " 55.61 USD"},
+                "rowTotal": {"unit": "USD", "value": "5892", "string": "$ 55.61 USD"},
                 "productId": "66072fb61b89448912e26791",
                 "productName": "Luxurious Fresh Ball",
                 "productSlug": "luxurious-fresh-ball",
@@ -714,9 +724,9 @@ async def test_get(client: Webflow, async_client: AsyncWebflow) -> None:
                 "variantSlug": "luxurious-fresh-ball-generic-bronze-practical-plastic",
                 "variantSKU": "luxurious-fresh-ball-generic-bronze-practical-plastic",
                 "variantImage": {
-                    "url": "https://d1otoma47x30pg.cloudfront.net/66072f39417a2a35b2589cc7/66072fb51b89448912e2672c_image14.jpeg"
+                    "url": "https://dev-assets.website-files.com/66072f39417a2a35b2589cc7/66072fb51b89448912e2672c_image14.jpeg"
                 },
-                "variantPrice": {"unit": "USD", "value": "5892", "string": " 55.61 USD"},
+                "variantPrice": {"unit": "USD", "value": "5892", "string": "$ 55.61 USD"},
                 "weight": 11,
                 "width": 82,
                 "height": 70,
@@ -724,7 +734,7 @@ async def test_get(client: Webflow, async_client: AsyncWebflow) -> None:
             },
             {
                 "count": 1,
-                "rowTotal": {"unit": "USD", "value": "5892", "string": " 53.44 USD"},
+                "rowTotal": {"unit": "USD", "value": "5892", "string": "$ 53.44 USD"},
                 "productId": "66072fb61b89448912e26799",
                 "productName": "Recycled Steel Gloves",
                 "productSlug": "recycled-steel-gloves",
@@ -733,9 +743,9 @@ async def test_get(client: Webflow, async_client: AsyncWebflow) -> None:
                 "variantSlug": "recycled-steel-gloves-electronic-granite-handcrafted-grey",
                 "variantSKU": "recycled-steel-gloves-electronic-granite-handcrafted-grey",
                 "variantImage": {
-                    "url": "https://d1otoma47x30pg.cloudfront.net/66072f39417a2a35b2589cc7/66072fb51b89448912e2671e_image2.jpeg"
+                    "url": "https://dev-assets.website-files.com/66072f39417a2a35b2589cc7/66072fb51b89448912e2671e_image2.jpeg"
                 },
-                "variantPrice": {"unit": "USD", "value": "5892", "string": " 53.44 USD"},
+                "variantPrice": {"unit": "USD", "value": "5892", "string": "$ 53.44 USD"},
                 "weight": 38,
                 "width": 76,
                 "height": 85,
@@ -774,28 +784,28 @@ async def test_get(client: Webflow, async_client: AsyncWebflow) -> None:
         "hasDownloads": False,
         "paymentProcessor": "stripe",
         "totals": {
-            "subtotal": {"unit": "USD", "value": "5892", "string": " 109.05 USD"},
+            "subtotal": {"unit": "USD", "value": "5892", "string": "$ 109.05 USD"},
             "extras": [
                 {
                     "type": "tax",
                     "name": "State Taxes",
                     "description": "NY Taxes (4.00%)",
-                    "price": {"unit": "USD", "value": "5892", "string": " 4.36 USD"},
+                    "price": {"unit": "USD", "value": "5892", "string": "$ 4.36 USD"},
                 },
                 {
                     "type": "tax",
                     "name": "City Taxes",
                     "description": "NEW YORK Taxes (4.88%)",
-                    "price": {"unit": "USD", "value": "5892", "string": " 5.32 USD"},
+                    "price": {"unit": "USD", "value": "5892", "string": "$ 5.32 USD"},
                 },
                 {
                     "type": "shipping",
                     "name": "Flat",
                     "description": "",
-                    "price": {"unit": "USD", "value": "5892", "string": " 0.00 USD"},
+                    "price": {"unit": "USD", "value": "5892", "string": "$ 0.00 USD"},
                 },
             ],
-            "total": {"unit": "USD", "value": "5892", "string": " 118.73 USD"},
+            "total": {"unit": "USD", "value": "5892", "string": "$ 118.73 USD"},
         },
         "downloadFiles": [
             {
@@ -987,9 +997,9 @@ async def test_update(client: Webflow, async_client: AsyncWebflow) -> None:
         "disputedOn": "2024-03-29T21:29:21Z",
         "disputeUpdatedOn": "2024-03-29T21:29:21Z",
         "disputeLastStatus": "charge_refunded",
-        "customerPaid": {"unit": "USD", "value": "5892", "string": " 118.73 USD"},
-        "netAmount": {"unit": "USD", "value": "5892", "string": " 112.62 USD"},
-        "applicationFee": {"unit": "USD", "value": "5892", "string": " 2.37 USD"},
+        "customerPaid": {"unit": "USD", "value": "5892", "string": "$ 118.73 USD"},
+        "netAmount": {"unit": "USD", "value": "5892", "string": "$ 112.62 USD"},
+        "applicationFee": {"unit": "USD", "value": "5892", "string": "$ 2.37 USD"},
         "allAddresses": [
             {
                 "type": "billing",
@@ -1043,7 +1053,7 @@ async def test_update(client: Webflow, async_client: AsyncWebflow) -> None:
         "purchasedItems": [
             {
                 "count": 1,
-                "rowTotal": {"unit": "USD", "value": "5892", "string": " 55.61 USD"},
+                "rowTotal": {"unit": "USD", "value": "5892", "string": "$ 55.61 USD"},
                 "productId": "66072fb61b89448912e26791",
                 "productName": "Luxurious Fresh Ball",
                 "productSlug": "luxurious-fresh-ball",
@@ -1052,9 +1062,9 @@ async def test_update(client: Webflow, async_client: AsyncWebflow) -> None:
                 "variantSlug": "luxurious-fresh-ball-generic-bronze-practical-plastic",
                 "variantSKU": "luxurious-fresh-ball-generic-bronze-practical-plastic",
                 "variantImage": {
-                    "url": "https://d1otoma47x30pg.cloudfront.net/66072f39417a2a35b2589cc7/66072fb51b89448912e2672c_image14.jpeg"
+                    "url": "https://dev-assets.website-files.com/66072f39417a2a35b2589cc7/66072fb51b89448912e2672c_image14.jpeg"
                 },
-                "variantPrice": {"unit": "USD", "value": "5892", "string": " 55.61 USD"},
+                "variantPrice": {"unit": "USD", "value": "5892", "string": "$ 55.61 USD"},
                 "weight": 11,
                 "width": 82,
                 "height": 70,
@@ -1062,7 +1072,7 @@ async def test_update(client: Webflow, async_client: AsyncWebflow) -> None:
             },
             {
                 "count": 1,
-                "rowTotal": {"unit": "USD", "value": "5892", "string": " 53.44 USD"},
+                "rowTotal": {"unit": "USD", "value": "5892", "string": "$ 53.44 USD"},
                 "productId": "66072fb61b89448912e26799",
                 "productName": "Recycled Steel Gloves",
                 "productSlug": "recycled-steel-gloves",
@@ -1071,9 +1081,9 @@ async def test_update(client: Webflow, async_client: AsyncWebflow) -> None:
                 "variantSlug": "recycled-steel-gloves-electronic-granite-handcrafted-grey",
                 "variantSKU": "recycled-steel-gloves-electronic-granite-handcrafted-grey",
                 "variantImage": {
-                    "url": "https://d1otoma47x30pg.cloudfront.net/66072f39417a2a35b2589cc7/66072fb51b89448912e2671e_image2.jpeg"
+                    "url": "https://dev-assets.website-files.com/66072f39417a2a35b2589cc7/66072fb51b89448912e2671e_image2.jpeg"
                 },
-                "variantPrice": {"unit": "USD", "value": "5892", "string": " 53.44 USD"},
+                "variantPrice": {"unit": "USD", "value": "5892", "string": "$ 53.44 USD"},
                 "weight": 38,
                 "width": 76,
                 "height": 85,
@@ -1112,28 +1122,28 @@ async def test_update(client: Webflow, async_client: AsyncWebflow) -> None:
         "hasDownloads": False,
         "paymentProcessor": "stripe",
         "totals": {
-            "subtotal": {"unit": "USD", "value": "5892", "string": " 109.05 USD"},
+            "subtotal": {"unit": "USD", "value": "5892", "string": "$ 109.05 USD"},
             "extras": [
                 {
                     "type": "tax",
                     "name": "State Taxes",
                     "description": "NY Taxes (4.00%)",
-                    "price": {"unit": "USD", "value": "5892", "string": " 4.36 USD"},
+                    "price": {"unit": "USD", "value": "5892", "string": "$ 4.36 USD"},
                 },
                 {
                     "type": "tax",
                     "name": "City Taxes",
                     "description": "NEW YORK Taxes (4.88%)",
-                    "price": {"unit": "USD", "value": "5892", "string": " 5.32 USD"},
+                    "price": {"unit": "USD", "value": "5892", "string": "$ 5.32 USD"},
                 },
                 {
                     "type": "shipping",
                     "name": "Flat",
                     "description": "",
-                    "price": {"unit": "USD", "value": "5892", "string": " 0.00 USD"},
+                    "price": {"unit": "USD", "value": "5892", "string": "$ 0.00 USD"},
                 },
             ],
-            "total": {"unit": "USD", "value": "5892", "string": " 118.73 USD"},
+            "total": {"unit": "USD", "value": "5892", "string": "$ 118.73 USD"},
         },
         "downloadFiles": [
             {
@@ -1325,9 +1335,9 @@ async def test_update_fulfill(client: Webflow, async_client: AsyncWebflow) -> No
         "disputedOn": "2024-03-29T21:29:21Z",
         "disputeUpdatedOn": "2024-03-29T21:29:21Z",
         "disputeLastStatus": "charge_refunded",
-        "customerPaid": {"unit": "USD", "value": "5892", "string": " 118.73 USD"},
-        "netAmount": {"unit": "USD", "value": "5892", "string": " 112.62 USD"},
-        "applicationFee": {"unit": "USD", "value": "5892", "string": " 2.37 USD"},
+        "customerPaid": {"unit": "USD", "value": "5892", "string": "$ 118.73 USD"},
+        "netAmount": {"unit": "USD", "value": "5892", "string": "$ 112.62 USD"},
+        "applicationFee": {"unit": "USD", "value": "5892", "string": "$ 2.37 USD"},
         "allAddresses": [
             {
                 "type": "billing",
@@ -1381,7 +1391,7 @@ async def test_update_fulfill(client: Webflow, async_client: AsyncWebflow) -> No
         "purchasedItems": [
             {
                 "count": 1,
-                "rowTotal": {"unit": "USD", "value": "5892", "string": " 55.61 USD"},
+                "rowTotal": {"unit": "USD", "value": "5892", "string": "$ 55.61 USD"},
                 "productId": "66072fb61b89448912e26791",
                 "productName": "Luxurious Fresh Ball",
                 "productSlug": "luxurious-fresh-ball",
@@ -1390,9 +1400,9 @@ async def test_update_fulfill(client: Webflow, async_client: AsyncWebflow) -> No
                 "variantSlug": "luxurious-fresh-ball-generic-bronze-practical-plastic",
                 "variantSKU": "luxurious-fresh-ball-generic-bronze-practical-plastic",
                 "variantImage": {
-                    "url": "https://d1otoma47x30pg.cloudfront.net/66072f39417a2a35b2589cc7/66072fb51b89448912e2672c_image14.jpeg"
+                    "url": "https://dev-assets.website-files.com/66072f39417a2a35b2589cc7/66072fb51b89448912e2672c_image14.jpeg"
                 },
-                "variantPrice": {"unit": "USD", "value": "5892", "string": " 55.61 USD"},
+                "variantPrice": {"unit": "USD", "value": "5892", "string": "$ 55.61 USD"},
                 "weight": 11,
                 "width": 82,
                 "height": 70,
@@ -1400,7 +1410,7 @@ async def test_update_fulfill(client: Webflow, async_client: AsyncWebflow) -> No
             },
             {
                 "count": 1,
-                "rowTotal": {"unit": "USD", "value": "5892", "string": " 53.44 USD"},
+                "rowTotal": {"unit": "USD", "value": "5892", "string": "$ 53.44 USD"},
                 "productId": "66072fb61b89448912e26799",
                 "productName": "Recycled Steel Gloves",
                 "productSlug": "recycled-steel-gloves",
@@ -1409,9 +1419,9 @@ async def test_update_fulfill(client: Webflow, async_client: AsyncWebflow) -> No
                 "variantSlug": "recycled-steel-gloves-electronic-granite-handcrafted-grey",
                 "variantSKU": "recycled-steel-gloves-electronic-granite-handcrafted-grey",
                 "variantImage": {
-                    "url": "https://d1otoma47x30pg.cloudfront.net/66072f39417a2a35b2589cc7/66072fb51b89448912e2671e_image2.jpeg"
+                    "url": "https://dev-assets.website-files.com/66072f39417a2a35b2589cc7/66072fb51b89448912e2671e_image2.jpeg"
                 },
-                "variantPrice": {"unit": "USD", "value": "5892", "string": " 53.44 USD"},
+                "variantPrice": {"unit": "USD", "value": "5892", "string": "$ 53.44 USD"},
                 "weight": 38,
                 "width": 76,
                 "height": 85,
@@ -1450,28 +1460,28 @@ async def test_update_fulfill(client: Webflow, async_client: AsyncWebflow) -> No
         "hasDownloads": False,
         "paymentProcessor": "stripe",
         "totals": {
-            "subtotal": {"unit": "USD", "value": "5892", "string": " 109.05 USD"},
+            "subtotal": {"unit": "USD", "value": "5892", "string": "$ 109.05 USD"},
             "extras": [
                 {
                     "type": "tax",
                     "name": "State Taxes",
                     "description": "NY Taxes (4.00%)",
-                    "price": {"unit": "USD", "value": "5892", "string": " 4.36 USD"},
+                    "price": {"unit": "USD", "value": "5892", "string": "$ 4.36 USD"},
                 },
                 {
                     "type": "tax",
                     "name": "City Taxes",
                     "description": "NEW YORK Taxes (4.88%)",
-                    "price": {"unit": "USD", "value": "5892", "string": " 5.32 USD"},
+                    "price": {"unit": "USD", "value": "5892", "string": "$ 5.32 USD"},
                 },
                 {
                     "type": "shipping",
                     "name": "Flat",
                     "description": "",
-                    "price": {"unit": "USD", "value": "5892", "string": " 0.00 USD"},
+                    "price": {"unit": "USD", "value": "5892", "string": "$ 0.00 USD"},
                 },
             ],
-            "total": {"unit": "USD", "value": "5892", "string": " 118.73 USD"},
+            "total": {"unit": "USD", "value": "5892", "string": "$ 118.73 USD"},
         },
         "downloadFiles": [
             {
@@ -1663,9 +1673,9 @@ async def test_update_unfulfill(client: Webflow, async_client: AsyncWebflow) -> 
         "disputedOn": "2024-03-29T21:29:21Z",
         "disputeUpdatedOn": "2024-03-29T21:29:21Z",
         "disputeLastStatus": "charge_refunded",
-        "customerPaid": {"unit": "USD", "value": "5892", "string": " 118.73 USD"},
-        "netAmount": {"unit": "USD", "value": "5892", "string": " 112.62 USD"},
-        "applicationFee": {"unit": "USD", "value": "5892", "string": " 2.37 USD"},
+        "customerPaid": {"unit": "USD", "value": "5892", "string": "$ 118.73 USD"},
+        "netAmount": {"unit": "USD", "value": "5892", "string": "$ 112.62 USD"},
+        "applicationFee": {"unit": "USD", "value": "5892", "string": "$ 2.37 USD"},
         "allAddresses": [
             {
                 "type": "billing",
@@ -1719,7 +1729,7 @@ async def test_update_unfulfill(client: Webflow, async_client: AsyncWebflow) -> 
         "purchasedItems": [
             {
                 "count": 1,
-                "rowTotal": {"unit": "USD", "value": "5892", "string": " 55.61 USD"},
+                "rowTotal": {"unit": "USD", "value": "5892", "string": "$ 55.61 USD"},
                 "productId": "66072fb61b89448912e26791",
                 "productName": "Luxurious Fresh Ball",
                 "productSlug": "luxurious-fresh-ball",
@@ -1728,9 +1738,9 @@ async def test_update_unfulfill(client: Webflow, async_client: AsyncWebflow) -> 
                 "variantSlug": "luxurious-fresh-ball-generic-bronze-practical-plastic",
                 "variantSKU": "luxurious-fresh-ball-generic-bronze-practical-plastic",
                 "variantImage": {
-                    "url": "https://d1otoma47x30pg.cloudfront.net/66072f39417a2a35b2589cc7/66072fb51b89448912e2672c_image14.jpeg"
+                    "url": "https://dev-assets.website-files.com/66072f39417a2a35b2589cc7/66072fb51b89448912e2672c_image14.jpeg"
                 },
-                "variantPrice": {"unit": "USD", "value": "5892", "string": " 55.61 USD"},
+                "variantPrice": {"unit": "USD", "value": "5892", "string": "$ 55.61 USD"},
                 "weight": 11,
                 "width": 82,
                 "height": 70,
@@ -1738,7 +1748,7 @@ async def test_update_unfulfill(client: Webflow, async_client: AsyncWebflow) -> 
             },
             {
                 "count": 1,
-                "rowTotal": {"unit": "USD", "value": "5892", "string": " 53.44 USD"},
+                "rowTotal": {"unit": "USD", "value": "5892", "string": "$ 53.44 USD"},
                 "productId": "66072fb61b89448912e26799",
                 "productName": "Recycled Steel Gloves",
                 "productSlug": "recycled-steel-gloves",
@@ -1747,9 +1757,9 @@ async def test_update_unfulfill(client: Webflow, async_client: AsyncWebflow) -> 
                 "variantSlug": "recycled-steel-gloves-electronic-granite-handcrafted-grey",
                 "variantSKU": "recycled-steel-gloves-electronic-granite-handcrafted-grey",
                 "variantImage": {
-                    "url": "https://d1otoma47x30pg.cloudfront.net/66072f39417a2a35b2589cc7/66072fb51b89448912e2671e_image2.jpeg"
+                    "url": "https://dev-assets.website-files.com/66072f39417a2a35b2589cc7/66072fb51b89448912e2671e_image2.jpeg"
                 },
-                "variantPrice": {"unit": "USD", "value": "5892", "string": " 53.44 USD"},
+                "variantPrice": {"unit": "USD", "value": "5892", "string": "$ 53.44 USD"},
                 "weight": 38,
                 "width": 76,
                 "height": 85,
@@ -1788,28 +1798,28 @@ async def test_update_unfulfill(client: Webflow, async_client: AsyncWebflow) -> 
         "hasDownloads": False,
         "paymentProcessor": "stripe",
         "totals": {
-            "subtotal": {"unit": "USD", "value": "5892", "string": " 109.05 USD"},
+            "subtotal": {"unit": "USD", "value": "5892", "string": "$ 109.05 USD"},
             "extras": [
                 {
                     "type": "tax",
                     "name": "State Taxes",
                     "description": "NY Taxes (4.00%)",
-                    "price": {"unit": "USD", "value": "5892", "string": " 4.36 USD"},
+                    "price": {"unit": "USD", "value": "5892", "string": "$ 4.36 USD"},
                 },
                 {
                     "type": "tax",
                     "name": "City Taxes",
                     "description": "NEW YORK Taxes (4.88%)",
-                    "price": {"unit": "USD", "value": "5892", "string": " 5.32 USD"},
+                    "price": {"unit": "USD", "value": "5892", "string": "$ 5.32 USD"},
                 },
                 {
                     "type": "shipping",
                     "name": "Flat",
                     "description": "",
-                    "price": {"unit": "USD", "value": "5892", "string": " 0.00 USD"},
+                    "price": {"unit": "USD", "value": "5892", "string": "$ 0.00 USD"},
                 },
             ],
-            "total": {"unit": "USD", "value": "5892", "string": " 118.73 USD"},
+            "total": {"unit": "USD", "value": "5892", "string": "$ 118.73 USD"},
         },
         "downloadFiles": [
             {
@@ -2001,9 +2011,9 @@ async def test_refund(client: Webflow, async_client: AsyncWebflow) -> None:
         "disputedOn": "2024-03-29T21:29:21Z",
         "disputeUpdatedOn": "2024-03-29T21:29:21Z",
         "disputeLastStatus": "charge_refunded",
-        "customerPaid": {"unit": "USD", "value": "5892", "string": " 118.73 USD"},
-        "netAmount": {"unit": "USD", "value": "5892", "string": " 112.62 USD"},
-        "applicationFee": {"unit": "USD", "value": "5892", "string": " 2.37 USD"},
+        "customerPaid": {"unit": "USD", "value": "5892", "string": "$ 118.73 USD"},
+        "netAmount": {"unit": "USD", "value": "5892", "string": "$ 112.62 USD"},
+        "applicationFee": {"unit": "USD", "value": "5892", "string": "$ 2.37 USD"},
         "allAddresses": [
             {
                 "type": "billing",
@@ -2057,7 +2067,7 @@ async def test_refund(client: Webflow, async_client: AsyncWebflow) -> None:
         "purchasedItems": [
             {
                 "count": 1,
-                "rowTotal": {"unit": "USD", "value": "5892", "string": " 55.61 USD"},
+                "rowTotal": {"unit": "USD", "value": "5892", "string": "$ 55.61 USD"},
                 "productId": "66072fb61b89448912e26791",
                 "productName": "Luxurious Fresh Ball",
                 "productSlug": "luxurious-fresh-ball",
@@ -2066,9 +2076,9 @@ async def test_refund(client: Webflow, async_client: AsyncWebflow) -> None:
                 "variantSlug": "luxurious-fresh-ball-generic-bronze-practical-plastic",
                 "variantSKU": "luxurious-fresh-ball-generic-bronze-practical-plastic",
                 "variantImage": {
-                    "url": "https://d1otoma47x30pg.cloudfront.net/66072f39417a2a35b2589cc7/66072fb51b89448912e2672c_image14.jpeg"
+                    "url": "https://dev-assets.website-files.com/66072f39417a2a35b2589cc7/66072fb51b89448912e2672c_image14.jpeg"
                 },
-                "variantPrice": {"unit": "USD", "value": "5892", "string": " 55.61 USD"},
+                "variantPrice": {"unit": "USD", "value": "5892", "string": "$ 55.61 USD"},
                 "weight": 11,
                 "width": 82,
                 "height": 70,
@@ -2076,7 +2086,7 @@ async def test_refund(client: Webflow, async_client: AsyncWebflow) -> None:
             },
             {
                 "count": 1,
-                "rowTotal": {"unit": "USD", "value": "5892", "string": " 53.44 USD"},
+                "rowTotal": {"unit": "USD", "value": "5892", "string": "$ 53.44 USD"},
                 "productId": "66072fb61b89448912e26799",
                 "productName": "Recycled Steel Gloves",
                 "productSlug": "recycled-steel-gloves",
@@ -2085,9 +2095,9 @@ async def test_refund(client: Webflow, async_client: AsyncWebflow) -> None:
                 "variantSlug": "recycled-steel-gloves-electronic-granite-handcrafted-grey",
                 "variantSKU": "recycled-steel-gloves-electronic-granite-handcrafted-grey",
                 "variantImage": {
-                    "url": "https://d1otoma47x30pg.cloudfront.net/66072f39417a2a35b2589cc7/66072fb51b89448912e2671e_image2.jpeg"
+                    "url": "https://dev-assets.website-files.com/66072f39417a2a35b2589cc7/66072fb51b89448912e2671e_image2.jpeg"
                 },
-                "variantPrice": {"unit": "USD", "value": "5892", "string": " 53.44 USD"},
+                "variantPrice": {"unit": "USD", "value": "5892", "string": "$ 53.44 USD"},
                 "weight": 38,
                 "width": 76,
                 "height": 85,
@@ -2126,28 +2136,28 @@ async def test_refund(client: Webflow, async_client: AsyncWebflow) -> None:
         "hasDownloads": False,
         "paymentProcessor": "stripe",
         "totals": {
-            "subtotal": {"unit": "USD", "value": "5892", "string": " 109.05 USD"},
+            "subtotal": {"unit": "USD", "value": "5892", "string": "$ 109.05 USD"},
             "extras": [
                 {
                     "type": "tax",
                     "name": "State Taxes",
                     "description": "NY Taxes (4.00%)",
-                    "price": {"unit": "USD", "value": "5892", "string": " 4.36 USD"},
+                    "price": {"unit": "USD", "value": "5892", "string": "$ 4.36 USD"},
                 },
                 {
                     "type": "tax",
                     "name": "City Taxes",
                     "description": "NEW YORK Taxes (4.88%)",
-                    "price": {"unit": "USD", "value": "5892", "string": " 5.32 USD"},
+                    "price": {"unit": "USD", "value": "5892", "string": "$ 5.32 USD"},
                 },
                 {
                     "type": "shipping",
                     "name": "Flat",
                     "description": "",
-                    "price": {"unit": "USD", "value": "5892", "string": " 0.00 USD"},
+                    "price": {"unit": "USD", "value": "5892", "string": "$ 0.00 USD"},
                 },
             ],
-            "total": {"unit": "USD", "value": "5892", "string": " 118.73 USD"},
+            "total": {"unit": "USD", "value": "5892", "string": "$ 118.73 USD"},
         },
         "downloadFiles": [
             {

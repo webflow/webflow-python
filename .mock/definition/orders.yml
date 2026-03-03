@@ -28,7 +28,9 @@ service:
     list:
       path: /sites/{site_id}/orders
       method: GET
-      auth: true
+      auth:
+        - OAuth2:
+            - ecommerce:read
       docs: |
         List all orders created for a given site.
 
@@ -47,16 +49,17 @@ service:
             type: optional<OrdersListRequestStatus>
             docs: Filter the orders by status
           offset:
-            type: optional<double>
+            type: optional<integer>
             docs: >-
               Offset used for pagination if the results have more than limit
               records
           limit:
-            type: optional<double>
+            type: optional<integer>
             docs: 'Maximum number of records to be returned (max limit: 100)'
       response:
         docs: Request was successful
         type: root.OrderList
+        status-code: 200
       errors:
         - root.BadRequestError
         - root.UnauthorizedError
@@ -68,6 +71,10 @@ service:
       examples:
         - path-parameters:
             site_id: 580e63e98c9a982ac9b8b741
+          query-parameters:
+            status: pending
+            offset: 1
+            limit: 1
           response:
             body:
               orders:
@@ -89,15 +96,15 @@ service:
                   customerPaid:
                     unit: USD
                     value: '5892'
-                    string: ' 211.55 USD'
+                    string: \$ 211.55 USD
                   netAmount:
                     unit: USD
                     value: '5892'
-                    string: ' 200.89 USD'
+                    string: \$ 200.89 USD
                   applicationFee:
                     unit: USD
                     value: '5892'
-                    string: ' 4.23 USD'
+                    string: \$ 4.23 USD
                   allAddresses:
                     - type: billing
                       addressee: Arthur Dent
@@ -145,7 +152,7 @@ service:
                       rowTotal:
                         unit: USD
                         value: '5892'
-                        string: ' 111.22 USD'
+                        string: \$ 111.22 USD
                       productId: 66072fb61b89448912e26791
                       productName: Luxurious Fresh Ball
                       productSlug: luxurious-fresh-ball
@@ -155,11 +162,11 @@ service:
                       variantSKU: luxurious-fresh-ball-generic-bronze-practical-plastic
                       variantImage:
                         url: >-
-                          https://d1otoma47x30pg.cloudfront.net/66072f39417a2a35b2589cc7/66072fb51b89448912e2672c_image14.jpeg
+                          https://dev-assets.website-files.com/66072f39417a2a35b2589cc7/66072fb51b89448912e2672c_image14.jpeg
                       variantPrice:
                         unit: USD
                         value: '5892'
-                        string: ' 55.61 USD'
+                        string: \$ 55.61 USD
                       weight: 11
                       width: 82
                       height: 70
@@ -168,7 +175,7 @@ service:
                       rowTotal:
                         unit: USD
                         value: '5892'
-                        string: ' 83.09 USD'
+                        string: \$ 83.09 USD
                       productId: 66072fb61b89448912e2678b
                       productName: Incredible Bronze Towels
                       productSlug: incredible-bronze-towels
@@ -180,20 +187,23 @@ service:
                       variantSKU: incredible-bronze-towels-sleek-frozen-incredible-metal
                       variantImage:
                         url: >-
-                          https://d1otoma47x30pg.cloudfront.net/66072f39417a2a35b2589cc7/66072fb51b89448912e26729_image16.jpeg
+                          https://dev-assets.website-files.com/66072f39417a2a35b2589cc7/66072fb51b89448912e26729_image16.jpeg
                       variantPrice:
                         unit: USD
                         value: '5892'
-                        string: ' 83.09 USD'
+                        string: \$ 83.09 USD
+                      weight: 5
                       width: 19
                       height: 72
                       length: 18
                   purchasedItemsCount: 3
                   stripeDetails:
+                    subscriptionId: sub_1J6xwG2eZvKYlo2CXu9Zt0Tn
                     paymentMethod: pm_1P410gJYFi4lcbXWbeKghqjK
                     paymentIntentId: pi_3P410iJYFi4lcbXW0EKKgcVg
                     customerId: cus_Ptod8KJBiiPgnH
                     chargeId: ch_3P410iJYFi4lcbXW0DxUkzCH
+                    refundReason: requested_by_customer
                   stripeCard:
                     last4: '4242'
                     brand: Visa
@@ -224,7 +234,7 @@ service:
                         price:
                           unit: USD
                           value: '5892'
-                          string: '3.44'
+                          string: \$3.44
                   downloadFiles:
                     - id: 5e9a5eba75e0ac242e1b6f64
                       name: The modern web design process - Webflow Ebook.pdf
@@ -243,15 +253,15 @@ service:
                   customerPaid:
                     unit: USD
                     value: '5892'
-                    string: ' 118.73 USD'
+                    string: \$ 118.73 USD
                   netAmount:
                     unit: USD
                     value: '5892'
-                    string: ' 112.62 USD'
+                    string: \$ 112.62 USD
                   applicationFee:
                     unit: USD
                     value: '5892'
-                    string: ' 2.37 USD'
+                    string: \$ 2.37 USD
                   allAddresses:
                     - type: billing
                       addressee: Arthur Dent
@@ -298,7 +308,7 @@ service:
                       rowTotal:
                         unit: USD
                         value: '5892'
-                        string: ' 55.61 USD'
+                        string: \$ 55.61 USD
                       productId: 66072fb61b89448912e26791
                       productName: Luxurious Fresh Ball
                       productSlug: luxurious-fresh-ball
@@ -308,11 +318,11 @@ service:
                       variantSKU: luxurious-fresh-ball-generic-bronze-practical-plastic
                       variantImage:
                         url: >-
-                          https://d1otoma47x30pg.cloudfront.net/66072f39417a2a35b2589cc7/66072fb51b89448912e2672c_image14.jpeg
+                          https://dev-assets.website-files.com/66072f39417a2a35b2589cc7/66072fb51b89448912e2672c_image14.jpeg
                       variantPrice:
                         unit: USD
                         value: '5892'
-                        string: ' 55.61 USD'
+                        string: \$ 55.61 USD
                       weight: 11
                       width: 82
                       height: 70
@@ -321,7 +331,7 @@ service:
                       rowTotal:
                         unit: USD
                         value: '5892'
-                        string: ' 53.44 USD'
+                        string: \$ 53.44 USD
                       productId: 66072fb61b89448912e26799
                       productName: Recycled Steel Gloves
                       productSlug: recycled-steel-gloves
@@ -335,17 +345,18 @@ service:
                         recycled-steel-gloves-electronic-granite-handcrafted-grey
                       variantImage:
                         url: >-
-                          https://d1otoma47x30pg.cloudfront.net/66072f39417a2a35b2589cc7/66072fb51b89448912e2671e_image2.jpeg
+                          https://dev-assets.website-files.com/66072f39417a2a35b2589cc7/66072fb51b89448912e2671e_image2.jpeg
                       variantPrice:
                         unit: USD
                         value: '5892'
-                        string: ' 53.44 USD'
+                        string: \$ 53.44 USD
                       weight: 38
                       width: 76
                       height: 85
                       length: 40
                   purchasedItemsCount: 2
                   stripeDetails:
+                    subscriptionId: sub_1J6xwG2eZvKYlo2CXu9Zt0Tn
                     paymentMethod: pm_1OzmzBJYFi4lcbXWHKNdXU7j
                     paymentIntentId: pi_3OzmzDJYFi4lcbXW1hTBW6ft
                     customerId: cus_PpRsNHwWdUoRKR
@@ -378,7 +389,7 @@ service:
                     subtotal:
                       unit: USD
                       value: '5892'
-                      string: ' 109.05 USD'
+                      string: \$ 109.05 USD
                     extras:
                       - type: tax
                         name: State Taxes
@@ -386,25 +397,25 @@ service:
                         price:
                           unit: USD
                           value: '5892'
-                          string: ' 4.36 USD'
+                          string: \$ 4.36 USD
                       - type: tax
                         name: City Taxes
                         description: NEW YORK Taxes (4.88%)
                         price:
                           unit: USD
                           value: '5892'
-                          string: ' 5.32 USD'
+                          string: \$ 5.32 USD
                       - type: shipping
                         name: Flat
                         description: ''
                         price:
                           unit: USD
                           value: '5892'
-                          string: ' 0.00 USD'
+                          string: \$ 0.00 USD
                     total:
                       unit: USD
                       value: '5892'
-                      string: ' 118.73 USD'
+                      string: \$ 118.73 USD
                   downloadFiles:
                     - id: 5e9a5eba75e0ac242e1b6f64
                       name: New product guide
@@ -417,7 +428,9 @@ service:
     get:
       path: /sites/{site_id}/orders/{order_id}
       method: GET
-      auth: true
+      auth:
+        - OAuth2:
+            - ecommerce:read
       docs: |
         Retrieve a single product by its ID. All of its SKUs will also be
         retrieved.
@@ -436,6 +449,7 @@ service:
       response:
         docs: Request was successful
         type: root.Order
+        status-code: 200
       errors:
         - root.BadRequestError
         - root.UnauthorizedError
@@ -468,15 +482,15 @@ service:
               customerPaid:
                 unit: USD
                 value: '5892'
-                string: ' 118.73 USD'
+                string: \$ 118.73 USD
               netAmount:
                 unit: USD
                 value: '5892'
-                string: ' 112.62 USD'
+                string: \$ 112.62 USD
               applicationFee:
                 unit: USD
                 value: '5892'
-                string: ' 2.37 USD'
+                string: \$ 2.37 USD
               allAddresses:
                 - type: billing
                   japanType: kana
@@ -527,7 +541,7 @@ service:
                   rowTotal:
                     unit: USD
                     value: '5892'
-                    string: ' 55.61 USD'
+                    string: \$ 55.61 USD
                   productId: 66072fb61b89448912e26791
                   productName: Luxurious Fresh Ball
                   productSlug: luxurious-fresh-ball
@@ -537,11 +551,11 @@ service:
                   variantSKU: luxurious-fresh-ball-generic-bronze-practical-plastic
                   variantImage:
                     url: >-
-                      https://d1otoma47x30pg.cloudfront.net/66072f39417a2a35b2589cc7/66072fb51b89448912e2672c_image14.jpeg
+                      https://dev-assets.website-files.com/66072f39417a2a35b2589cc7/66072fb51b89448912e2672c_image14.jpeg
                   variantPrice:
                     unit: USD
                     value: '5892'
-                    string: ' 55.61 USD'
+                    string: \$ 55.61 USD
                   weight: 11
                   width: 82
                   height: 70
@@ -550,7 +564,7 @@ service:
                   rowTotal:
                     unit: USD
                     value: '5892'
-                    string: ' 53.44 USD'
+                    string: \$ 53.44 USD
                   productId: 66072fb61b89448912e26799
                   productName: Recycled Steel Gloves
                   productSlug: recycled-steel-gloves
@@ -560,11 +574,11 @@ service:
                   variantSKU: recycled-steel-gloves-electronic-granite-handcrafted-grey
                   variantImage:
                     url: >-
-                      https://d1otoma47x30pg.cloudfront.net/66072f39417a2a35b2589cc7/66072fb51b89448912e2671e_image2.jpeg
+                      https://dev-assets.website-files.com/66072f39417a2a35b2589cc7/66072fb51b89448912e2671e_image2.jpeg
                   variantPrice:
                     unit: USD
                     value: '5892'
-                    string: ' 53.44 USD'
+                    string: \$ 53.44 USD
                   weight: 38
                   width: 76
                   height: 85
@@ -605,7 +619,7 @@ service:
                 subtotal:
                   unit: USD
                   value: '5892'
-                  string: ' 109.05 USD'
+                  string: \$ 109.05 USD
                 extras:
                   - type: tax
                     name: State Taxes
@@ -613,25 +627,25 @@ service:
                     price:
                       unit: USD
                       value: '5892'
-                      string: ' 4.36 USD'
+                      string: \$ 4.36 USD
                   - type: tax
                     name: City Taxes
                     description: NEW YORK Taxes (4.88%)
                     price:
                       unit: USD
                       value: '5892'
-                      string: ' 5.32 USD'
+                      string: \$ 5.32 USD
                   - type: shipping
                     name: Flat
                     description: ''
                     price:
                       unit: USD
                       value: '5892'
-                      string: ' 0.00 USD'
+                      string: \$ 0.00 USD
                 total:
                   unit: USD
                   value: '5892'
-                  string: ' 118.73 USD'
+                  string: \$ 118.73 USD
               downloadFiles:
                 - id: 5e9a5eba75e0ac242e1b6f64
                   name: New product guide
@@ -640,7 +654,9 @@ service:
     update:
       path: /sites/{site_id}/orders/{order_id}
       method: PATCH
-      auth: true
+      auth:
+        - OAuth2:
+            - ecommerce:write
       docs: |
         This API lets you update the fields, `comment`, `shippingProvider`,
         and/or `shippingTracking` for a given order. All three fields can be
@@ -677,6 +693,7 @@ service:
       response:
         docs: Request was successful
         type: root.Order
+        status-code: 200
       errors:
         - root.BadRequestError
         - root.UnauthorizedError
@@ -710,15 +727,15 @@ service:
               customerPaid:
                 unit: USD
                 value: '5892'
-                string: ' 118.73 USD'
+                string: \$ 118.73 USD
               netAmount:
                 unit: USD
                 value: '5892'
-                string: ' 112.62 USD'
+                string: \$ 112.62 USD
               applicationFee:
                 unit: USD
                 value: '5892'
-                string: ' 2.37 USD'
+                string: \$ 2.37 USD
               allAddresses:
                 - type: billing
                   japanType: kana
@@ -769,7 +786,7 @@ service:
                   rowTotal:
                     unit: USD
                     value: '5892'
-                    string: ' 55.61 USD'
+                    string: \$ 55.61 USD
                   productId: 66072fb61b89448912e26791
                   productName: Luxurious Fresh Ball
                   productSlug: luxurious-fresh-ball
@@ -779,11 +796,11 @@ service:
                   variantSKU: luxurious-fresh-ball-generic-bronze-practical-plastic
                   variantImage:
                     url: >-
-                      https://d1otoma47x30pg.cloudfront.net/66072f39417a2a35b2589cc7/66072fb51b89448912e2672c_image14.jpeg
+                      https://dev-assets.website-files.com/66072f39417a2a35b2589cc7/66072fb51b89448912e2672c_image14.jpeg
                   variantPrice:
                     unit: USD
                     value: '5892'
-                    string: ' 55.61 USD'
+                    string: \$ 55.61 USD
                   weight: 11
                   width: 82
                   height: 70
@@ -792,7 +809,7 @@ service:
                   rowTotal:
                     unit: USD
                     value: '5892'
-                    string: ' 53.44 USD'
+                    string: \$ 53.44 USD
                   productId: 66072fb61b89448912e26799
                   productName: Recycled Steel Gloves
                   productSlug: recycled-steel-gloves
@@ -802,11 +819,11 @@ service:
                   variantSKU: recycled-steel-gloves-electronic-granite-handcrafted-grey
                   variantImage:
                     url: >-
-                      https://d1otoma47x30pg.cloudfront.net/66072f39417a2a35b2589cc7/66072fb51b89448912e2671e_image2.jpeg
+                      https://dev-assets.website-files.com/66072f39417a2a35b2589cc7/66072fb51b89448912e2671e_image2.jpeg
                   variantPrice:
                     unit: USD
                     value: '5892'
-                    string: ' 53.44 USD'
+                    string: \$ 53.44 USD
                   weight: 38
                   width: 76
                   height: 85
@@ -847,7 +864,7 @@ service:
                 subtotal:
                   unit: USD
                   value: '5892'
-                  string: ' 109.05 USD'
+                  string: \$ 109.05 USD
                 extras:
                   - type: tax
                     name: State Taxes
@@ -855,25 +872,25 @@ service:
                     price:
                       unit: USD
                       value: '5892'
-                      string: ' 4.36 USD'
+                      string: \$ 4.36 USD
                   - type: tax
                     name: City Taxes
                     description: NEW YORK Taxes (4.88%)
                     price:
                       unit: USD
                       value: '5892'
-                      string: ' 5.32 USD'
+                      string: \$ 5.32 USD
                   - type: shipping
                     name: Flat
                     description: ''
                     price:
                       unit: USD
                       value: '5892'
-                      string: ' 0.00 USD'
+                      string: \$ 0.00 USD
                 total:
                   unit: USD
                   value: '5892'
-                  string: ' 118.73 USD'
+                  string: \$ 118.73 USD
               downloadFiles:
                 - id: 5e9a5eba75e0ac242e1b6f64
                   name: New product guide
@@ -882,7 +899,9 @@ service:
     update-fulfill:
       path: /sites/{site_id}/orders/{order_id}/fulfill
       method: POST
-      auth: true
+      auth:
+        - OAuth2:
+            - ecommerce:write
       docs: |
         Updates an order's status to fulfilled
 
@@ -909,6 +928,7 @@ service:
       response:
         docs: Request was successful
         type: root.Order
+        status-code: 200
       errors:
         - root.BadRequestError
         - root.UnauthorizedError
@@ -942,15 +962,15 @@ service:
               customerPaid:
                 unit: USD
                 value: '5892'
-                string: ' 118.73 USD'
+                string: \$ 118.73 USD
               netAmount:
                 unit: USD
                 value: '5892'
-                string: ' 112.62 USD'
+                string: \$ 112.62 USD
               applicationFee:
                 unit: USD
                 value: '5892'
-                string: ' 2.37 USD'
+                string: \$ 2.37 USD
               allAddresses:
                 - type: billing
                   japanType: kana
@@ -1001,7 +1021,7 @@ service:
                   rowTotal:
                     unit: USD
                     value: '5892'
-                    string: ' 55.61 USD'
+                    string: \$ 55.61 USD
                   productId: 66072fb61b89448912e26791
                   productName: Luxurious Fresh Ball
                   productSlug: luxurious-fresh-ball
@@ -1011,11 +1031,11 @@ service:
                   variantSKU: luxurious-fresh-ball-generic-bronze-practical-plastic
                   variantImage:
                     url: >-
-                      https://d1otoma47x30pg.cloudfront.net/66072f39417a2a35b2589cc7/66072fb51b89448912e2672c_image14.jpeg
+                      https://dev-assets.website-files.com/66072f39417a2a35b2589cc7/66072fb51b89448912e2672c_image14.jpeg
                   variantPrice:
                     unit: USD
                     value: '5892'
-                    string: ' 55.61 USD'
+                    string: \$ 55.61 USD
                   weight: 11
                   width: 82
                   height: 70
@@ -1024,7 +1044,7 @@ service:
                   rowTotal:
                     unit: USD
                     value: '5892'
-                    string: ' 53.44 USD'
+                    string: \$ 53.44 USD
                   productId: 66072fb61b89448912e26799
                   productName: Recycled Steel Gloves
                   productSlug: recycled-steel-gloves
@@ -1034,11 +1054,11 @@ service:
                   variantSKU: recycled-steel-gloves-electronic-granite-handcrafted-grey
                   variantImage:
                     url: >-
-                      https://d1otoma47x30pg.cloudfront.net/66072f39417a2a35b2589cc7/66072fb51b89448912e2671e_image2.jpeg
+                      https://dev-assets.website-files.com/66072f39417a2a35b2589cc7/66072fb51b89448912e2671e_image2.jpeg
                   variantPrice:
                     unit: USD
                     value: '5892'
-                    string: ' 53.44 USD'
+                    string: \$ 53.44 USD
                   weight: 38
                   width: 76
                   height: 85
@@ -1079,7 +1099,7 @@ service:
                 subtotal:
                   unit: USD
                   value: '5892'
-                  string: ' 109.05 USD'
+                  string: \$ 109.05 USD
                 extras:
                   - type: tax
                     name: State Taxes
@@ -1087,25 +1107,25 @@ service:
                     price:
                       unit: USD
                       value: '5892'
-                      string: ' 4.36 USD'
+                      string: \$ 4.36 USD
                   - type: tax
                     name: City Taxes
                     description: NEW YORK Taxes (4.88%)
                     price:
                       unit: USD
                       value: '5892'
-                      string: ' 5.32 USD'
+                      string: \$ 5.32 USD
                   - type: shipping
                     name: Flat
                     description: ''
                     price:
                       unit: USD
                       value: '5892'
-                      string: ' 0.00 USD'
+                      string: \$ 0.00 USD
                 total:
                   unit: USD
                   value: '5892'
-                  string: ' 118.73 USD'
+                  string: \$ 118.73 USD
               downloadFiles:
                 - id: 5e9a5eba75e0ac242e1b6f64
                   name: New product guide
@@ -1114,7 +1134,9 @@ service:
     update-unfulfill:
       path: /sites/{site_id}/orders/{order_id}/unfulfill
       method: POST
-      auth: true
+      auth:
+        - OAuth2:
+            - ecommerce:write
       docs: |
         Updates an order's status to unfulfilled
 
@@ -1132,6 +1154,7 @@ service:
       response:
         docs: Request was successful
         type: root.Order
+        status-code: 200
       errors:
         - root.BadRequestError
         - root.UnauthorizedError
@@ -1164,15 +1187,15 @@ service:
               customerPaid:
                 unit: USD
                 value: '5892'
-                string: ' 118.73 USD'
+                string: \$ 118.73 USD
               netAmount:
                 unit: USD
                 value: '5892'
-                string: ' 112.62 USD'
+                string: \$ 112.62 USD
               applicationFee:
                 unit: USD
                 value: '5892'
-                string: ' 2.37 USD'
+                string: \$ 2.37 USD
               allAddresses:
                 - type: billing
                   japanType: kana
@@ -1223,7 +1246,7 @@ service:
                   rowTotal:
                     unit: USD
                     value: '5892'
-                    string: ' 55.61 USD'
+                    string: \$ 55.61 USD
                   productId: 66072fb61b89448912e26791
                   productName: Luxurious Fresh Ball
                   productSlug: luxurious-fresh-ball
@@ -1233,11 +1256,11 @@ service:
                   variantSKU: luxurious-fresh-ball-generic-bronze-practical-plastic
                   variantImage:
                     url: >-
-                      https://d1otoma47x30pg.cloudfront.net/66072f39417a2a35b2589cc7/66072fb51b89448912e2672c_image14.jpeg
+                      https://dev-assets.website-files.com/66072f39417a2a35b2589cc7/66072fb51b89448912e2672c_image14.jpeg
                   variantPrice:
                     unit: USD
                     value: '5892'
-                    string: ' 55.61 USD'
+                    string: \$ 55.61 USD
                   weight: 11
                   width: 82
                   height: 70
@@ -1246,7 +1269,7 @@ service:
                   rowTotal:
                     unit: USD
                     value: '5892'
-                    string: ' 53.44 USD'
+                    string: \$ 53.44 USD
                   productId: 66072fb61b89448912e26799
                   productName: Recycled Steel Gloves
                   productSlug: recycled-steel-gloves
@@ -1256,11 +1279,11 @@ service:
                   variantSKU: recycled-steel-gloves-electronic-granite-handcrafted-grey
                   variantImage:
                     url: >-
-                      https://d1otoma47x30pg.cloudfront.net/66072f39417a2a35b2589cc7/66072fb51b89448912e2671e_image2.jpeg
+                      https://dev-assets.website-files.com/66072f39417a2a35b2589cc7/66072fb51b89448912e2671e_image2.jpeg
                   variantPrice:
                     unit: USD
                     value: '5892'
-                    string: ' 53.44 USD'
+                    string: \$ 53.44 USD
                   weight: 38
                   width: 76
                   height: 85
@@ -1301,7 +1324,7 @@ service:
                 subtotal:
                   unit: USD
                   value: '5892'
-                  string: ' 109.05 USD'
+                  string: \$ 109.05 USD
                 extras:
                   - type: tax
                     name: State Taxes
@@ -1309,25 +1332,25 @@ service:
                     price:
                       unit: USD
                       value: '5892'
-                      string: ' 4.36 USD'
+                      string: \$ 4.36 USD
                   - type: tax
                     name: City Taxes
                     description: NEW YORK Taxes (4.88%)
                     price:
                       unit: USD
                       value: '5892'
-                      string: ' 5.32 USD'
+                      string: \$ 5.32 USD
                   - type: shipping
                     name: Flat
                     description: ''
                     price:
                       unit: USD
                       value: '5892'
-                      string: ' 0.00 USD'
+                      string: \$ 0.00 USD
                 total:
                   unit: USD
                   value: '5892'
-                  string: ' 118.73 USD'
+                  string: \$ 118.73 USD
               downloadFiles:
                 - id: 5e9a5eba75e0ac242e1b6f64
                   name: New product guide
@@ -1336,7 +1359,9 @@ service:
     refund:
       path: /sites/{site_id}/orders/{order_id}/refund
       method: POST
-      auth: true
+      auth:
+        - OAuth2:
+            - ecommerce:write
       docs: |
         This API will reverse a Stripe charge and refund an order back to a
         customer. It will also set the order's status to `refunded`.
@@ -1363,6 +1388,7 @@ service:
       response:
         docs: Request was successful
         type: root.Order
+        status-code: 200
       errors:
         - root.BadRequestError
         - root.UnauthorizedError
@@ -1396,15 +1422,15 @@ service:
               customerPaid:
                 unit: USD
                 value: '5892'
-                string: ' 118.73 USD'
+                string: \$ 118.73 USD
               netAmount:
                 unit: USD
                 value: '5892'
-                string: ' 112.62 USD'
+                string: \$ 112.62 USD
               applicationFee:
                 unit: USD
                 value: '5892'
-                string: ' 2.37 USD'
+                string: \$ 2.37 USD
               allAddresses:
                 - type: billing
                   japanType: kana
@@ -1455,7 +1481,7 @@ service:
                   rowTotal:
                     unit: USD
                     value: '5892'
-                    string: ' 55.61 USD'
+                    string: \$ 55.61 USD
                   productId: 66072fb61b89448912e26791
                   productName: Luxurious Fresh Ball
                   productSlug: luxurious-fresh-ball
@@ -1465,11 +1491,11 @@ service:
                   variantSKU: luxurious-fresh-ball-generic-bronze-practical-plastic
                   variantImage:
                     url: >-
-                      https://d1otoma47x30pg.cloudfront.net/66072f39417a2a35b2589cc7/66072fb51b89448912e2672c_image14.jpeg
+                      https://dev-assets.website-files.com/66072f39417a2a35b2589cc7/66072fb51b89448912e2672c_image14.jpeg
                   variantPrice:
                     unit: USD
                     value: '5892'
-                    string: ' 55.61 USD'
+                    string: \$ 55.61 USD
                   weight: 11
                   width: 82
                   height: 70
@@ -1478,7 +1504,7 @@ service:
                   rowTotal:
                     unit: USD
                     value: '5892'
-                    string: ' 53.44 USD'
+                    string: \$ 53.44 USD
                   productId: 66072fb61b89448912e26799
                   productName: Recycled Steel Gloves
                   productSlug: recycled-steel-gloves
@@ -1488,11 +1514,11 @@ service:
                   variantSKU: recycled-steel-gloves-electronic-granite-handcrafted-grey
                   variantImage:
                     url: >-
-                      https://d1otoma47x30pg.cloudfront.net/66072f39417a2a35b2589cc7/66072fb51b89448912e2671e_image2.jpeg
+                      https://dev-assets.website-files.com/66072f39417a2a35b2589cc7/66072fb51b89448912e2671e_image2.jpeg
                   variantPrice:
                     unit: USD
                     value: '5892'
-                    string: ' 53.44 USD'
+                    string: \$ 53.44 USD
                   weight: 38
                   width: 76
                   height: 85
@@ -1533,7 +1559,7 @@ service:
                 subtotal:
                   unit: USD
                   value: '5892'
-                  string: ' 109.05 USD'
+                  string: \$ 109.05 USD
                 extras:
                   - type: tax
                     name: State Taxes
@@ -1541,25 +1567,25 @@ service:
                     price:
                       unit: USD
                       value: '5892'
-                      string: ' 4.36 USD'
+                      string: \$ 4.36 USD
                   - type: tax
                     name: City Taxes
                     description: NEW YORK Taxes (4.88%)
                     price:
                       unit: USD
                       value: '5892'
-                      string: ' 5.32 USD'
+                      string: \$ 5.32 USD
                   - type: shipping
                     name: Flat
                     description: ''
                     price:
                       unit: USD
                       value: '5892'
-                      string: ' 0.00 USD'
+                      string: \$ 0.00 USD
                 total:
                   unit: USD
                   value: '5892'
-                  string: ' 118.73 USD'
+                  string: \$ 118.73 USD
               downloadFiles:
                 - id: 5e9a5eba75e0ac242e1b6f64
                   name: New product guide
@@ -1569,3 +1595,377 @@ service:
     openapi: ../../../openapi/referenced-specs/v2.yml
   display-name: Orders
 docs: Orders are the orders for your Webflow site.
+webhooks:
+  ecomm_new_order:
+    audiences: []
+    method: POST
+    display-name: New eComm Order
+    headers: {}
+    payload: root.NewOrder
+    examples:
+      - payload:
+          triggerType: ecomm_new_order
+          payload:
+            orderId: fc7-128
+            status: unfulfilled
+            comment: >-
+              Customer requested gift wrapping and a personalized note saying:
+              Happy Birthday, Ford! 🎉 Please ensure the item is packed with
+              extra bubble wrap for safe transit.
+            orderComment: >-
+              Please gift wrap with a personal note saying "Happy Birthday,
+              Ford! 🎉
+            acceptedOn: '2024-03-29T21:29:21Z'
+            fulfilledOn: '2018-12-03T22:06:15Z'
+            refundedOn: '2018-12-03T22:06:15Z'
+            disputedOn: '2018-12-03T22:06:15Z'
+            disputeUpdatedOn: '2018-12-03T22:06:15Z'
+            customerPaid:
+              unit: USD
+              value: '5892'
+              string: \$ 118.73 USD
+            netAmount:
+              unit: USD
+              value: '5892'
+              string: \$ 112.62 USD
+            applicationFee:
+              unit: USD
+              value: '5892'
+              string: \$ 2.37 USD
+            allAddresses:
+              - type: billing
+                addressee: Arthur Dent
+                line1: 20 W 34th St
+                line2: Empire State Building
+                city: New York
+                state: New York
+                country: US
+                postalCode: '10118'
+              - type: shipping
+                addressee: Arthur Dent
+                line1: 20 W 34th St
+                line2: Empire State Building
+                city: New York
+                state: New York
+                country: US
+                postalCode: '10118'
+            shippingAddress:
+              type: shipping
+              japanType: kanji
+              addressee: Arthur Dent
+              line1: 20 W 34th St
+              line2: Empire State Building
+              city: New York
+              state: New York
+              country: US
+              postalCode: '10118'
+            billingAddress:
+              type: billing
+              addressee: Arthur Dent
+              line1: 20 W 34th St
+              line2: Empire State Building
+              city: New York
+              state: New York
+              country: US
+              postalCode: '10118'
+            shippingProvider: Shipping Company, Co.
+            shippingTracking: tr00000000001
+            shippingTrackingURL: https://www.shippingcompany.com/tracking/tr00000000001
+            customerInfo:
+              fullName: Arthur Dent
+              email: arthur.dent@example.com
+            purchasedItems:
+              - count: 1
+                rowTotal:
+                  unit: USD
+                  value: '5892'
+                  string: \$ 55.61 USD
+                productId: 66072fb61b89448912e26791
+                productName: Luxurious Fresh Ball
+                productSlug: luxurious-fresh-ball
+                variantId: 66072fb71b89448912e2683f
+                variantName: 'Luxurious Fresh Ball Generic: Bronze, Practical: Plastic'
+                variantSlug: luxurious-fresh-ball-generic-bronze-practical-plastic
+                variantSKU: luxurious-fresh-ball-generic-bronze-practical-plastic
+                variantImage:
+                  url: >-
+                    https://dev-assets.website-files.com/66072f39417a2a35b2589cc7/66072fb51b89448912e2672c_image14.jpeg
+                variantPrice:
+                  unit: USD
+                  value: '5892'
+                  string: \$ 55.61 USD
+                weight: 11
+                width: 82
+                height: 70
+                length: 9
+              - count: 1
+                rowTotal:
+                  unit: USD
+                  value: '5892'
+                  string: \$ 53.44 USD
+                productId: 66072fb61b89448912e26799
+                productName: Recycled Steel Gloves
+                productSlug: recycled-steel-gloves
+                variantId: 66072fb91b89448912e26ab9
+                variantName: 'Recycled Steel Gloves Electronic: Granite, Handcrafted: grey'
+                variantSlug: recycled-steel-gloves-electronic-granite-handcrafted-grey
+                variantSKU: recycled-steel-gloves-electronic-granite-handcrafted-grey
+                variantImage:
+                  url: >-
+                    https://dev-assets.website-files.com/66072f39417a2a35b2589cc7/66072fb51b89448912e2671e_image2.jpeg
+                variantPrice:
+                  unit: USD
+                  value: '5892'
+                  string: \$ 53.44 USD
+                weight: 38
+                width: 76
+                height: 85
+                length: 40
+            purchasedItemsCount: 2
+            stripeDetails:
+              subscriptionId: sub_1J6xwG2eZvKYlo2CXu9Zt0Tn
+              paymentMethod: pm_1OzmzBJYFi4lcbXWHKNdXU7j
+              paymentIntentId: pi_3OzmzDJYFi4lcbXW1hTBW6ft
+              customerId: cus_PpRsNHwWdUoRKR
+              chargeId: ch_3OzmzDJYFi4lcbXW1ndkkrH2
+              refundId: re_3OzmzDJYFi4lcbXW1kFAmlBk
+              refundReason: fraudulent
+            stripeCard:
+              last4: '4242'
+              brand: Visa
+              ownerName: Arthur Dent
+              expires:
+                year: 2024
+                month: 4
+            customData:
+              - key: value
+            metadata:
+              isBuyNow: false
+            isCustomerDeleted: false
+            isShippingRequired: true
+            hasDownloads: false
+            paymentProcessor: stripe
+            totals:
+              subtotal:
+                unit: USD
+                value: '5892'
+                string: \$ 109.05 USD
+              extras:
+                - type: tax
+                  name: State Taxes
+                  description: NY Taxes (4.00%)
+                  price:
+                    unit: USD
+                    value: '5892'
+                    string: \$ 4.36 USD
+                - type: tax
+                  name: City Taxes
+                  description: NEW YORK Taxes (4.88%)
+                  price:
+                    unit: USD
+                    value: '5892'
+                    string: \$ 5.32 USD
+                - type: shipping
+                  name: Flat
+                  description: ''
+                  price:
+                    unit: USD
+                    value: '5892'
+                    string: \$ 0.00 USD
+              total:
+                unit: USD
+                value: '5892'
+                string: \$ 118.73 USD
+            downloadFiles:
+              - id: 5e9a5eba75e0ac242e1b6f64
+                name: New product guide
+                url: >-
+                  https://webflow.com/dashboard/download-digital-product?payload=5d93ba5e38c6b0160ab711d3;e7634a;5eb1aac72912ec06f561278c;5e9a5eba75e0ac242e1b6f63:ka2nehxy:4a1ee0a632feaab94294350087215ed89533f2f530903e3b933b638940e921aa
+    docs: Information about a new ecommerce order
+  ecomm_order_changed:
+    audiences: []
+    method: POST
+    display-name: Updated eComm Order
+    headers: {}
+    payload: root.UpdatedOrder
+    examples:
+      - payload:
+          triggerType: ecomm_order_changed
+          payload:
+            orderId: fc7-128
+            status: refunded
+            comment: >-
+              Customer requested gift wrapping and a personalized note saying:
+              Happy Birthday, Ford! 🎉 Please ensure the item is packed with
+              extra bubble wrap for safe transit.
+            orderComment: >-
+              Please gift wrap with a personal note saying "Happy Birthday,
+              Ford! 🎉
+            acceptedOn: '2024-03-29T21:29:21Z'
+            fulfilledOn: '2024-03-29T21:29:21Z'
+            refundedOn: '2024-04-08T18:25:04Z'
+            disputedOn: '2024-03-29T21:29:21Z'
+            disputeUpdatedOn: '2024-03-29T21:29:21Z'
+            disputeLastStatus: charge_refunded
+            customerPaid:
+              unit: USD
+              value: '5892'
+              string: \$ 118.73 USD
+            netAmount:
+              unit: USD
+              value: '5892'
+              string: \$ 112.62 USD
+            applicationFee:
+              unit: USD
+              value: '5892'
+              string: \$ 2.37 USD
+            allAddresses:
+              - type: billing
+                addressee: Arthur Dent
+                line1: 20 W 34th St
+                line2: Empire State Building
+                city: New York
+                state: New York
+                country: US
+                postalCode: '10118'
+              - type: shipping
+                addressee: Arthur Dent
+                line1: 20 W 34th St
+                line2: Empire State Building
+                city: New York
+                state: New York
+                country: US
+                postalCode: '10118'
+            shippingAddress:
+              type: shipping
+              japanType: kanji
+              addressee: Arthur Dent
+              line1: 20 W 34th St
+              line2: Empire State Building
+              city: New York
+              state: New York
+              country: US
+              postalCode: '10118'
+            billingAddress:
+              type: billing
+              addressee: Arthur Dent
+              line1: 20 W 34th St
+              line2: Empire State Building
+              city: New York
+              state: New York
+              country: US
+              postalCode: '10118'
+            shippingProvider: Shipping Company, Co.
+            shippingTracking: tr00000000001
+            shippingTrackingURL: https://www.shippingcompany.com/tracking/tr00000000001
+            customerInfo:
+              fullName: Arthur Dent
+              email: arthur.dent@example.com
+            purchasedItems:
+              - count: 1
+                rowTotal:
+                  unit: USD
+                  value: '5892'
+                  string: \$ 55.61 USD
+                productId: 66072fb61b89448912e26791
+                productName: Luxurious Fresh Ball
+                productSlug: luxurious-fresh-ball
+                variantId: 66072fb71b89448912e2683f
+                variantName: 'Luxurious Fresh Ball Generic: Bronze, Practical: Plastic'
+                variantSlug: luxurious-fresh-ball-generic-bronze-practical-plastic
+                variantSKU: luxurious-fresh-ball-generic-bronze-practical-plastic
+                variantImage:
+                  url: >-
+                    https://dev-assets.website-files.com/66072f39417a2a35b2589cc7/66072fb51b89448912e2672c_image14.jpeg
+                variantPrice:
+                  unit: USD
+                  value: '5892'
+                  string: \$ 55.61 USD
+                weight: 11
+                width: 82
+                height: 70
+                length: 9
+              - count: 1
+                rowTotal:
+                  unit: USD
+                  value: '5892'
+                  string: \$ 53.44 USD
+                productId: 66072fb61b89448912e26799
+                productName: Recycled Steel Gloves
+                productSlug: recycled-steel-gloves
+                variantId: 66072fb91b89448912e26ab9
+                variantName: 'Recycled Steel Gloves Electronic: Granite, Handcrafted: grey'
+                variantSlug: recycled-steel-gloves-electronic-granite-handcrafted-grey
+                variantSKU: recycled-steel-gloves-electronic-granite-handcrafted-grey
+                variantImage:
+                  url: >-
+                    https://dev-assets.website-files.com/66072f39417a2a35b2589cc7/66072fb51b89448912e2671e_image2.jpeg
+                variantPrice:
+                  unit: USD
+                  value: '5892'
+                  string: \$ 53.44 USD
+                weight: 38
+                width: 76
+                height: 85
+                length: 40
+            purchasedItemsCount: 2
+            stripeDetails:
+              subscriptionId: sub_1J6xwG2eZvKYlo2CXu9Zt0Tn
+              paymentMethod: pm_1OzmzBJYFi4lcbXWHKNdXU7j
+              paymentIntentId: pi_3OzmzDJYFi4lcbXW1hTBW6ft
+              customerId: cus_PpRsNHwWdUoRKR
+              chargeId: ch_3OzmzDJYFi4lcbXW1ndkkrH2
+              refundId: re_3OzmzDJYFi4lcbXW1kFAmlBk
+              refundReason: fraudulent
+            stripeCard:
+              last4: '4242'
+              brand: Visa
+              ownerName: Arthur Dent
+              expires:
+                year: 2024
+                month: 4
+            customData:
+              - key: value
+            metadata:
+              isBuyNow: false
+            isCustomerDeleted: false
+            isShippingRequired: true
+            hasDownloads: false
+            paymentProcessor: stripe
+            totals:
+              subtotal:
+                unit: USD
+                value: '5892'
+                string: \$ 109.05 USD
+              extras:
+                - type: tax
+                  name: State Taxes
+                  description: NY Taxes (4.00%)
+                  price:
+                    unit: USD
+                    value: '5892'
+                    string: \$ 4.36 USD
+                - type: tax
+                  name: City Taxes
+                  description: NEW YORK Taxes (4.88%)
+                  price:
+                    unit: USD
+                    value: '5892'
+                    string: \$ 5.32 USD
+                - type: shipping
+                  name: Flat
+                  description: ''
+                  price:
+                    unit: USD
+                    value: '5892'
+                    string: \$ 0.00 USD
+              total:
+                unit: USD
+                value: '5892'
+                string: \$ 118.73 USD
+            downloadFiles:
+              - id: 5e9a5eba75e0ac242e1b6f64
+                name: New product guide
+                url: >-
+                  https://webflow.com/dashboard/download-digital-product?payload=5d93ba5e38c6b0160ab711d3;e7634a;5eb1aac72912ec06f561278c;5e9a5eba75e0ac242e1b6f63:ka2nehxy:4a1ee0a632feaab94294350087215ed89533f2f530903e3b933b638940e921aa
+    docs: Information about an updated ecommerce order
