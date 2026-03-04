@@ -24,22 +24,26 @@ class ActivityLogsClient:
         self,
         site_id: str,
         *,
-        limit: typing.Optional[float] = None,
-        offset: typing.Optional[float] = None,
+        limit: typing.Optional[int] = None,
+        offset: typing.Optional[int] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> SiteActivityLogResponse:
         """
-        Retrieve Activity Logs for a specific Site. Requires Site to be on an Enterprise plan. </br></br>  Required scope | `site_activity:read`
+        Retrieve Activity Logs for a specific Site.
+
+        <Warning title="Enterprise Only">This endpoint requires an Enterprise workspace.</Warning>
+
+        Required scope: `site_activity:read`
 
         Parameters
         ----------
         site_id : str
             Unique identifier for a Site
 
-        limit : typing.Optional[float]
+        limit : typing.Optional[int]
             Maximum number of records to be returned (max limit: 100)
 
-        offset : typing.Optional[float]
+        offset : typing.Optional[int]
             Offset used for pagination if the results have more than limit records
 
         request_options : typing.Optional[RequestOptions]
@@ -59,10 +63,13 @@ class ActivityLogsClient:
         )
         client.sites.activity_logs.list(
             site_id="580e63e98c9a982ac9b8b741",
+            limit=1,
+            offset=1,
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/activity_logs",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "limit": limit,
@@ -133,22 +140,26 @@ class AsyncActivityLogsClient:
         self,
         site_id: str,
         *,
-        limit: typing.Optional[float] = None,
-        offset: typing.Optional[float] = None,
+        limit: typing.Optional[int] = None,
+        offset: typing.Optional[int] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> SiteActivityLogResponse:
         """
-        Retrieve Activity Logs for a specific Site. Requires Site to be on an Enterprise plan. </br></br>  Required scope | `site_activity:read`
+        Retrieve Activity Logs for a specific Site.
+
+        <Warning title="Enterprise Only">This endpoint requires an Enterprise workspace.</Warning>
+
+        Required scope: `site_activity:read`
 
         Parameters
         ----------
         site_id : str
             Unique identifier for a Site
 
-        limit : typing.Optional[float]
+        limit : typing.Optional[int]
             Maximum number of records to be returned (max limit: 100)
 
-        offset : typing.Optional[float]
+        offset : typing.Optional[int]
             Offset used for pagination if the results have more than limit records
 
         request_options : typing.Optional[RequestOptions]
@@ -173,6 +184,8 @@ class AsyncActivityLogsClient:
         async def main() -> None:
             await client.sites.activity_logs.list(
                 site_id="580e63e98c9a982ac9b8b741",
+                limit=1,
+                offset=1,
             )
 
 
@@ -180,6 +193,7 @@ class AsyncActivityLogsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/activity_logs",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
                 "limit": limit,
