@@ -61,6 +61,7 @@ class WebhooksClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/webhooks",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -212,6 +213,7 @@ class WebhooksClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id_)}/webhooks",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             json={
                 "id": id,
@@ -324,6 +326,7 @@ class WebhooksClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"webhooks/{jsonable_encoder(webhook_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -422,6 +425,7 @@ class WebhooksClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"webhooks/{jsonable_encoder(webhook_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="DELETE",
             request_options=request_options,
         )
@@ -528,6 +532,7 @@ class AsyncWebhooksClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/webhooks",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -686,6 +691,7 @@ class AsyncWebhooksClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id_)}/webhooks",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             json={
                 "id": id,
@@ -806,6 +812,7 @@ class AsyncWebhooksClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"webhooks/{jsonable_encoder(webhook_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -912,6 +919,7 @@ class AsyncWebhooksClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"webhooks/{jsonable_encoder(webhook_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="DELETE",
             request_options=request_options,
         )

@@ -5,6 +5,7 @@ import typing_extensions
 import typing
 from .custom_code_hosted_response import CustomCodeHostedResponse
 from ..core.serialization import FieldMetadata
+from .pagination import Pagination
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
@@ -17,6 +18,7 @@ class RegisteredScriptList(UniversalBaseModel):
     registered_scripts: typing_extensions.Annotated[
         typing.Optional[typing.List[CustomCodeHostedResponse]], FieldMetadata(alias="registeredScripts")
     ] = None
+    pagination: typing.Optional[Pagination] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

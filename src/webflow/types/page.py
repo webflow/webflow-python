@@ -80,7 +80,7 @@ class Page(UniversalBaseModel):
         default=None
     )
     """
-    Indicates whether the Page supports [Page Branching](https://university.webflow.com/lesson/page-branching)
+    Indicates whether the Page supports [Page Branching](https://university.webflow.com/lesson/page-branching). Pages that are already branches cannot be branched again.
     """
 
     is_branch: typing_extensions.Annotated[typing.Optional[bool], FieldMetadata(alias="isBranch")] = pydantic.Field(
@@ -90,11 +90,11 @@ class Page(UniversalBaseModel):
     Indicates whether the Page is a Branch of another Page [Page Branching](https://university.webflow.com/lesson/page-branching)
     """
 
-    is_members_only: typing_extensions.Annotated[typing.Optional[bool], FieldMetadata(alias="isMembersOnly")] = (
-        pydantic.Field(default=None)
+    branch_id: typing_extensions.Annotated[typing.Optional[str], FieldMetadata(alias="branchId")] = pydantic.Field(
+        default=None
     )
     """
-    Indicates whether the Page is restricted by [Memberships Controls](https://university.webflow.com/lesson/webflow-memberships-overview#how-to-manage-page-restrictions)
+    If the Page is a Branch of another Page, this is the ID of the Branch
     """
 
     seo: typing.Optional[PageSeo] = pydantic.Field(default=None)
