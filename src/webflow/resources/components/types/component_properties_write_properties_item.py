@@ -20,7 +20,7 @@ class ComponentPropertiesWritePropertiesItem(UniversalBaseModel):
     
     The provided value must be compatible with the type of the component property.
     
-    For example, attempting to update a single-line plain-text property with a multi-line 
+    For example, attempting to update a single-line plain-text property with a multi-line
     value will result in an error.
     """
 
