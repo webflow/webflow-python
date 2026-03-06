@@ -11,17 +11,17 @@ class Pagination(UniversalBaseModel):
     Pagination object
     """
 
-    limit: typing.Optional[float] = pydantic.Field(default=None)
+    limit: typing.Optional[int] = pydantic.Field(default=None)
     """
     The limit used for pagination
     """
 
-    offset: typing.Optional[float] = pydantic.Field(default=None)
+    offset: typing.Optional[int] = pydantic.Field(default=None)
     """
     The offset used for pagination
     """
 
-    total: typing.Optional[float] = pydantic.Field(default=None)
+    total: typing.Optional[int] = pydantic.Field(default=None)
     """
     The total number of records
     """
