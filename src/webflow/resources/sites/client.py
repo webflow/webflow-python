@@ -4,8 +4,12 @@ import typing
 from ...core.client_wrapper import SyncClientWrapper
 from .resources.redirects.client import RedirectsClient
 from .resources.plans.client import PlansClient
+from .resources.robots_txt.client import RobotsTxtClient
+from .resources.well_known.client import WellKnownClient
 from .resources.activity_logs.client import ActivityLogsClient
+from .resources.comments.client import CommentsClient
 from .resources.scripts.client import ScriptsClient
+from .resources.forms.client import FormsClient
 from ...core.request_options import RequestOptions
 from ...types.site import Site
 from ...core.jsonable_encoder import jsonable_encoder
@@ -25,8 +29,12 @@ from .types.sites_publish_response import SitesPublishResponse
 from ...core.client_wrapper import AsyncClientWrapper
 from .resources.redirects.client import AsyncRedirectsClient
 from .resources.plans.client import AsyncPlansClient
+from .resources.robots_txt.client import AsyncRobotsTxtClient
+from .resources.well_known.client import AsyncWellKnownClient
 from .resources.activity_logs.client import AsyncActivityLogsClient
+from .resources.comments.client import AsyncCommentsClient
 from .resources.scripts.client import AsyncScriptsClient
+from .resources.forms.client import AsyncFormsClient
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
@@ -37,8 +45,12 @@ class SitesClient:
         self._client_wrapper = client_wrapper
         self.redirects = RedirectsClient(client_wrapper=self._client_wrapper)
         self.plans = PlansClient(client_wrapper=self._client_wrapper)
+        self.robots_txt = RobotsTxtClient(client_wrapper=self._client_wrapper)
+        self.well_known = WellKnownClient(client_wrapper=self._client_wrapper)
         self.activity_logs = ActivityLogsClient(client_wrapper=self._client_wrapper)
+        self.comments = CommentsClient(client_wrapper=self._client_wrapper)
         self.scripts = ScriptsClient(client_wrapper=self._client_wrapper)
+        self.forms = FormsClient(client_wrapper=self._client_wrapper)
 
     def create(
         self,
@@ -50,7 +62,9 @@ class SitesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> Site:
         """
-        Create a site. This endpoint requires an Enterprise workspace.
+        Create a site.
+
+        <Warning title="Enterprise Only">This endpoint requires an Enterprise workspace.</Warning>
 
         Required scope | `workspace:write`
 
@@ -90,6 +104,7 @@ class SitesClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"workspaces/{jsonable_encoder(workspace_id)}/sites",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             json={
                 "name": name,
@@ -203,6 +218,7 @@ class SitesClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             "sites",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -282,6 +298,7 @@ class SitesClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -351,7 +368,9 @@ class SitesClient:
 
     def delete(self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
         """
-        Delete a site. This endpoint requires an Enterprise workspace.
+        Delete a site.
+
+        <Warning title="Enterprise Only">This endpoint requires an Enterprise workspace.</Warning>
 
         Required scope | `sites:write`
 
@@ -380,6 +399,7 @@ class SitesClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="DELETE",
             request_options=request_options,
         )
@@ -460,7 +480,9 @@ class SitesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> Site:
         """
-        Update a site. This endpoint requires an Enterprise workspace.
+        Update a site.
+
+        <Warning title="Enterprise Only">This endpoint requires an Enterprise workspace.</Warning>
 
         Required scope | `sites:write`
 
@@ -496,6 +518,7 @@ class SitesClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="PATCH",
             json={
                 "name": name,
@@ -613,6 +636,7 @@ class SitesClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/custom_domains",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -691,7 +715,9 @@ class SitesClient:
         """
         Publishes a site to one or more more domains.
 
-        <Note title="Endpoint-specific rate limit">This endpoint has a limit of one successful publish queue per minute.</Note>
+        To publish to a specific custom domain, use the domain IDs from the [Get Custom Domains](/data/reference/sites/get-custom-domain) endpoint.
+
+        <Note title="Rate limit: 1 publish per minute">This endpoint has a specific rate limit of one successful publish queue per minute.</Note>
 
         Required scope | `sites:write`
 
@@ -723,10 +749,13 @@ class SitesClient:
         )
         client.sites.publish(
             site_id="580e63e98c9a982ac9b8b741",
+            custom_domains=["660c6449dd97ebc7346ac629", "660c6449dd97ebc7346ac62f"],
+            publish_to_webflow_subdomain=False,
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/publish",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             json={
                 "customDomains": custom_domains,
@@ -808,8 +837,12 @@ class AsyncSitesClient:
         self._client_wrapper = client_wrapper
         self.redirects = AsyncRedirectsClient(client_wrapper=self._client_wrapper)
         self.plans = AsyncPlansClient(client_wrapper=self._client_wrapper)
+        self.robots_txt = AsyncRobotsTxtClient(client_wrapper=self._client_wrapper)
+        self.well_known = AsyncWellKnownClient(client_wrapper=self._client_wrapper)
         self.activity_logs = AsyncActivityLogsClient(client_wrapper=self._client_wrapper)
+        self.comments = AsyncCommentsClient(client_wrapper=self._client_wrapper)
         self.scripts = AsyncScriptsClient(client_wrapper=self._client_wrapper)
+        self.forms = AsyncFormsClient(client_wrapper=self._client_wrapper)
 
     async def create(
         self,
@@ -821,7 +854,9 @@ class AsyncSitesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> Site:
         """
-        Create a site. This endpoint requires an Enterprise workspace.
+        Create a site.
+
+        <Warning title="Enterprise Only">This endpoint requires an Enterprise workspace.</Warning>
 
         Required scope | `workspace:write`
 
@@ -869,6 +904,7 @@ class AsyncSitesClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"workspaces/{jsonable_encoder(workspace_id)}/sites",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             json={
                 "name": name,
@@ -990,6 +1026,7 @@ class AsyncSitesClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             "sites",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -1077,6 +1114,7 @@ class AsyncSitesClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -1146,7 +1184,9 @@ class AsyncSitesClient:
 
     async def delete(self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
         """
-        Delete a site. This endpoint requires an Enterprise workspace.
+        Delete a site.
+
+        <Warning title="Enterprise Only">This endpoint requires an Enterprise workspace.</Warning>
 
         Required scope | `sites:write`
 
@@ -1183,6 +1223,7 @@ class AsyncSitesClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="DELETE",
             request_options=request_options,
         )
@@ -1263,7 +1304,9 @@ class AsyncSitesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> Site:
         """
-        Update a site. This endpoint requires an Enterprise workspace.
+        Update a site.
+
+        <Warning title="Enterprise Only">This endpoint requires an Enterprise workspace.</Warning>
 
         Required scope | `sites:write`
 
@@ -1307,6 +1350,7 @@ class AsyncSitesClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}",
+            base_url=self._client_wrapper.get_environment().base,
             method="PATCH",
             json={
                 "name": name,
@@ -1434,6 +1478,7 @@ class AsyncSitesClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/custom_domains",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -1512,7 +1557,9 @@ class AsyncSitesClient:
         """
         Publishes a site to one or more more domains.
 
-        <Note title="Endpoint-specific rate limit">This endpoint has a limit of one successful publish queue per minute.</Note>
+        To publish to a specific custom domain, use the domain IDs from the [Get Custom Domains](/data/reference/sites/get-custom-domain) endpoint.
+
+        <Note title="Rate limit: 1 publish per minute">This endpoint has a specific rate limit of one successful publish queue per minute.</Note>
 
         Required scope | `sites:write`
 
@@ -1549,6 +1596,8 @@ class AsyncSitesClient:
         async def main() -> None:
             await client.sites.publish(
                 site_id="580e63e98c9a982ac9b8b741",
+                custom_domains=["660c6449dd97ebc7346ac629", "660c6449dd97ebc7346ac62f"],
+                publish_to_webflow_subdomain=False,
             )
 
 
@@ -1556,6 +1605,7 @@ class AsyncSitesClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sites/{jsonable_encoder(site_id)}/publish",
+            base_url=self._client_wrapper.get_environment().base,
             method="POST",
             json={
                 "customDomains": custom_domains,
