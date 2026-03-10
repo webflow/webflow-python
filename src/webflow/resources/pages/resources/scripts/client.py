@@ -31,13 +31,7 @@ class ScriptsClient:
         self, page_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> ScriptApplyList:
         """
-        Get all registered scripts that have been applied to a specific Page.
-
-        In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered
-        to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate
-        `custom_code` endpoints.
-
-        <Note>Access to this endpoint requires a bearer token from a [Data Client App](/data/docs/getting-started-data-clients).</Note>
+        Get all scripts applied to a page.
 
         Required scope | `custom_code:read`
 
@@ -67,6 +61,7 @@ class ScriptsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"pages/{jsonable_encoder(page_id)}/custom_code",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -144,15 +139,11 @@ class ScriptsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ScriptApplyList:
         """
-        Add a registered script to a Page.
+        Apply registered scripts to a page. If you have multiple scripts your App needs to apply or maintain on a page, ensure they are always included in the request body for this endpoint. To remove individual scripts, simply call this endpoint without the script in the request body.
 
-        In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered
-        to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate
-        `custom_code` endpoints.
-
-        A site can have a maximum of 800 registered scripts.
-
-        <Note>Access to this endpoint requires a bearer token from a [Data Client App](/data/docs/getting-started-data-clients).</Note>
+        <Note title="Script Registration">
+          To apply a script to a page, the script must first be registered to a Site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints. See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
+        </Note>
 
         Required scope | `custom_code:write`
 
@@ -204,6 +195,7 @@ class ScriptsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"pages/{jsonable_encoder(page_id)}/custom_code",
+            base_url=self._client_wrapper.get_environment().base,
             method="PUT",
             json={
                 "scripts": convert_and_respect_annotation_metadata(
@@ -291,13 +283,11 @@ class ScriptsClient:
 
     def delete_custom_code(self, page_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
         """
-        Delete the custom code block that an app has created for a page
+        Remove all scripts from a page applied by the App. This endpoint will not remove scripts from the site's registered scripts.
 
-        In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered
-        to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate
-        `custom_code` endpoints.
+        To remove individual scripts applied by the App, use the [Add/Update Custom Code](/data/reference/custom-code/custom-code-pages/upsert-custom-code) endpoint.
 
-        <Note>Access to this endpoint requires a bearer token from a [Data Client App](/data/docs/getting-started-data-clients).</Note>
+        <Note>Access to this endpoint requires a bearer token obtained from an [OAuth Code Grant Flow](/data/reference/oauth-app).</Note>
 
         Required scope | `custom_code:write`
 
@@ -326,6 +316,7 @@ class ScriptsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"pages/{jsonable_encoder(page_id)}/custom_code",
+            base_url=self._client_wrapper.get_environment().base,
             method="DELETE",
             request_options=request_options,
         )
@@ -396,13 +387,7 @@ class AsyncScriptsClient:
         self, page_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> ScriptApplyList:
         """
-        Get all registered scripts that have been applied to a specific Page.
-
-        In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered
-        to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate
-        `custom_code` endpoints.
-
-        <Note>Access to this endpoint requires a bearer token from a [Data Client App](/data/docs/getting-started-data-clients).</Note>
+        Get all scripts applied to a page.
 
         Required scope | `custom_code:read`
 
@@ -440,6 +425,7 @@ class AsyncScriptsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"pages/{jsonable_encoder(page_id)}/custom_code",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -517,15 +503,11 @@ class AsyncScriptsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ScriptApplyList:
         """
-        Add a registered script to a Page.
+        Apply registered scripts to a page. If you have multiple scripts your App needs to apply or maintain on a page, ensure they are always included in the request body for this endpoint. To remove individual scripts, simply call this endpoint without the script in the request body.
 
-        In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered
-        to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate
-        `custom_code` endpoints.
-
-        A site can have a maximum of 800 registered scripts.
-
-        <Note>Access to this endpoint requires a bearer token from a [Data Client App](/data/docs/getting-started-data-clients).</Note>
+        <Note title="Script Registration">
+          To apply a script to a page, the script must first be registered to a Site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints. See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
+        </Note>
 
         Required scope | `custom_code:write`
 
@@ -585,6 +567,7 @@ class AsyncScriptsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"pages/{jsonable_encoder(page_id)}/custom_code",
+            base_url=self._client_wrapper.get_environment().base,
             method="PUT",
             json={
                 "scripts": convert_and_respect_annotation_metadata(
@@ -674,13 +657,11 @@ class AsyncScriptsClient:
         self, page_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> None:
         """
-        Delete the custom code block that an app has created for a page
+        Remove all scripts from a page applied by the App. This endpoint will not remove scripts from the site's registered scripts.
 
-        In order to use the Custom Code APIs for Sites and Pages, Custom Code Scripts must first be registered
-        to a Site via the `registered_scripts` endpoints, and then applied to a Site or Page using the appropriate
-        `custom_code` endpoints.
+        To remove individual scripts applied by the App, use the [Add/Update Custom Code](/data/reference/custom-code/custom-code-pages/upsert-custom-code) endpoint.
 
-        <Note>Access to this endpoint requires a bearer token from a [Data Client App](/data/docs/getting-started-data-clients).</Note>
+        <Note>Access to this endpoint requires a bearer token obtained from an [OAuth Code Grant Flow](/data/reference/oauth-app).</Note>
 
         Required scope | `custom_code:write`
 
@@ -717,6 +698,7 @@ class AsyncScriptsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"pages/{jsonable_encoder(page_id)}/custom_code",
+            base_url=self._client_wrapper.get_environment().base,
             method="DELETE",
             request_options=request_options,
         )
