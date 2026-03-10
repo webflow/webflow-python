@@ -28,7 +28,7 @@ class InventoryClient:
         self._client_wrapper = client_wrapper
 
     def list(
-        self, collection_id: str, item_id: str, *, request_options: typing.Optional[RequestOptions] = None
+        self, sku_collection_id: str, sku_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> InventoryItem:
         """
         List the current inventory levels for a particular SKU item.
@@ -37,11 +37,11 @@ class InventoryClient:
 
         Parameters
         ----------
-        collection_id : str
-            Unique identifier for a Collection
+        sku_collection_id : str
+            Unique identifier for a SKU collection. Use the List Collections API to find this ID.
 
-        item_id : str
-            Unique identifier for an Item
+        sku_id : str
+            Unique identifier for a SKU
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -59,12 +59,13 @@ class InventoryClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.inventory.list(
-            collection_id="580e63fc8c9a982ac9b8b745",
-            item_id="580e64008c9a982ac9b8b754",
+            sku_collection_id="6377a7c4b7a79608c34a46f7",
+            sku_id="5e8518516e147040726cc415",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"collections/{jsonable_encoder(collection_id)}/items/{jsonable_encoder(item_id)}/inventory",
+            f"collections/{jsonable_encoder(sku_collection_id)}/items/{jsonable_encoder(sku_id)}/inventory",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -154,8 +155,8 @@ class InventoryClient:
 
     def update(
         self,
-        collection_id: str,
-        item_id: str,
+        sku_collection_id: str,
+        sku_id: str,
         *,
         inventory_type: InventoryUpdateRequestInventoryType,
         update_quantity: typing.Optional[float] = OMIT,
@@ -173,11 +174,11 @@ class InventoryClient:
 
         Parameters
         ----------
-        collection_id : str
-            Unique identifier for a Collection
+        sku_collection_id : str
+            Unique identifier for a SKU collection. Use the List Collections API to find this ID.
 
-        item_id : str
-            Unique identifier for an Item
+        sku_id : str
+            Unique identifier for a SKU
 
         inventory_type : InventoryUpdateRequestInventoryType
             infinite or finite
@@ -204,13 +205,14 @@ class InventoryClient:
             access_token="YOUR_ACCESS_TOKEN",
         )
         client.inventory.update(
-            collection_id="580e63fc8c9a982ac9b8b745",
-            item_id="580e64008c9a982ac9b8b754",
+            sku_collection_id="6377a7c4b7a79608c34a46f7",
+            sku_id="5e8518516e147040726cc415",
             inventory_type="infinite",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"collections/{jsonable_encoder(collection_id)}/items/{jsonable_encoder(item_id)}/inventory",
+            f"collections/{jsonable_encoder(sku_collection_id)}/items/{jsonable_encoder(sku_id)}/inventory",
+            base_url=self._client_wrapper.get_environment().base,
             method="PATCH",
             json={
                 "inventoryType": inventory_type,
@@ -313,7 +315,7 @@ class AsyncInventoryClient:
         self._client_wrapper = client_wrapper
 
     async def list(
-        self, collection_id: str, item_id: str, *, request_options: typing.Optional[RequestOptions] = None
+        self, sku_collection_id: str, sku_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> InventoryItem:
         """
         List the current inventory levels for a particular SKU item.
@@ -322,11 +324,11 @@ class AsyncInventoryClient:
 
         Parameters
         ----------
-        collection_id : str
-            Unique identifier for a Collection
+        sku_collection_id : str
+            Unique identifier for a SKU collection. Use the List Collections API to find this ID.
 
-        item_id : str
-            Unique identifier for an Item
+        sku_id : str
+            Unique identifier for a SKU
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -349,15 +351,16 @@ class AsyncInventoryClient:
 
         async def main() -> None:
             await client.inventory.list(
-                collection_id="580e63fc8c9a982ac9b8b745",
-                item_id="580e64008c9a982ac9b8b754",
+                sku_collection_id="6377a7c4b7a79608c34a46f7",
+                sku_id="5e8518516e147040726cc415",
             )
 
 
         asyncio.run(main())
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"collections/{jsonable_encoder(collection_id)}/items/{jsonable_encoder(item_id)}/inventory",
+            f"collections/{jsonable_encoder(sku_collection_id)}/items/{jsonable_encoder(sku_id)}/inventory",
+            base_url=self._client_wrapper.get_environment().base,
             method="GET",
             request_options=request_options,
         )
@@ -447,8 +450,8 @@ class AsyncInventoryClient:
 
     async def update(
         self,
-        collection_id: str,
-        item_id: str,
+        sku_collection_id: str,
+        sku_id: str,
         *,
         inventory_type: InventoryUpdateRequestInventoryType,
         update_quantity: typing.Optional[float] = OMIT,
@@ -466,11 +469,11 @@ class AsyncInventoryClient:
 
         Parameters
         ----------
-        collection_id : str
-            Unique identifier for a Collection
+        sku_collection_id : str
+            Unique identifier for a SKU collection. Use the List Collections API to find this ID.
 
-        item_id : str
-            Unique identifier for an Item
+        sku_id : str
+            Unique identifier for a SKU
 
         inventory_type : InventoryUpdateRequestInventoryType
             infinite or finite
@@ -502,8 +505,8 @@ class AsyncInventoryClient:
 
         async def main() -> None:
             await client.inventory.update(
-                collection_id="580e63fc8c9a982ac9b8b745",
-                item_id="580e64008c9a982ac9b8b754",
+                sku_collection_id="6377a7c4b7a79608c34a46f7",
+                sku_id="5e8518516e147040726cc415",
                 inventory_type="infinite",
             )
 
@@ -511,7 +514,8 @@ class AsyncInventoryClient:
         asyncio.run(main())
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"collections/{jsonable_encoder(collection_id)}/items/{jsonable_encoder(item_id)}/inventory",
+            f"collections/{jsonable_encoder(sku_collection_id)}/items/{jsonable_encoder(sku_id)}/inventory",
+            base_url=self._client_wrapper.get_environment().base,
             method="PATCH",
             json={
                 "inventoryType": inventory_type,
