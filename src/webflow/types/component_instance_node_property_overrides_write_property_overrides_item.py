@@ -16,9 +16,9 @@ class ComponentInstanceNodePropertyOverridesWritePropertyOverridesItem(Universal
 
     text: str = pydantic.Field()
     """
-    The new string or HTML value used to override the component instance property value. 
-    The provided value must be compatible with the type of the component instance property. 
-    For example, attempting to override a single-line plain-text property with a multi-line 
+    The new string or HTML value used to override the component instance property value.
+    The provided value must be compatible with the type of the component instance property.
+    For example, attempting to override a single-line plain-text property with a multi-line
     value will result in an error.
     """
 
