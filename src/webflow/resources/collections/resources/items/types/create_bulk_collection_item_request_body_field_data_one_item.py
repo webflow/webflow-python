@@ -6,7 +6,7 @@ from ......core.pydantic_utilities import IS_PYDANTIC_V2
 import typing
 
 
-class CreateBulkCollectionItemRequestBodyFieldDataItem(UniversalBaseModel):
+class CreateBulkCollectionItemRequestBodyFieldDataOneItem(UniversalBaseModel):
     """
     A single CMS item to create
     """
@@ -18,7 +18,7 @@ class CreateBulkCollectionItemRequestBodyFieldDataItem(UniversalBaseModel):
 
     slug: str = pydantic.Field()
     """
-    URL slug for the item in your site. 
+    URL slug for the item in your site.
     Note: Updating the item slug will break all links referencing the old slug.
     """
 

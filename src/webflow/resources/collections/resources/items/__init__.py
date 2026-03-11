@@ -2,7 +2,7 @@
 
 from .types import (
     CreateBulkCollectionItemRequestBodyFieldData,
-    CreateBulkCollectionItemRequestBodyFieldDataItem,
+    CreateBulkCollectionItemRequestBodyFieldDataOneItem,
     ItemIDs,
     ItemIDsWithLocales,
     ItemsCreateItemLiveRequestBody,
@@ -24,7 +24,7 @@ from .types import (
 
 __all__ = [
     "CreateBulkCollectionItemRequestBodyFieldData",
-    "CreateBulkCollectionItemRequestBodyFieldDataItem",
+    "CreateBulkCollectionItemRequestBodyFieldDataOneItem",
     "ItemIDs",
     "ItemIDsWithLocales",
     "ItemsCreateItemLiveRequestBody",

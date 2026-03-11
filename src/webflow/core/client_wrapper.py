@@ -11,7 +11,7 @@ class BaseClientWrapper:
     def __init__(
         self,
         *,
-        access_token: typing.Optional[typing.Union[str, typing.Callable[[], str]]] = None,
+        access_token: typing.Union[str, typing.Callable[[], str]],
         environment: WebflowEnvironment,
         timeout: typing.Optional[float] = None,
     ):
@@ -25,13 +25,11 @@ class BaseClientWrapper:
             "X-Fern-SDK-Name": "webflow",
             "X-Fern-SDK-Version": "1.2.1",
         }
-        access_token = self._get_access_token()
-        if access_token is not None:
-            headers["Authorization"] = f"Bearer {access_token}"
+        headers["Authorization"] = f"Bearer {self._get_access_token()}"
         return headers
 
-    def _get_access_token(self) -> typing.Optional[str]:
-        if isinstance(self._access_token, str) or self._access_token is None:
+    def _get_access_token(self) -> str:
+        if isinstance(self._access_token, str):
             return self._access_token
         else:
             return self._access_token()
@@ -47,7 +45,7 @@ class SyncClientWrapper(BaseClientWrapper):
     def __init__(
         self,
         *,
-        access_token: typing.Optional[typing.Union[str, typing.Callable[[], str]]] = None,
+        access_token: typing.Union[str, typing.Callable[[], str]],
         environment: WebflowEnvironment,
         timeout: typing.Optional[float] = None,
         httpx_client: httpx.Client,
@@ -62,7 +60,7 @@ class AsyncClientWrapper(BaseClientWrapper):
     def __init__(
         self,
         *,
-        access_token: typing.Optional[typing.Union[str, typing.Callable[[], str]]] = None,
+        access_token: typing.Union[str, typing.Callable[[], str]],
         environment: WebflowEnvironment,
         timeout: typing.Optional[float] = None,
         httpx_client: httpx.AsyncClient,

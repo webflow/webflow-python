@@ -3,7 +3,7 @@
 from . import fields, items
 from .items import (
     CreateBulkCollectionItemRequestBodyFieldData,
-    CreateBulkCollectionItemRequestBodyFieldDataItem,
+    CreateBulkCollectionItemRequestBodyFieldDataOneItem,
     ItemIDs,
     ItemIDsWithLocales,
     ItemsCreateItemLiveRequestBody,
@@ -25,7 +25,7 @@ from .items import (
 
 __all__ = [
     "CreateBulkCollectionItemRequestBodyFieldData",
-    "CreateBulkCollectionItemRequestBodyFieldDataItem",
+    "CreateBulkCollectionItemRequestBodyFieldDataOneItem",
     "ItemIDs",
     "ItemIDsWithLocales",
     "ItemsCreateItemLiveRequestBody",
