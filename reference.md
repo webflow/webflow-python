@@ -1,6 +1,6 @@
 # Reference
 ## Token
-<details><summary><code>client.token.<a href="src/webflow/resources/token/client.py">authorized_by</a>()</code></summary>
+<details><summary><code>client.token.<a href="src/webflow/token/client.py">authorized_by</a>() -> AuthorizedUser</code></summary>
 <dl>
 <dd>
 
@@ -30,10 +30,13 @@ Required Scope | `authorized_user:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.token.authorized_by()
 
 ```
@@ -62,7 +65,7 @@ client.token.authorized_by()
 </dl>
 </details>
 
-<details><summary><code>client.token.<a href="src/webflow/resources/token/client.py">introspect</a>()</code></summary>
+<details><summary><code>client.token.<a href="src/webflow/token/client.py">introspect</a>() -> Authorization</code></summary>
 <dl>
 <dd>
 
@@ -92,10 +95,13 @@ Information about the authorization token
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.token.introspect()
 
 ```
@@ -125,7 +131,7 @@ client.token.introspect()
 </details>
 
 ## Sites
-<details><summary><code>client.sites.<a href="src/webflow/resources/sites/client.py">create</a>(...)</code></summary>
+<details><summary><code>client.sites.<a href="src/webflow/sites/client.py">create</a>(...) -> Site</code></summary>
 <dl>
 <dd>
 
@@ -137,7 +143,7 @@ client.token.introspect()
 <dl>
 <dd>
 
-Create a site. 
+Create a site.
 
 <Warning title="Enterprise Only">This endpoint requires an Enterprise workspace.</Warning>
 
@@ -157,13 +163,16 @@ Required scope | `workspace:write`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.sites.create(
     workspace_id="580e63e98c9a982ac9b8b741",
-    name="The Hitchhiker's Guide to the Galaxy",
+    name="The Hitchhiker\'s Guide to the Galaxy",
 )
 
 ```
@@ -224,7 +233,7 @@ client.sites.create(
 </dl>
 </details>
 
-<details><summary><code>client.sites.<a href="src/webflow/resources/sites/client.py">list</a>()</code></summary>
+<details><summary><code>client.sites.<a href="src/webflow/sites/client.py">list</a>() -> Sites</code></summary>
 <dl>
 <dd>
 
@@ -254,10 +263,13 @@ Required scope | `sites:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.sites.list()
 
 ```
@@ -286,7 +298,7 @@ client.sites.list()
 </dl>
 </details>
 
-<details><summary><code>client.sites.<a href="src/webflow/resources/sites/client.py">get</a>(...)</code></summary>
+<details><summary><code>client.sites.<a href="src/webflow/sites/client.py">get</a>(...) -> Site</code></summary>
 <dl>
 <dd>
 
@@ -316,10 +328,13 @@ Required scope | `sites:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.sites.get(
     site_id="580e63e98c9a982ac9b8b741",
 )
@@ -358,7 +373,7 @@ client.sites.get(
 </dl>
 </details>
 
-<details><summary><code>client.sites.<a href="src/webflow/resources/sites/client.py">delete</a>(...)</code></summary>
+<details><summary><code>client.sites.<a href="src/webflow/sites/client.py">delete</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -370,7 +385,7 @@ client.sites.get(
 <dl>
 <dd>
 
-Delete a site. 
+Delete a site.
 
 <Warning title="Enterprise Only">This endpoint requires an Enterprise workspace.</Warning>
 
@@ -390,10 +405,13 @@ Required scope | `sites:write`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.sites.delete(
     site_id="580e63e98c9a982ac9b8b741",
 )
@@ -432,7 +450,7 @@ client.sites.delete(
 </dl>
 </details>
 
-<details><summary><code>client.sites.<a href="src/webflow/resources/sites/client.py">update</a>(...)</code></summary>
+<details><summary><code>client.sites.<a href="src/webflow/sites/client.py">update</a>(...) -> Site</code></summary>
 <dl>
 <dd>
 
@@ -444,7 +462,7 @@ client.sites.delete(
 <dl>
 <dd>
 
-Update a site. 
+Update a site.
 
 <Warning title="Enterprise Only">This endpoint requires an Enterprise workspace.</Warning>
 
@@ -464,10 +482,13 @@ Required scope | `sites:write`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.sites.update(
     site_id="580e63e98c9a982ac9b8b741",
 )
@@ -522,7 +543,7 @@ client.sites.update(
 </dl>
 </details>
 
-<details><summary><code>client.sites.<a href="src/webflow/resources/sites/client.py">get_custom_domain</a>(...)</code></summary>
+<details><summary><code>client.sites.<a href="src/webflow/sites/client.py">get_custom_domain</a>(...) -> Domains</code></summary>
 <dl>
 <dd>
 
@@ -552,10 +573,13 @@ Required scope | `sites:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.sites.get_custom_domain(
     site_id="580e63e98c9a982ac9b8b741",
 )
@@ -594,7 +618,7 @@ client.sites.get_custom_domain(
 </dl>
 </details>
 
-<details><summary><code>client.sites.<a href="src/webflow/resources/sites/client.py">publish</a>(...)</code></summary>
+<details><summary><code>client.sites.<a href="src/webflow/sites/client.py">publish</a>(...) -> SitesPublishResponse</code></summary>
 <dl>
 <dd>
 
@@ -606,7 +630,7 @@ client.sites.get_custom_domain(
 <dl>
 <dd>
 
-Publishes a site to one or more more domains. 
+Publishes a site to one or more more domains.
 
 To publish to a specific custom domain, use the domain IDs from the [Get Custom Domains](/data/reference/sites/get-custom-domain) endpoint.
 
@@ -628,13 +652,19 @@ Required scope | `sites:write`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.sites.publish(
     site_id="580e63e98c9a982ac9b8b741",
-    custom_domains=["660c6449dd97ebc7346ac629", "660c6449dd97ebc7346ac62f"],
+    custom_domains=[
+        "660c6449dd97ebc7346ac629",
+        "660c6449dd97ebc7346ac62f"
+    ],
     publish_to_webflow_subdomain=False,
 )
 
@@ -660,7 +690,7 @@ client.sites.publish(
 <dl>
 <dd>
 
-**custom_domains:** `typing.Optional[typing.Sequence[str]]` — Array of Custom Domain IDs to publish
+**custom_domains:** `typing.Optional[typing.List[str]]` — Array of Custom Domain IDs to publish
     
 </dd>
 </dl>
@@ -689,7 +719,7 @@ client.sites.publish(
 </details>
 
 ## Collections
-<details><summary><code>client.collections.<a href="src/webflow/resources/collections/client.py">list</a>(...)</code></summary>
+<details><summary><code>client.collections.<a href="src/webflow/collections/client.py">list</a>(...) -> CollectionList</code></summary>
 <dl>
 <dd>
 
@@ -719,10 +749,13 @@ Required scope | `cms:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.collections.list(
     site_id="580e63e98c9a982ac9b8b741",
 )
@@ -761,7 +794,7 @@ client.collections.list(
 </dl>
 </details>
 
-<details><summary><code>client.collections.<a href="src/webflow/resources/collections/client.py">create</a>(...)</code></summary>
+<details><summary><code>client.collections.<a href="src/webflow/collections/client.py">create</a>(...) -> Collection</code></summary>
 <dl>
 <dd>
 
@@ -792,11 +825,14 @@ Required scope | `cms:write`
 <dd>
 
 ```python
-from webflow import ReferenceField, ReferenceFieldMetadata, StaticField, Webflow
+from webflow import Webflow, StaticField
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.collections.create(
     site_id="580e63e98c9a982ac9b8b741",
     display_name="Blog Posts",
@@ -815,15 +851,12 @@ client.collections.create(
             display_name="Content",
             help_text="The content of the blog post",
         ),
-        ReferenceField(
+        StaticField(
             is_required=True,
-            type="Reference",
+            type=,
             display_name="Author",
             help_text="The author of the blog post",
-            metadata=ReferenceFieldMetadata(
-                collection_id="23cc2d952d4e4631ffd4345d2743db4e",
-            ),
-        ),
+        )
     ],
 )
 
@@ -873,7 +906,7 @@ client.collections.create(
 <dl>
 <dd>
 
-**fields:** `typing.Optional[typing.Sequence[FieldCreate]]` — An array of custom fields to add to the collection
+**fields:** `typing.Optional[typing.List[FieldCreate]]` — An array of custom fields to add to the collection
     
 </dd>
 </dl>
@@ -893,7 +926,7 @@ client.collections.create(
 </dl>
 </details>
 
-<details><summary><code>client.collections.<a href="src/webflow/resources/collections/client.py">get</a>(...)</code></summary>
+<details><summary><code>client.collections.<a href="src/webflow/collections/client.py">get</a>(...) -> Collection</code></summary>
 <dl>
 <dd>
 
@@ -923,10 +956,13 @@ Required scope | `cms:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.collections.get(
     collection_id="580e63fc8c9a982ac9b8b745",
 )
@@ -965,7 +1001,7 @@ client.collections.get(
 </dl>
 </details>
 
-<details><summary><code>client.collections.<a href="src/webflow/resources/collections/client.py">delete</a>(...)</code></summary>
+<details><summary><code>client.collections.<a href="src/webflow/collections/client.py">delete</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -995,10 +1031,13 @@ Required scope | `cms:write`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.collections.delete(
     collection_id="580e63fc8c9a982ac9b8b745",
 )
@@ -1038,7 +1077,7 @@ client.collections.delete(
 </details>
 
 ## Pages
-<details><summary><code>client.pages.<a href="src/webflow/resources/pages/client.py">list</a>(...)</code></summary>
+<details><summary><code>client.pages.<a href="src/webflow/pages/client.py">list</a>(...) -> PageList</code></summary>
 <dl>
 <dd>
 
@@ -1068,10 +1107,13 @@ Required scope | `pages:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.pages.list(
     site_id="580e63e98c9a982ac9b8b741",
     locale_id="65427cf400e02b306eaa04a0",
@@ -1141,7 +1183,7 @@ Unique identifier for a specific Locale.
 </dl>
 </details>
 
-<details><summary><code>client.pages.<a href="src/webflow/resources/pages/client.py">get_metadata</a>(...)</code></summary>
+<details><summary><code>client.pages.<a href="src/webflow/pages/client.py">get_metadata</a>(...) -> Page</code></summary>
 <dl>
 <dd>
 
@@ -1171,10 +1213,13 @@ Required scope | `pages:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.pages.get_metadata(
     page_id="63c720f9347c2139b248e552",
     locale_id="65427cf400e02b306eaa04a0",
@@ -1226,7 +1271,7 @@ Unique identifier for a specific Locale.
 </dl>
 </details>
 
-<details><summary><code>client.pages.<a href="src/webflow/resources/pages/client.py">update_page_settings</a>(...)</code></summary>
+<details><summary><code>client.pages.<a href="src/webflow/pages/client.py">update_page_settings</a>(...) -> Page</code></summary>
 <dl>
 <dd>
 
@@ -1256,21 +1301,21 @@ Required scope | `pages:write`
 
 ```python
 from webflow import Webflow
-from webflow.resources.pages import (
-    PageMetadataWriteOpenGraph,
-    PageMetadataWriteSeo,
-)
+from webflow.environment import WebflowEnvironment
+from webflow.pages import PageMetadataWriteSeo, PageMetadataWriteOpenGraph
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.pages.update_page_settings(
     page_id="63c720f9347c2139b248e552",
     locale_id="65427cf400e02b306eaa04a0",
     title="Guide to the Galaxy",
     slug="guide-to-the-galaxy",
     seo=PageMetadataWriteSeo(
-        title="The Ultimate Hitchhiker's Guide to the Galaxy",
+        title="The Ultimate Hitchhiker\'s Guide to the Galaxy",
         description="Everything you need to know about the galaxy, from avoiding Vogon poetry to the importance of towels.",
     ),
     open_graph=PageMetadataWriteOpenGraph(
@@ -1325,7 +1370,7 @@ Unique identifier for a specific Locale.
 
 **slug:** `typing.Optional[str]` 
 
-Slug for the page. 
+Slug for the page.
 
 
 **Note:** Updating slugs in secondary locales is only supported in <a href="https://webflow.com/localization">Advanced and Enterprise localization add-on plans.</a>
@@ -1364,7 +1409,7 @@ Slug for the page.
 </dl>
 </details>
 
-<details><summary><code>client.pages.<a href="src/webflow/resources/pages/client.py">get_content</a>(...)</code></summary>
+<details><summary><code>client.pages.<a href="src/webflow/pages/client.py">get_content</a>(...) -> Dom</code></summary>
 <dl>
 <dd>
 
@@ -1378,7 +1423,7 @@ Slug for the page.
 
 Get text and component instance content from a static page.
 
-<Badge intent="info">Localization</Badge> 
+<Badge intent="info">Localization</Badge>
 
 Required scope | `pages:read`
 </dd>
@@ -1396,10 +1441,13 @@ Required scope | `pages:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.pages.get_content(
     page_id="63c720f9347c2139b248e552",
     locale_id="65427cf400e02b306eaa04a0",
@@ -1469,7 +1517,7 @@ Unique identifier for a specific Locale.
 </dl>
 </details>
 
-<details><summary><code>client.pages.<a href="src/webflow/resources/pages/client.py">update_static_content</a>(...)</code></summary>
+<details><summary><code>client.pages.<a href="src/webflow/pages/client.py">update_static_content</a>(...) -> UpdateStaticContentResponse</code></summary>
 <dl>
 <dd>
 
@@ -1507,67 +1555,38 @@ Required scope | `pages:write`
 <dd>
 
 ```python
-from webflow import (
-    ComponentInstanceNodePropertyOverridesWrite,
-    ComponentInstanceNodePropertyOverridesWritePropertyOverridesItem,
-    Select,
-    SelectNodeWriteChoicesItem,
-    SubmitButtonNodeWrite,
-    TextInputNodeWrite,
-    TextNodeWrite,
-    Webflow,
-)
+from webflow import Webflow, TextNodeWrite
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.pages.update_static_content(
     page_id="63c720f9347c2139b248e552",
     locale_id="localeId",
     nodes=[
         TextNodeWrite(
             node_id="a245c12d-995b-55ee-5ec7-aa36a6cad623",
-            text="<h1>The Hitchhiker's Guide to the Galaxy</h1>",
+            text="<h1>The Hitchhiker\'s Guide to the Galaxy</h1>",
         ),
         TextNodeWrite(
             node_id="a245c12d-995b-55ee-5ec7-aa36a6cad627",
-            text="<div><h3>Don't Panic!</h3><p>Always know where your towel is.</p></div>",
+            text="<div><h3>Don\'t Panic!</h3><p>Always know where your towel is.</p></div>",
         ),
-        Select(
+        TextNodeWrite(
             node_id="a245c12d-995b-55ee-5ec7-aa36a6cad635",
-            choices=[
-                SelectNodeWriteChoicesItem(
-                    value="choice-1",
-                    text="First choice",
-                ),
-                SelectNodeWriteChoicesItem(
-                    value="choice-2",
-                    text="Second choice",
-                ),
-            ],
         ),
-        TextInputNodeWrite(
+        TextNodeWrite(
             node_id="a245c12d-995b-55ee-5ec7-aa36a6cad642",
-            placeholder="Enter something here...",
         ),
-        SubmitButtonNodeWrite(
+        TextNodeWrite(
             node_id="a245c12d-995b-55ee-5ec7-aa36a6cad671",
-            value="Submit",
-            waiting_text="Submitting...",
         ),
-        ComponentInstanceNodePropertyOverridesWrite(
+        TextNodeWrite(
             node_id="a245c12d-995b-55ee-5ec7-aa36a6cad629",
-            property_overrides=[
-                ComponentInstanceNodePropertyOverridesWritePropertyOverridesItem(
-                    property_id="7dd14c08-2e96-8d3d-2b19-b5c03642a0f0",
-                    text="<div><h1>Time is an <em>illusion</em></h1></div>",
-                ),
-                ComponentInstanceNodePropertyOverridesWritePropertyOverridesItem(
-                    property_id="7dd14c08-2e96-8d3d-2b19-b5c03642a0f1",
-                    text="Life, the Universe and Everything",
-                ),
-            ],
-        ),
+        )
     ],
 )
 
@@ -1601,7 +1620,7 @@ client.pages.update_static_content(
 <dl>
 <dd>
 
-**nodes:** `typing.Sequence[PageDomWriteNodesItem]` — List of DOM Nodes with the new content that will be updated in each node.
+**nodes:** `typing.List[PageDomWriteNodesItem]` — List of DOM Nodes with the new content that will be updated in each node.
     
 </dd>
 </dl>
@@ -1622,7 +1641,7 @@ client.pages.update_static_content(
 </details>
 
 ## Components
-<details><summary><code>client.components.<a href="src/webflow/resources/components/client.py">list</a>(...)</code></summary>
+<details><summary><code>client.components.<a href="src/webflow/components/client.py">list</a>(...) -> ComponentList</code></summary>
 <dl>
 <dd>
 
@@ -1652,10 +1671,13 @@ Required scope | `components:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.components.list(
     site_id="580e63e98c9a982ac9b8b741",
     branch_id="68026fa68ef6dc744c75b833",
@@ -1721,7 +1743,7 @@ client.components.list(
 </dl>
 </details>
 
-<details><summary><code>client.components.<a href="src/webflow/resources/components/client.py">get_content</a>(...)</code></summary>
+<details><summary><code>client.components.<a href="src/webflow/components/client.py">get_content</a>(...) -> ComponentDom</code></summary>
 <dl>
 <dd>
 
@@ -1754,10 +1776,13 @@ Required scope | `components:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.components.get_content(
     site_id="580e63e98c9a982ac9b8b741",
     component_id="8505ba55-ef72-629e-f85c-33e4b703d48b",
@@ -1845,7 +1870,7 @@ Unique identifier for a specific Locale.
 </dl>
 </details>
 
-<details><summary><code>client.components.<a href="src/webflow/resources/components/client.py">update_content</a>(...)</code></summary>
+<details><summary><code>client.components.<a href="src/webflow/components/client.py">update_content</a>(...) -> ComponentsUpdateContentResponse</code></summary>
 <dl>
 <dd>
 
@@ -1883,20 +1908,14 @@ Required scope | `components:write`
 <dd>
 
 ```python
-from webflow import (
-    ComponentInstanceNodePropertyOverridesWrite,
-    ComponentInstanceNodePropertyOverridesWritePropertyOverridesItem,
-    Select,
-    SelectNodeWriteChoicesItem,
-    SubmitButtonNodeWrite,
-    TextInputNodeWrite,
-    TextNodeWrite,
-    Webflow,
-)
+from webflow import Webflow, TextNodeWrite
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.components.update_content(
     site_id="580e63e98c9a982ac9b8b741",
     component_id="8505ba55-ef72-629e-f85c-33e4b703d48b",
@@ -1905,47 +1924,24 @@ client.components.update_content(
     nodes=[
         TextNodeWrite(
             node_id="a245c12d-995b-55ee-5ec7-aa36a6cad623",
-            text="<h1>The Hitchhiker's Guide to the Galaxy</h1>",
+            text="<h1>The Hitchhiker\'s Guide to the Galaxy</h1>",
         ),
         TextNodeWrite(
             node_id="a245c12d-995b-55ee-5ec7-aa36a6cad627",
-            text="<div><h3>Don't Panic!</h3><p>Always know where your towel is.</p></div>",
+            text="<div><h3>Don\'t Panic!</h3><p>Always know where your towel is.</p></div>",
         ),
-        Select(
+        TextNodeWrite(
             node_id="a245c12d-995b-55ee-5ec7-aa36a6cad635",
-            choices=[
-                SelectNodeWriteChoicesItem(
-                    value="choice-1",
-                    text="First choice",
-                ),
-                SelectNodeWriteChoicesItem(
-                    value="choice-2",
-                    text="Second choice",
-                ),
-            ],
         ),
-        TextInputNodeWrite(
+        TextNodeWrite(
             node_id="a245c12d-995b-55ee-5ec7-aa36a6cad642",
-            placeholder="Enter something here...",
         ),
-        SubmitButtonNodeWrite(
+        TextNodeWrite(
             node_id="a245c12d-995b-55ee-5ec7-aa36a6cad671",
-            value="Submit",
-            waiting_text="Submitting...",
         ),
-        ComponentInstanceNodePropertyOverridesWrite(
+        TextNodeWrite(
             node_id="a245c12d-995b-55ee-5ec7-aa36a6cad629",
-            property_overrides=[
-                ComponentInstanceNodePropertyOverridesWritePropertyOverridesItem(
-                    property_id="7dd14c08-2e96-8d3d-2b19-b5c03642a0f0",
-                    text="<div><h1>Time is an <em>illusion</em></h1></div>",
-                ),
-                ComponentInstanceNodePropertyOverridesWritePropertyOverridesItem(
-                    property_id="7dd14c08-2e96-8d3d-2b19-b5c03642a0f1",
-                    text="Life, the Universe and Everything",
-                ),
-            ],
-        ),
+        )
     ],
 )
 
@@ -1979,7 +1975,7 @@ client.components.update_content(
 <dl>
 <dd>
 
-**nodes:** `typing.Sequence[ComponentDomWriteNodesItem]` — List of DOM Nodes with the new content that will be updated in each node.
+**nodes:** `typing.List[ComponentDomWriteNodesItem]` — List of DOM Nodes with the new content that will be updated in each node.
     
 </dd>
 </dl>
@@ -2019,7 +2015,7 @@ Unique identifier for a specific Locale.
 </dl>
 </details>
 
-<details><summary><code>client.components.<a href="src/webflow/resources/components/client.py">get_properties</a>(...)</code></summary>
+<details><summary><code>client.components.<a href="src/webflow/components/client.py">get_properties</a>(...) -> ComponentProperties</code></summary>
 <dl>
 <dd>
 
@@ -2051,10 +2047,13 @@ Required scope | `components:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.components.get_properties(
     site_id="580e63e98c9a982ac9b8b741",
     component_id="8505ba55-ef72-629e-f85c-33e4b703d48b",
@@ -2142,7 +2141,7 @@ Unique identifier for a specific Locale.
 </dl>
 </details>
 
-<details><summary><code>client.components.<a href="src/webflow/resources/components/client.py">update_properties</a>(...)</code></summary>
+<details><summary><code>client.components.<a href="src/webflow/components/client.py">update_properties</a>(...) -> ComponentsUpdatePropertiesResponse</code></summary>
 <dl>
 <dd>
 
@@ -2178,11 +2177,14 @@ Required scope | `components:write`
 
 ```python
 from webflow import Webflow
-from webflow.resources.components import ComponentPropertiesWritePropertiesItem
+from webflow.environment import WebflowEnvironment
+from webflow.components import ComponentPropertiesWritePropertiesItem
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.components.update_properties(
     site_id="580e63e98c9a982ac9b8b741",
     component_id="8505ba55-ef72-629e-f85c-33e4b703d48b",
@@ -2196,7 +2198,7 @@ client.components.update_properties(
         ComponentPropertiesWritePropertiesItem(
             property_id="a245c12d-995b-55ee-5ec7-aa36a6cad627",
             text="<div><h3>Dont Panic!</h3><p>Always know where your towel is.</p></div>",
-        ),
+        )
     ],
 )
 
@@ -2230,7 +2232,7 @@ client.components.update_properties(
 <dl>
 <dd>
 
-**properties:** `typing.Sequence[ComponentPropertiesWritePropertiesItem]` — A list of component properties to update within the specified secondary locale.
+**properties:** `typing.List[ComponentPropertiesWritePropertiesItem]` — A list of component properties to update within the specified secondary locale.
     
 </dd>
 </dl>
@@ -2271,7 +2273,7 @@ Unique identifier for a specific Locale.
 </details>
 
 ## Scripts
-<details><summary><code>client.scripts.<a href="src/webflow/resources/scripts/client.py">list</a>(...)</code></summary>
+<details><summary><code>client.scripts.<a href="src/webflow/scripts/client.py">list</a>(...) -> RegisteredScriptList</code></summary>
 <dl>
 <dd>
 
@@ -2305,10 +2307,13 @@ Required scope | `custom_code:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.scripts.list(
     site_id="580e63e98c9a982ac9b8b741",
 )
@@ -2347,7 +2352,7 @@ client.scripts.list(
 </dl>
 </details>
 
-<details><summary><code>client.scripts.<a href="src/webflow/resources/scripts/client.py">register_hosted</a>(...)</code></summary>
+<details><summary><code>client.scripts.<a href="src/webflow/scripts/client.py">register_hosted</a>(...) -> CustomCodeHostedResponse</code></summary>
 <dl>
 <dd>
 
@@ -2381,10 +2386,13 @@ Required scope | `custom_code:write`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.scripts.register_hosted(
     site_id="580e63e98c9a982ac9b8b741",
     hosted_location="hostedLocation",
@@ -2467,7 +2475,7 @@ client.scripts.register_hosted(
 </dl>
 </details>
 
-<details><summary><code>client.scripts.<a href="src/webflow/resources/scripts/client.py">register_inline</a>(...)</code></summary>
+<details><summary><code>client.scripts.<a href="src/webflow/scripts/client.py">register_inline</a>(...) -> CustomCodeInlineResponse</code></summary>
 <dl>
 <dd>
 
@@ -2501,13 +2509,16 @@ Required scope | `custom_code:write`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.scripts.register_inline(
     site_id="580e63e98c9a982ac9b8b741",
-    source_code="alert('hello world');",
+    source_code="alert(\'hello world\');",
     version="0.0.1",
     display_name="Alert",
 )
@@ -2587,7 +2598,7 @@ client.scripts.register_inline(
 </details>
 
 ## Assets
-<details><summary><code>client.assets.<a href="src/webflow/resources/assets/client.py">list</a>(...)</code></summary>
+<details><summary><code>client.assets.<a href="src/webflow/assets/client.py">list</a>(...) -> Assets</code></summary>
 <dl>
 <dd>
 
@@ -2617,10 +2628,13 @@ Required scope | `assets:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.assets.list(
     site_id="580e63e98c9a982ac9b8b741",
     offset=1,
@@ -2677,7 +2691,7 @@ client.assets.list(
 </dl>
 </details>
 
-<details><summary><code>client.assets.<a href="src/webflow/resources/assets/client.py">create</a>(...)</code></summary>
+<details><summary><code>client.assets.<a href="src/webflow/assets/client.py">create</a>(...) -> AssetUpload</code></summary>
 <dl>
 <dd>
 
@@ -2689,7 +2703,7 @@ client.assets.list(
 <dl>
 <dd>
 
-The first step in uploading an asset to a site. 
+The first step in uploading an asset to a site.
 
 
 This endpoint generates a response with the following information: `uploadUrl` and `uploadDetails`.
@@ -2699,7 +2713,7 @@ Use these properties in the header of a [POST request to Amazson s3](https://doc
 
 
 To learn more about how to upload assets to Webflow, see our [assets guide](/data/docs/working-with-assets).
-  
+
  Required scope | `assets:write`
 </dd>
 </dl>
@@ -2716,10 +2730,13 @@ To learn more about how to upload assets to Webflow, see our [assets guide](/dat
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.assets.create(
     site_id="580e63e98c9a982ac9b8b741",
     file_name="file.png",
@@ -2784,7 +2801,7 @@ client.assets.create(
 </dl>
 </details>
 
-<details><summary><code>client.assets.<a href="src/webflow/resources/assets/client.py">get</a>(...)</code></summary>
+<details><summary><code>client.assets.<a href="src/webflow/assets/client.py">get</a>(...) -> Asset</code></summary>
 <dl>
 <dd>
 
@@ -2814,10 +2831,13 @@ Required scope | `assets:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.assets.get(
     asset_id="580e63fc8c9a982ac9b8b745",
 )
@@ -2856,7 +2876,7 @@ client.assets.get(
 </dl>
 </details>
 
-<details><summary><code>client.assets.<a href="src/webflow/resources/assets/client.py">delete</a>(...)</code></summary>
+<details><summary><code>client.assets.<a href="src/webflow/assets/client.py">delete</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -2886,10 +2906,13 @@ Required Scope: `assets: write`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.assets.delete(
     asset_id="580e63fc8c9a982ac9b8b745",
 )
@@ -2928,7 +2951,7 @@ client.assets.delete(
 </dl>
 </details>
 
-<details><summary><code>client.assets.<a href="src/webflow/resources/assets/client.py">update</a>(...)</code></summary>
+<details><summary><code>client.assets.<a href="src/webflow/assets/client.py">update</a>(...) -> Asset</code></summary>
 <dl>
 <dd>
 
@@ -2958,10 +2981,13 @@ Required scope | `assets:write`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.assets.update(
     asset_id="580e63fc8c9a982ac9b8b745",
 )
@@ -3016,7 +3042,7 @@ client.assets.update(
 </dl>
 </details>
 
-<details><summary><code>client.assets.<a href="src/webflow/resources/assets/client.py">list_folders</a>(...)</code></summary>
+<details><summary><code>client.assets.<a href="src/webflow/assets/client.py">list_folders</a>(...) -> AssetFolderList</code></summary>
 <dl>
 <dd>
 
@@ -3046,10 +3072,13 @@ Required scope | `assets:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.assets.list_folders(
     site_id="580e63e98c9a982ac9b8b741",
 )
@@ -3088,7 +3117,7 @@ client.assets.list_folders(
 </dl>
 </details>
 
-<details><summary><code>client.assets.<a href="src/webflow/resources/assets/client.py">create_folder</a>(...)</code></summary>
+<details><summary><code>client.assets.<a href="src/webflow/assets/client.py">create_folder</a>(...) -> AssetFolder</code></summary>
 <dl>
 <dd>
 
@@ -3118,10 +3147,13 @@ Required scope | `assets:write`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.assets.create_folder(
     site_id="580e63e98c9a982ac9b8b741",
     display_name="my asset folder",
@@ -3177,7 +3209,7 @@ client.assets.create_folder(
 </dl>
 </details>
 
-<details><summary><code>client.assets.<a href="src/webflow/resources/assets/client.py">get_folder</a>(...)</code></summary>
+<details><summary><code>client.assets.<a href="src/webflow/assets/client.py">get_folder</a>(...) -> AssetFolder</code></summary>
 <dl>
 <dd>
 
@@ -3207,10 +3239,13 @@ Required scope | `assets:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.assets.get_folder(
     asset_folder_id="6390c49774a71f0e3c1a08ee",
 )
@@ -3250,7 +3285,7 @@ client.assets.get_folder(
 </details>
 
 ## Webhooks
-<details><summary><code>client.webhooks.<a href="src/webflow/resources/webhooks/client.py">list</a>(...)</code></summary>
+<details><summary><code>client.webhooks.<a href="src/webflow/webhooks/client.py">list</a>(...) -> WebhookList</code></summary>
 <dl>
 <dd>
 
@@ -3280,10 +3315,13 @@ Required scope | `sites:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.webhooks.list(
     site_id="580e63e98c9a982ac9b8b741",
 )
@@ -3322,7 +3360,7 @@ client.webhooks.list(
 </dl>
 </details>
 
-<details><summary><code>client.webhooks.<a href="src/webflow/resources/webhooks/client.py">create</a>(...)</code></summary>
+<details><summary><code>client.webhooks.<a href="src/webflow/webhooks/client.py">create</a>(...) -> Webhook</code></summary>
 <dl>
 <dd>
 
@@ -3354,13 +3392,15 @@ Required scope | `sites:write`
 <dd>
 
 ```python
+from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 import datetime
 
-from webflow import Webflow
-
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.webhooks.create(
     site_id_="580e63e98c9a982ac9b8b741",
     id="582266e0cd48de0f0e3c6d8b",
@@ -3368,12 +3408,8 @@ client.webhooks.create(
     url="https://webhook.site/7f7f7f7f-7f7f-7f7f-7f7f-7f7f7f7f7f7f",
     workspace_id="4f4e46fd476ea8c507000001",
     site_id="562ac0395358780a1f5e6fbd",
-    last_triggered=datetime.datetime.fromisoformat(
-        "2023-02-08 23:59:28+00:00",
-    ),
-    created_on=datetime.datetime.fromisoformat(
-        "2022-11-08 23:59:28+00:00",
-    ),
+    last_triggered=datetime.datetime.fromisoformat("2023-02-08T23:59:28+00:00"),
+    created_on=datetime.datetime.fromisoformat("2022-11-08T23:59:28+00:00"),
 )
 
 ```
@@ -3390,7 +3426,7 @@ client.webhooks.create(
 <dl>
 <dd>
 
-**site_id_:** `str` — Unique identifier for a Site
+**site_id:** `str` — Unique identifier for a Site
     
 </dd>
 </dl>
@@ -3398,63 +3434,7 @@ client.webhooks.create(
 <dl>
 <dd>
 
-**id:** `typing.Optional[str]` — Unique identifier for the Webhook registration
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**trigger_type:** `typing.Optional[TriggerType]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**url:** `typing.Optional[str]` — URL to send the Webhook payload to
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**workspace_id:** `typing.Optional[str]` — Unique identifier for the Workspace the Webhook is registered in
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**site_id:** `typing.Optional[str]` — Unique identifier for the Site the Webhook is registered in
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**filter:** `typing.Optional[WebhookFilter]` — Only supported for the `form_submission` trigger type. Filter for the form you want Webhooks to be sent for.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**last_triggered:** `typing.Optional[dt.datetime]` — Date the Webhook instance was last triggered
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**created_on:** `typing.Optional[dt.datetime]` — Date the Webhook registration was created
+**request:** `Webhook` 
     
 </dd>
 </dl>
@@ -3474,7 +3454,7 @@ client.webhooks.create(
 </dl>
 </details>
 
-<details><summary><code>client.webhooks.<a href="src/webflow/resources/webhooks/client.py">get</a>(...)</code></summary>
+<details><summary><code>client.webhooks.<a href="src/webflow/webhooks/client.py">get</a>(...) -> Webhook</code></summary>
 <dl>
 <dd>
 
@@ -3504,10 +3484,13 @@ Required scope: `sites:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.webhooks.get(
     webhook_id="580e64008c9a982ac9b8b754",
 )
@@ -3546,7 +3529,7 @@ client.webhooks.get(
 </dl>
 </details>
 
-<details><summary><code>client.webhooks.<a href="src/webflow/resources/webhooks/client.py">delete</a>(...)</code></summary>
+<details><summary><code>client.webhooks.<a href="src/webflow/webhooks/client.py">delete</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -3576,10 +3559,13 @@ Required scope: `sites:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.webhooks.delete(
     webhook_id="580e64008c9a982ac9b8b754",
 )
@@ -3619,7 +3605,7 @@ client.webhooks.delete(
 </details>
 
 ## Forms
-<details><summary><code>client.forms.<a href="src/webflow/resources/forms/client.py">list</a>(...)</code></summary>
+<details><summary><code>client.forms.<a href="src/webflow/forms/client.py">list</a>(...) -> FormList</code></summary>
 <dl>
 <dd>
 
@@ -3649,10 +3635,13 @@ Required scope | `forms:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.forms.list(
     site_id="580e63e98c9a982ac9b8b741",
     limit=1,
@@ -3709,7 +3698,7 @@ client.forms.list(
 </dl>
 </details>
 
-<details><summary><code>client.forms.<a href="src/webflow/resources/forms/client.py">get</a>(...)</code></summary>
+<details><summary><code>client.forms.<a href="src/webflow/forms/client.py">get</a>(...) -> Form</code></summary>
 <dl>
 <dd>
 
@@ -3739,10 +3728,13 @@ Required scope | `forms:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.forms.get(
     form_id="580e63e98c9a982ac9b8b741",
 )
@@ -3781,7 +3773,7 @@ client.forms.get(
 </dl>
 </details>
 
-<details><summary><code>client.forms.<a href="src/webflow/resources/forms/client.py">list_submissions</a>(...)</code></summary>
+<details><summary><code>client.forms.<a href="src/webflow/forms/client.py">list_submissions</a>(...) -> FormSubmissionList</code></summary>
 <dl>
 <dd>
 
@@ -3797,7 +3789,7 @@ List form submissions for a given form
 
 <Note title="Forms in components">
   When a form is used in a component definition, each instance of the form is considered a unique form.
-  
+
   To get a combined list of submissions for a form that appears across multiple component instances, use the [List Form Submissions by Site](/data/reference/forms/form-submissions/list-submissions-by-site) endpoint.
 </Note>
 
@@ -3817,10 +3809,13 @@ Required scope | `forms:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.forms.list_submissions(
     form_id="580e63e98c9a982ac9b8b741",
     offset=1,
@@ -3877,7 +3872,7 @@ client.forms.list_submissions(
 </dl>
 </details>
 
-<details><summary><code>client.forms.<a href="src/webflow/resources/forms/client.py">get_submission</a>(...)</code></summary>
+<details><summary><code>client.forms.<a href="src/webflow/forms/client.py">get_submission</a>(...) -> FormSubmission</code></summary>
 <dl>
 <dd>
 
@@ -3907,10 +3902,13 @@ Required scope | `forms:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.forms.get_submission(
     form_submission_id="580e63e98c9a982ac9b8b741",
 )
@@ -3949,7 +3947,7 @@ client.forms.get_submission(
 </dl>
 </details>
 
-<details><summary><code>client.forms.<a href="src/webflow/resources/forms/client.py">delete_submission</a>(...)</code></summary>
+<details><summary><code>client.forms.<a href="src/webflow/forms/client.py">delete_submission</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -3980,10 +3978,13 @@ Required scope | `forms:write`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.forms.delete_submission(
     form_submission_id="580e63e98c9a982ac9b8b741",
 )
@@ -4022,7 +4023,7 @@ client.forms.delete_submission(
 </dl>
 </details>
 
-<details><summary><code>client.forms.<a href="src/webflow/resources/forms/client.py">update_submission</a>(...)</code></summary>
+<details><summary><code>client.forms.<a href="src/webflow/forms/client.py">update_submission</a>(...) -> FormSubmission</code></summary>
 <dl>
 <dd>
 
@@ -4052,10 +4053,13 @@ Required scope | `forms:write`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.forms.update_submission(
     form_submission_id="580e63e98c9a982ac9b8b741",
 )
@@ -4082,7 +4086,7 @@ client.forms.update_submission(
 <dl>
 <dd>
 
-**form_submission_data:** `typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]` — An existing **hidden field** defined on the form schema, and the corresponding value to set
+**form_submission_data:** `typing.Optional[typing.Dict[str, typing.Any]]` — An existing **hidden field** defined on the form schema, and the corresponding value to set
     
 </dd>
 </dl>
@@ -4103,7 +4107,7 @@ client.forms.update_submission(
 </details>
 
 ## Products
-<details><summary><code>client.products.<a href="src/webflow/resources/products/client.py">list</a>(...)</code></summary>
+<details><summary><code>client.products.<a href="src/webflow/products/client.py">list</a>(...) -> ProductAndSkUsList</code></summary>
 <dl>
 <dd>
 
@@ -4115,7 +4119,7 @@ client.forms.update_submission(
 <dl>
 <dd>
 
-Retrieve all products for a site. 
+Retrieve all products for a site.
 
 Use `limit` and `offset` to page through all products with subsequent requests. All SKUs for each product
 will also be fetched and returned. The `limit`, `offset` and `total` values represent Products only and do not include any SKUs.
@@ -4136,10 +4140,13 @@ Required scope | `ecommerce:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.products.list(
     site_id="580e63e98c9a982ac9b8b741",
     offset=1,
@@ -4196,7 +4203,7 @@ client.products.list(
 </dl>
 </details>
 
-<details><summary><code>client.products.<a href="src/webflow/resources/products/client.py">create</a>(...)</code></summary>
+<details><summary><code>client.products.<a href="src/webflow/products/client.py">create</a>(...) -> ProductAndSkUs</code></summary>
 <dl>
 <dd>
 
@@ -4232,22 +4239,15 @@ Required scope | `ecommerce:write`
 <dd>
 
 ```python
-from webflow import (
-    ProductFieldData,
-    SkuFieldData,
-    SkuFieldDataPrice,
-    SkuPropertyList,
-    SkuPropertyListEnumItem,
-    Webflow,
-)
-from webflow.resources.products import (
-    ProductSkuCreateProduct,
-    ProductSkuCreateSku,
-)
+from webflow import Webflow, ProductFieldData, SkuPropertyList, SkuPropertyListEnumItem, SkuFieldData, SkuFieldDataPrice
+from webflow.environment import WebflowEnvironment
+from webflow.products import ProductSkuCreateProduct, ProductSkuCreateSku
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.products.create(
     site_id="580e63e98c9a982ac9b8b741",
     publish_status="staging",
@@ -4275,7 +4275,7 @@ client.products.create(
                             id="blue",
                             name="Blue",
                             slug="blue",
-                        ),
+                        )
                     ],
                 ),
                 SkuPropertyList(
@@ -4296,9 +4296,9 @@ client.products.create(
                             id="large",
                             name="Large",
                             slug="large",
-                        ),
+                        )
                     ],
-                ),
+                )
             ],
         ),
     ),
@@ -4307,7 +4307,7 @@ client.products.create(
             name="Colorful T-shirt - Red Small",
             slug="colorful-t-shirt-red-small",
             price=SkuFieldDataPrice(
-                value=2499.0,
+                value=2499,
                 unit="USD",
                 currency="USD",
             ),
@@ -4374,7 +4374,7 @@ client.products.create(
 </dl>
 </details>
 
-<details><summary><code>client.products.<a href="src/webflow/resources/products/client.py">get</a>(...)</code></summary>
+<details><summary><code>client.products.<a href="src/webflow/products/client.py">get</a>(...) -> ProductAndSkUs</code></summary>
 <dl>
 <dd>
 
@@ -4405,10 +4405,13 @@ Required scope | `ecommerce:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.products.get(
     site_id="580e63e98c9a982ac9b8b741",
     product_id="580e63fc8c9a982ac9b8b745",
@@ -4456,7 +4459,7 @@ client.products.get(
 </dl>
 </details>
 
-<details><summary><code>client.products.<a href="src/webflow/resources/products/client.py">update</a>(...)</code></summary>
+<details><summary><code>client.products.<a href="src/webflow/products/client.py">update</a>(...) -> Product</code></summary>
 <dl>
 <dd>
 
@@ -4488,10 +4491,13 @@ Required scope | `ecommerce:write`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.products.update(
     site_id="580e63e98c9a982ac9b8b741",
     product_id="580e63fc8c9a982ac9b8b745",
@@ -4563,7 +4569,7 @@ client.products.update(
 </dl>
 </details>
 
-<details><summary><code>client.products.<a href="src/webflow/resources/products/client.py">create_sku</a>(...)</code></summary>
+<details><summary><code>client.products.<a href="src/webflow/products/client.py">create_sku</a>(...) -> ProductsCreateSkuResponse</code></summary>
 <dl>
 <dd>
 
@@ -4594,13 +4600,15 @@ Required scope | `ecommerce:write`
 <dd>
 
 ```python
+from webflow import Webflow, Sku, SkuFieldData, SkuFieldDataPrice
+from webflow.environment import WebflowEnvironment
 import datetime
 
-from webflow import Sku, SkuFieldData, SkuFieldDataPrice, Webflow
-
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.products.create_sku(
     site_id="580e63e98c9a982ac9b8b741",
     product_id="580e63fc8c9a982ac9b8b745",
@@ -4608,20 +4616,14 @@ client.products.create_sku(
         Sku(
             id="66072fb71b89448912e2681c",
             cms_locale_id="653ad57de882f528b32e810e",
-            last_published=datetime.datetime.fromisoformat(
-                "2023-03-17 18:47:35+00:00",
-            ),
-            last_updated=datetime.datetime.fromisoformat(
-                "2023-03-17 18:47:35+00:00",
-            ),
-            created_on=datetime.datetime.fromisoformat(
-                "2023-03-17 18:47:35+00:00",
-            ),
+            last_published=datetime.datetime.fromisoformat("2023-03-17T18:47:35+00:00"),
+            last_updated=datetime.datetime.fromisoformat("2023-03-17T18:47:35+00:00"),
+            created_on=datetime.datetime.fromisoformat("2023-03-17T18:47:35+00:00"),
             field_data=SkuFieldData(
                 name="Colorful T-shirt - Default",
                 slug="colorful-t-shirt-default",
                 price=SkuFieldDataPrice(
-                    value=2499.0,
+                    value=2499,
                     unit="USD",
                     currency="USD",
                 ),
@@ -4660,7 +4662,7 @@ client.products.create_sku(
 <dl>
 <dd>
 
-**skus:** `typing.Sequence[Sku]` — An array of the SKU data your are adding
+**skus:** `typing.List[Sku]` — An array of the SKU data your are adding
     
 </dd>
 </dl>
@@ -4688,7 +4690,7 @@ client.products.create_sku(
 </dl>
 </details>
 
-<details><summary><code>client.products.<a href="src/webflow/resources/products/client.py">update_sku</a>(...)</code></summary>
+<details><summary><code>client.products.<a href="src/webflow/products/client.py">update_sku</a>(...) -> Sku</code></summary>
 <dl>
 <dd>
 
@@ -4719,13 +4721,15 @@ Required scope | `ecommerce:write`
 <dd>
 
 ```python
+from webflow import Webflow, Sku, SkuFieldData, SkuFieldDataPrice
+from webflow.environment import WebflowEnvironment
 import datetime
 
-from webflow import Sku, SkuFieldData, SkuFieldDataPrice, Webflow
-
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.products.update_sku(
     site_id="580e63e98c9a982ac9b8b741",
     product_id="580e63fc8c9a982ac9b8b745",
@@ -4733,20 +4737,14 @@ client.products.update_sku(
     sku=Sku(
         id="66072fb71b89448912e2681c",
         cms_locale_id="653ad57de882f528b32e810e",
-        last_published=datetime.datetime.fromisoformat(
-            "2023-03-17 18:47:35+00:00",
-        ),
-        last_updated=datetime.datetime.fromisoformat(
-            "2023-03-17 18:47:35+00:00",
-        ),
-        created_on=datetime.datetime.fromisoformat(
-            "2023-03-17 18:47:35+00:00",
-        ),
+        last_published=datetime.datetime.fromisoformat("2023-03-17T18:47:35+00:00"),
+        last_updated=datetime.datetime.fromisoformat("2023-03-17T18:47:35+00:00"),
+        created_on=datetime.datetime.fromisoformat("2023-03-17T18:47:35+00:00"),
         field_data=SkuFieldData(
             name="Colorful T-shirt - Default",
             slug="colorful-t-shirt-default",
             price=SkuFieldDataPrice(
-                value=2499.0,
+                value=2499,
                 unit="USD",
                 currency="USD",
             ),
@@ -4821,7 +4819,7 @@ client.products.update_sku(
 </details>
 
 ## Orders
-<details><summary><code>client.orders.<a href="src/webflow/resources/orders/client.py">list</a>(...)</code></summary>
+<details><summary><code>client.orders.<a href="src/webflow/orders/client.py">list</a>(...) -> OrderList</code></summary>
 <dl>
 <dd>
 
@@ -4851,10 +4849,13 @@ Required scope | `ecommerce:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.orders.list(
     site_id="580e63e98c9a982ac9b8b741",
     status="pending",
@@ -4920,7 +4921,7 @@ client.orders.list(
 </dl>
 </details>
 
-<details><summary><code>client.orders.<a href="src/webflow/resources/orders/client.py">get</a>(...)</code></summary>
+<details><summary><code>client.orders.<a href="src/webflow/orders/client.py">get</a>(...) -> Order</code></summary>
 <dl>
 <dd>
 
@@ -4951,10 +4952,13 @@ Required scope | `ecommerce:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.orders.get(
     site_id="580e63e98c9a982ac9b8b741",
     order_id="5e8518516e147040726cc415",
@@ -5002,7 +5006,7 @@ client.orders.get(
 </dl>
 </details>
 
-<details><summary><code>client.orders.<a href="src/webflow/resources/orders/client.py">update</a>(...)</code></summary>
+<details><summary><code>client.orders.<a href="src/webflow/orders/client.py">update</a>(...) -> Order</code></summary>
 <dl>
 <dd>
 
@@ -5034,10 +5038,13 @@ Required scope | `ecommerce:write`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.orders.update(
     site_id="580e63e98c9a982ac9b8b741",
     order_id="5e8518516e147040726cc415",
@@ -5117,7 +5124,7 @@ client.orders.update(
 </dl>
 </details>
 
-<details><summary><code>client.orders.<a href="src/webflow/resources/orders/client.py">update_fulfill</a>(...)</code></summary>
+<details><summary><code>client.orders.<a href="src/webflow/orders/client.py">update_fulfill</a>(...) -> Order</code></summary>
 <dl>
 <dd>
 
@@ -5147,10 +5154,13 @@ Required scope | `ecommerce:write`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.orders.update_fulfill(
     site_id="580e63e98c9a982ac9b8b741",
     order_id="5e8518516e147040726cc415",
@@ -5206,7 +5216,7 @@ client.orders.update_fulfill(
 </dl>
 </details>
 
-<details><summary><code>client.orders.<a href="src/webflow/resources/orders/client.py">update_unfulfill</a>(...)</code></summary>
+<details><summary><code>client.orders.<a href="src/webflow/orders/client.py">update_unfulfill</a>(...) -> Order</code></summary>
 <dl>
 <dd>
 
@@ -5236,10 +5246,13 @@ Required scope | `ecommerce:write`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.orders.update_unfulfill(
     site_id="580e63e98c9a982ac9b8b741",
     order_id="5e8518516e147040726cc415",
@@ -5287,7 +5300,7 @@ client.orders.update_unfulfill(
 </dl>
 </details>
 
-<details><summary><code>client.orders.<a href="src/webflow/resources/orders/client.py">refund</a>(...)</code></summary>
+<details><summary><code>client.orders.<a href="src/webflow/orders/client.py">refund</a>(...) -> Order</code></summary>
 <dl>
 <dd>
 
@@ -5318,10 +5331,13 @@ Required scope | `ecommerce:write`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.orders.refund(
     site_id="580e63e98c9a982ac9b8b741",
     order_id="5e8518516e147040726cc415",
@@ -5378,7 +5394,7 @@ client.orders.refund(
 </details>
 
 ## Inventory
-<details><summary><code>client.inventory.<a href="src/webflow/resources/inventory/client.py">list</a>(...)</code></summary>
+<details><summary><code>client.inventory.<a href="src/webflow/inventory/client.py">list</a>(...) -> InventoryItem</code></summary>
 <dl>
 <dd>
 
@@ -5408,10 +5424,13 @@ Required scope | `ecommerce:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.inventory.list(
     sku_collection_id="6377a7c4b7a79608c34a46f7",
     sku_id="5e8518516e147040726cc415",
@@ -5459,7 +5478,7 @@ client.inventory.list(
 </dl>
 </details>
 
-<details><summary><code>client.inventory.<a href="src/webflow/resources/inventory/client.py">update</a>(...)</code></summary>
+<details><summary><code>client.inventory.<a href="src/webflow/inventory/client.py">update</a>(...) -> InventoryItem</code></summary>
 <dl>
 <dd>
 
@@ -5471,10 +5490,10 @@ client.inventory.list(
 <dl>
 <dd>
 
-Updates the current inventory levels for a particular SKU item. 
+Updates the current inventory levels for a particular SKU item.
 
-Updates may be given in one or two methods, absolutely or incrementally. 
-- Absolute updates are done by setting `quantity` directly. 
+Updates may be given in one or two methods, absolutely or incrementally.
+- Absolute updates are done by setting `quantity` directly.
 - Incremental updates are by specifying the inventory delta in `updateQuantity` which is then added to the `quantity` stored on the server.
 
 Required scope | `ecommerce:write`
@@ -5493,10 +5512,13 @@ Required scope | `ecommerce:write`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.inventory.update(
     sku_collection_id="6377a7c4b7a79608c34a46f7",
     sku_id="5e8518516e147040726cc415",
@@ -5570,7 +5592,7 @@ client.inventory.update(
 </details>
 
 ## Ecommerce
-<details><summary><code>client.ecommerce.<a href="src/webflow/resources/ecommerce/client.py">get_settings</a>(...)</code></summary>
+<details><summary><code>client.ecommerce.<a href="src/webflow/ecommerce/client.py">get_settings</a>(...) -> EcommerceSettings</code></summary>
 <dl>
 <dd>
 
@@ -5600,10 +5622,13 @@ Required scope | `ecommerce:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.ecommerce.get_settings(
     site_id="580e63e98c9a982ac9b8b741",
 )
@@ -5643,7 +5668,7 @@ client.ecommerce.get_settings(
 </details>
 
 ## Collections Fields
-<details><summary><code>client.collections.fields.<a href="src/webflow/resources/collections/resources/fields/client.py">create</a>(...)</code></summary>
+<details><summary><code>client.collections.fields.<a href="src/webflow/collections/fields/client.py">create</a>(...) -> FieldCreate</code></summary>
 <dl>
 <dd>
 
@@ -5676,23 +5701,23 @@ Required scope | `cms:write`
 <dd>
 
 ```python
-from webflow import ReferenceField, ReferenceFieldMetadata, Webflow
+from webflow import Webflow, StaticField
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.collections.fields.create(
     collection_id="580e63fc8c9a982ac9b8b745",
-    request=ReferenceField(
-        id="562ac0395358780a1f5e6fbd",
+    request=StaticField(
+        id="562ac0395358780a1f5e6fbc",
         is_editable=True,
         is_required=False,
-        type="Reference",
-        display_name="Author",
-        help_text="Add the post author here",
-        metadata=ReferenceFieldMetadata(
-            collection_id="63692ab61fb2852f582ba8f5",
-        ),
+        type="RichText",
+        display_name="Post Body",
+        help_text="Add the body of your post here",
     ),
 )
 
@@ -5738,7 +5763,7 @@ client.collections.fields.create(
 </dl>
 </details>
 
-<details><summary><code>client.collections.fields.<a href="src/webflow/resources/collections/resources/fields/client.py">delete</a>(...)</code></summary>
+<details><summary><code>client.collections.fields.<a href="src/webflow/collections/fields/client.py">delete</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -5768,10 +5793,13 @@ Required scope | `cms:write`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.collections.fields.delete(
     collection_id="580e63fc8c9a982ac9b8b745",
     field_id="580e63fc8c9a982ac9b8b745",
@@ -5819,7 +5847,7 @@ client.collections.fields.delete(
 </dl>
 </details>
 
-<details><summary><code>client.collections.fields.<a href="src/webflow/resources/collections/resources/fields/client.py">update</a>(...)</code></summary>
+<details><summary><code>client.collections.fields.<a href="src/webflow/collections/fields/client.py">update</a>(...) -> Field</code></summary>
 <dl>
 <dd>
 
@@ -5849,10 +5877,13 @@ Required scope | `cms:write`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.collections.fields.update(
     collection_id="580e63fc8c9a982ac9b8b745",
     field_id="580e63fc8c9a982ac9b8b745",
@@ -5928,7 +5959,7 @@ client.collections.fields.update(
 </details>
 
 ## Collections Items
-<details><summary><code>client.collections.items.<a href="src/webflow/resources/collections/resources/items/client.py">list_items</a>(...)</code></summary>
+<details><summary><code>client.collections.items.<a href="src/webflow/collections/items/client.py">list_items</a>(...) -> CollectionItemList</code></summary>
 <dl>
 <dd>
 
@@ -5958,10 +5989,13 @@ Required scope | `CMS:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.collections.items.list_items(
     collection_id="580e63fc8c9a982ac9b8b745",
     cms_locale_id="cmsLocaleId",
@@ -6071,7 +6105,7 @@ client.collections.items.list_items(
 </dl>
 </details>
 
-<details><summary><code>client.collections.items.<a href="src/webflow/resources/collections/resources/items/client.py">create_item</a>(...)</code></summary>
+<details><summary><code>client.collections.items.<a href="src/webflow/collections/items/client.py">create_item</a>(...) -> CollectionItem</code></summary>
 <dl>
 <dd>
 
@@ -6103,38 +6137,24 @@ Required scope | `CMS:write`
 <dd>
 
 ```python
-from webflow import (
-    CollectionItemPostSingle,
-    CollectionItemPostSingleFieldData,
-    Webflow,
-)
-from webflow.resources.collections.resources.items import MultipleItems
+from webflow import Webflow, CollectionItemPostSingle, CollectionItemPostSingleFieldData
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.collections.items.create_item(
     collection_id="580e63fc8c9a982ac9b8b745",
     skip_invalid_files=True,
-    request=MultipleItems(
-        items=[
-            CollectionItemPostSingle(
-                is_archived=False,
-                is_draft=False,
-                field_data=CollectionItemPostSingleFieldData(
-                    name="Senior Data Analyst",
-                    slug="senior-data-analyst",
-                ),
-            ),
-            CollectionItemPostSingle(
-                is_archived=False,
-                is_draft=False,
-                field_data=CollectionItemPostSingleFieldData(
-                    name="Product Manager",
-                    slug="product-manager",
-                ),
-            ),
-        ],
+    request=CollectionItemPostSingle(
+        is_archived=False,
+        is_draft=False,
+        field_data=CollectionItemPostSingleFieldData(
+            name="The Hitchhiker\'s Guide to the Galaxy",
+            slug="hitchhikers-guide-to-the-galaxy",
+        ),
     ),
 )
 
@@ -6188,7 +6208,7 @@ client.collections.items.create_item(
 </dl>
 </details>
 
-<details><summary><code>client.collections.items.<a href="src/webflow/resources/collections/resources/items/client.py">delete_items</a>(...)</code></summary>
+<details><summary><code>client.collections.items.<a href="src/webflow/collections/items/client.py">delete_items</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -6220,13 +6240,14 @@ Required scope | `CMS:write`
 
 ```python
 from webflow import Webflow
-from webflow.resources.collections.resources.items import (
-    ItemsDeleteItemsRequestItemsItem,
-)
+from webflow.environment import WebflowEnvironment
+from webflow.collections.items import ItemsDeleteItemsRequestItemsItem
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.collections.items.delete_items(
     collection_id="580e63fc8c9a982ac9b8b745",
     items=[
@@ -6258,7 +6279,7 @@ client.collections.items.delete_items(
 <dl>
 <dd>
 
-**items:** `typing.Sequence[ItemsDeleteItemsRequestItemsItem]` 
+**items:** `typing.List[ItemsDeleteItemsRequestItemsItem]` 
     
 </dd>
 </dl>
@@ -6278,7 +6299,7 @@ client.collections.items.delete_items(
 </dl>
 </details>
 
-<details><summary><code>client.collections.items.<a href="src/webflow/resources/collections/resources/items/client.py">update_items</a>(...)</code></summary>
+<details><summary><code>client.collections.items.<a href="src/webflow/collections/items/client.py">update_items</a>(...) -> ItemsUpdateItemsResponse</code></summary>
 <dl>
 <dd>
 
@@ -6311,37 +6332,50 @@ Required scope | `CMS:write`
 <dd>
 
 ```python
-from webflow import (
-    CollectionItemWithIdInput,
-    CollectionItemWithIdInputFieldData,
-    Webflow,
-)
+from webflow import Webflow, CollectionItemWithIdInput, CollectionItemWithIdInputFieldData
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.collections.items.update_items(
     collection_id="580e63fc8c9a982ac9b8b745",
     skip_invalid_files=True,
     items=[
         CollectionItemWithIdInput(
-            id="580e64008c9a982ac9b8b754",
-            is_archived=False,
-            is_draft=False,
+            id="66f6ed9576ddacf3149d5ea6",
+            cms_locale_id="66f6e966c9e1dc700a857ca5",
             field_data=CollectionItemWithIdInputFieldData(
-                name="Senior Data Analyst",
-                slug="senior-data-analyst",
+                name="Ne Paniquez Pas",
+                slug="ne-paniquez-pas",
             ),
         ),
         CollectionItemWithIdInput(
-            id="580e64008c9a982ac9b8b754",
-            is_archived=False,
-            is_draft=False,
+            id="66f6ed9576ddacf3149d5ea6",
+            cms_locale_id="66f6e966c9e1dc700a857ca4",
             field_data=CollectionItemWithIdInputFieldData(
-                name="Product Manager",
-                slug="product-manager",
+                name="No Entrar en Pánico",
+                slug="no-entrar-en-panico",
             ),
         ),
+        CollectionItemWithIdInput(
+            id="66f6ed9576ddacf3149d5eaa",
+            cms_locale_id="66f6e966c9e1dc700a857ca5",
+            field_data=CollectionItemWithIdInputFieldData(
+                name="Au Revoir et Merci pour Tous les Poissons",
+                slug="au-revoir-et-merci",
+            ),
+        ),
+        CollectionItemWithIdInput(
+            id="66f6ed9576ddacf3149d5eaa",
+            cms_locale_id="66f6e966c9e1dc700a857ca4",
+            field_data=CollectionItemWithIdInputFieldData(
+                name="Hasta Luego y Gracias por Todo el Pescado",
+                slug="hasta-luego-y-gracias",
+            ),
+        )
     ],
 )
 
@@ -6375,7 +6409,7 @@ client.collections.items.update_items(
 <dl>
 <dd>
 
-**items:** `typing.Optional[typing.Sequence[CollectionItemWithIdInput]]` 
+**items:** `typing.Optional[typing.List[CollectionItemWithIdInput]]` 
     
 </dd>
 </dl>
@@ -6395,7 +6429,7 @@ client.collections.items.update_items(
 </dl>
 </details>
 
-<details><summary><code>client.collections.items.<a href="src/webflow/resources/collections/resources/items/client.py">list_items_live</a>(...)</code></summary>
+<details><summary><code>client.collections.items.<a href="src/webflow/collections/items/client.py">list_items_live</a>(...) -> CollectionItemList</code></summary>
 <dl>
 <dd>
 
@@ -6429,10 +6463,13 @@ Required scope | `CMS:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.collections.items.list_items_live(
     collection_id="580e63fc8c9a982ac9b8b745",
     cms_locale_id="cmsLocaleId",
@@ -6542,7 +6579,7 @@ client.collections.items.list_items_live(
 </dl>
 </details>
 
-<details><summary><code>client.collections.items.<a href="src/webflow/resources/collections/resources/items/client.py">create_item_live</a>(...)</code></summary>
+<details><summary><code>client.collections.items.<a href="src/webflow/collections/items/client.py">create_item_live</a>(...) -> CollectionItem</code></summary>
 <dl>
 <dd>
 
@@ -6575,34 +6612,24 @@ Required scope | `CMS:write`
 <dd>
 
 ```python
-from webflow import CollectionItem, CollectionItemFieldData, Webflow
-from webflow.resources.collections.resources.items import MultipleLiveItems
+from webflow import Webflow, CollectionItem, CollectionItemFieldData
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.collections.items.create_item_live(
     collection_id="580e63fc8c9a982ac9b8b745",
     skip_invalid_files=True,
-    request=MultipleLiveItems(
-        items=[
-            CollectionItem(
-                is_archived=False,
-                is_draft=False,
-                field_data=CollectionItemFieldData(
-                    name="Senior Data Analyst",
-                    slug="senior-data-analyst",
-                ),
-            ),
-            CollectionItem(
-                is_archived=False,
-                is_draft=False,
-                field_data=CollectionItemFieldData(
-                    name="Product Manager",
-                    slug="product-manager",
-                ),
-            ),
-        ],
+    request=CollectionItem(
+        is_archived=False,
+        is_draft=False,
+        field_data=CollectionItemFieldData(
+            name="The Hitchhiker\'s Guide to the Galaxy",
+            slug="hitchhikers-guide-to-the-galaxy",
+        ),
     ),
 )
 
@@ -6656,7 +6683,7 @@ client.collections.items.create_item_live(
 </dl>
 </details>
 
-<details><summary><code>client.collections.items.<a href="src/webflow/resources/collections/resources/items/client.py">delete_items_live</a>(...)</code></summary>
+<details><summary><code>client.collections.items.<a href="src/webflow/collections/items/client.py">delete_items_live</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -6668,7 +6695,7 @@ client.collections.items.create_item_live(
 <dl>
 <dd>
 
-Unpublish up to 100 items from the live site and set the `isDraft` property to `true`. 
+Unpublish up to 100 items from the live site and set the `isDraft` property to `true`.
 
 <Tip title="Localization Tip">Items will only be unpublished in the primary locale unless a `cmsLocaleId` is included in the request.</Tip>
 
@@ -6688,13 +6715,14 @@ Required scope | `CMS:write`
 
 ```python
 from webflow import Webflow
-from webflow.resources.collections.resources.items import (
-    ItemsDeleteItemsLiveRequestItemsItem,
-)
+from webflow.environment import WebflowEnvironment
+from webflow.collections.items import ItemsDeleteItemsLiveRequestItemsItem
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.collections.items.delete_items_live(
     collection_id="580e63fc8c9a982ac9b8b745",
     items=[
@@ -6726,7 +6754,7 @@ client.collections.items.delete_items_live(
 <dl>
 <dd>
 
-**items:** `typing.Sequence[ItemsDeleteItemsLiveRequestItemsItem]` 
+**items:** `typing.List[ItemsDeleteItemsLiveRequestItemsItem]` 
     
 </dd>
 </dl>
@@ -6746,7 +6774,7 @@ client.collections.items.delete_items_live(
 </dl>
 </details>
 
-<details><summary><code>client.collections.items.<a href="src/webflow/resources/collections/resources/items/client.py">update_items_live</a>(...)</code></summary>
+<details><summary><code>client.collections.items.<a href="src/webflow/collections/items/client.py">update_items_live</a>(...) -> CollectionItemListNoPagination</code></summary>
 <dl>
 <dd>
 
@@ -6777,15 +6805,14 @@ Required scope | `CMS:write`
 <dd>
 
 ```python
-from webflow import (
-    CollectionItemWithIdInput,
-    CollectionItemWithIdInputFieldData,
-    Webflow,
-)
+from webflow import Webflow, CollectionItemWithIdInput, CollectionItemWithIdInputFieldData
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.collections.items.update_items_live(
     collection_id="580e63fc8c9a982ac9b8b745",
     skip_invalid_files=True,
@@ -6821,7 +6848,7 @@ client.collections.items.update_items_live(
                 name="Hasta Luego y Gracias por Todo el Pescado",
                 slug="hasta-luego-y-gracias",
             ),
-        ),
+        )
     ],
 )
 
@@ -6855,7 +6882,7 @@ client.collections.items.update_items_live(
 <dl>
 <dd>
 
-**items:** `typing.Optional[typing.Sequence[CollectionItemWithIdInput]]` 
+**items:** `typing.Optional[typing.List[CollectionItemWithIdInput]]` 
     
 </dd>
 </dl>
@@ -6875,7 +6902,7 @@ client.collections.items.update_items_live(
 </dl>
 </details>
 
-<details><summary><code>client.collections.items.<a href="src/webflow/resources/collections/resources/items/client.py">create_items</a>(...)</code></summary>
+<details><summary><code>client.collections.items.<a href="src/webflow/collections/items/client.py">create_items</a>(...) -> BulkCollectionItem</code></summary>
 <dl>
 <dd>
 
@@ -6910,18 +6937,21 @@ Required scope | `CMS:write`
 
 ```python
 from webflow import Webflow
-from webflow.resources.collections.resources.items import SingleCmsItem
+from webflow.environment import WebflowEnvironment
+from webflow.collections.items import SingleCmsItem
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.collections.items.create_items(
     collection_id="580e63fc8c9a982ac9b8b745",
     skip_invalid_files=True,
     cms_locale_ids=[
         "66f6e966c9e1dc700a857ca3",
         "66f6e966c9e1dc700a857ca4",
-        "66f6e966c9e1dc700a857ca5",
+        "66f6e966c9e1dc700a857ca5"
     ],
     is_archived=False,
     is_draft=False,
@@ -6969,7 +6999,7 @@ client.collections.items.create_items(
 <dl>
 <dd>
 
-**cms_locale_ids:** `typing.Optional[typing.Sequence[str]]` — Array of identifiers for the locales where the item will be created
+**cms_locale_ids:** `typing.Optional[typing.List[str]]` — Array of identifiers for the locales where the item will be created
     
 </dd>
 </dl>
@@ -7005,7 +7035,7 @@ client.collections.items.create_items(
 </dl>
 </details>
 
-<details><summary><code>client.collections.items.<a href="src/webflow/resources/collections/resources/items/client.py">get_item</a>(...)</code></summary>
+<details><summary><code>client.collections.items.<a href="src/webflow/collections/items/client.py">get_item</a>(...) -> CollectionItem</code></summary>
 <dl>
 <dd>
 
@@ -7035,10 +7065,13 @@ Required scope | `CMS:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.collections.items.get_item(
     collection_id="580e63fc8c9a982ac9b8b745",
     item_id="580e64008c9a982ac9b8b754",
@@ -7095,7 +7128,7 @@ client.collections.items.get_item(
 </dl>
 </details>
 
-<details><summary><code>client.collections.items.<a href="src/webflow/resources/collections/resources/items/client.py">delete_item</a>(...)</code></summary>
+<details><summary><code>client.collections.items.<a href="src/webflow/collections/items/client.py">delete_item</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -7107,7 +7140,7 @@ client.collections.items.get_item(
 <dl>
 <dd>
 
-Delete an item from a collection. 
+Delete an item from a collection.
 
 Required scope | `CMS:write`
 </dd>
@@ -7125,10 +7158,13 @@ Required scope | `CMS:write`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.collections.items.delete_item(
     collection_id="580e63fc8c9a982ac9b8b745",
     item_id="580e64008c9a982ac9b8b754",
@@ -7185,7 +7221,7 @@ client.collections.items.delete_item(
 </dl>
 </details>
 
-<details><summary><code>client.collections.items.<a href="src/webflow/resources/collections/resources/items/client.py">update_item</a>(...)</code></summary>
+<details><summary><code>client.collections.items.<a href="src/webflow/collections/items/client.py">update_item</a>(...) -> CollectionItem</code></summary>
 <dl>
 <dd>
 
@@ -7214,11 +7250,14 @@ Required scope | `CMS:write`
 <dd>
 
 ```python
-from webflow import CollectionItemPatchSingleFieldData, Webflow
+from webflow import Webflow, CollectionItemPatchSingleFieldData
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.collections.items.update_item(
     collection_id="580e63fc8c9a982ac9b8b745",
     item_id="580e64008c9a982ac9b8b754",
@@ -7226,7 +7265,7 @@ client.collections.items.update_item(
     is_archived=False,
     is_draft=False,
     field_data=CollectionItemPatchSingleFieldData(
-        name="The Hitchhiker's Guide to the Galaxy",
+        name="The Hitchhiker\'s Guide to the Galaxy",
         slug="hitchhikers-guide-to-the-galaxy",
     ),
 )
@@ -7261,71 +7300,15 @@ client.collections.items.update_item(
 <dl>
 <dd>
 
+**request:** `CollectionItemPatchSingle` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **skip_invalid_files:** `typing.Optional[bool]` — When true, invalid files are skipped and processing continues. When false, the entire request fails if any file is invalid.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**id:** `typing.Optional[str]` — Unique identifier for the Item
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**cms_locale_id:** `typing.Optional[str]` — Identifier for the locale of the CMS item
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**last_published:** `typing.Optional[str]` — The date the item was last published
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**last_updated:** `typing.Optional[str]` — The date the item was last updated
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**created_on:** `typing.Optional[str]` — The date the item was created
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**is_archived:** `typing.Optional[bool]` — Boolean determining if the Item is set to archived
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**is_draft:** `typing.Optional[bool]` — Boolean determining if the Item is set to draft
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**field_data:** `typing.Optional[CollectionItemPatchSingleFieldData]` 
     
 </dd>
 </dl>
@@ -7345,7 +7328,7 @@ client.collections.items.update_item(
 </dl>
 </details>
 
-<details><summary><code>client.collections.items.<a href="src/webflow/resources/collections/resources/items/client.py">get_item_live</a>(...)</code></summary>
+<details><summary><code>client.collections.items.<a href="src/webflow/collections/items/client.py">get_item_live</a>(...) -> CollectionItem</code></summary>
 <dl>
 <dd>
 
@@ -7379,10 +7362,13 @@ Required scope | `CMS:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.collections.items.get_item_live(
     collection_id="580e63fc8c9a982ac9b8b745",
     item_id="580e64008c9a982ac9b8b754",
@@ -7439,7 +7425,7 @@ client.collections.items.get_item_live(
 </dl>
 </details>
 
-<details><summary><code>client.collections.items.<a href="src/webflow/resources/collections/resources/items/client.py">delete_item_live</a>(...)</code></summary>
+<details><summary><code>client.collections.items.<a href="src/webflow/collections/items/client.py">delete_item_live</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -7451,7 +7437,7 @@ client.collections.items.get_item_live(
 <dl>
 <dd>
 
-Unpublish a live item from the site and set the `isDraft` property to `true`. 
+Unpublish a live item from the site and set the `isDraft` property to `true`.
 
 For bulk unpublishing, please use [this endpoint.](/data/v2.0.0/reference/cms/collection-items/live-items/delete-items-live)
 
@@ -7471,10 +7457,13 @@ Required scope | `CMS:write`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.collections.items.delete_item_live(
     collection_id="580e63fc8c9a982ac9b8b745",
     item_id="580e64008c9a982ac9b8b754",
@@ -7531,7 +7520,7 @@ client.collections.items.delete_item_live(
 </dl>
 </details>
 
-<details><summary><code>client.collections.items.<a href="src/webflow/resources/collections/resources/items/client.py">update_item_live</a>(...)</code></summary>
+<details><summary><code>client.collections.items.<a href="src/webflow/collections/items/client.py">update_item_live</a>(...) -> CollectionItem</code></summary>
 <dl>
 <dd>
 
@@ -7560,11 +7549,14 @@ Required scope | `CMS:write`
 <dd>
 
 ```python
-from webflow import CollectionItemPatchSingleFieldData, Webflow
+from webflow import Webflow, CollectionItemPatchSingleFieldData
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.collections.items.update_item_live(
     collection_id="580e63fc8c9a982ac9b8b745",
     item_id="580e64008c9a982ac9b8b754",
@@ -7572,7 +7564,7 @@ client.collections.items.update_item_live(
     is_archived=False,
     is_draft=False,
     field_data=CollectionItemPatchSingleFieldData(
-        name="The Hitchhiker's Guide to the Galaxy",
+        name="The Hitchhiker\'s Guide to the Galaxy",
         slug="hitchhikers-guide-to-the-galaxy",
     ),
 )
@@ -7607,71 +7599,15 @@ client.collections.items.update_item_live(
 <dl>
 <dd>
 
+**request:** `CollectionItemPatchSingle` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **skip_invalid_files:** `typing.Optional[bool]` — When true, invalid files are skipped and processing continues. When false, the entire request fails if any file is invalid.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**id:** `typing.Optional[str]` — Unique identifier for the Item
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**cms_locale_id:** `typing.Optional[str]` — Identifier for the locale of the CMS item
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**last_published:** `typing.Optional[str]` — The date the item was last published
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**last_updated:** `typing.Optional[str]` — The date the item was last updated
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**created_on:** `typing.Optional[str]` — The date the item was created
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**is_archived:** `typing.Optional[bool]` — Boolean determining if the Item is set to archived
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**is_draft:** `typing.Optional[bool]` — Boolean determining if the Item is set to draft
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**field_data:** `typing.Optional[CollectionItemPatchSingleFieldData]` 
     
 </dd>
 </dl>
@@ -7691,7 +7627,7 @@ client.collections.items.update_item_live(
 </dl>
 </details>
 
-<details><summary><code>client.collections.items.<a href="src/webflow/resources/collections/resources/items/client.py">publish_item</a>(...)</code></summary>
+<details><summary><code>client.collections.items.<a href="src/webflow/collections/items/client.py">publish_item</a>(...) -> ItemsPublishItemResponse</code></summary>
 <dl>
 <dd>
 
@@ -7721,26 +7657,21 @@ Required scope | `cms:write`
 
 ```python
 from webflow import Webflow
-from webflow.resources.collections.resources.items import (
-    ItemIDsWithLocales,
-    ItemsPublishItemRequestItemsItemsItem,
-)
+from webflow.environment import WebflowEnvironment
+from webflow.collections.items import ItemIDs
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.collections.items.publish_item(
     collection_id="580e63fc8c9a982ac9b8b745",
-    request=ItemIDsWithLocales(
-        items=[
-            ItemsPublishItemRequestItemsItemsItem(
-                id="643fd856d66b6528195ee2ca",
-                cms_locale_ids=[
-                    "653ad57de882f528b32e810e",
-                    "6514390aea353fc691d69827",
-                    "65143930ea353fc691d69cd8",
-                ],
-            )
+    request=ItemIDs(
+        item_ids=[
+            "643fd856d66b6528195ee2ca",
+            "643fd856d66b6528195ee2cb",
+            "643fd856d66b6528195ee2cc"
         ],
     ),
 )
@@ -7788,7 +7719,7 @@ client.collections.items.publish_item(
 </details>
 
 ## Pages Scripts
-<details><summary><code>client.pages.scripts.<a href="src/webflow/resources/pages/resources/scripts/client.py">get_custom_code</a>(...)</code></summary>
+<details><summary><code>client.pages.scripts.<a href="src/webflow/pages/scripts/client.py">get_custom_code</a>(...) -> ScriptApplyList</code></summary>
 <dl>
 <dd>
 
@@ -7800,7 +7731,7 @@ client.collections.items.publish_item(
 <dl>
 <dd>
 
-Get all scripts applied to a page. 
+Get all scripts applied to a page.
 
 Required scope | `custom_code:read`
 </dd>
@@ -7818,10 +7749,13 @@ Required scope | `custom_code:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.pages.scripts.get_custom_code(
     page_id="63c720f9347c2139b248e552",
 )
@@ -7860,7 +7794,7 @@ client.pages.scripts.get_custom_code(
 </dl>
 </details>
 
-<details><summary><code>client.pages.scripts.<a href="src/webflow/resources/pages/resources/scripts/client.py">upsert_custom_code</a>(...)</code></summary>
+<details><summary><code>client.pages.scripts.<a href="src/webflow/pages/scripts/client.py">upsert_custom_code</a>(...) -> ScriptApplyList</code></summary>
 <dl>
 <dd>
 
@@ -7893,11 +7827,14 @@ Required scope | `custom_code:write`
 <dd>
 
 ```python
-from webflow import ScriptApply, Webflow
+from webflow import Webflow, ScriptApply
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.pages.scripts.upsert_custom_code(
     page_id="63c720f9347c2139b248e552",
     scripts=[
@@ -7905,13 +7842,15 @@ client.pages.scripts.upsert_custom_code(
             id="cms_slider",
             location="header",
             version="1.0.0",
-            attributes={"my-attribute": "some-value"},
+            attributes={
+                "my-attribute": "some-value"
+            },
         ),
         ScriptApply(
             id="alert",
             location="header",
             version="0.0.1",
-        ),
+        )
     ],
 )
 
@@ -7937,23 +7876,7 @@ client.pages.scripts.upsert_custom_code(
 <dl>
 <dd>
 
-**scripts:** `typing.Optional[typing.Sequence[ScriptApply]]` — A list of scripts applied to a Site or a Page
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**last_updated:** `typing.Optional[str]` — Date when the Site's scripts were last updated
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**created_on:** `typing.Optional[str]` — Date when the Site's scripts were created
+**request:** `ScriptApplyList` 
     
 </dd>
 </dl>
@@ -7973,7 +7896,7 @@ client.pages.scripts.upsert_custom_code(
 </dl>
 </details>
 
-<details><summary><code>client.pages.scripts.<a href="src/webflow/resources/pages/resources/scripts/client.py">delete_custom_code</a>(...)</code></summary>
+<details><summary><code>client.pages.scripts.<a href="src/webflow/pages/scripts/client.py">delete_custom_code</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -8007,10 +7930,13 @@ Required scope | `custom_code:write`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.pages.scripts.delete_custom_code(
     page_id="63c720f9347c2139b248e552",
 )
@@ -8050,7 +7976,7 @@ client.pages.scripts.delete_custom_code(
 </details>
 
 ## Sites Redirects
-<details><summary><code>client.sites.redirects.<a href="src/webflow/resources/sites/resources/redirects/client.py">list</a>(...)</code></summary>
+<details><summary><code>client.sites.redirects.<a href="src/webflow/sites/redirects/client.py">list</a>(...) -> Redirects</code></summary>
 <dl>
 <dd>
 
@@ -8084,10 +8010,13 @@ Required scope: `sites:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.sites.redirects.list(
     site_id="580e63e98c9a982ac9b8b741",
 )
@@ -8126,7 +8055,7 @@ client.sites.redirects.list(
 </dl>
 </details>
 
-<details><summary><code>client.sites.redirects.<a href="src/webflow/resources/sites/resources/redirects/client.py">create</a>(...)</code></summary>
+<details><summary><code>client.sites.redirects.<a href="src/webflow/sites/redirects/client.py">create</a>(...) -> Redirect</code></summary>
 <dl>
 <dd>
 
@@ -8160,10 +8089,13 @@ Required scope: `sites:write`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.sites.redirects.create(
     site_id="580e63e98c9a982ac9b8b741",
     id="42e1a2b7aa1a13f768a0042a",
@@ -8193,23 +8125,7 @@ client.sites.redirects.create(
 <dl>
 <dd>
 
-**id:** `typing.Optional[str]` — The ID of the specific redirect rule
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**from_url:** `typing.Optional[str]` — The source URL path that will be redirected.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**to_url:** `typing.Optional[str]` — The target URL path where the user or client will be redirected.
+**request:** `Redirect` 
     
 </dd>
 </dl>
@@ -8229,7 +8145,7 @@ client.sites.redirects.create(
 </dl>
 </details>
 
-<details><summary><code>client.sites.redirects.<a href="src/webflow/resources/sites/resources/redirects/client.py">delete</a>(...)</code></summary>
+<details><summary><code>client.sites.redirects.<a href="src/webflow/sites/redirects/client.py">delete</a>(...) -> Redirects</code></summary>
 <dl>
 <dd>
 
@@ -8263,10 +8179,13 @@ Required scope: `sites:write`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.sites.redirects.delete(
     site_id="580e63e98c9a982ac9b8b741",
     redirect_id="66c4cb9a20cac35ed19500e6",
@@ -8294,7 +8213,7 @@ client.sites.redirects.delete(
 <dl>
 <dd>
 
-**redirect_id:** `str` — Unique identifier site rediect
+**redirect_id:** `str` — Unique identifier site redirect
     
 </dd>
 </dl>
@@ -8314,7 +8233,7 @@ client.sites.redirects.delete(
 </dl>
 </details>
 
-<details><summary><code>client.sites.redirects.<a href="src/webflow/resources/sites/resources/redirects/client.py">update</a>(...)</code></summary>
+<details><summary><code>client.sites.redirects.<a href="src/webflow/sites/redirects/client.py">update</a>(...) -> Redirect</code></summary>
 <dl>
 <dd>
 
@@ -8346,10 +8265,13 @@ Required scope: `sites:write`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.sites.redirects.update(
     site_id="580e63e98c9a982ac9b8b741",
     redirect_id="66c4cb9a20cac35ed19500e6",
@@ -8380,7 +8302,7 @@ client.sites.redirects.update(
 <dl>
 <dd>
 
-**redirect_id:** `str` — Unique identifier site rediect
+**redirect_id:** `str` — Unique identifier site redirect
     
 </dd>
 </dl>
@@ -8388,23 +8310,7 @@ client.sites.redirects.update(
 <dl>
 <dd>
 
-**id:** `typing.Optional[str]` — The ID of the specific redirect rule
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**from_url:** `typing.Optional[str]` — The source URL path that will be redirected.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**to_url:** `typing.Optional[str]` — The target URL path where the user or client will be redirected.
+**request:** `Redirect` 
     
 </dd>
 </dl>
@@ -8425,7 +8331,7 @@ client.sites.redirects.update(
 </details>
 
 ## Sites Plans
-<details><summary><code>client.sites.plans.<a href="src/webflow/resources/sites/resources/plans/client.py">get_site_plan</a>(...)</code></summary>
+<details><summary><code>client.sites.plans.<a href="src/webflow/sites/plans/client.py">get_site_plan</a>(...) -> SitePlan</code></summary>
 <dl>
 <dd>
 
@@ -8457,10 +8363,13 @@ Required scope | `sites:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.sites.plans.get_site_plan(
     site_id="580e63e98c9a982ac9b8b741",
 )
@@ -8500,7 +8409,7 @@ client.sites.plans.get_site_plan(
 </details>
 
 ## Sites RobotsTxt
-<details><summary><code>client.sites.robots_txt.<a href="src/webflow/resources/sites/resources/robots_txt/client.py">get</a>(...)</code></summary>
+<details><summary><code>client.sites.robots_txt.<a href="src/webflow/sites/robots_txt/client.py">get</a>(...) -> Robots</code></summary>
 <dl>
 <dd>
 
@@ -8532,10 +8441,13 @@ Required scope: `site_config:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.sites.robots_txt.get(
     site_id="580e63e98c9a982ac9b8b741",
 )
@@ -8574,7 +8486,7 @@ client.sites.robots_txt.get(
 </dl>
 </details>
 
-<details><summary><code>client.sites.robots_txt.<a href="src/webflow/resources/sites/resources/robots_txt/client.py">put</a>(...)</code></summary>
+<details><summary><code>client.sites.robots_txt.<a href="src/webflow/sites/robots_txt/client.py">put</a>(...) -> Robots</code></summary>
 <dl>
 <dd>
 
@@ -8605,18 +8517,26 @@ Required scope | `site_config:write`
 <dd>
 
 ```python
-from webflow import RobotsRulesItem, Webflow
+from webflow import Webflow, RobotsRulesItem
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.sites.robots_txt.put(
     site_id="580e63e98c9a982ac9b8b741",
     rules=[
         RobotsRulesItem(
             user_agent="googlebot",
-            allows=["/public"],
-            disallows=["/vogon-poetry", "/total-perspective-vortex"],
+            allows=[
+                "/public"
+            ],
+            disallows=[
+                "/vogon-poetry",
+                "/total-perspective-vortex"
+            ],
         )
     ],
     sitemap="https://heartofgold.ship/sitemap.xml",
@@ -8644,15 +8564,7 @@ client.sites.robots_txt.put(
 <dl>
 <dd>
 
-**rules:** `typing.Optional[typing.Sequence[RobotsRulesItem]]` — List of rules for user agents.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**sitemap:** `typing.Optional[str]` — URL to the sitemap.
+**request:** `Robots` 
     
 </dd>
 </dl>
@@ -8672,7 +8584,7 @@ client.sites.robots_txt.put(
 </dl>
 </details>
 
-<details><summary><code>client.sites.robots_txt.<a href="src/webflow/resources/sites/resources/robots_txt/client.py">delete</a>(...)</code></summary>
+<details><summary><code>client.sites.robots_txt.<a href="src/webflow/sites/robots_txt/client.py">delete</a>(...) -> Robots</code></summary>
 <dl>
 <dd>
 
@@ -8705,18 +8617,25 @@ Required scope: `site_config:write`
 <dd>
 
 ```python
-from webflow import RobotsRulesItem, Webflow
+from webflow import Webflow, RobotsRulesItem
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.sites.robots_txt.delete(
     site_id="580e63e98c9a982ac9b8b741",
     rules=[
         RobotsRulesItem(
             user_agent="*",
-            allows=["/public"],
-            disallows=["/bubbles"],
+            allows=[
+                "/public"
+            ],
+            disallows=[
+                "/bubbles"
+            ],
         )
     ],
 )
@@ -8743,15 +8662,7 @@ client.sites.robots_txt.delete(
 <dl>
 <dd>
 
-**rules:** `typing.Optional[typing.Sequence[RobotsRulesItem]]` — List of rules for user agents.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**sitemap:** `typing.Optional[str]` — URL to the sitemap.
+**request:** `Robots` 
     
 </dd>
 </dl>
@@ -8771,7 +8682,7 @@ client.sites.robots_txt.delete(
 </dl>
 </details>
 
-<details><summary><code>client.sites.robots_txt.<a href="src/webflow/resources/sites/resources/robots_txt/client.py">patch</a>(...)</code></summary>
+<details><summary><code>client.sites.robots_txt.<a href="src/webflow/sites/robots_txt/client.py">patch</a>(...) -> Robots</code></summary>
 <dl>
 <dd>
 
@@ -8802,18 +8713,26 @@ Required scope | `site_config:write`
 <dd>
 
 ```python
-from webflow import RobotsRulesItem, Webflow
+from webflow import Webflow, RobotsRulesItem
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.sites.robots_txt.patch(
     site_id="580e63e98c9a982ac9b8b741",
     rules=[
         RobotsRulesItem(
             user_agent="googlebot",
-            allows=["/public"],
-            disallows=["/vogon-poetry", "/total-perspective-vortex"],
+            allows=[
+                "/public"
+            ],
+            disallows=[
+                "/vogon-poetry",
+                "/total-perspective-vortex"
+            ],
         )
     ],
     sitemap="https://heartofgold.ship/sitemap.xml",
@@ -8841,15 +8760,7 @@ client.sites.robots_txt.patch(
 <dl>
 <dd>
 
-**rules:** `typing.Optional[typing.Sequence[RobotsRulesItem]]` — List of rules for user agents.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**sitemap:** `typing.Optional[str]` — URL to the sitemap.
+**request:** `Robots` 
     
 </dd>
 </dl>
@@ -8870,7 +8781,7 @@ client.sites.robots_txt.patch(
 </details>
 
 ## Sites WellKnown
-<details><summary><code>client.sites.well_known.<a href="src/webflow/resources/sites/resources/well_known/client.py">put</a>(...)</code></summary>
+<details><summary><code>client.sites.well_known.<a href="src/webflow/sites/well_known/client.py">put</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -8887,8 +8798,8 @@ Upload a supported well-known file to a site.
 The current restrictions on well-known files are as follows:
   - Each file must be smaller than 100kb
   - Less than 30 total files
-  - Have one of the following file extensions (or no extension): `.txt`, `.json`, `.noext` 
-  
+  - Have one of the following file extensions (or no extension): `.txt`, `.json`, `.noext`
+
   <Note title=".noext">
     `.noext` is a special file extension that removes other extensions. For example, `apple-app-site-association.noext.txt` will be uploaded as `apple-app-site-association`. Use this extension for tools that have trouble uploading extensionless files.
   </Note>
@@ -8911,14 +8822,17 @@ Required scope: `site_config:write`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.sites.well_known.put(
     site_id="580e63e98c9a982ac9b8b741",
     file_name="apple-app-site-association.txt",
-    file_data='{\n  "applinks": {\n    "apps": [],\n    "details": [\n  {\n    "appID": "ABCDE12345.com.example.app",\n    "paths": [ "/*", "/some/path/*" ]\n      }\n    ]\n  }\n}\n',
+    file_data="{\n  \"applinks\": {\n    \"apps\": [],\n    \"details\": [\n  {\n    \"appID\": \"ABCDE12345.com.example.app\",\n    \"paths\": [ \"/*\", \"/some/path/*\" ]\n      }\n    ]\n  }\n}\n",
     content_type="application/json",
 )
 
@@ -8980,7 +8894,7 @@ client.sites.well_known.put(
 </dl>
 </details>
 
-<details><summary><code>client.sites.well_known.<a href="src/webflow/resources/sites/resources/well_known/client.py">delete</a>(...)</code></summary>
+<details><summary><code>client.sites.well_known.<a href="src/webflow/sites/well_known/client.py">delete</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -9012,10 +8926,13 @@ Required scope: `site_config:write`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.sites.well_known.delete(
     site_id="580e63e98c9a982ac9b8b741",
 )
@@ -9042,7 +8959,7 @@ client.sites.well_known.delete(
 <dl>
 <dd>
 
-**file_names:** `typing.Optional[typing.Sequence[str]]` — A list of file names to delete
+**file_names:** `typing.Optional[typing.List[str]]` — A list of file names to delete
     
 </dd>
 </dl>
@@ -9063,7 +8980,7 @@ client.sites.well_known.delete(
 </details>
 
 ## Sites ActivityLogs
-<details><summary><code>client.sites.activity_logs.<a href="src/webflow/resources/sites/resources/activity_logs/client.py">list</a>(...)</code></summary>
+<details><summary><code>client.sites.activity_logs.<a href="src/webflow/sites/activity_logs/client.py">list</a>(...) -> SiteActivityLogResponse</code></summary>
 <dl>
 <dd>
 
@@ -9075,7 +8992,7 @@ client.sites.well_known.delete(
 <dl>
 <dd>
 
-Retrieve Activity Logs for a specific Site. 
+Retrieve Activity Logs for a specific Site.
 
 <Warning title="Enterprise Only">This endpoint requires an Enterprise workspace.</Warning>
 
@@ -9095,10 +9012,13 @@ Required scope: `site_activity:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.sites.activity_logs.list(
     site_id="580e63e98c9a982ac9b8b741",
     limit=1,
@@ -9156,7 +9076,7 @@ client.sites.activity_logs.list(
 </details>
 
 ## Sites Comments
-<details><summary><code>client.sites.comments.<a href="src/webflow/resources/sites/resources/comments/client.py">list_comment_threads</a>(...)</code></summary>
+<details><summary><code>client.sites.comments.<a href="src/webflow/sites/comments/client.py">list_comment_threads</a>(...) -> CommentThreadList</code></summary>
 <dl>
 <dd>
 
@@ -9190,10 +9110,13 @@ Required scope | `comments:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.sites.comments.list_comment_threads(
     site_id="580e63e98c9a982ac9b8b741",
     locale_id="65427cf400e02b306eaa04a0",
@@ -9281,7 +9204,7 @@ Unique identifier for a specific Locale.
 </dl>
 </details>
 
-<details><summary><code>client.sites.comments.<a href="src/webflow/resources/sites/resources/comments/client.py">get_comment_thread</a>(...)</code></summary>
+<details><summary><code>client.sites.comments.<a href="src/webflow/sites/comments/client.py">get_comment_thread</a>(...) -> CommentThread</code></summary>
 <dl>
 <dd>
 
@@ -9315,10 +9238,13 @@ Required scope | `comments:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.sites.comments.get_comment_thread(
     site_id="580e63e98c9a982ac9b8b741",
     comment_thread_id="580e63e98c9a982ac9b8b741",
@@ -9415,7 +9341,7 @@ Unique identifier for a specific Locale.
 </dl>
 </details>
 
-<details><summary><code>client.sites.comments.<a href="src/webflow/resources/sites/resources/comments/client.py">list_comment_replies</a>(...)</code></summary>
+<details><summary><code>client.sites.comments.<a href="src/webflow/sites/comments/client.py">list_comment_replies</a>(...) -> CommentReplyList</code></summary>
 <dl>
 <dd>
 
@@ -9449,10 +9375,13 @@ Required scope | `comments:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.sites.comments.list_comment_replies(
     site_id="580e63e98c9a982ac9b8b741",
     comment_thread_id="580e63e98c9a982ac9b8b741",
@@ -9550,7 +9479,7 @@ Unique identifier for a specific Locale.
 </details>
 
 ## Sites Scripts
-<details><summary><code>client.sites.scripts.<a href="src/webflow/resources/sites/resources/scripts/client.py">get_custom_code</a>(...)</code></summary>
+<details><summary><code>client.sites.scripts.<a href="src/webflow/sites/scripts/client.py">get_custom_code</a>(...) -> ScriptApplyList</code></summary>
 <dl>
 <dd>
 
@@ -9562,11 +9491,11 @@ Unique identifier for a specific Locale.
 <dl>
 <dd>
 
-Get all scripts applied to a site by the App. 
+Get all scripts applied to a site by the App.
 
 <Note title="Script Registration">
   To apply a script to a site or page, the script must first be registered to a site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints. See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
-</Note> 
+</Note>
 
 Required scope | `custom_code:read`
 </dd>
@@ -9584,10 +9513,13 @@ Required scope | `custom_code:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.sites.scripts.get_custom_code(
     site_id="580e63e98c9a982ac9b8b741",
 )
@@ -9626,7 +9558,7 @@ client.sites.scripts.get_custom_code(
 </dl>
 </details>
 
-<details><summary><code>client.sites.scripts.<a href="src/webflow/resources/sites/resources/scripts/client.py">upsert_custom_code</a>(...)</code></summary>
+<details><summary><code>client.sites.scripts.<a href="src/webflow/sites/scripts/client.py">upsert_custom_code</a>(...) -> ScriptApplyList</code></summary>
 <dl>
 <dd>
 
@@ -9659,11 +9591,14 @@ Required scope | `custom_code:write`
 <dd>
 
 ```python
-from webflow import ScriptApply, Webflow
+from webflow import Webflow, ScriptApply
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.sites.scripts.upsert_custom_code(
     site_id="580e63e98c9a982ac9b8b741",
     scripts=[
@@ -9671,13 +9606,15 @@ client.sites.scripts.upsert_custom_code(
             id="cms_slider",
             location="header",
             version="1.0.0",
-            attributes={"my-attribute": "some-value"},
+            attributes={
+                "my-attribute": "some-value"
+            },
         ),
         ScriptApply(
             id="alert",
             location="header",
             version="0.0.1",
-        ),
+        )
     ],
 )
 
@@ -9703,23 +9640,7 @@ client.sites.scripts.upsert_custom_code(
 <dl>
 <dd>
 
-**scripts:** `typing.Optional[typing.Sequence[ScriptApply]]` — A list of scripts applied to a Site or a Page
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**last_updated:** `typing.Optional[str]` — Date when the Site's scripts were last updated
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**created_on:** `typing.Optional[str]` — Date when the Site's scripts were created
+**request:** `ScriptApplyList` 
     
 </dd>
 </dl>
@@ -9739,7 +9660,7 @@ client.sites.scripts.upsert_custom_code(
 </dl>
 </details>
 
-<details><summary><code>client.sites.scripts.<a href="src/webflow/resources/sites/resources/scripts/client.py">delete_custom_code</a>(...)</code></summary>
+<details><summary><code>client.sites.scripts.<a href="src/webflow/sites/scripts/client.py">delete_custom_code</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -9773,10 +9694,13 @@ Required scope | `custom_code:write`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.sites.scripts.delete_custom_code(
     site_id="580e63e98c9a982ac9b8b741",
 )
@@ -9815,7 +9739,7 @@ client.sites.scripts.delete_custom_code(
 </dl>
 </details>
 
-<details><summary><code>client.sites.scripts.<a href="src/webflow/resources/sites/resources/scripts/client.py">list_custom_code_blocks</a>(...)</code></summary>
+<details><summary><code>client.sites.scripts.<a href="src/webflow/sites/scripts/client.py">list_custom_code_blocks</a>(...) -> ListCustomCodeBlocks</code></summary>
 <dl>
 <dd>
 
@@ -9827,11 +9751,11 @@ client.sites.scripts.delete_custom_code(
 <dl>
 <dd>
 
-Get a list of scripts that have been applied to a site and/or individual pages. 
+Get a list of scripts that have been applied to a site and/or individual pages.
 
 <Note title="Script Registration">
-  To apply a script to a site or page, the script must first be registered to a site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints. 
-  
+  To apply a script to a site or page, the script must first be registered to a site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints.
+
   See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
 </Note>
 
@@ -9851,10 +9775,13 @@ Required scope | `custom_code:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.sites.scripts.list_custom_code_blocks(
     site_id="580e63e98c9a982ac9b8b741",
     offset=1,
@@ -9912,7 +9839,7 @@ client.sites.scripts.list_custom_code_blocks(
 </details>
 
 ## Sites Forms
-<details><summary><code>client.sites.forms.<a href="src/webflow/resources/sites/resources/forms/client.py">list_submissions_by_site</a>(...)</code></summary>
+<details><summary><code>client.sites.forms.<a href="src/webflow/sites/forms/client.py">list_submissions_by_site</a>(...) -> FormSubmissionList</code></summary>
 <dl>
 <dd>
 
@@ -9926,7 +9853,7 @@ client.sites.scripts.list_custom_code_blocks(
 
 List all form submissions for a given site with the ability to filter submissions by a centralized `elementId`.
 
-Add `elementId` when you want to filter form submissions to a specific form in a site. You can get the `elementId` from the [List forms endpoint](/data/reference/forms/forms/list) (displayed as `formElementId` in the response). 
+Add `elementId` when you want to filter form submissions to a specific form in a site. You can get the `elementId` from the [List forms endpoint](/data/reference/forms/forms/list) (displayed as `formElementId` in the response).
 
 <Note title="Forms in components">
 When a form is used in a Webflow component definition, each instance of the component will yield a unique form. Adding the `elementId` in this request ensures this API response includes all submissions from that core form, wherever that form is used in instantiated components.
@@ -9950,10 +9877,13 @@ Required scope | `forms:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.sites.forms.list_submissions_by_site(
     site_id="580e63e98c9a982ac9b8b741",
     element_id="18259716-3e5a-646a-5f41-5dc4b9405aa0",
@@ -10019,7 +9949,7 @@ client.sites.forms.list_submissions_by_site(
 </dl>
 </details>
 
-<details><summary><code>client.sites.forms.<a href="src/webflow/resources/sites/resources/forms/client.py">list_submissions</a>(...)</code></summary>
+<details><summary><code>client.sites.forms.<a href="src/webflow/sites/forms/client.py">list_submissions</a>(...) -> FormSubmissionList</code></summary>
 <dl>
 <dd>
 
@@ -10031,7 +9961,7 @@ client.sites.forms.list_submissions_by_site(
 <dl>
 <dd>
 
-List form submissions for a given form ID within a specific site. 
+List form submissions for a given form ID within a specific site.
 
 Use the [List Form Submissions by Site endpoint](/data/reference/forms/form-submissions/list-submissions-by-site) to list form submissions for a given site with the ability to filter by a `formElementId`.
 
@@ -10051,10 +9981,13 @@ Required scope | `forms:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.sites.forms.list_submissions(
     site_id="580e63e98c9a982ac9b8b741",
     form_id="580e63e98c9a982ac9b8b741",
@@ -10120,7 +10053,7 @@ client.sites.forms.list_submissions(
 </dl>
 </details>
 
-<details><summary><code>client.sites.forms.<a href="src/webflow/resources/sites/resources/forms/client.py">get_submission</a>(...)</code></summary>
+<details><summary><code>client.sites.forms.<a href="src/webflow/sites/forms/client.py">get_submission</a>(...) -> FormSubmission</code></summary>
 <dl>
 <dd>
 
@@ -10150,10 +10083,13 @@ Required scope | `forms:read`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.sites.forms.get_submission(
     site_id="580e63e98c9a982ac9b8b741",
     form_submission_id="580e63e98c9a982ac9b8b741",
@@ -10201,7 +10137,7 @@ client.sites.forms.get_submission(
 </dl>
 </details>
 
-<details><summary><code>client.sites.forms.<a href="src/webflow/resources/sites/resources/forms/client.py">delete_submission</a>(...)</code></summary>
+<details><summary><code>client.sites.forms.<a href="src/webflow/sites/forms/client.py">delete_submission</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -10231,10 +10167,13 @@ Required scope | `forms:write`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.sites.forms.delete_submission(
     site_id="580e63e98c9a982ac9b8b741",
     form_submission_id="580e63e98c9a982ac9b8b741",
@@ -10282,7 +10221,7 @@ client.sites.forms.delete_submission(
 </dl>
 </details>
 
-<details><summary><code>client.sites.forms.<a href="src/webflow/resources/sites/resources/forms/client.py">update_submission</a>(...)</code></summary>
+<details><summary><code>client.sites.forms.<a href="src/webflow/sites/forms/client.py">update_submission</a>(...) -> FormSubmission</code></summary>
 <dl>
 <dd>
 
@@ -10312,10 +10251,13 @@ Required scope | `forms:write`
 
 ```python
 from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.sites.forms.update_submission(
     site_id="580e63e98c9a982ac9b8b741",
     form_submission_id="580e63e98c9a982ac9b8b741",
@@ -10351,7 +10293,7 @@ client.sites.forms.update_submission(
 <dl>
 <dd>
 
-**form_submission_data:** `typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]` — An existing **hidden field** defined on the form schema, and the corresponding value to set
+**form_submission_data:** `typing.Optional[typing.Dict[str, typing.Any]]` — An existing **hidden field** defined on the form schema, and the corresponding value to set
     
 </dd>
 </dl>
@@ -10372,7 +10314,7 @@ client.sites.forms.update_submission(
 </details>
 
 ## Workspaces AuditLogs
-<details><summary><code>client.workspaces.audit_logs.<a href="src/webflow/resources/workspaces/resources/audit_logs/client.py">get_workspace_audit_logs</a>(...)</code></summary>
+<details><summary><code>client.workspaces.audit_logs.<a href="src/webflow/workspaces/audit_logs/client.py">get_workspace_audit_logs</a>(...) -> WorkspaceAuditLogResponse</code></summary>
 <dl>
 <dd>
 
@@ -10403,25 +10345,23 @@ Required scope | `workspace_activity:read`
 <dd>
 
 ```python
+from webflow import Webflow
+from webflow.environment import WebflowEnvironment
 import datetime
 
-from webflow import Webflow
-
 client = Webflow(
-    access_token="YOUR_ACCESS_TOKEN",
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
 )
+
 client.workspaces.audit_logs.get_workspace_audit_logs(
     workspace_id_or_slug="hitchhikers-workspace",
     limit=1,
     offset=1,
     sort_order="asc",
     event_type="user_access",
-    from_=datetime.datetime.fromisoformat(
-        "2025-06-22 16:00:31+00:00",
-    ),
-    to=datetime.datetime.fromisoformat(
-        "2025-07-22 16:00:31+00:00",
-    ),
+    from_=datetime.datetime.fromisoformat("2025-06-22T16:00:31+00:00"),
+    to=datetime.datetime.fromisoformat("2025-07-22T16:00:31+00:00"),
 )
 
 ```
@@ -10478,7 +10418,7 @@ client.workspaces.audit_logs.get_workspace_audit_logs(
 <dl>
 <dd>
 
-**from_:** `typing.Optional[dt.datetime]` — The start date to filter by
+**from:** `typing.Optional[datetime.datetime]` — The start date to filter by
     
 </dd>
 </dl>
@@ -10486,7 +10426,7 @@ client.workspaces.audit_logs.get_workspace_audit_logs(
 <dl>
 <dd>
 
-**to:** `typing.Optional[dt.datetime]` — The end date to filter by
+**to:** `typing.Optional[datetime.datetime]` — The end date to filter by
     
 </dd>
 </dl>

@@ -2,4 +2,4 @@
 
 import typing
 
-Conflict = typing.Optional[typing.Any]
+Conflict = typing.Any

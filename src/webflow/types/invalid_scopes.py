@@ -2,4 +2,4 @@
 
 import typing
 
-InvalidScopes = typing.Optional[typing.Any]
+InvalidScopes = typing.Any

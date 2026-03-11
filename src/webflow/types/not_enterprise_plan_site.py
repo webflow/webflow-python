@@ -2,4 +2,4 @@
 
 import typing
 
-NotEnterprisePlanSite = typing.Optional[typing.Any]
+NotEnterprisePlanSite = typing.Any
