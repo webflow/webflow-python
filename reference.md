@@ -137,7 +137,7 @@ client.token.introspect()
 <dl>
 <dd>
 
-Create a site. 
+Create a site.
 
 <Warning title="Enterprise Only">This endpoint requires an Enterprise workspace.</Warning>
 
@@ -370,7 +370,7 @@ client.sites.get(
 <dl>
 <dd>
 
-Delete a site. 
+Delete a site.
 
 <Warning title="Enterprise Only">This endpoint requires an Enterprise workspace.</Warning>
 
@@ -444,7 +444,7 @@ client.sites.delete(
 <dl>
 <dd>
 
-Update a site. 
+Update a site.
 
 <Warning title="Enterprise Only">This endpoint requires an Enterprise workspace.</Warning>
 
@@ -606,7 +606,7 @@ client.sites.get_custom_domain(
 <dl>
 <dd>
 
-Publishes a site to one or more more domains. 
+Publishes a site to one or more more domains.
 
 To publish to a specific custom domain, use the domain IDs from the [Get Custom Domains](/data/reference/sites/get-custom-domain) endpoint.
 
@@ -1325,7 +1325,7 @@ Unique identifier for a specific Locale.
 
 **slug:** `typing.Optional[str]` 
 
-Slug for the page. 
+Slug for the page.
 
 
 **Note:** Updating slugs in secondary locales is only supported in <a href="https://webflow.com/localization">Advanced and Enterprise localization add-on plans.</a>
@@ -1378,7 +1378,7 @@ Slug for the page.
 
 Get text and component instance content from a static page.
 
-<Badge intent="info">Localization</Badge> 
+<Badge intent="info">Localization</Badge>
 
 Required scope | `pages:read`
 </dd>
@@ -2689,7 +2689,7 @@ client.assets.list(
 <dl>
 <dd>
 
-The first step in uploading an asset to a site. 
+The first step in uploading an asset to a site.
 
 
 This endpoint generates a response with the following information: `uploadUrl` and `uploadDetails`.
@@ -2699,7 +2699,7 @@ Use these properties in the header of a [POST request to Amazson s3](https://doc
 
 
 To learn more about how to upload assets to Webflow, see our [assets guide](/data/docs/working-with-assets).
-  
+
  Required scope | `assets:write`
 </dd>
 </dl>
@@ -3797,7 +3797,7 @@ List form submissions for a given form
 
 <Note title="Forms in components">
   When a form is used in a component definition, each instance of the form is considered a unique form.
-  
+
   To get a combined list of submissions for a form that appears across multiple component instances, use the [List Form Submissions by Site](/data/reference/forms/form-submissions/list-submissions-by-site) endpoint.
 </Note>
 
@@ -4115,7 +4115,7 @@ client.forms.update_submission(
 <dl>
 <dd>
 
-Retrieve all products for a site. 
+Retrieve all products for a site.
 
 Use `limit` and `offset` to page through all products with subsequent requests. All SKUs for each product
 will also be fetched and returned. The `limit`, `offset` and `total` values represent Products only and do not include any SKUs.
@@ -5471,10 +5471,10 @@ client.inventory.list(
 <dl>
 <dd>
 
-Updates the current inventory levels for a particular SKU item. 
+Updates the current inventory levels for a particular SKU item.
 
-Updates may be given in one or two methods, absolutely or incrementally. 
-- Absolute updates are done by setting `quantity` directly. 
+Updates may be given in one or two methods, absolutely or incrementally.
+- Absolute updates are done by setting `quantity` directly.
 - Incremental updates are by specifying the inventory delta in `updateQuantity` which is then added to the `quantity` stored on the server.
 
 Required scope | `ecommerce:write`
@@ -6668,7 +6668,7 @@ client.collections.items.create_item_live(
 <dl>
 <dd>
 
-Unpublish up to 100 items from the live site and set the `isDraft` property to `true`. 
+Unpublish up to 100 items from the live site and set the `isDraft` property to `true`.
 
 <Tip title="Localization Tip">Items will only be unpublished in the primary locale unless a `cmsLocaleId` is included in the request.</Tip>
 
@@ -7107,7 +7107,7 @@ client.collections.items.get_item(
 <dl>
 <dd>
 
-Delete an item from a collection. 
+Delete an item from a collection.
 
 Required scope | `CMS:write`
 </dd>
@@ -7451,7 +7451,7 @@ client.collections.items.get_item_live(
 <dl>
 <dd>
 
-Unpublish a live item from the site and set the `isDraft` property to `true`. 
+Unpublish a live item from the site and set the `isDraft` property to `true`.
 
 For bulk unpublishing, please use [this endpoint.](/data/v2.0.0/reference/cms/collection-items/live-items/delete-items-live)
 
@@ -7800,7 +7800,7 @@ client.collections.items.publish_item(
 <dl>
 <dd>
 
-Get all scripts applied to a page. 
+Get all scripts applied to a page.
 
 Required scope | `custom_code:read`
 </dd>
@@ -8294,7 +8294,7 @@ client.sites.redirects.delete(
 <dl>
 <dd>
 
-**redirect_id:** `str` — Unique identifier site rediect
+**redirect_id:** `str` — Unique identifier site redirect
     
 </dd>
 </dl>
@@ -8380,7 +8380,7 @@ client.sites.redirects.update(
 <dl>
 <dd>
 
-**redirect_id:** `str` — Unique identifier site rediect
+**redirect_id:** `str` — Unique identifier site redirect
     
 </dd>
 </dl>
@@ -8887,8 +8887,8 @@ Upload a supported well-known file to a site.
 The current restrictions on well-known files are as follows:
   - Each file must be smaller than 100kb
   - Less than 30 total files
-  - Have one of the following file extensions (or no extension): `.txt`, `.json`, `.noext` 
-  
+  - Have one of the following file extensions (or no extension): `.txt`, `.json`, `.noext`
+
   <Note title=".noext">
     `.noext` is a special file extension that removes other extensions. For example, `apple-app-site-association.noext.txt` will be uploaded as `apple-app-site-association`. Use this extension for tools that have trouble uploading extensionless files.
   </Note>
@@ -9075,7 +9075,7 @@ client.sites.well_known.delete(
 <dl>
 <dd>
 
-Retrieve Activity Logs for a specific Site. 
+Retrieve Activity Logs for a specific Site.
 
 <Warning title="Enterprise Only">This endpoint requires an Enterprise workspace.</Warning>
 
@@ -9562,11 +9562,11 @@ Unique identifier for a specific Locale.
 <dl>
 <dd>
 
-Get all scripts applied to a site by the App. 
+Get all scripts applied to a site by the App.
 
 <Note title="Script Registration">
   To apply a script to a site or page, the script must first be registered to a site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints. See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
-</Note> 
+</Note>
 
 Required scope | `custom_code:read`
 </dd>
@@ -9827,11 +9827,11 @@ client.sites.scripts.delete_custom_code(
 <dl>
 <dd>
 
-Get a list of scripts that have been applied to a site and/or individual pages. 
+Get a list of scripts that have been applied to a site and/or individual pages.
 
 <Note title="Script Registration">
-  To apply a script to a site or page, the script must first be registered to a site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints. 
-  
+  To apply a script to a site or page, the script must first be registered to a site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints.
+
   See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
 </Note>
 
@@ -9926,7 +9926,7 @@ client.sites.scripts.list_custom_code_blocks(
 
 List all form submissions for a given site with the ability to filter submissions by a centralized `elementId`.
 
-Add `elementId` when you want to filter form submissions to a specific form in a site. You can get the `elementId` from the [List forms endpoint](/data/reference/forms/forms/list) (displayed as `formElementId` in the response). 
+Add `elementId` when you want to filter form submissions to a specific form in a site. You can get the `elementId` from the [List forms endpoint](/data/reference/forms/forms/list) (displayed as `formElementId` in the response).
 
 <Note title="Forms in components">
 When a form is used in a Webflow component definition, each instance of the component will yield a unique form. Adding the `elementId` in this request ensures this API response includes all submissions from that core form, wherever that form is used in instantiated components.
@@ -10031,7 +10031,7 @@ client.sites.forms.list_submissions_by_site(
 <dl>
 <dd>
 
-List form submissions for a given form ID within a specific site. 
+List form submissions for a given form ID within a specific site.
 
 Use the [List Form Submissions by Site endpoint](/data/reference/forms/form-submissions/list-submissions-by-site) to list form submissions for a given site with the ability to filter by a `formElementId`.
 

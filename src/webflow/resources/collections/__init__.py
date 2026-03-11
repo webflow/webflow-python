@@ -2,7 +2,7 @@
 
 from .resources import (
     CreateBulkCollectionItemRequestBodyFieldData,
-    CreateBulkCollectionItemRequestBodyFieldDataItem,
+    CreateBulkCollectionItemRequestBodyFieldDataOneItem,
     ItemIDs,
     ItemIDsWithLocales,
     ItemsCreateItemLiveRequestBody,
@@ -26,7 +26,7 @@ from .resources import (
 
 __all__ = [
     "CreateBulkCollectionItemRequestBodyFieldData",
-    "CreateBulkCollectionItemRequestBodyFieldDataItem",
+    "CreateBulkCollectionItemRequestBodyFieldDataOneItem",
     "ItemIDs",
     "ItemIDsWithLocales",
     "ItemsCreateItemLiveRequestBody",

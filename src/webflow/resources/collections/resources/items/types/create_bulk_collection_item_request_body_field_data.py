@@ -2,8 +2,10 @@
 
 import typing
 from .single_cms_item import SingleCmsItem
-from .create_bulk_collection_item_request_body_field_data_item import CreateBulkCollectionItemRequestBodyFieldDataItem
+from .create_bulk_collection_item_request_body_field_data_one_item import (
+    CreateBulkCollectionItemRequestBodyFieldDataOneItem,
+)
 
 CreateBulkCollectionItemRequestBodyFieldData = typing.Union[
-    SingleCmsItem, typing.List[CreateBulkCollectionItemRequestBodyFieldDataItem]
+    SingleCmsItem, typing.List[CreateBulkCollectionItemRequestBodyFieldDataOneItem]
 ]

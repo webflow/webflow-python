@@ -13,7 +13,7 @@ from ..core.pydantic_utilities import IS_PYDANTIC_V2
 
 class ProductFieldData(UniversalBaseModel):
     """
-    Contains content-specific details for a product, covering both standard (e.g., title, description)  and custom fields tailored to the product setup.
+    Contains content-specific details for a product, covering both standard (e.g., title, description) and custom fields tailored to the product setup.
     """
 
     name: typing.Optional[str] = pydantic.Field(default=None)

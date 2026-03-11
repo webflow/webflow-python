@@ -277,7 +277,7 @@ class RedirectsClient:
             Unique identifier for a Site
 
         redirect_id : str
-            Unique identifier site rediect
+            Unique identifier site redirect
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -392,7 +392,7 @@ class RedirectsClient:
             Unique identifier for a Site
 
         redirect_id : str
-            Unique identifier site rediect
+            Unique identifier site redirect
 
         id : typing.Optional[str]
             The ID of the specific redirect rule
@@ -775,7 +775,7 @@ class AsyncRedirectsClient:
             Unique identifier for a Site
 
         redirect_id : str
-            Unique identifier site rediect
+            Unique identifier site redirect
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -898,7 +898,7 @@ class AsyncRedirectsClient:
             Unique identifier for a Site
 
         redirect_id : str
-            Unique identifier site rediect
+            Unique identifier site redirect
 
         id : typing.Optional[str]
             The ID of the specific redirect rule
