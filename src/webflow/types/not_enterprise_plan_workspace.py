@@ -2,4 +2,4 @@
 
 import typing
 
-NotEnterprisePlanWorkspace = typing.Optional[typing.Any]
+NotEnterprisePlanWorkspace = typing.Any

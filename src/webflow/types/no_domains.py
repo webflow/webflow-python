@@ -2,4 +2,4 @@
 
 import typing
 
-NoDomains = typing.Optional[typing.Any]
+NoDomains = typing.Any

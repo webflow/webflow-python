@@ -1,0 +1,14 @@
+{
+  "cliVersion": "4.22.0",
+  "generatorName": "fernapi/fern-python-sdk",
+  "generatorVersion": "4.63.4",
+  "generatorConfig": {
+    "client_class_name": "Webflow",
+    "improved_imports": false,
+    "pydantic_config": {
+      "use_str_enums": false
+    }
+  },
+  "originGitCommit": "3ad89f5558f1774e8535f034a87bfe8c2fdfcd50",
+  "sdkVersion": "1.2.1"
+}
