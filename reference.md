@@ -634,6 +634,8 @@ Publishes a site to one or more more domains.
 
 To publish to a specific custom domain, use the domain IDs from the [Get Custom Domains](/data/reference/sites/get-custom-domain) endpoint.
 
+You must include at least one of the `customDomains` or `publishToWebflowSubdomain` properties in the request body.
+
 <Note title="Rate limit: 1 publish per minute">This endpoint has a specific rate limit of one successful publish queue per minute.</Note>
 
 Required scope | `sites:write`
@@ -6003,7 +6005,7 @@ client.collections.items.list_items(
     limit=1,
     name="name",
     slug="slug",
-    sort_by="lastPublished",
+    sort_by="createdOn",
     sort_order="asc",
 )
 
@@ -6069,7 +6071,23 @@ client.collections.items.list_items(
 <dl>
 <dd>
 
+**created_on:** `typing.Optional[ItemsListItemsRequestCreatedOn]` — Filter by the creation date of the item(s)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **last_published:** `typing.Optional[ItemsListItemsRequestLastPublished]` — Filter by the last published date of the item(s)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**last_updated:** `typing.Optional[ItemsListItemsRequestLastUpdated]` — Filter by the last updated date of the item(s)
     
 </dd>
 </dl>
@@ -6477,7 +6495,7 @@ client.collections.items.list_items_live(
     limit=1,
     name="name",
     slug="slug",
-    sort_by="lastPublished",
+    sort_by="createdOn",
     sort_order="asc",
 )
 
@@ -6543,7 +6561,23 @@ client.collections.items.list_items_live(
 <dl>
 <dd>
 
+**created_on:** `typing.Optional[ItemsListItemsLiveRequestCreatedOn]` — Filter by the creation date of the item(s)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **last_published:** `typing.Optional[ItemsListItemsLiveRequestLastPublished]` — Filter by the last published date of the item(s)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**last_updated:** `typing.Optional[ItemsListItemsLiveRequestLastUpdated]` — Filter by the last updated date of the item(s)
     
 </dd>
 </dl>
