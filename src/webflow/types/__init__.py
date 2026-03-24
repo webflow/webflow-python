@@ -110,8 +110,12 @@ if typing.TYPE_CHECKING:
     from .invalid_scopes import InvalidScopes
     from .inventory_item import InventoryItem
     from .inventory_item_inventory_type import InventoryItemInventoryType
+    from .items_list_items_live_request_created_on import ItemsListItemsLiveRequestCreatedOn
     from .items_list_items_live_request_last_published import ItemsListItemsLiveRequestLastPublished
+    from .items_list_items_live_request_last_updated import ItemsListItemsLiveRequestLastUpdated
+    from .items_list_items_request_created_on import ItemsListItemsRequestCreatedOn
     from .items_list_items_request_last_published import ItemsListItemsRequestLastPublished
+    from .items_list_items_request_last_updated import ItemsListItemsRequestLastUpdated
     from .list_custom_code_blocks import ListCustomCodeBlocks
     from .locale import Locale
     from .locales import Locales
@@ -406,8 +410,12 @@ _dynamic_imports: typing.Dict[str, str] = {
     "InvalidScopes": ".invalid_scopes",
     "InventoryItem": ".inventory_item",
     "InventoryItemInventoryType": ".inventory_item_inventory_type",
+    "ItemsListItemsLiveRequestCreatedOn": ".items_list_items_live_request_created_on",
     "ItemsListItemsLiveRequestLastPublished": ".items_list_items_live_request_last_published",
+    "ItemsListItemsLiveRequestLastUpdated": ".items_list_items_live_request_last_updated",
+    "ItemsListItemsRequestCreatedOn": ".items_list_items_request_created_on",
     "ItemsListItemsRequestLastPublished": ".items_list_items_request_last_published",
+    "ItemsListItemsRequestLastUpdated": ".items_list_items_request_last_updated",
     "ListCustomCodeBlocks": ".list_custom_code_blocks",
     "Locale": ".locale",
     "Locales": ".locales",
@@ -698,8 +706,12 @@ __all__ = [
     "InvalidScopes",
     "InventoryItem",
     "InventoryItemInventoryType",
+    "ItemsListItemsLiveRequestCreatedOn",
     "ItemsListItemsLiveRequestLastPublished",
+    "ItemsListItemsLiveRequestLastUpdated",
+    "ItemsListItemsRequestCreatedOn",
     "ItemsListItemsRequestLastPublished",
+    "ItemsListItemsRequestLastUpdated",
     "ListCustomCodeBlocks",
     "Locale",
     "Locales",
