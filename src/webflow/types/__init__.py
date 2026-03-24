@@ -68,7 +68,8 @@ if typing.TYPE_CHECKING:
     from .component_node import ComponentNode
     from .component_properties import ComponentProperties
     from .component_property import ComponentProperty
-    from .component_property_type import ComponentPropertyType
+    from .component_property_text import ComponentPropertyText
+    from .component_property_text_type import ComponentPropertyTextType
     from .conflict import Conflict
     from .custom_code_block import CustomCodeBlock
     from .custom_code_block_type import CustomCodeBlockType
@@ -110,8 +111,12 @@ if typing.TYPE_CHECKING:
     from .invalid_scopes import InvalidScopes
     from .inventory_item import InventoryItem
     from .inventory_item_inventory_type import InventoryItemInventoryType
+    from .items_list_items_live_request_created_on import ItemsListItemsLiveRequestCreatedOn
     from .items_list_items_live_request_last_published import ItemsListItemsLiveRequestLastPublished
+    from .items_list_items_live_request_last_updated import ItemsListItemsLiveRequestLastUpdated
+    from .items_list_items_request_created_on import ItemsListItemsRequestCreatedOn
     from .items_list_items_request_last_published import ItemsListItemsRequestLastPublished
+    from .items_list_items_request_last_updated import ItemsListItemsRequestLastUpdated
     from .list_custom_code_blocks import ListCustomCodeBlocks
     from .locale import Locale
     from .locales import Locales
@@ -366,7 +371,8 @@ _dynamic_imports: typing.Dict[str, str] = {
     "ComponentNode": ".component_node",
     "ComponentProperties": ".component_properties",
     "ComponentProperty": ".component_property",
-    "ComponentPropertyType": ".component_property_type",
+    "ComponentPropertyText": ".component_property_text",
+    "ComponentPropertyTextType": ".component_property_text_type",
     "Conflict": ".conflict",
     "CustomCodeBlock": ".custom_code_block",
     "CustomCodeBlockType": ".custom_code_block_type",
@@ -406,8 +412,12 @@ _dynamic_imports: typing.Dict[str, str] = {
     "InvalidScopes": ".invalid_scopes",
     "InventoryItem": ".inventory_item",
     "InventoryItemInventoryType": ".inventory_item_inventory_type",
+    "ItemsListItemsLiveRequestCreatedOn": ".items_list_items_live_request_created_on",
     "ItemsListItemsLiveRequestLastPublished": ".items_list_items_live_request_last_published",
+    "ItemsListItemsLiveRequestLastUpdated": ".items_list_items_live_request_last_updated",
+    "ItemsListItemsRequestCreatedOn": ".items_list_items_request_created_on",
     "ItemsListItemsRequestLastPublished": ".items_list_items_request_last_published",
+    "ItemsListItemsRequestLastUpdated": ".items_list_items_request_last_updated",
     "ListCustomCodeBlocks": ".list_custom_code_blocks",
     "Locale": ".locale",
     "Locales": ".locales",
@@ -658,7 +668,8 @@ __all__ = [
     "ComponentNode",
     "ComponentProperties",
     "ComponentProperty",
-    "ComponentPropertyType",
+    "ComponentPropertyText",
+    "ComponentPropertyTextType",
     "Conflict",
     "CustomCodeBlock",
     "CustomCodeBlockType",
@@ -698,8 +709,12 @@ __all__ = [
     "InvalidScopes",
     "InventoryItem",
     "InventoryItemInventoryType",
+    "ItemsListItemsLiveRequestCreatedOn",
     "ItemsListItemsLiveRequestLastPublished",
+    "ItemsListItemsLiveRequestLastUpdated",
+    "ItemsListItemsRequestCreatedOn",
     "ItemsListItemsRequestLastPublished",
+    "ItemsListItemsRequestLastUpdated",
     "ListCustomCodeBlocks",
     "Locale",
     "Locales",
