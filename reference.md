@@ -634,6 +634,8 @@ Publishes a site to one or more more domains.
 
 To publish to a specific custom domain, use the domain IDs from the [Get Custom Domains](/data/reference/sites/get-custom-domain) endpoint.
 
+You must include at least one of the `customDomains` or `publishToWebflowSubdomain` properties in the request body.
+
 <Note title="Rate limit: 1 publish per minute">This endpoint has a specific rate limit of one successful publish queue per minute.</Note>
 
 Required scope | `sites:write`
@@ -1147,7 +1149,7 @@ client.pages.list(
 
 Unique identifier for a specific Locale.
 
-[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -1251,7 +1253,7 @@ client.pages.get_metadata(
 
 Unique identifier for a specific Locale.
 
-[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -1352,7 +1354,7 @@ client.pages.update_page_settings(
 
 Unique identifier for a specific Locale.
 
-[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -1481,7 +1483,7 @@ client.pages.get_content(
 
 Unique identifier for a specific Locale.
 
-[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -1826,7 +1828,7 @@ client.components.get_content(
 
 Unique identifier for a specific Locale.
 
-[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -1987,7 +1989,7 @@ client.components.update_content(
 
 Unique identifier for a specific Locale.
 
-[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -2097,7 +2099,7 @@ client.components.get_properties(
 
 Unique identifier for a specific Locale.
 
-[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -2244,7 +2246,7 @@ client.components.update_properties(
 
 Unique identifier for a specific Locale.
 
-[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -2637,6 +2639,7 @@ client = Webflow(
 
 client.assets.list(
     site_id="580e63e98c9a982ac9b8b741",
+    locale_id="65427cf400e02b306eaa04a0",
     offset=1,
     limit=1,
 )
@@ -2656,6 +2659,18 @@ client.assets.list(
 <dd>
 
 **site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**locale_id:** `typing.Optional[str]` 
+
+Unique identifier for a specific Locale.
+
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -2840,6 +2855,7 @@ client = Webflow(
 
 client.assets.get(
     asset_id="580e63fc8c9a982ac9b8b745",
+    locale_id="65427cf400e02b306eaa04a0",
 )
 
 ```
@@ -2857,6 +2873,18 @@ client.assets.get(
 <dd>
 
 **asset_id:** `str` — Unique identifier for an Asset on a site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**locale_id:** `typing.Optional[str]` 
+
+Unique identifier for a specific Locale.
+
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -2990,6 +3018,7 @@ client = Webflow(
 
 client.assets.update(
     asset_id="580e63fc8c9a982ac9b8b745",
+    locale_id="65427cf400e02b306eaa04a0",
 )
 
 ```
@@ -3014,7 +3043,11 @@ client.assets.update(
 <dl>
 <dd>
 
-**locale_id:** `typing.Optional[str]` — Unique identifier for a specific locale. Applicable, when using localization.
+**locale_id:** `typing.Optional[str]` 
+
+Unique identifier for a specific Locale.
+
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -3022,7 +3055,15 @@ client.assets.update(
 <dl>
 <dd>
 
-**display_name:** `typing.Optional[str]` — A human readable name for the asset
+**display_name:** `typing.Optional[str]` — A human readable name for the asset. This value is not localizable.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**alt_text:** `typing.Optional[str]` — Alternate text describing the image
     
 </dd>
 </dl>
@@ -6003,7 +6044,7 @@ client.collections.items.list_items(
     limit=1,
     name="name",
     slug="slug",
-    sort_by="lastPublished",
+    sort_by="createdOn",
     sort_order="asc",
 )
 
@@ -6069,7 +6110,23 @@ client.collections.items.list_items(
 <dl>
 <dd>
 
+**created_on:** `typing.Optional[ItemsListItemsRequestCreatedOn]` — Filter by the creation date of the item(s)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **last_published:** `typing.Optional[ItemsListItemsRequestLastPublished]` — Filter by the last published date of the item(s)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**last_updated:** `typing.Optional[ItemsListItemsRequestLastUpdated]` — Filter by the last updated date of the item(s)
     
 </dd>
 </dl>
@@ -6477,7 +6534,7 @@ client.collections.items.list_items_live(
     limit=1,
     name="name",
     slug="slug",
-    sort_by="lastPublished",
+    sort_by="createdOn",
     sort_order="asc",
 )
 
@@ -6543,7 +6600,23 @@ client.collections.items.list_items_live(
 <dl>
 <dd>
 
+**created_on:** `typing.Optional[ItemsListItemsLiveRequestCreatedOn]` — Filter by the creation date of the item(s)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **last_published:** `typing.Optional[ItemsListItemsLiveRequestLastPublished]` — Filter by the last published date of the item(s)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**last_updated:** `typing.Optional[ItemsListItemsLiveRequestLastUpdated]` — Filter by the last updated date of the item(s)
     
 </dd>
 </dl>
@@ -9152,7 +9225,7 @@ client.sites.comments.list_comment_threads(
 
 Unique identifier for a specific Locale.
 
-[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -9289,7 +9362,7 @@ client.sites.comments.get_comment_thread(
 
 Unique identifier for a specific Locale.
 
-[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -9426,7 +9499,7 @@ client.sites.comments.list_comment_replies(
 
 Unique identifier for a specific Locale.
 
-[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>

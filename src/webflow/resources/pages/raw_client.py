@@ -57,7 +57,7 @@ class RawPagesClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         limit : typing.Optional[int]
             Maximum number of records to be returned (max limit: 100)
@@ -178,7 +178,7 @@ class RawPagesClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -295,7 +295,7 @@ class RawPagesClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         title : typing.Optional[str]
             Title for the page
@@ -441,7 +441,7 @@ class RawPagesClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         limit : typing.Optional[int]
             Maximum number of records to be returned (max limit: 100)
@@ -724,7 +724,7 @@ class AsyncRawPagesClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         limit : typing.Optional[int]
             Maximum number of records to be returned (max limit: 100)
@@ -845,7 +845,7 @@ class AsyncRawPagesClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -962,7 +962,7 @@ class AsyncRawPagesClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         title : typing.Optional[str]
             Title for the page
@@ -1108,7 +1108,7 @@ class AsyncRawPagesClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         limit : typing.Optional[int]
             Maximum number of records to be returned (max limit: 100)
