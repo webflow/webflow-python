@@ -35,6 +35,7 @@ class RawAssetsClient:
         self,
         site_id: str,
         *,
+        locale_id: typing.Optional[str] = None,
         offset: typing.Optional[int] = None,
         limit: typing.Optional[int] = None,
         request_options: typing.Optional[RequestOptions] = None,
@@ -48,6 +49,11 @@ class RawAssetsClient:
         ----------
         site_id : str
             Unique identifier for a Site
+
+        locale_id : typing.Optional[str]
+            Unique identifier for a specific Locale.
+
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         offset : typing.Optional[int]
             Offset used for pagination if the results have more than limit records
@@ -68,6 +74,7 @@ class RawAssetsClient:
             base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
+                "localeId": locale_id,
                 "offset": offset,
                 "limit": limit,
             },
@@ -281,7 +288,13 @@ class RawAssetsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def get(self, asset_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> HttpResponse[Asset]:
+    def get(
+        self,
+        asset_id: str,
+        *,
+        locale_id: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HttpResponse[Asset]:
         """
         Get details about an asset
 
@@ -291,6 +304,11 @@ class RawAssetsClient:
         ----------
         asset_id : str
             Unique identifier for an Asset on a site
+
+        locale_id : typing.Optional[str]
+            Unique identifier for a specific Locale.
+
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -304,6 +322,9 @@ class RawAssetsClient:
             f"assets/{jsonable_encoder(asset_id)}",
             base_url=self._client_wrapper.get_environment().base,
             method="GET",
+            params={
+                "localeId": locale_id,
+            },
             request_options=request_options,
         )
         try:
@@ -475,8 +496,9 @@ class RawAssetsClient:
         self,
         asset_id: str,
         *,
-        locale_id: typing.Optional[str] = OMIT,
+        locale_id: typing.Optional[str] = None,
         display_name: typing.Optional[str] = OMIT,
+        alt_text: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[Asset]:
         """
@@ -490,10 +512,15 @@ class RawAssetsClient:
             Unique identifier for an Asset on a site
 
         locale_id : typing.Optional[str]
-            Unique identifier for a specific locale. Applicable, when using localization.
+            Unique identifier for a specific Locale.
+
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         display_name : typing.Optional[str]
-            A human readable name for the asset
+            A human readable name for the asset. This value is not localizable.
+
+        alt_text : typing.Optional[str]
+            Alternate text describing the image
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -507,9 +534,12 @@ class RawAssetsClient:
             f"assets/{jsonable_encoder(asset_id)}",
             base_url=self._client_wrapper.get_environment().base,
             method="PATCH",
-            json={
+            params={
                 "localeId": locale_id,
+            },
+            json={
                 "displayName": display_name,
+                "altText": alt_text,
             },
             headers={
                 "content-type": "application/json",
@@ -922,6 +952,7 @@ class AsyncRawAssetsClient:
         self,
         site_id: str,
         *,
+        locale_id: typing.Optional[str] = None,
         offset: typing.Optional[int] = None,
         limit: typing.Optional[int] = None,
         request_options: typing.Optional[RequestOptions] = None,
@@ -935,6 +966,11 @@ class AsyncRawAssetsClient:
         ----------
         site_id : str
             Unique identifier for a Site
+
+        locale_id : typing.Optional[str]
+            Unique identifier for a specific Locale.
+
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         offset : typing.Optional[int]
             Offset used for pagination if the results have more than limit records
@@ -955,6 +991,7 @@ class AsyncRawAssetsClient:
             base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
+                "localeId": locale_id,
                 "offset": offset,
                 "limit": limit,
             },
@@ -1169,7 +1206,11 @@ class AsyncRawAssetsClient:
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
     async def get(
-        self, asset_id: str, *, request_options: typing.Optional[RequestOptions] = None
+        self,
+        asset_id: str,
+        *,
+        locale_id: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[Asset]:
         """
         Get details about an asset
@@ -1180,6 +1221,11 @@ class AsyncRawAssetsClient:
         ----------
         asset_id : str
             Unique identifier for an Asset on a site
+
+        locale_id : typing.Optional[str]
+            Unique identifier for a specific Locale.
+
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1193,6 +1239,9 @@ class AsyncRawAssetsClient:
             f"assets/{jsonable_encoder(asset_id)}",
             base_url=self._client_wrapper.get_environment().base,
             method="GET",
+            params={
+                "localeId": locale_id,
+            },
             request_options=request_options,
         )
         try:
@@ -1366,8 +1415,9 @@ class AsyncRawAssetsClient:
         self,
         asset_id: str,
         *,
-        locale_id: typing.Optional[str] = OMIT,
+        locale_id: typing.Optional[str] = None,
         display_name: typing.Optional[str] = OMIT,
+        alt_text: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[Asset]:
         """
@@ -1381,10 +1431,15 @@ class AsyncRawAssetsClient:
             Unique identifier for an Asset on a site
 
         locale_id : typing.Optional[str]
-            Unique identifier for a specific locale. Applicable, when using localization.
+            Unique identifier for a specific Locale.
+
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         display_name : typing.Optional[str]
-            A human readable name for the asset
+            A human readable name for the asset. This value is not localizable.
+
+        alt_text : typing.Optional[str]
+            Alternate text describing the image
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1398,9 +1453,12 @@ class AsyncRawAssetsClient:
             f"assets/{jsonable_encoder(asset_id)}",
             base_url=self._client_wrapper.get_environment().base,
             method="PATCH",
-            json={
+            params={
                 "localeId": locale_id,
+            },
+            json={
                 "displayName": display_name,
+                "altText": alt_text,
             },
             headers={
                 "content-type": "application/json",
