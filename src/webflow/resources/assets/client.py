@@ -34,6 +34,7 @@ class AssetsClient:
         self,
         site_id: str,
         *,
+        locale_id: typing.Optional[str] = None,
         offset: typing.Optional[int] = None,
         limit: typing.Optional[int] = None,
         request_options: typing.Optional[RequestOptions] = None,
@@ -47,6 +48,11 @@ class AssetsClient:
         ----------
         site_id : str
             Unique identifier for a Site
+
+        locale_id : typing.Optional[str]
+            Unique identifier for a specific Locale.
+
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         offset : typing.Optional[int]
             Offset used for pagination if the results have more than limit records
@@ -71,11 +77,14 @@ class AssetsClient:
         )
         client.assets.list(
             site_id="580e63e98c9a982ac9b8b741",
+            locale_id="65427cf400e02b306eaa04a0",
             offset=1,
             limit=1,
         )
         """
-        _response = self._raw_client.list(site_id, offset=offset, limit=limit, request_options=request_options)
+        _response = self._raw_client.list(
+            site_id, locale_id=locale_id, offset=offset, limit=limit, request_options=request_options
+        )
         return _response.data
 
     def create(
@@ -145,7 +154,13 @@ class AssetsClient:
         )
         return _response.data
 
-    def get(self, asset_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> Asset:
+    def get(
+        self,
+        asset_id: str,
+        *,
+        locale_id: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> Asset:
         """
         Get details about an asset
 
@@ -155,6 +170,11 @@ class AssetsClient:
         ----------
         asset_id : str
             Unique identifier for an Asset on a site
+
+        locale_id : typing.Optional[str]
+            Unique identifier for a specific Locale.
+
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -173,9 +193,10 @@ class AssetsClient:
         )
         client.assets.get(
             asset_id="580e63fc8c9a982ac9b8b745",
+            locale_id="65427cf400e02b306eaa04a0",
         )
         """
-        _response = self._raw_client.get(asset_id, request_options=request_options)
+        _response = self._raw_client.get(asset_id, locale_id=locale_id, request_options=request_options)
         return _response.data
 
     def delete(self, asset_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
@@ -214,8 +235,9 @@ class AssetsClient:
         self,
         asset_id: str,
         *,
-        locale_id: typing.Optional[str] = OMIT,
+        locale_id: typing.Optional[str] = None,
         display_name: typing.Optional[str] = OMIT,
+        alt_text: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> Asset:
         """
@@ -229,10 +251,15 @@ class AssetsClient:
             Unique identifier for an Asset on a site
 
         locale_id : typing.Optional[str]
-            Unique identifier for a specific locale. Applicable, when using localization.
+            Unique identifier for a specific Locale.
+
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         display_name : typing.Optional[str]
-            A human readable name for the asset
+            A human readable name for the asset. This value is not localizable.
+
+        alt_text : typing.Optional[str]
+            Alternate text describing the image
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -251,10 +278,11 @@ class AssetsClient:
         )
         client.assets.update(
             asset_id="580e63fc8c9a982ac9b8b745",
+            locale_id="65427cf400e02b306eaa04a0",
         )
         """
         _response = self._raw_client.update(
-            asset_id, locale_id=locale_id, display_name=display_name, request_options=request_options
+            asset_id, locale_id=locale_id, display_name=display_name, alt_text=alt_text, request_options=request_options
         )
         return _response.data
 
@@ -395,6 +423,7 @@ class AsyncAssetsClient:
         self,
         site_id: str,
         *,
+        locale_id: typing.Optional[str] = None,
         offset: typing.Optional[int] = None,
         limit: typing.Optional[int] = None,
         request_options: typing.Optional[RequestOptions] = None,
@@ -408,6 +437,11 @@ class AsyncAssetsClient:
         ----------
         site_id : str
             Unique identifier for a Site
+
+        locale_id : typing.Optional[str]
+            Unique identifier for a specific Locale.
+
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         offset : typing.Optional[int]
             Offset used for pagination if the results have more than limit records
@@ -437,6 +471,7 @@ class AsyncAssetsClient:
         async def main() -> None:
             await client.assets.list(
                 site_id="580e63e98c9a982ac9b8b741",
+                locale_id="65427cf400e02b306eaa04a0",
                 offset=1,
                 limit=1,
             )
@@ -444,7 +479,9 @@ class AsyncAssetsClient:
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.list(site_id, offset=offset, limit=limit, request_options=request_options)
+        _response = await self._raw_client.list(
+            site_id, locale_id=locale_id, offset=offset, limit=limit, request_options=request_options
+        )
         return _response.data
 
     async def create(
@@ -522,7 +559,13 @@ class AsyncAssetsClient:
         )
         return _response.data
 
-    async def get(self, asset_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> Asset:
+    async def get(
+        self,
+        asset_id: str,
+        *,
+        locale_id: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> Asset:
         """
         Get details about an asset
 
@@ -532,6 +575,11 @@ class AsyncAssetsClient:
         ----------
         asset_id : str
             Unique identifier for an Asset on a site
+
+        locale_id : typing.Optional[str]
+            Unique identifier for a specific Locale.
+
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -555,12 +603,13 @@ class AsyncAssetsClient:
         async def main() -> None:
             await client.assets.get(
                 asset_id="580e63fc8c9a982ac9b8b745",
+                locale_id="65427cf400e02b306eaa04a0",
             )
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.get(asset_id, request_options=request_options)
+        _response = await self._raw_client.get(asset_id, locale_id=locale_id, request_options=request_options)
         return _response.data
 
     async def delete(self, asset_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
@@ -607,8 +656,9 @@ class AsyncAssetsClient:
         self,
         asset_id: str,
         *,
-        locale_id: typing.Optional[str] = OMIT,
+        locale_id: typing.Optional[str] = None,
         display_name: typing.Optional[str] = OMIT,
+        alt_text: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> Asset:
         """
@@ -622,10 +672,15 @@ class AsyncAssetsClient:
             Unique identifier for an Asset on a site
 
         locale_id : typing.Optional[str]
-            Unique identifier for a specific locale. Applicable, when using localization.
+            Unique identifier for a specific Locale.
+
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         display_name : typing.Optional[str]
-            A human readable name for the asset
+            A human readable name for the asset. This value is not localizable.
+
+        alt_text : typing.Optional[str]
+            Alternate text describing the image
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -649,13 +704,14 @@ class AsyncAssetsClient:
         async def main() -> None:
             await client.assets.update(
                 asset_id="580e63fc8c9a982ac9b8b745",
+                locale_id="65427cf400e02b306eaa04a0",
             )
 
 
         asyncio.run(main())
         """
         _response = await self._raw_client.update(
-            asset_id, locale_id=locale_id, display_name=display_name, request_options=request_options
+            asset_id, locale_id=locale_id, display_name=display_name, alt_text=alt_text, request_options=request_options
         )
         return _response.data
 
