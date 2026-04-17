@@ -32,7 +32,7 @@ class SitePublishPayload(UniversalBaseModel):
     published_by: typing_extensions.Annotated[
         typing.Optional[typing.Dict[str, typing.Any]],
         FieldMetadata(alias="publishedBy"),
-        pydantic.Field(alias="publishedBy", description="The name andID of the user who published the site"),
+        pydantic.Field(alias="publishedBy", description="The name and ID of the user who published the site"),
     ] = None
 
     if IS_PYDANTIC_V2:
