@@ -6,7 +6,7 @@ import typing
 from importlib import import_module
 
 if typing.TYPE_CHECKING:
-    from .types import SitesPublishResponse
+    from .types import SitesPublishResponse, SitesPublishResponsePublishScope
     from .resources import (
         CommentsGetCommentThreadRequestSortBy,
         CommentsGetCommentThreadRequestSortOrder,
@@ -32,6 +32,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "CommentsListCommentThreadsRequestSortBy": ".resources",
     "CommentsListCommentThreadsRequestSortOrder": ".resources",
     "SitesPublishResponse": ".types",
+    "SitesPublishResponsePublishScope": ".types",
     "WellKnownFileContentType": ".resources",
     "activity_logs": ".resources",
     "comments": ".resources",
@@ -73,6 +74,7 @@ __all__ = [
     "CommentsListCommentThreadsRequestSortBy",
     "CommentsListCommentThreadsRequestSortOrder",
     "SitesPublishResponse",
+    "SitesPublishResponsePublishScope",
     "WellKnownFileContentType",
     "activity_logs",
     "comments",
