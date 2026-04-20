@@ -38,17 +38,14 @@ class CommentPayload(UniversalBaseModel):
     page_id: typing_extensions.Annotated[
         typing.Optional[str],
         FieldMetadata(alias="pageId"),
-        pydantic.Field(alias="pageId", description="The page unique identifier"),
+        pydantic.Field(
+            alias="pageId", description="The page unique identifier, or for CMS item comments, the template page ID"
+        ),
     ] = None
     locale_id: typing_extensions.Annotated[
         typing.Optional[str],
         FieldMetadata(alias="localeId"),
         pydantic.Field(alias="localeId", description="The locale unique identifier"),
-    ] = None
-    item_id: typing_extensions.Annotated[
-        typing.Optional[str],
-        FieldMetadata(alias="itemId"),
-        pydantic.Field(alias="itemId", description="The item unique identifier"),
     ] = None
     breakpoint: typing.Optional[str] = pydantic.Field(default=None)
     """
