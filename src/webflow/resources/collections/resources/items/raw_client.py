@@ -24,8 +24,12 @@ from .....types.collection_item_list_no_pagination import CollectionItemListNoPa
 from .....types.collection_item_patch_single_field_data import CollectionItemPatchSingleFieldData
 from .....types.collection_item_with_id_input import CollectionItemWithIdInput
 from .....types.error import Error
+from .....types.items_list_items_live_request_created_on import ItemsListItemsLiveRequestCreatedOn
 from .....types.items_list_items_live_request_last_published import ItemsListItemsLiveRequestLastPublished
+from .....types.items_list_items_live_request_last_updated import ItemsListItemsLiveRequestLastUpdated
+from .....types.items_list_items_request_created_on import ItemsListItemsRequestCreatedOn
 from .....types.items_list_items_request_last_published import ItemsListItemsRequestLastPublished
+from .....types.items_list_items_request_last_updated import ItemsListItemsRequestLastUpdated
 from .types.create_bulk_collection_item_request_body_field_data import CreateBulkCollectionItemRequestBodyFieldData
 from .types.items_create_item_live_request_body import ItemsCreateItemLiveRequestBody
 from .types.items_create_item_request_body import ItemsCreateItemRequestBody
@@ -57,7 +61,9 @@ class RawItemsClient:
         limit: typing.Optional[int] = None,
         name: typing.Optional[str] = None,
         slug: typing.Optional[str] = None,
+        created_on: typing.Optional[ItemsListItemsRequestCreatedOn] = None,
         last_published: typing.Optional[ItemsListItemsRequestLastPublished] = None,
+        last_updated: typing.Optional[ItemsListItemsRequestLastUpdated] = None,
         sort_by: typing.Optional[ItemsListItemsRequestSortBy] = None,
         sort_order: typing.Optional[ItemsListItemsRequestSortOrder] = None,
         request_options: typing.Optional[RequestOptions] = None,
@@ -87,8 +93,14 @@ class RawItemsClient:
         slug : typing.Optional[str]
             Filter by the exact slug of the item
 
+        created_on : typing.Optional[ItemsListItemsRequestCreatedOn]
+            Filter by the creation date of the item(s)
+
         last_published : typing.Optional[ItemsListItemsRequestLastPublished]
             Filter by the last published date of the item(s)
+
+        last_updated : typing.Optional[ItemsListItemsRequestLastUpdated]
+            Filter by the last updated date of the item(s)
 
         sort_by : typing.Optional[ItemsListItemsRequestSortBy]
             Sort results by the provided value
@@ -114,8 +126,14 @@ class RawItemsClient:
                 "limit": limit,
                 "name": name,
                 "slug": slug,
+                "createdOn": convert_and_respect_annotation_metadata(
+                    object_=created_on, annotation=ItemsListItemsRequestCreatedOn, direction="write"
+                ),
                 "lastPublished": convert_and_respect_annotation_metadata(
                     object_=last_published, annotation=ItemsListItemsRequestLastPublished, direction="write"
+                ),
+                "lastUpdated": convert_and_respect_annotation_metadata(
+                    object_=last_updated, annotation=ItemsListItemsRequestLastUpdated, direction="write"
                 ),
                 "sortBy": sort_by,
                 "sortOrder": sort_order,
@@ -577,7 +595,9 @@ class RawItemsClient:
         limit: typing.Optional[int] = None,
         name: typing.Optional[str] = None,
         slug: typing.Optional[str] = None,
+        created_on: typing.Optional[ItemsListItemsLiveRequestCreatedOn] = None,
         last_published: typing.Optional[ItemsListItemsLiveRequestLastPublished] = None,
+        last_updated: typing.Optional[ItemsListItemsLiveRequestLastUpdated] = None,
         sort_by: typing.Optional[ItemsListItemsLiveRequestSortBy] = None,
         sort_order: typing.Optional[ItemsListItemsLiveRequestSortOrder] = None,
         request_options: typing.Optional[RequestOptions] = None,
@@ -611,8 +631,14 @@ class RawItemsClient:
         slug : typing.Optional[str]
             Filter by the exact slug of the item
 
+        created_on : typing.Optional[ItemsListItemsLiveRequestCreatedOn]
+            Filter by the creation date of the item(s)
+
         last_published : typing.Optional[ItemsListItemsLiveRequestLastPublished]
             Filter by the last published date of the item(s)
+
+        last_updated : typing.Optional[ItemsListItemsLiveRequestLastUpdated]
+            Filter by the last updated date of the item(s)
 
         sort_by : typing.Optional[ItemsListItemsLiveRequestSortBy]
             Sort results by the provided value
@@ -638,8 +664,14 @@ class RawItemsClient:
                 "limit": limit,
                 "name": name,
                 "slug": slug,
+                "createdOn": convert_and_respect_annotation_metadata(
+                    object_=created_on, annotation=ItemsListItemsLiveRequestCreatedOn, direction="write"
+                ),
                 "lastPublished": convert_and_respect_annotation_metadata(
                     object_=last_published, annotation=ItemsListItemsLiveRequestLastPublished, direction="write"
+                ),
+                "lastUpdated": convert_and_respect_annotation_metadata(
+                    object_=last_updated, annotation=ItemsListItemsLiveRequestLastUpdated, direction="write"
                 ),
                 "sortBy": sort_by,
                 "sortOrder": sort_order,
@@ -2158,7 +2190,9 @@ class AsyncRawItemsClient:
         limit: typing.Optional[int] = None,
         name: typing.Optional[str] = None,
         slug: typing.Optional[str] = None,
+        created_on: typing.Optional[ItemsListItemsRequestCreatedOn] = None,
         last_published: typing.Optional[ItemsListItemsRequestLastPublished] = None,
+        last_updated: typing.Optional[ItemsListItemsRequestLastUpdated] = None,
         sort_by: typing.Optional[ItemsListItemsRequestSortBy] = None,
         sort_order: typing.Optional[ItemsListItemsRequestSortOrder] = None,
         request_options: typing.Optional[RequestOptions] = None,
@@ -2188,8 +2222,14 @@ class AsyncRawItemsClient:
         slug : typing.Optional[str]
             Filter by the exact slug of the item
 
+        created_on : typing.Optional[ItemsListItemsRequestCreatedOn]
+            Filter by the creation date of the item(s)
+
         last_published : typing.Optional[ItemsListItemsRequestLastPublished]
             Filter by the last published date of the item(s)
+
+        last_updated : typing.Optional[ItemsListItemsRequestLastUpdated]
+            Filter by the last updated date of the item(s)
 
         sort_by : typing.Optional[ItemsListItemsRequestSortBy]
             Sort results by the provided value
@@ -2215,8 +2255,14 @@ class AsyncRawItemsClient:
                 "limit": limit,
                 "name": name,
                 "slug": slug,
+                "createdOn": convert_and_respect_annotation_metadata(
+                    object_=created_on, annotation=ItemsListItemsRequestCreatedOn, direction="write"
+                ),
                 "lastPublished": convert_and_respect_annotation_metadata(
                     object_=last_published, annotation=ItemsListItemsRequestLastPublished, direction="write"
+                ),
+                "lastUpdated": convert_and_respect_annotation_metadata(
+                    object_=last_updated, annotation=ItemsListItemsRequestLastUpdated, direction="write"
                 ),
                 "sortBy": sort_by,
                 "sortOrder": sort_order,
@@ -2678,7 +2724,9 @@ class AsyncRawItemsClient:
         limit: typing.Optional[int] = None,
         name: typing.Optional[str] = None,
         slug: typing.Optional[str] = None,
+        created_on: typing.Optional[ItemsListItemsLiveRequestCreatedOn] = None,
         last_published: typing.Optional[ItemsListItemsLiveRequestLastPublished] = None,
+        last_updated: typing.Optional[ItemsListItemsLiveRequestLastUpdated] = None,
         sort_by: typing.Optional[ItemsListItemsLiveRequestSortBy] = None,
         sort_order: typing.Optional[ItemsListItemsLiveRequestSortOrder] = None,
         request_options: typing.Optional[RequestOptions] = None,
@@ -2712,8 +2760,14 @@ class AsyncRawItemsClient:
         slug : typing.Optional[str]
             Filter by the exact slug of the item
 
+        created_on : typing.Optional[ItemsListItemsLiveRequestCreatedOn]
+            Filter by the creation date of the item(s)
+
         last_published : typing.Optional[ItemsListItemsLiveRequestLastPublished]
             Filter by the last published date of the item(s)
+
+        last_updated : typing.Optional[ItemsListItemsLiveRequestLastUpdated]
+            Filter by the last updated date of the item(s)
 
         sort_by : typing.Optional[ItemsListItemsLiveRequestSortBy]
             Sort results by the provided value
@@ -2739,8 +2793,14 @@ class AsyncRawItemsClient:
                 "limit": limit,
                 "name": name,
                 "slug": slug,
+                "createdOn": convert_and_respect_annotation_metadata(
+                    object_=created_on, annotation=ItemsListItemsLiveRequestCreatedOn, direction="write"
+                ),
                 "lastPublished": convert_and_respect_annotation_metadata(
                     object_=last_published, annotation=ItemsListItemsLiveRequestLastPublished, direction="write"
+                ),
+                "lastUpdated": convert_and_respect_annotation_metadata(
+                    object_=last_updated, annotation=ItemsListItemsLiveRequestLastUpdated, direction="write"
                 ),
                 "sortBy": sort_by,
                 "sortOrder": sort_order,
