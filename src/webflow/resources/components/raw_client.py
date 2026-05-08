@@ -186,7 +186,7 @@ class RawComponentsClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         branch_id : typing.Optional[str]
             Scope the operation to work on a specific branch.
@@ -329,7 +329,7 @@ class RawComponentsClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         branch_id : typing.Optional[str]
             Scope the operation to work on a specific branch.
@@ -475,7 +475,7 @@ class RawComponentsClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         branch_id : typing.Optional[str]
             Scope the operation to work on a specific branch.
@@ -615,7 +615,7 @@ class RawComponentsClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         branch_id : typing.Optional[str]
             Scope the operation to work on a specific branch.
@@ -879,7 +879,7 @@ class AsyncRawComponentsClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         branch_id : typing.Optional[str]
             Scope the operation to work on a specific branch.
@@ -1022,7 +1022,7 @@ class AsyncRawComponentsClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         branch_id : typing.Optional[str]
             Scope the operation to work on a specific branch.
@@ -1168,7 +1168,7 @@ class AsyncRawComponentsClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         branch_id : typing.Optional[str]
             Scope the operation to work on a specific branch.
@@ -1308,7 +1308,7 @@ class AsyncRawComponentsClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         branch_id : typing.Optional[str]
             Scope the operation to work on a specific branch.

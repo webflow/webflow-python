@@ -6,11 +6,18 @@ import pydantic
 import typing_extensions
 from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
 from ..core.serialization import FieldMetadata
+from .google_tag_id import GoogleTagId
 
 
-class FieldValidationsAdditionalPropertiesAdditionalProperties(UniversalBaseModel):
-    additional_properties: typing_extensions.Annotated[
-        typing.Any, FieldMetadata(alias="additionalProperties"), pydantic.Field(alias="additionalProperties")
+class GoogleTagIds(UniversalBaseModel):
+    """
+    A list of Google Tags configured for a site.
+    """
+
+    google_tag_ids: typing_extensions.Annotated[
+        typing.List[GoogleTagId],
+        FieldMetadata(alias="googleTagIds"),
+        pydantic.Field(alias="googleTagIds", description="List of Google Tags configured for a site, sorted by order."),
     ]
 
     if IS_PYDANTIC_V2:

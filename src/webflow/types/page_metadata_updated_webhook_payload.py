@@ -23,6 +23,26 @@ class PageMetadataUpdatedWebhookPayload(UniversalBaseModel):
     page_title: typing_extensions.Annotated[
         typing.Optional[str], FieldMetadata(alias="pageTitle"), pydantic.Field(alias="pageTitle")
     ] = None
+    page_name: typing_extensions.Annotated[
+        typing.Optional[str],
+        FieldMetadata(alias="pageName"),
+        pydantic.Field(alias="pageName", description="The display name of the page, or null if not set"),
+    ] = None
+    archived: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    Whether the page is archived
+    """
+
+    draft: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    Whether the page is a draft
+    """
+
+    is_branch: typing_extensions.Annotated[
+        typing.Optional[bool],
+        FieldMetadata(alias="isBranch"),
+        pydantic.Field(alias="isBranch", description="Whether the page belongs to a branch"),
+    ] = None
     last_updated: typing_extensions.Annotated[
         typing.Optional[dt.datetime], FieldMetadata(alias="lastUpdated"), pydantic.Field(alias="lastUpdated")
     ] = None
