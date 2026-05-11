@@ -60,7 +60,7 @@ class RawCommentsClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         offset : typing.Optional[int]
             Offset used for pagination if the results have more than limit records
@@ -201,7 +201,7 @@ class RawCommentsClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         offset : typing.Optional[int]
             Offset used for pagination if the results have more than limit records
@@ -342,7 +342,7 @@ class RawCommentsClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         offset : typing.Optional[int]
             Offset used for pagination if the results have more than limit records
@@ -484,7 +484,7 @@ class AsyncRawCommentsClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         offset : typing.Optional[int]
             Offset used for pagination if the results have more than limit records
@@ -625,7 +625,7 @@ class AsyncRawCommentsClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         offset : typing.Optional[int]
             Offset used for pagination if the results have more than limit records
@@ -766,7 +766,7 @@ class AsyncRawCommentsClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         offset : typing.Optional[int]
             Offset used for pagination if the results have more than limit records
