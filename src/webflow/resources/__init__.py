@@ -37,7 +37,7 @@ if typing.TYPE_CHECKING:
         UpdateStaticContentResponse,
     )
     from .products import ProductSkuCreateProduct, ProductSkuCreateSku, ProductsCreateSkuResponse
-    from .sites import SitesPublishResponse
+    from .sites import SitesPublishResponse, SitesPublishResponsePublishScope
 _dynamic_imports: typing.Dict[str, str] = {
     "ComponentDomWriteNodesItem": ".components",
     "ComponentPropertiesWritePropertiesItem": ".components",
@@ -54,6 +54,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "ProductSkuCreateSku": ".products",
     "ProductsCreateSkuResponse": ".products",
     "SitesPublishResponse": ".sites",
+    "SitesPublishResponsePublishScope": ".sites",
     "UpdateStaticContentResponse": ".pages",
     "assets": ".assets",
     "collections": ".collections",
@@ -109,6 +110,7 @@ __all__ = [
     "ProductSkuCreateSku",
     "ProductsCreateSkuResponse",
     "SitesPublishResponse",
+    "SitesPublishResponsePublishScope",
     "UpdateStaticContentResponse",
     "assets",
     "collections",

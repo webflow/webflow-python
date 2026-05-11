@@ -88,7 +88,7 @@ class RawTokenClient:
         """
         Information about the authorization token
 
-        <Note>Access to this endpoint requires a bearer token from a [Data Client App](/data/docs/getting-started-data-clients).</Note>
+        <Note>Access to this endpoint requires a bearer token from a [Data Client App](/data/docs/data-clients/getting-started).</Note>
 
         Parameters
         ----------
@@ -212,7 +212,7 @@ class AsyncRawTokenClient:
         """
         Information about the authorization token
 
-        <Note>Access to this endpoint requires a bearer token from a [Data Client App](/data/docs/getting-started-data-clients).</Note>
+        <Note>Access to this endpoint requires a bearer token from a [Data Client App](/data/docs/data-clients/getting-started).</Note>
 
         Parameters
         ----------
