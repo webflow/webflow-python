@@ -60,7 +60,7 @@ class PagesClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         limit : typing.Optional[int]
             Maximum number of records to be returned (max limit: 100)
@@ -115,7 +115,7 @@ class PagesClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -164,7 +164,7 @@ class PagesClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         title : typing.Optional[str]
             Title for the page
@@ -172,8 +172,9 @@ class PagesClient:
         slug : typing.Optional[str]
             Slug for the page.
 
-
-            **Note:** Updating slugs in secondary locales is only supported in <a href="https://webflow.com/localization">Advanced and Enterprise localization add-on plans.</a>
+            **Note:** The slug field is ignored in the following cases — all other fields in the same request still apply:
+            - The site's home page, collection template pages, and utility pages (e.g. 404, password, search).
+            - For secondary locales, updating the slug requires an <a href="https://webflow.com/feature/localization">Advanced or Enterprise localization add-on plan</a>.
 
         seo : typing.Optional[PageMetadataWriteSeo]
             SEO-related fields for the Page
@@ -252,7 +253,7 @@ class PagesClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         limit : typing.Optional[int]
             Maximum number of records to be returned (max limit: 100)
@@ -447,7 +448,7 @@ class AsyncPagesClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         limit : typing.Optional[int]
             Maximum number of records to be returned (max limit: 100)
@@ -510,7 +511,7 @@ class AsyncPagesClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -567,7 +568,7 @@ class AsyncPagesClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         title : typing.Optional[str]
             Title for the page
@@ -575,8 +576,9 @@ class AsyncPagesClient:
         slug : typing.Optional[str]
             Slug for the page.
 
-
-            **Note:** Updating slugs in secondary locales is only supported in <a href="https://webflow.com/localization">Advanced and Enterprise localization add-on plans.</a>
+            **Note:** The slug field is ignored in the following cases — all other fields in the same request still apply:
+            - The site's home page, collection template pages, and utility pages (e.g. 404, password, search).
+            - For secondary locales, updating the slug requires an <a href="https://webflow.com/feature/localization">Advanced or Enterprise localization add-on plan</a>.
 
         seo : typing.Optional[PageMetadataWriteSeo]
             SEO-related fields for the Page
@@ -663,7 +665,7 @@ class AsyncPagesClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         limit : typing.Optional[int]
             Maximum number of records to be returned (max limit: 100)

@@ -79,7 +79,7 @@ client.token.authorized_by()
 
 Information about the authorization token
 
-<Note>Access to this endpoint requires a bearer token from a [Data Client App](/data/docs/getting-started-data-clients).</Note>
+<Note>Access to this endpoint requires a bearer token from a [Data Client App](/data/docs/data-clients/getting-started).</Note>
 </dd>
 </dl>
 </dd>
@@ -630,9 +630,14 @@ client.sites.get_custom_domain(
 <dl>
 <dd>
 
-Publishes a site to one or more more domains.
+Publishes a site or an individual page to one or more domains.
+If multiple individual pages are published to staging, publishing from staging to production publishes all staged changes.
 
 To publish to a specific custom domain, use the domain IDs from the [Get Custom Domains](/data/reference/sites/get-custom-domain) endpoint.
+
+You must include at least one of the `customDomains` or `publishToWebflowSubdomain` properties in the request body.
+
+To publish an individual page instead of the entire site, provide the ID of the page in the `pageId` parameter.
 
 <Note title="Rate limit: 1 publish per minute">This endpoint has a specific rate limit of one successful publish queue per minute.</Note>
 
@@ -699,6 +704,14 @@ client.sites.publish(
 <dd>
 
 **publish_to_webflow_subdomain:** `typing.Optional[bool]` — Choice of whether to publish to the default Webflow Subdomain
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**page_id:** `typing.Optional[str]` — The ID of the page to publish
     
 </dd>
 </dl>
@@ -1147,7 +1160,7 @@ client.pages.list(
 
 Unique identifier for a specific Locale.
 
-[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -1251,7 +1264,7 @@ client.pages.get_metadata(
 
 Unique identifier for a specific Locale.
 
-[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -1352,7 +1365,7 @@ client.pages.update_page_settings(
 
 Unique identifier for a specific Locale.
 
-[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -1372,8 +1385,9 @@ Unique identifier for a specific Locale.
 
 Slug for the page.
 
-
-**Note:** Updating slugs in secondary locales is only supported in <a href="https://webflow.com/localization">Advanced and Enterprise localization add-on plans.</a>
+**Note:** The slug field is ignored in the following cases — all other fields in the same request still apply:
+- The site's home page, collection template pages, and utility pages (e.g. 404, password, search).
+- For secondary locales, updating the slug requires an <a href="https://webflow.com/feature/localization">Advanced or Enterprise localization add-on plan</a>.
     
 </dd>
 </dl>
@@ -1481,7 +1495,7 @@ client.pages.get_content(
 
 Unique identifier for a specific Locale.
 
-[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -1826,7 +1840,7 @@ client.components.get_content(
 
 Unique identifier for a specific Locale.
 
-[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -1987,7 +2001,7 @@ client.components.update_content(
 
 Unique identifier for a specific Locale.
 
-[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -2097,7 +2111,7 @@ client.components.get_properties(
 
 Unique identifier for a specific Locale.
 
-[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -2244,7 +2258,7 @@ client.components.update_properties(
 
 Unique identifier for a specific Locale.
 
-[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -2290,6 +2304,8 @@ Get a list of scripts that have been registered to a site. A site can have a max
 <Note title="Script Registration">
   To apply a script to a site or page, the script must first be registered to a site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints. See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
 </Note>
+
+<Note>Access to this endpoint requires a bearer token obtained from an [OAuth Code Grant Flow](/data/reference/oauth-app).</Note>
 
 Required scope | `custom_code:read`
 </dd>
@@ -2369,6 +2385,8 @@ Register a hosted script to a site.
 <Note title="Script Registration">
   To apply a script to a site or page, the script must first be registered to a site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints. See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
 </Note>
+
+<Note>Access to this endpoint requires a bearer token obtained from an [OAuth Code Grant Flow](/data/reference/oauth-app).</Note>
 
 Required scope | `custom_code:write`
 </dd>
@@ -2492,6 +2510,8 @@ Register an inline script to a site. Inline scripts are limited to 2000 characte
 <Note title="Script Registration">
   To apply a script to a site or page, the script must first be registered to a site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints. See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
 </Note>
+
+<Note>Access to this endpoint requires a bearer token obtained from an [OAuth Code Grant Flow](/data/reference/oauth-app).</Note>
 
 Required scope | `custom_code:write`
 </dd>
@@ -2637,6 +2657,7 @@ client = Webflow(
 
 client.assets.list(
     site_id="580e63e98c9a982ac9b8b741",
+    locale_id="65427cf400e02b306eaa04a0",
     offset=1,
     limit=1,
 )
@@ -2656,6 +2677,18 @@ client.assets.list(
 <dd>
 
 **site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**locale_id:** `typing.Optional[str]` 
+
+Unique identifier for a specific Locale.
+
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -2840,6 +2873,7 @@ client = Webflow(
 
 client.assets.get(
     asset_id="580e63fc8c9a982ac9b8b745",
+    locale_id="65427cf400e02b306eaa04a0",
 )
 
 ```
@@ -2857,6 +2891,18 @@ client.assets.get(
 <dd>
 
 **asset_id:** `str` — Unique identifier for an Asset on a site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**locale_id:** `typing.Optional[str]` 
+
+Unique identifier for a specific Locale.
+
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -2990,6 +3036,7 @@ client = Webflow(
 
 client.assets.update(
     asset_id="580e63fc8c9a982ac9b8b745",
+    locale_id="65427cf400e02b306eaa04a0",
 )
 
 ```
@@ -3014,7 +3061,11 @@ client.assets.update(
 <dl>
 <dd>
 
-**locale_id:** `typing.Optional[str]` — Unique identifier for a specific locale. Applicable, when using localization.
+**locale_id:** `typing.Optional[str]` 
+
+Unique identifier for a specific Locale.
+
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -3022,7 +3073,15 @@ client.assets.update(
 <dl>
 <dd>
 
-**display_name:** `typing.Optional[str]` — A human readable name for the asset
+**display_name:** `typing.Optional[str]` — A human readable name for the asset. This value is not localizable.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**alt_text:** `typing.Optional[str]` — Alternate text describing the image
     
 </dd>
 </dl>
@@ -3376,7 +3435,7 @@ Create a new Webhook.
 
 Limit of 75 registrations per `triggerType`, per site.
 
-<Note>Access to this endpoint requires a bearer token from a [Data Client App](/data/docs/getting-started-data-clients).</Note>
+<Note>Access to this endpoint requires a bearer token from a [Data Client App](/data/docs/data-clients/getting-started).</Note>
 Required scope | `sites:write`
 </dd>
 </dl>
@@ -6003,7 +6062,7 @@ client.collections.items.list_items(
     limit=1,
     name="name",
     slug="slug",
-    sort_by="lastPublished",
+    sort_by="createdOn",
     sort_order="asc",
 )
 
@@ -6069,7 +6128,23 @@ client.collections.items.list_items(
 <dl>
 <dd>
 
+**created_on:** `typing.Optional[ItemsListItemsRequestCreatedOn]` — Filter by the creation date of the item(s)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **last_published:** `typing.Optional[ItemsListItemsRequestLastPublished]` — Filter by the last published date of the item(s)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**last_updated:** `typing.Optional[ItemsListItemsRequestLastUpdated]` — Filter by the last updated date of the item(s)
     
 </dd>
 </dl>
@@ -6477,7 +6552,7 @@ client.collections.items.list_items_live(
     limit=1,
     name="name",
     slug="slug",
-    sort_by="lastPublished",
+    sort_by="createdOn",
     sort_order="asc",
 )
 
@@ -6543,7 +6618,23 @@ client.collections.items.list_items_live(
 <dl>
 <dd>
 
+**created_on:** `typing.Optional[ItemsListItemsLiveRequestCreatedOn]` — Filter by the creation date of the item(s)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **last_published:** `typing.Optional[ItemsListItemsLiveRequestLastPublished]` — Filter by the last published date of the item(s)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**last_updated:** `typing.Optional[ItemsListItemsLiveRequestLastUpdated]` — Filter by the last updated date of the item(s)
     
 </dd>
 </dl>
@@ -7733,6 +7824,8 @@ client.collections.items.publish_item(
 
 Get all scripts applied to a page.
 
+<Note>Access to this endpoint requires a bearer token obtained from an [OAuth Code Grant Flow](/data/reference/oauth-app).</Note>
+
 Required scope | `custom_code:read`
 </dd>
 </dl>
@@ -7811,6 +7904,8 @@ Apply registered scripts to a page. If you have multiple scripts your App needs 
 <Note title="Script Registration">
   To apply a script to a page, the script must first be registered to a Site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints. See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
 </Note>
+
+<Note>Access to this endpoint requires a bearer token obtained from an [OAuth Code Grant Flow](/data/reference/oauth-app).</Note>
 
 Required scope | `custom_code:write`
 </dd>
@@ -8979,6 +9074,333 @@ client.sites.well_known.delete(
 </dl>
 </details>
 
+## Sites GoogleTag
+<details><summary><code>client.sites.google_tag.<a href="src/webflow/sites/google_tag/client.py">list</a>(...) -> GoogleTagIds</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+List all Google Tag IDs configured for a site, sorted by order.
+
+Required scope: `sites:read`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow
+from webflow.environment import WebflowEnvironment
+
+client = Webflow(
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
+)
+
+client.sites.google_tag.list(
+    site_id="580e63e98c9a982ac9b8b741",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sites.google_tag.<a href="src/webflow/sites/google_tag/client.py">delete_all</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Delete all Google Tag IDs from a site.
+
+Required scope: `sites:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow
+from webflow.environment import WebflowEnvironment
+
+client = Webflow(
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
+)
+
+client.sites.google_tag.delete_all(
+    site_id="580e63e98c9a982ac9b8b741",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sites.google_tag.<a href="src/webflow/sites/google_tag/client.py">upsert</a>(...) -> GoogleTagIds</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Add or update Google Tag IDs for a site. Existing tags not referenced in the request are preserved. A site may have a maximum of 25 tags total.
+
+`order` is optional on input — it is auto-assigned for new tags and returned on all tags in the response.
+
+Required scope: `sites:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow, GoogleTagId
+from webflow.environment import WebflowEnvironment
+
+client = Webflow(
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
+)
+
+client.sites.google_tag.upsert(
+    site_id="580e63e98c9a982ac9b8b741",
+    google_tag_ids=[
+        GoogleTagId(
+            order=0,
+            display_name="Main Analytics Tag",
+            tag_id="G-1234567890",
+        )
+    ],
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `GoogleTagIds` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sites.google_tag.<a href="src/webflow/sites/google_tag/client.py">delete</a>(...) -> GoogleTagIds</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Delete a single Google Tag ID from a site. The `order` values of the remaining tags are renormalized after deletion.
+
+Required scope: `sites:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow
+from webflow.environment import WebflowEnvironment
+
+client = Webflow(
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
+)
+
+client.sites.google_tag.delete(
+    site_id="580e63e98c9a982ac9b8b741",
+    tag_id="G-XXXXXXXXXX",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**tag_id:** `str` — The Google Tag ID (e.g. G-XXXXXXXXXX)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 ## Sites ActivityLogs
 <details><summary><code>client.sites.activity_logs.<a href="src/webflow/sites/activity_logs/client.py">list</a>(...) -> SiteActivityLogResponse</code></summary>
 <dl>
@@ -9152,7 +9574,7 @@ client.sites.comments.list_comment_threads(
 
 Unique identifier for a specific Locale.
 
-[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -9289,7 +9711,7 @@ client.sites.comments.get_comment_thread(
 
 Unique identifier for a specific Locale.
 
-[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -9426,7 +9848,7 @@ client.sites.comments.list_comment_replies(
 
 Unique identifier for a specific Locale.
 
-[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -9496,6 +9918,8 @@ Get all scripts applied to a site by the App.
 <Note title="Script Registration">
   To apply a script to a site or page, the script must first be registered to a site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints. See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
 </Note>
+
+<Note>Access to this endpoint requires a bearer token obtained from an [OAuth Code Grant Flow](/data/reference/oauth-app).</Note>
 
 Required scope | `custom_code:read`
 </dd>
@@ -9575,6 +9999,8 @@ Apply registered scripts to a site. If you have multiple scripts your App needs 
 <Note title="Script Registration">
   To apply a script to a site or page, the script must first be registered to a site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints. See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
 </Note>
+
+<Note>Access to this endpoint requires a bearer token obtained from an [OAuth Code Grant Flow](/data/reference/oauth-app).</Note>
 
 Required scope | `custom_code:write`
 </dd>
@@ -9758,6 +10184,8 @@ Get a list of scripts that have been applied to a site and/or individual pages.
 
   See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
 </Note>
+
+<Note>Access to this endpoint requires a bearer token obtained from an [OAuth Code Grant Flow](/data/reference/oauth-app).</Note>
 
 Required scope | `custom_code:read`
 </dd>
