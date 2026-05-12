@@ -3,93 +3,65 @@
 import typing
 from json.decoder import JSONDecodeError
 
-from ...core.api_error import ApiError
-from ...core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
-from ...core.http_response import AsyncHttpResponse, HttpResponse
-from ...core.jsonable_encoder import jsonable_encoder
-from ...core.parse_error import ParsingError
-from ...core.pydantic_utilities import parse_obj_as
-from ...core.request_options import RequestOptions
-from ...core.serialization import convert_and_respect_annotation_metadata
-from ...errors.bad_request_error import BadRequestError
-from ...errors.forbidden_error import ForbiddenError
-from ...errors.internal_server_error import InternalServerError
-from ...errors.not_found_error import NotFoundError
-from ...errors.too_many_requests_error import TooManyRequestsError
-from ...errors.unauthorized_error import UnauthorizedError
-from ...types.dom import Dom
-from ...types.error import Error
-from ...types.page import Page
-from ...types.page_list import PageList
-from .types.page_dom_write_nodes_item import PageDomWriteNodesItem
-from .types.page_metadata_write_open_graph import PageMetadataWriteOpenGraph
-from .types.page_metadata_write_seo import PageMetadataWriteSeo
-from .types.update_static_content_response import UpdateStaticContentResponse
+from .....core.api_error import ApiError
+from .....core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
+from .....core.http_response import AsyncHttpResponse, HttpResponse
+from .....core.jsonable_encoder import jsonable_encoder
+from .....core.parse_error import ParsingError
+from .....core.pydantic_utilities import parse_obj_as
+from .....core.request_options import RequestOptions
+from .....core.serialization import convert_and_respect_annotation_metadata
+from .....errors.bad_request_error import BadRequestError
+from .....errors.internal_server_error import InternalServerError
+from .....errors.not_found_error import NotFoundError
+from .....errors.too_many_requests_error import TooManyRequestsError
+from .....errors.unauthorized_error import UnauthorizedError
+from .....types.error import Error
+from .....types.google_tag_id import GoogleTagId
+from .....types.google_tag_ids import GoogleTagIds
 from pydantic import ValidationError
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
 
 
-class RawPagesClient:
+class RawGoogleTagClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
     def list(
-        self,
-        site_id: str,
-        *,
-        locale_id: typing.Optional[str] = None,
-        limit: typing.Optional[int] = None,
-        offset: typing.Optional[int] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[PageList]:
+        self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[GoogleTagIds]:
         """
-        List of all pages for a site.
+        List all Google Tag IDs configured for a site, sorted by order.
 
-        Required scope | `pages:read`
+        Required scope: `sites:read`
 
         Parameters
         ----------
         site_id : str
             Unique identifier for a Site
 
-        locale_id : typing.Optional[str]
-            Unique identifier for a specific Locale.
-
-            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
-
-        limit : typing.Optional[int]
-            Maximum number of records to be returned (max limit: 100)
-
-        offset : typing.Optional[int]
-            Offset used for pagination if the results have more than limit records
-
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        HttpResponse[PageList]
+        HttpResponse[GoogleTagIds]
             Request was successful
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"sites/{jsonable_encoder(site_id)}/pages",
+            f"sites/{jsonable_encoder(site_id)}/integrations/google_tags",
             base_url=self._client_wrapper.get_environment().base,
             method="GET",
-            params={
-                "localeId": locale_id,
-                "limit": limit,
-                "offset": offset,
-            },
             request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    PageList,
+                    GoogleTagIds,
                     parse_obj_as(
-                        type_=PageList,  # type: ignore
+                        type_=GoogleTagIds,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -158,55 +130,35 @@ class RawPagesClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def get_metadata(
-        self,
-        page_id: str,
-        *,
-        locale_id: typing.Optional[str] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[Page]:
+    def delete_all(
+        self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[None]:
         """
-        Get metadata information for a single page.
+        Delete all Google Tag IDs from a site.
 
-        Required scope | `pages:read`
+        Required scope: `sites:write`
 
         Parameters
         ----------
-        page_id : str
-            Unique identifier for a Page
-
-        locale_id : typing.Optional[str]
-            Unique identifier for a specific Locale.
-
-            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
+        site_id : str
+            Unique identifier for a Site
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        HttpResponse[Page]
-            Request was successful
+        HttpResponse[None]
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"pages/{jsonable_encoder(page_id)}",
+            f"sites/{jsonable_encoder(site_id)}/integrations/google_tags",
             base_url=self._client_wrapper.get_environment().base,
-            method="GET",
-            params={
-                "localeId": locale_id,
-            },
+            method="DELETE",
             request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    Page,
-                    parse_obj_as(
-                        type_=Page,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
+                return HttpResponse(response=_response, data=None)
             if _response.status_code == 400:
                 raise BadRequestError(
                     headers=dict(_response.headers),
@@ -271,71 +223,43 @@ class RawPagesClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def update_page_settings(
+    def upsert(
         self,
-        page_id: str,
+        site_id: str,
         *,
-        locale_id: typing.Optional[str] = None,
-        title: typing.Optional[str] = OMIT,
-        slug: typing.Optional[str] = OMIT,
-        seo: typing.Optional[PageMetadataWriteSeo] = OMIT,
-        open_graph: typing.Optional[PageMetadataWriteOpenGraph] = OMIT,
+        google_tag_ids: typing.Sequence[GoogleTagId],
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[Page]:
+    ) -> HttpResponse[GoogleTagIds]:
         """
-        Update Page-level metadata, including SEO and Open Graph fields.
+        Add or update Google Tag IDs for a site. Existing tags not referenced in the request are preserved. A site may have a maximum of 25 tags total.
 
-        Required scope | `pages:write`
+        `order` is optional on input — it is auto-assigned for new tags and returned on all tags in the response.
+
+        Required scope: `sites:write`
 
         Parameters
         ----------
-        page_id : str
-            Unique identifier for a Page
+        site_id : str
+            Unique identifier for a Site
 
-        locale_id : typing.Optional[str]
-            Unique identifier for a specific Locale.
-
-            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
-
-        title : typing.Optional[str]
-            Title for the page
-
-        slug : typing.Optional[str]
-            Slug for the page.
-
-            **Note:** The slug field is ignored in the following cases — all other fields in the same request still apply:
-            - The site's home page, collection template pages, and utility pages (e.g. 404, password, search).
-            - For secondary locales, updating the slug requires an <a href="https://webflow.com/feature/localization">Advanced or Enterprise localization add-on plan</a>.
-
-        seo : typing.Optional[PageMetadataWriteSeo]
-            SEO-related fields for the Page
-
-        open_graph : typing.Optional[PageMetadataWriteOpenGraph]
-            Open Graph fields for the Page
+        google_tag_ids : typing.Sequence[GoogleTagId]
+            List of Google Tags configured for a site, sorted by order.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        HttpResponse[Page]
+        HttpResponse[GoogleTagIds]
             Request was successful
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"pages/{jsonable_encoder(page_id)}",
+            f"sites/{jsonable_encoder(site_id)}/integrations/google_tags",
             base_url=self._client_wrapper.get_environment().base,
-            method="PUT",
-            params={
-                "localeId": locale_id,
-            },
+            method="PATCH",
             json={
-                "title": title,
-                "slug": slug,
-                "seo": convert_and_respect_annotation_metadata(
-                    object_=seo, annotation=PageMetadataWriteSeo, direction="write"
-                ),
-                "openGraph": convert_and_respect_annotation_metadata(
-                    object_=open_graph, annotation=PageMetadataWriteOpenGraph, direction="write"
+                "googleTagIds": convert_and_respect_annotation_metadata(
+                    object_=google_tag_ids, annotation=typing.Sequence[GoogleTagId], direction="write"
                 ),
             },
             headers={
@@ -347,9 +271,9 @@ class RawPagesClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    Page,
+                    GoogleTagIds,
                     parse_obj_as(
-                        type_=Page,  # type: ignore
+                        type_=GoogleTagIds,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -418,63 +342,42 @@ class RawPagesClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def get_content(
-        self,
-        page_id: str,
-        *,
-        locale_id: typing.Optional[str] = None,
-        limit: typing.Optional[int] = None,
-        offset: typing.Optional[int] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[Dom]:
+    def delete(
+        self, site_id: str, tag_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[GoogleTagIds]:
         """
-        Get text and component instance content from a static page.
+        Delete a single Google Tag ID from a site. The `order` values of the remaining tags are renormalized after deletion.
 
-        <Badge intent="info">Localization</Badge>
-
-        Required scope | `pages:read`
+        Required scope: `sites:write`
 
         Parameters
         ----------
-        page_id : str
-            Unique identifier for a Page
+        site_id : str
+            Unique identifier for a Site
 
-        locale_id : typing.Optional[str]
-            Unique identifier for a specific Locale.
-
-            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
-
-        limit : typing.Optional[int]
-            Maximum number of records to be returned (max limit: 100)
-
-        offset : typing.Optional[int]
-            Offset used for pagination if the results have more than limit records
+        tag_id : str
+            The Google Tag ID (e.g. G-XXXXXXXXXX)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        HttpResponse[Dom]
+        HttpResponse[GoogleTagIds]
             Request was successful
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"pages/{jsonable_encoder(page_id)}/dom",
+            f"sites/{jsonable_encoder(site_id)}/integrations/google_tags/{jsonable_encoder(tag_id)}",
             base_url=self._client_wrapper.get_environment().base,
-            method="GET",
-            params={
-                "localeId": locale_id,
-                "limit": limit,
-                "offset": offset,
-            },
+            method="DELETE",
             request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    Dom,
+                    GoogleTagIds,
                     parse_obj_as(
-                        type_=Dom,  # type: ignore
+                        type_=GoogleTagIds,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -497,161 +400,6 @@ class RawPagesClient:
                         Error,
                         parse_obj_as(
                             type_=Error,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 403:
-                raise ForbiddenError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Error,
-                        parse_obj_as(
-                            type_=Error,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 429:
-                raise TooManyRequestsError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Error,
-                        parse_obj_as(
-                            type_=Error,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 500:
-                raise InternalServerError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Error,
-                        parse_obj_as(
-                            type_=Error,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    def update_static_content(
-        self,
-        page_id: str,
-        *,
-        locale_id: str,
-        nodes: typing.Sequence[PageDomWriteNodesItem],
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[UpdateStaticContentResponse]:
-        """
-        This endpoint updates content on a static page in **secondary locales**. It supports updating up to 1000 nodes in a single request.
-
-        Before making updates:
-        1. Use the [get page content](/data/reference/pages-and-components/pages/get-content) endpoint to identify available content nodes and their types.
-        2. If the page has component instances, retrieve the component's properties that you'll override using the [get component properties](/data/reference/pages-and-components/components/get-properties) endpoint.
-        3. DOM elements may include a `data-w-id` attribute. This attribute is used by Webflow to maintain custom attributes and links across locales. Always include the original `data-w-id` value in your update requests to ensure consistent behavior across all locales.
-
-        <Note>
-          This endpoint is specifically for localized pages. Ensure that the specified `localeId` is a valid **secondary locale** for the site otherwise the request will fail.
-        </Note>
-
-        Required scope | `pages:write`
-
-        Parameters
-        ----------
-        page_id : str
-            Unique identifier for a Page
-
-        locale_id : str
-            The locale identifier.
-
-        nodes : typing.Sequence[PageDomWriteNodesItem]
-            List of DOM Nodes with the new content that will be updated in each node.
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[UpdateStaticContentResponse]
-            Request was successful
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            f"pages/{jsonable_encoder(page_id)}/dom",
-            base_url=self._client_wrapper.get_environment().base,
-            method="POST",
-            params={
-                "localeId": locale_id,
-            },
-            json={
-                "nodes": convert_and_respect_annotation_metadata(
-                    object_=nodes, annotation=typing.Sequence[PageDomWriteNodesItem], direction="write"
-                ),
-            },
-            headers={
-                "content-type": "application/json",
-            },
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    UpdateStaticContentResponse,
-                    parse_obj_as(
-                        type_=UpdateStaticContentResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 400:
-                raise BadRequestError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Error,
-                        parse_obj_as(
-                            type_=Error,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 403:
-                raise ForbiddenError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -699,65 +447,43 @@ class RawPagesClient:
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
 
-class AsyncRawPagesClient:
+class AsyncRawGoogleTagClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
     async def list(
-        self,
-        site_id: str,
-        *,
-        locale_id: typing.Optional[str] = None,
-        limit: typing.Optional[int] = None,
-        offset: typing.Optional[int] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[PageList]:
+        self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[GoogleTagIds]:
         """
-        List of all pages for a site.
+        List all Google Tag IDs configured for a site, sorted by order.
 
-        Required scope | `pages:read`
+        Required scope: `sites:read`
 
         Parameters
         ----------
         site_id : str
             Unique identifier for a Site
 
-        locale_id : typing.Optional[str]
-            Unique identifier for a specific Locale.
-
-            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
-
-        limit : typing.Optional[int]
-            Maximum number of records to be returned (max limit: 100)
-
-        offset : typing.Optional[int]
-            Offset used for pagination if the results have more than limit records
-
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        AsyncHttpResponse[PageList]
+        AsyncHttpResponse[GoogleTagIds]
             Request was successful
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"sites/{jsonable_encoder(site_id)}/pages",
+            f"sites/{jsonable_encoder(site_id)}/integrations/google_tags",
             base_url=self._client_wrapper.get_environment().base,
             method="GET",
-            params={
-                "localeId": locale_id,
-                "limit": limit,
-                "offset": offset,
-            },
             request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    PageList,
+                    GoogleTagIds,
                     parse_obj_as(
-                        type_=PageList,  # type: ignore
+                        type_=GoogleTagIds,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -826,55 +552,35 @@ class AsyncRawPagesClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def get_metadata(
-        self,
-        page_id: str,
-        *,
-        locale_id: typing.Optional[str] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[Page]:
+    async def delete_all(
+        self, site_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[None]:
         """
-        Get metadata information for a single page.
+        Delete all Google Tag IDs from a site.
 
-        Required scope | `pages:read`
+        Required scope: `sites:write`
 
         Parameters
         ----------
-        page_id : str
-            Unique identifier for a Page
-
-        locale_id : typing.Optional[str]
-            Unique identifier for a specific Locale.
-
-            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
+        site_id : str
+            Unique identifier for a Site
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        AsyncHttpResponse[Page]
-            Request was successful
+        AsyncHttpResponse[None]
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"pages/{jsonable_encoder(page_id)}",
+            f"sites/{jsonable_encoder(site_id)}/integrations/google_tags",
             base_url=self._client_wrapper.get_environment().base,
-            method="GET",
-            params={
-                "localeId": locale_id,
-            },
+            method="DELETE",
             request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    Page,
-                    parse_obj_as(
-                        type_=Page,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
+                return AsyncHttpResponse(response=_response, data=None)
             if _response.status_code == 400:
                 raise BadRequestError(
                     headers=dict(_response.headers),
@@ -939,71 +645,43 @@ class AsyncRawPagesClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def update_page_settings(
+    async def upsert(
         self,
-        page_id: str,
+        site_id: str,
         *,
-        locale_id: typing.Optional[str] = None,
-        title: typing.Optional[str] = OMIT,
-        slug: typing.Optional[str] = OMIT,
-        seo: typing.Optional[PageMetadataWriteSeo] = OMIT,
-        open_graph: typing.Optional[PageMetadataWriteOpenGraph] = OMIT,
+        google_tag_ids: typing.Sequence[GoogleTagId],
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[Page]:
+    ) -> AsyncHttpResponse[GoogleTagIds]:
         """
-        Update Page-level metadata, including SEO and Open Graph fields.
+        Add or update Google Tag IDs for a site. Existing tags not referenced in the request are preserved. A site may have a maximum of 25 tags total.
 
-        Required scope | `pages:write`
+        `order` is optional on input — it is auto-assigned for new tags and returned on all tags in the response.
+
+        Required scope: `sites:write`
 
         Parameters
         ----------
-        page_id : str
-            Unique identifier for a Page
+        site_id : str
+            Unique identifier for a Site
 
-        locale_id : typing.Optional[str]
-            Unique identifier for a specific Locale.
-
-            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
-
-        title : typing.Optional[str]
-            Title for the page
-
-        slug : typing.Optional[str]
-            Slug for the page.
-
-            **Note:** The slug field is ignored in the following cases — all other fields in the same request still apply:
-            - The site's home page, collection template pages, and utility pages (e.g. 404, password, search).
-            - For secondary locales, updating the slug requires an <a href="https://webflow.com/feature/localization">Advanced or Enterprise localization add-on plan</a>.
-
-        seo : typing.Optional[PageMetadataWriteSeo]
-            SEO-related fields for the Page
-
-        open_graph : typing.Optional[PageMetadataWriteOpenGraph]
-            Open Graph fields for the Page
+        google_tag_ids : typing.Sequence[GoogleTagId]
+            List of Google Tags configured for a site, sorted by order.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        AsyncHttpResponse[Page]
+        AsyncHttpResponse[GoogleTagIds]
             Request was successful
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"pages/{jsonable_encoder(page_id)}",
+            f"sites/{jsonable_encoder(site_id)}/integrations/google_tags",
             base_url=self._client_wrapper.get_environment().base,
-            method="PUT",
-            params={
-                "localeId": locale_id,
-            },
+            method="PATCH",
             json={
-                "title": title,
-                "slug": slug,
-                "seo": convert_and_respect_annotation_metadata(
-                    object_=seo, annotation=PageMetadataWriteSeo, direction="write"
-                ),
-                "openGraph": convert_and_respect_annotation_metadata(
-                    object_=open_graph, annotation=PageMetadataWriteOpenGraph, direction="write"
+                "googleTagIds": convert_and_respect_annotation_metadata(
+                    object_=google_tag_ids, annotation=typing.Sequence[GoogleTagId], direction="write"
                 ),
             },
             headers={
@@ -1015,9 +693,9 @@ class AsyncRawPagesClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    Page,
+                    GoogleTagIds,
                     parse_obj_as(
-                        type_=Page,  # type: ignore
+                        type_=GoogleTagIds,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1086,63 +764,42 @@ class AsyncRawPagesClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def get_content(
-        self,
-        page_id: str,
-        *,
-        locale_id: typing.Optional[str] = None,
-        limit: typing.Optional[int] = None,
-        offset: typing.Optional[int] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[Dom]:
+    async def delete(
+        self, site_id: str, tag_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[GoogleTagIds]:
         """
-        Get text and component instance content from a static page.
+        Delete a single Google Tag ID from a site. The `order` values of the remaining tags are renormalized after deletion.
 
-        <Badge intent="info">Localization</Badge>
-
-        Required scope | `pages:read`
+        Required scope: `sites:write`
 
         Parameters
         ----------
-        page_id : str
-            Unique identifier for a Page
+        site_id : str
+            Unique identifier for a Site
 
-        locale_id : typing.Optional[str]
-            Unique identifier for a specific Locale.
-
-            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
-
-        limit : typing.Optional[int]
-            Maximum number of records to be returned (max limit: 100)
-
-        offset : typing.Optional[int]
-            Offset used for pagination if the results have more than limit records
+        tag_id : str
+            The Google Tag ID (e.g. G-XXXXXXXXXX)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        AsyncHttpResponse[Dom]
+        AsyncHttpResponse[GoogleTagIds]
             Request was successful
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"pages/{jsonable_encoder(page_id)}/dom",
+            f"sites/{jsonable_encoder(site_id)}/integrations/google_tags/{jsonable_encoder(tag_id)}",
             base_url=self._client_wrapper.get_environment().base,
-            method="GET",
-            params={
-                "localeId": locale_id,
-                "limit": limit,
-                "offset": offset,
-            },
+            method="DELETE",
             request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    Dom,
+                    GoogleTagIds,
                     parse_obj_as(
-                        type_=Dom,  # type: ignore
+                        type_=GoogleTagIds,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1165,161 +822,6 @@ class AsyncRawPagesClient:
                         Error,
                         parse_obj_as(
                             type_=Error,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 403:
-                raise ForbiddenError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Error,
-                        parse_obj_as(
-                            type_=Error,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 429:
-                raise TooManyRequestsError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Error,
-                        parse_obj_as(
-                            type_=Error,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 500:
-                raise InternalServerError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Error,
-                        parse_obj_as(
-                            type_=Error,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    async def update_static_content(
-        self,
-        page_id: str,
-        *,
-        locale_id: str,
-        nodes: typing.Sequence[PageDomWriteNodesItem],
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[UpdateStaticContentResponse]:
-        """
-        This endpoint updates content on a static page in **secondary locales**. It supports updating up to 1000 nodes in a single request.
-
-        Before making updates:
-        1. Use the [get page content](/data/reference/pages-and-components/pages/get-content) endpoint to identify available content nodes and their types.
-        2. If the page has component instances, retrieve the component's properties that you'll override using the [get component properties](/data/reference/pages-and-components/components/get-properties) endpoint.
-        3. DOM elements may include a `data-w-id` attribute. This attribute is used by Webflow to maintain custom attributes and links across locales. Always include the original `data-w-id` value in your update requests to ensure consistent behavior across all locales.
-
-        <Note>
-          This endpoint is specifically for localized pages. Ensure that the specified `localeId` is a valid **secondary locale** for the site otherwise the request will fail.
-        </Note>
-
-        Required scope | `pages:write`
-
-        Parameters
-        ----------
-        page_id : str
-            Unique identifier for a Page
-
-        locale_id : str
-            The locale identifier.
-
-        nodes : typing.Sequence[PageDomWriteNodesItem]
-            List of DOM Nodes with the new content that will be updated in each node.
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[UpdateStaticContentResponse]
-            Request was successful
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"pages/{jsonable_encoder(page_id)}/dom",
-            base_url=self._client_wrapper.get_environment().base,
-            method="POST",
-            params={
-                "localeId": locale_id,
-            },
-            json={
-                "nodes": convert_and_respect_annotation_metadata(
-                    object_=nodes, annotation=typing.Sequence[PageDomWriteNodesItem], direction="write"
-                ),
-            },
-            headers={
-                "content-type": "application/json",
-            },
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    UpdateStaticContentResponse,
-                    parse_obj_as(
-                        type_=UpdateStaticContentResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 400:
-                raise BadRequestError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        Error,
-                        parse_obj_as(
-                            type_=Error,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 403:
-                raise ForbiddenError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
