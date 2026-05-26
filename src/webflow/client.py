@@ -13,6 +13,7 @@ if typing.TYPE_CHECKING:
     from .resources.assets.client import AssetsClient, AsyncAssetsClient
     from .resources.collections.client import AsyncCollectionsClient, CollectionsClient
     from .resources.components.client import AsyncComponentsClient, ComponentsClient
+    from .resources.custom_fonts.client import AsyncCustomFontsClient, CustomFontsClient
     from .resources.ecommerce.client import AsyncEcommerceClient, EcommerceClient
     from .resources.forms.client import AsyncFormsClient, FormsClient
     from .resources.inventory.client import AsyncInventoryClient, InventoryClient
@@ -99,6 +100,7 @@ class Webflow:
         self._components: typing.Optional[ComponentsClient] = None
         self._scripts: typing.Optional[ScriptsClient] = None
         self._assets: typing.Optional[AssetsClient] = None
+        self._custom_fonts: typing.Optional[CustomFontsClient] = None
         self._webhooks: typing.Optional[WebhooksClient] = None
         self._forms: typing.Optional[FormsClient] = None
         self._products: typing.Optional[ProductsClient] = None
@@ -162,6 +164,14 @@ class Webflow:
 
             self._assets = AssetsClient(client_wrapper=self._client_wrapper)
         return self._assets
+
+    @property
+    def custom_fonts(self):
+        if self._custom_fonts is None:
+            from .resources.custom_fonts.client import CustomFontsClient  # noqa: E402
+
+            self._custom_fonts = CustomFontsClient(client_wrapper=self._client_wrapper)
+        return self._custom_fonts
 
     @property
     def webhooks(self):
@@ -293,6 +303,7 @@ class AsyncWebflow:
         self._components: typing.Optional[AsyncComponentsClient] = None
         self._scripts: typing.Optional[AsyncScriptsClient] = None
         self._assets: typing.Optional[AsyncAssetsClient] = None
+        self._custom_fonts: typing.Optional[AsyncCustomFontsClient] = None
         self._webhooks: typing.Optional[AsyncWebhooksClient] = None
         self._forms: typing.Optional[AsyncFormsClient] = None
         self._products: typing.Optional[AsyncProductsClient] = None
@@ -356,6 +367,14 @@ class AsyncWebflow:
 
             self._assets = AsyncAssetsClient(client_wrapper=self._client_wrapper)
         return self._assets
+
+    @property
+    def custom_fonts(self):
+        if self._custom_fonts is None:
+            from .resources.custom_fonts.client import AsyncCustomFontsClient  # noqa: E402
+
+            self._custom_fonts = AsyncCustomFontsClient(client_wrapper=self._client_wrapper)
+        return self._custom_fonts
 
     @property
     def webhooks(self):

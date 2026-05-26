@@ -79,7 +79,7 @@ client.token.authorized_by()
 
 Information about the authorization token
 
-<Note>Access to this endpoint requires a bearer token from a [Data Client App](/data/docs/getting-started-data-clients).</Note>
+<Note>Access to this endpoint requires a bearer token from a [Data Client App](/data/docs/data-clients/getting-started).</Note>
 </dd>
 </dl>
 </dd>
@@ -630,9 +630,14 @@ client.sites.get_custom_domain(
 <dl>
 <dd>
 
-Publishes a site to one or more more domains.
+Publishes a site or an individual page to one or more domains.
+If multiple individual pages are published to staging, publishing from staging to production publishes all staged changes.
 
 To publish to a specific custom domain, use the domain IDs from the [Get Custom Domains](/data/reference/sites/get-custom-domain) endpoint.
+
+You must include at least one of the `customDomains` or `publishToWebflowSubdomain` properties in the request body.
+
+To publish an individual page instead of the entire site, provide the ID of the page in the `pageId` parameter.
 
 <Note title="Rate limit: 1 publish per minute">This endpoint has a specific rate limit of one successful publish queue per minute.</Note>
 
@@ -699,6 +704,14 @@ client.sites.publish(
 <dd>
 
 **publish_to_webflow_subdomain:** `typing.Optional[bool]` — Choice of whether to publish to the default Webflow Subdomain
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**page_id:** `typing.Optional[str]` — The ID of the page to publish
     
 </dd>
 </dl>
@@ -1147,7 +1160,7 @@ client.pages.list(
 
 Unique identifier for a specific Locale.
 
-[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -1251,7 +1264,7 @@ client.pages.get_metadata(
 
 Unique identifier for a specific Locale.
 
-[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -1352,7 +1365,7 @@ client.pages.update_page_settings(
 
 Unique identifier for a specific Locale.
 
-[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -1372,8 +1385,9 @@ Unique identifier for a specific Locale.
 
 Slug for the page.
 
-
-**Note:** Updating slugs in secondary locales is only supported in <a href="https://webflow.com/localization">Advanced and Enterprise localization add-on plans.</a>
+**Note:** The slug field is ignored in the following cases — all other fields in the same request still apply:
+- The site's home page, collection template pages, and utility pages (e.g. 404, password, search).
+- For secondary locales, updating the slug requires an <a href="https://webflow.com/feature/localization">Advanced or Enterprise localization add-on plan</a>.
     
 </dd>
 </dl>
@@ -1481,7 +1495,7 @@ client.pages.get_content(
 
 Unique identifier for a specific Locale.
 
-[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -1826,7 +1840,7 @@ client.components.get_content(
 
 Unique identifier for a specific Locale.
 
-[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -1987,7 +2001,7 @@ client.components.update_content(
 
 Unique identifier for a specific Locale.
 
-[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -2097,7 +2111,7 @@ client.components.get_properties(
 
 Unique identifier for a specific Locale.
 
-[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -2244,7 +2258,7 @@ client.components.update_properties(
 
 Unique identifier for a specific Locale.
 
-[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -2290,6 +2304,8 @@ Get a list of scripts that have been registered to a site. A site can have a max
 <Note title="Script Registration">
   To apply a script to a site or page, the script must first be registered to a site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints. See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
 </Note>
+
+<Note>Access to this endpoint requires a bearer token obtained from an [OAuth Code Grant Flow](/data/reference/oauth-app).</Note>
 
 Required scope | `custom_code:read`
 </dd>
@@ -2369,6 +2385,8 @@ Register a hosted script to a site.
 <Note title="Script Registration">
   To apply a script to a site or page, the script must first be registered to a site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints. See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
 </Note>
+
+<Note>Access to this endpoint requires a bearer token obtained from an [OAuth Code Grant Flow](/data/reference/oauth-app).</Note>
 
 Required scope | `custom_code:write`
 </dd>
@@ -2492,6 +2510,8 @@ Register an inline script to a site. Inline scripts are limited to 2000 characte
 <Note title="Script Registration">
   To apply a script to a site or page, the script must first be registered to a site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints. See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
 </Note>
+
+<Note>Access to this endpoint requires a bearer token obtained from an [OAuth Code Grant Flow](/data/reference/oauth-app).</Note>
 
 Required scope | `custom_code:write`
 </dd>
@@ -2637,8 +2657,10 @@ client = Webflow(
 
 client.assets.list(
     site_id="580e63e98c9a982ac9b8b741",
+    locale_id="65427cf400e02b306eaa04a0",
     offset=1,
     limit=1,
+    folder_id="folderId",
 )
 
 ```
@@ -2663,6 +2685,18 @@ client.assets.list(
 <dl>
 <dd>
 
+**locale_id:** `typing.Optional[str]` 
+
+Unique identifier for a specific Locale.
+
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **offset:** `typing.Optional[int]` — Offset used for pagination if the results have more than limit records
     
 </dd>
@@ -2672,6 +2706,17 @@ client.assets.list(
 <dd>
 
 **limit:** `typing.Optional[int]` — Maximum number of records to be returned (max limit: 100)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**folder_id:** `typing.Optional[str]` 
+
+Filter assets to those in the specified folder and all descendant folders.
+Must be a 24-character hex ObjectId.
     
 </dd>
 </dl>
@@ -2840,6 +2885,7 @@ client = Webflow(
 
 client.assets.get(
     asset_id="580e63fc8c9a982ac9b8b745",
+    locale_id="65427cf400e02b306eaa04a0",
 )
 
 ```
@@ -2857,6 +2903,18 @@ client.assets.get(
 <dd>
 
 **asset_id:** `str` — Unique identifier for an Asset on a site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**locale_id:** `typing.Optional[str]` 
+
+Unique identifier for a specific Locale.
+
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -2990,6 +3048,7 @@ client = Webflow(
 
 client.assets.update(
     asset_id="580e63fc8c9a982ac9b8b745",
+    locale_id="65427cf400e02b306eaa04a0",
 )
 
 ```
@@ -3014,7 +3073,11 @@ client.assets.update(
 <dl>
 <dd>
 
-**locale_id:** `typing.Optional[str]` — Unique identifier for a specific locale. Applicable, when using localization.
+**locale_id:** `typing.Optional[str]` 
+
+Unique identifier for a specific Locale.
+
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -3022,7 +3085,15 @@ client.assets.update(
 <dl>
 <dd>
 
-**display_name:** `typing.Optional[str]` — A human readable name for the asset
+**display_name:** `typing.Optional[str]` — A human readable name for the asset. This value is not localizable.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**alt_text:** `typing.Optional[str]` — Alternate text describing the image
     
 </dd>
 </dl>
@@ -3284,6 +3355,739 @@ client.assets.get_folder(
 </dl>
 </details>
 
+## Custom Fonts
+<details><summary><code>client.custom_fonts.<a href="src/webflow/custom_fonts/client.py">list</a>(...) -> CustomFonts</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+List the custom fonts uploaded to a site.
+
+Required scope | `sites:read`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow
+from webflow.environment import WebflowEnvironment
+
+client = Webflow(
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
+)
+
+client.custom_fonts.list(
+    site_id="580e63e98c9a982ac9b8b741",
+    offset=1,
+    limit=1,
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**offset:** `typing.Optional[int]` — Offset used for pagination if the results have more than limit records
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[int]` — Maximum number of records to be returned (max limit: 100)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.custom_fonts.<a href="src/webflow/custom_fonts/client.py">create</a>(...) -> CustomFontCreateResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Register a custom font on a site and get a presigned S3 URL to upload the font binary.
+
+The response includes a `customFont` object and an `upload` object. Use the `upload.url` and `upload.fields`
+to POST the font binary directly to S3 as `multipart/form-data`. The binary must go in a field named `file`
+and must be the last field in the form (an AWS S3 requirement). S3 returns `201 Created` on a successful upload.
+
+To learn more, see [Custom fonts](/data/docs/custom-fonts).
+
+Required scope | `sites:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow
+from webflow.environment import WebflowEnvironment
+
+client = Webflow(
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
+)
+
+client.custom_fonts.create(
+    site_id="580e63e98c9a982ac9b8b741",
+    file_name="AcmeSans-Regular.woff2",
+    file_hash="3c7d87c9575702bc3b1e991f4d3c638e",
+    font_family="Acme Sans",
+    weight=400,
+    italic=False,
+    font_display="auto",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**file_name:** `str` — File name including extension. Accepted extensions are `.woff2`, `.woff`, `.ttf`, `.otf`, and `.eot`. Maximum 256 characters.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**file_hash:** `str` — Lowercase hex MD5 hash of the font binary (exactly 32 characters)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**font_family:** `str` — The CSS font-family name (1-256 characters). Commas are stripped server-side.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**weight:** `int` — CSS font-weight value (1-1000)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**italic:** `bool` — Whether the font is italic
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**font_display:** `CustomFontsCreateRequestFontDisplay` — CSS font-display value
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**axes:** `typing.Optional[typing.List[CustomFontAxis]]` — Variable font axes. Omit or pass an empty array for static fonts.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.custom_fonts.<a href="src/webflow/custom_fonts/client.py">get</a>(...) -> CustomFontsGetResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Get details about a custom font on a site.
+
+Required scope | `sites:read`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow
+from webflow.environment import WebflowEnvironment
+
+client = Webflow(
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
+)
+
+client.custom_fonts.get(
+    site_id="580e63e98c9a982ac9b8b741",
+    font_id="66f3a1b2c4d5e6f7a8b9c0d1",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**font_id:** `str` — Unique identifier for a custom font on a site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.custom_fonts.<a href="src/webflow/custom_fonts/client.py">delete</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Delete a custom font from a site.
+
+Required scope | `sites:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow
+from webflow.environment import WebflowEnvironment
+
+client = Webflow(
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
+)
+
+client.custom_fonts.delete(
+    site_id="580e63e98c9a982ac9b8b741",
+    font_id="66f3a1b2c4d5e6f7a8b9c0d1",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**font_id:** `str` — Unique identifier for a custom font on a site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.custom_fonts.<a href="src/webflow/custom_fonts/client.py">update</a>(...) -> CustomFontsUpdateResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Update the metadata of a custom font. The font binary is not changed by this endpoint.
+To replace the binary, use [Replace custom font file](#operation/replace-custom-font-file).
+
+The request body must include at least one of `fontFamily`, `weight`, `italic`, or `fontDisplay`.
+
+Required scope | `sites:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow
+from webflow.environment import WebflowEnvironment
+
+client = Webflow(
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
+)
+
+client.custom_fonts.update(
+    site_id="580e63e98c9a982ac9b8b741",
+    font_id="66f3a1b2c4d5e6f7a8b9c0d1",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**font_id:** `str` — Unique identifier for a custom font on a site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**font_family:** `typing.Optional[str]` — The CSS font-family name (1-256 characters)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**weight:** `typing.Optional[int]` — CSS font-weight value (1-1000)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**italic:** `typing.Optional[bool]` — Whether the font is italic
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**font_display:** `typing.Optional[CustomFontsUpdateRequestFontDisplay]` — CSS font-display value
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.custom_fonts.<a href="src/webflow/custom_fonts/client.py">replace_file</a>(...) -> CustomFontCreateResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Replace the binary of an existing custom font while preserving its ID and any references to it.
+The upload handshake is identical to [Create custom font](#operation/create-custom-font).
+
+If the existing font has a non-empty `axes` array (a variable font), you must include an `axes` field
+in the request. Send `axes: []` to declare that the new binary is a static font, or send the new variable
+axes to declare it is still variable. Omitting `axes` when the existing font is variable returns `400`.
+
+Required scope | `sites:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow
+from webflow.environment import WebflowEnvironment
+
+client = Webflow(
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
+)
+
+client.custom_fonts.replace_file(
+    site_id="580e63e98c9a982ac9b8b741",
+    font_id="66f3a1b2c4d5e6f7a8b9c0d1",
+    file_name="AcmeSans-Regular-v2.woff2",
+    file_hash="3c7d87c9575702bc3b1e991f4d3c638e",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**font_id:** `str` — Unique identifier for a custom font on a site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**file_name:** `str` — File name including extension. Accepted extensions are `.woff2`, `.woff`, `.ttf`, `.otf`, and `.eot`. Maximum 256 characters.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**file_hash:** `str` — Lowercase hex MD5 hash of the font binary (exactly 32 characters)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**axes:** `typing.Optional[typing.List[CustomFontAxis]]` — Variable font axes for the replacement binary. Required when the existing font has a non-empty `axes` array.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.custom_fonts.<a href="src/webflow/custom_fonts/client.py">batch_delete</a>(...) -> CustomFontBatchDeleteResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Delete 1-100 custom fonts in a single request. The response is always `200 OK` for a valid request body.
+Per-font results are reported in the `deleted` and `failed` arrays.
+
+The endpoint is idempotent: fonts that do not exist appear in `failed` with `name: "NotFound"` rather than
+failing the entire request. You can safely retry a partial failure by re-sending only the IDs that did not
+appear in `deleted`.
+
+Required scope | `sites:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow
+from webflow.environment import WebflowEnvironment
+from webflow.custom_fonts import CustomFontBatchDeleteRequestItemsItem
+
+client = Webflow(
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
+)
+
+client.custom_fonts.batch_delete(
+    site_id="580e63e98c9a982ac9b8b741",
+    items=[
+        CustomFontBatchDeleteRequestItemsItem(
+            id="66f3a1b2c4d5e6f7a8b9c0d1",
+        )
+    ],
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**items:** `typing.List[CustomFontBatchDeleteRequestItemsItem]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 ## Webhooks
 <details><summary><code>client.webhooks.<a href="src/webflow/webhooks/client.py">list</a>(...) -> WebhookList</code></summary>
 <dl>
@@ -3376,7 +4180,7 @@ Create a new Webhook.
 
 Limit of 75 registrations per `triggerType`, per site.
 
-<Note>Access to this endpoint requires a bearer token from a [Data Client App](/data/docs/getting-started-data-clients).</Note>
+<Note>Access to this endpoint requires a bearer token from a [Data Client App](/data/docs/data-clients/getting-started).</Note>
 Required scope | `sites:write`
 </dd>
 </dl>
@@ -6003,7 +6807,7 @@ client.collections.items.list_items(
     limit=1,
     name="name",
     slug="slug",
-    sort_by="lastPublished",
+    sort_by="createdOn",
     sort_order="asc",
 )
 
@@ -6069,7 +6873,23 @@ client.collections.items.list_items(
 <dl>
 <dd>
 
+**created_on:** `typing.Optional[ItemsListItemsRequestCreatedOn]` — Filter by the creation date of the item(s)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **last_published:** `typing.Optional[ItemsListItemsRequestLastPublished]` — Filter by the last published date of the item(s)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**last_updated:** `typing.Optional[ItemsListItemsRequestLastUpdated]` — Filter by the last updated date of the item(s)
     
 </dd>
 </dl>
@@ -6477,7 +7297,7 @@ client.collections.items.list_items_live(
     limit=1,
     name="name",
     slug="slug",
-    sort_by="lastPublished",
+    sort_by="createdOn",
     sort_order="asc",
 )
 
@@ -6543,7 +7363,23 @@ client.collections.items.list_items_live(
 <dl>
 <dd>
 
+**created_on:** `typing.Optional[ItemsListItemsLiveRequestCreatedOn]` — Filter by the creation date of the item(s)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **last_published:** `typing.Optional[ItemsListItemsLiveRequestLastPublished]` — Filter by the last published date of the item(s)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**last_updated:** `typing.Optional[ItemsListItemsLiveRequestLastUpdated]` — Filter by the last updated date of the item(s)
     
 </dd>
 </dl>
@@ -7733,6 +8569,8 @@ client.collections.items.publish_item(
 
 Get all scripts applied to a page.
 
+<Note>Access to this endpoint requires a bearer token obtained from an [OAuth Code Grant Flow](/data/reference/oauth-app).</Note>
+
 Required scope | `custom_code:read`
 </dd>
 </dl>
@@ -7811,6 +8649,8 @@ Apply registered scripts to a page. If you have multiple scripts your App needs 
 <Note title="Script Registration">
   To apply a script to a page, the script must first be registered to a Site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints. See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
 </Note>
+
+<Note>Access to this endpoint requires a bearer token obtained from an [OAuth Code Grant Flow](/data/reference/oauth-app).</Note>
 
 Required scope | `custom_code:write`
 </dd>
@@ -8979,6 +9819,333 @@ client.sites.well_known.delete(
 </dl>
 </details>
 
+## Sites GoogleTag
+<details><summary><code>client.sites.google_tag.<a href="src/webflow/sites/google_tag/client.py">list</a>(...) -> GoogleTagIds</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+List all Google Tag IDs configured for a site, sorted by order.
+
+Required scope: `sites:read`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow
+from webflow.environment import WebflowEnvironment
+
+client = Webflow(
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
+)
+
+client.sites.google_tag.list(
+    site_id="580e63e98c9a982ac9b8b741",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sites.google_tag.<a href="src/webflow/sites/google_tag/client.py">delete_all</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Delete all Google Tag IDs from a site.
+
+Required scope: `sites:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow
+from webflow.environment import WebflowEnvironment
+
+client = Webflow(
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
+)
+
+client.sites.google_tag.delete_all(
+    site_id="580e63e98c9a982ac9b8b741",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sites.google_tag.<a href="src/webflow/sites/google_tag/client.py">upsert</a>(...) -> GoogleTagIds</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Add or update Google Tag IDs for a site. Existing tags not referenced in the request are preserved. A site may have a maximum of 25 tags total.
+
+`order` is optional on input — it is auto-assigned for new tags and returned on all tags in the response.
+
+Required scope: `sites:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow, GoogleTagId
+from webflow.environment import WebflowEnvironment
+
+client = Webflow(
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
+)
+
+client.sites.google_tag.upsert(
+    site_id="580e63e98c9a982ac9b8b741",
+    google_tag_ids=[
+        GoogleTagId(
+            order=0,
+            display_name="Main Analytics Tag",
+            tag_id="G-1234567890",
+        )
+    ],
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `GoogleTagIds` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sites.google_tag.<a href="src/webflow/sites/google_tag/client.py">delete</a>(...) -> GoogleTagIds</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Delete a single Google Tag ID from a site. The `order` values of the remaining tags are renormalized after deletion.
+
+Required scope: `sites:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow
+from webflow.environment import WebflowEnvironment
+
+client = Webflow(
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
+)
+
+client.sites.google_tag.delete(
+    site_id="580e63e98c9a982ac9b8b741",
+    tag_id="G-XXXXXXXXXX",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**tag_id:** `str` — The Google Tag ID (e.g. G-XXXXXXXXXX)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 ## Sites ActivityLogs
 <details><summary><code>client.sites.activity_logs.<a href="src/webflow/sites/activity_logs/client.py">list</a>(...) -> SiteActivityLogResponse</code></summary>
 <dl>
@@ -9152,7 +10319,7 @@ client.sites.comments.list_comment_threads(
 
 Unique identifier for a specific Locale.
 
-[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -9289,7 +10456,7 @@ client.sites.comments.get_comment_thread(
 
 Unique identifier for a specific Locale.
 
-[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -9426,7 +10593,7 @@ client.sites.comments.list_comment_replies(
 
 Unique identifier for a specific Locale.
 
-[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -9496,6 +10663,8 @@ Get all scripts applied to a site by the App.
 <Note title="Script Registration">
   To apply a script to a site or page, the script must first be registered to a site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints. See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
 </Note>
+
+<Note>Access to this endpoint requires a bearer token obtained from an [OAuth Code Grant Flow](/data/reference/oauth-app).</Note>
 
 Required scope | `custom_code:read`
 </dd>
@@ -9575,6 +10744,8 @@ Apply registered scripts to a site. If you have multiple scripts your App needs 
 <Note title="Script Registration">
   To apply a script to a site or page, the script must first be registered to a site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints. See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
 </Note>
+
+<Note>Access to this endpoint requires a bearer token obtained from an [OAuth Code Grant Flow](/data/reference/oauth-app).</Note>
 
 Required scope | `custom_code:write`
 </dd>
@@ -9758,6 +10929,8 @@ Get a list of scripts that have been applied to a site and/or individual pages.
 
   See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
 </Note>
+
+<Note>Access to this endpoint requires a bearer token obtained from an [OAuth Code Grant Flow](/data/reference/oauth-app).</Note>
 
 Required scope | `custom_code:read`
 </dd>

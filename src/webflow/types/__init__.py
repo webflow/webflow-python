@@ -68,12 +68,24 @@ if typing.TYPE_CHECKING:
     from .component_node import ComponentNode
     from .component_properties import ComponentProperties
     from .component_property import ComponentProperty
-    from .component_property_type import ComponentPropertyType
+    from .component_property_text import ComponentPropertyText
+    from .component_property_text_type import ComponentPropertyTextType
     from .conflict import Conflict
     from .custom_code_block import CustomCodeBlock
     from .custom_code_block_type import CustomCodeBlockType
     from .custom_code_hosted_response import CustomCodeHostedResponse
     from .custom_code_inline_response import CustomCodeInlineResponse
+    from .custom_font import CustomFont
+    from .custom_font_axis import CustomFontAxis
+    from .custom_font_batch_delete_response import CustomFontBatchDeleteResponse
+    from .custom_font_batch_delete_response_deleted_item import CustomFontBatchDeleteResponseDeletedItem
+    from .custom_font_batch_delete_response_failed_item import CustomFontBatchDeleteResponseFailedItem
+    from .custom_font_create_response import CustomFontCreateResponse
+    from .custom_font_font_display import CustomFontFontDisplay
+    from .custom_font_format import CustomFontFormat
+    from .custom_font_upload import CustomFontUpload
+    from .custom_font_upload_fields import CustomFontUploadFields
+    from .custom_fonts import CustomFonts
     from .custom_role import CustomRole
     from .custom_role_audit_log_item import CustomRoleAuditLogItem
     from .custom_role_audit_log_item_event_sub_type import CustomRoleAuditLogItemEventSubType
@@ -88,9 +100,6 @@ if typing.TYPE_CHECKING:
     from .field_type import FieldType
     from .field_validations import FieldValidations
     from .field_validations_additional_properties import FieldValidationsAdditionalProperties
-    from .field_validations_additional_properties_additional_properties import (
-        FieldValidationsAdditionalPropertiesAdditionalProperties,
-    )
     from .forbidden_error_body import ForbiddenErrorBody
     from .form import Form
     from .form_field import FormField
@@ -104,14 +113,20 @@ if typing.TYPE_CHECKING:
     from .form_submission_trigger_payload import FormSubmissionTriggerPayload
     from .form_submission_trigger_payload_schema_item import FormSubmissionTriggerPayloadSchemaItem
     from .form_submission_trigger_payload_schema_item_field_type import FormSubmissionTriggerPayloadSchemaItemFieldType
+    from .google_tag_id import GoogleTagId
+    from .google_tag_ids import GoogleTagIds
     from .image_node import ImageNode
     from .image_node_image import ImageNodeImage
     from .invalid_domain import InvalidDomain
     from .invalid_scopes import InvalidScopes
     from .inventory_item import InventoryItem
     from .inventory_item_inventory_type import InventoryItemInventoryType
+    from .items_list_items_live_request_created_on import ItemsListItemsLiveRequestCreatedOn
     from .items_list_items_live_request_last_published import ItemsListItemsLiveRequestLastPublished
+    from .items_list_items_live_request_last_updated import ItemsListItemsLiveRequestLastUpdated
+    from .items_list_items_request_created_on import ItemsListItemsRequestCreatedOn
     from .items_list_items_request_last_published import ItemsListItemsRequestLastPublished
+    from .items_list_items_request_last_updated import ItemsListItemsRequestLastUpdated
     from .list_custom_code_blocks import ListCustomCodeBlocks
     from .locale import Locale
     from .locales import Locales
@@ -214,6 +229,7 @@ if typing.TYPE_CHECKING:
     from .site_plan_name import SitePlanName
     from .site_publish import SitePublish
     from .site_publish_payload import SitePublishPayload
+    from .site_publish_payload_publish_scope import SitePublishPayloadPublishScope
     from .sites import Sites
     from .sku import Sku
     from .sku_field_data import SkuFieldData
@@ -366,12 +382,24 @@ _dynamic_imports: typing.Dict[str, str] = {
     "ComponentNode": ".component_node",
     "ComponentProperties": ".component_properties",
     "ComponentProperty": ".component_property",
-    "ComponentPropertyType": ".component_property_type",
+    "ComponentPropertyText": ".component_property_text",
+    "ComponentPropertyTextType": ".component_property_text_type",
     "Conflict": ".conflict",
     "CustomCodeBlock": ".custom_code_block",
     "CustomCodeBlockType": ".custom_code_block_type",
     "CustomCodeHostedResponse": ".custom_code_hosted_response",
     "CustomCodeInlineResponse": ".custom_code_inline_response",
+    "CustomFont": ".custom_font",
+    "CustomFontAxis": ".custom_font_axis",
+    "CustomFontBatchDeleteResponse": ".custom_font_batch_delete_response",
+    "CustomFontBatchDeleteResponseDeletedItem": ".custom_font_batch_delete_response_deleted_item",
+    "CustomFontBatchDeleteResponseFailedItem": ".custom_font_batch_delete_response_failed_item",
+    "CustomFontCreateResponse": ".custom_font_create_response",
+    "CustomFontFontDisplay": ".custom_font_font_display",
+    "CustomFontFormat": ".custom_font_format",
+    "CustomFontUpload": ".custom_font_upload",
+    "CustomFontUploadFields": ".custom_font_upload_fields",
+    "CustomFonts": ".custom_fonts",
     "CustomRole": ".custom_role",
     "CustomRoleAuditLogItem": ".custom_role_audit_log_item",
     "CustomRoleAuditLogItemEventSubType": ".custom_role_audit_log_item_event_sub_type",
@@ -386,7 +414,6 @@ _dynamic_imports: typing.Dict[str, str] = {
     "FieldType": ".field_type",
     "FieldValidations": ".field_validations",
     "FieldValidationsAdditionalProperties": ".field_validations_additional_properties",
-    "FieldValidationsAdditionalPropertiesAdditionalProperties": ".field_validations_additional_properties_additional_properties",
     "ForbiddenErrorBody": ".forbidden_error_body",
     "Form": ".form",
     "FormField": ".form_field",
@@ -400,14 +427,20 @@ _dynamic_imports: typing.Dict[str, str] = {
     "FormSubmissionTriggerPayload": ".form_submission_trigger_payload",
     "FormSubmissionTriggerPayloadSchemaItem": ".form_submission_trigger_payload_schema_item",
     "FormSubmissionTriggerPayloadSchemaItemFieldType": ".form_submission_trigger_payload_schema_item_field_type",
+    "GoogleTagId": ".google_tag_id",
+    "GoogleTagIds": ".google_tag_ids",
     "ImageNode": ".image_node",
     "ImageNodeImage": ".image_node_image",
     "InvalidDomain": ".invalid_domain",
     "InvalidScopes": ".invalid_scopes",
     "InventoryItem": ".inventory_item",
     "InventoryItemInventoryType": ".inventory_item_inventory_type",
+    "ItemsListItemsLiveRequestCreatedOn": ".items_list_items_live_request_created_on",
     "ItemsListItemsLiveRequestLastPublished": ".items_list_items_live_request_last_published",
+    "ItemsListItemsLiveRequestLastUpdated": ".items_list_items_live_request_last_updated",
+    "ItemsListItemsRequestCreatedOn": ".items_list_items_request_created_on",
     "ItemsListItemsRequestLastPublished": ".items_list_items_request_last_published",
+    "ItemsListItemsRequestLastUpdated": ".items_list_items_request_last_updated",
     "ListCustomCodeBlocks": ".list_custom_code_blocks",
     "Locale": ".locale",
     "Locales": ".locales",
@@ -508,6 +541,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "SitePlanName": ".site_plan_name",
     "SitePublish": ".site_publish",
     "SitePublishPayload": ".site_publish_payload",
+    "SitePublishPayloadPublishScope": ".site_publish_payload_publish_scope",
     "Sites": ".sites",
     "Sku": ".sku",
     "SkuFieldData": ".sku_field_data",
@@ -658,12 +692,24 @@ __all__ = [
     "ComponentNode",
     "ComponentProperties",
     "ComponentProperty",
-    "ComponentPropertyType",
+    "ComponentPropertyText",
+    "ComponentPropertyTextType",
     "Conflict",
     "CustomCodeBlock",
     "CustomCodeBlockType",
     "CustomCodeHostedResponse",
     "CustomCodeInlineResponse",
+    "CustomFont",
+    "CustomFontAxis",
+    "CustomFontBatchDeleteResponse",
+    "CustomFontBatchDeleteResponseDeletedItem",
+    "CustomFontBatchDeleteResponseFailedItem",
+    "CustomFontCreateResponse",
+    "CustomFontFontDisplay",
+    "CustomFontFormat",
+    "CustomFontUpload",
+    "CustomFontUploadFields",
+    "CustomFonts",
     "CustomRole",
     "CustomRoleAuditLogItem",
     "CustomRoleAuditLogItemEventSubType",
@@ -678,7 +724,6 @@ __all__ = [
     "FieldType",
     "FieldValidations",
     "FieldValidationsAdditionalProperties",
-    "FieldValidationsAdditionalPropertiesAdditionalProperties",
     "ForbiddenErrorBody",
     "Form",
     "FormField",
@@ -692,14 +737,20 @@ __all__ = [
     "FormSubmissionTriggerPayload",
     "FormSubmissionTriggerPayloadSchemaItem",
     "FormSubmissionTriggerPayloadSchemaItemFieldType",
+    "GoogleTagId",
+    "GoogleTagIds",
     "ImageNode",
     "ImageNodeImage",
     "InvalidDomain",
     "InvalidScopes",
     "InventoryItem",
     "InventoryItemInventoryType",
+    "ItemsListItemsLiveRequestCreatedOn",
     "ItemsListItemsLiveRequestLastPublished",
+    "ItemsListItemsLiveRequestLastUpdated",
+    "ItemsListItemsRequestCreatedOn",
     "ItemsListItemsRequestLastPublished",
+    "ItemsListItemsRequestLastUpdated",
     "ListCustomCodeBlocks",
     "Locale",
     "Locales",
@@ -800,6 +851,7 @@ __all__ = [
     "SitePlanName",
     "SitePublish",
     "SitePublishPayload",
+    "SitePublishPayloadPublishScope",
     "Sites",
     "Sku",
     "SkuFieldData",
