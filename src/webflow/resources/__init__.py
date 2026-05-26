@@ -10,6 +10,7 @@ if typing.TYPE_CHECKING:
         assets,
         collections,
         components,
+        custom_fonts,
         ecommerce,
         forms,
         inventory,
@@ -28,6 +29,13 @@ if typing.TYPE_CHECKING:
         ComponentsUpdateContentResponse,
         ComponentsUpdatePropertiesResponse,
     )
+    from .custom_fonts import (
+        CustomFontBatchDeleteRequestItemsItem,
+        CustomFontsCreateRequestFontDisplay,
+        CustomFontsGetResponse,
+        CustomFontsUpdateRequestFontDisplay,
+        CustomFontsUpdateResponse,
+    )
     from .inventory import EcommInventoryChangedPayload, InventoryUpdateRequestInventoryType
     from .orders import OrdersListRequestStatus, OrdersRefundRequestReason
     from .pages import (
@@ -37,12 +45,17 @@ if typing.TYPE_CHECKING:
         UpdateStaticContentResponse,
     )
     from .products import ProductSkuCreateProduct, ProductSkuCreateSku, ProductsCreateSkuResponse
-    from .sites import SitesPublishResponse
+    from .sites import SitesPublishResponse, SitesPublishResponsePublishScope
 _dynamic_imports: typing.Dict[str, str] = {
     "ComponentDomWriteNodesItem": ".components",
     "ComponentPropertiesWritePropertiesItem": ".components",
     "ComponentsUpdateContentResponse": ".components",
     "ComponentsUpdatePropertiesResponse": ".components",
+    "CustomFontBatchDeleteRequestItemsItem": ".custom_fonts",
+    "CustomFontsCreateRequestFontDisplay": ".custom_fonts",
+    "CustomFontsGetResponse": ".custom_fonts",
+    "CustomFontsUpdateRequestFontDisplay": ".custom_fonts",
+    "CustomFontsUpdateResponse": ".custom_fonts",
     "EcommInventoryChangedPayload": ".inventory",
     "InventoryUpdateRequestInventoryType": ".inventory",
     "OrdersListRequestStatus": ".orders",
@@ -54,10 +67,12 @@ _dynamic_imports: typing.Dict[str, str] = {
     "ProductSkuCreateSku": ".products",
     "ProductsCreateSkuResponse": ".products",
     "SitesPublishResponse": ".sites",
+    "SitesPublishResponsePublishScope": ".sites",
     "UpdateStaticContentResponse": ".pages",
     "assets": ".assets",
     "collections": ".collections",
     "components": ".components",
+    "custom_fonts": ".custom_fonts",
     "ecommerce": ".ecommerce",
     "forms": ".forms",
     "inventory": ".inventory",
@@ -98,6 +113,11 @@ __all__ = [
     "ComponentPropertiesWritePropertiesItem",
     "ComponentsUpdateContentResponse",
     "ComponentsUpdatePropertiesResponse",
+    "CustomFontBatchDeleteRequestItemsItem",
+    "CustomFontsCreateRequestFontDisplay",
+    "CustomFontsGetResponse",
+    "CustomFontsUpdateRequestFontDisplay",
+    "CustomFontsUpdateResponse",
     "EcommInventoryChangedPayload",
     "InventoryUpdateRequestInventoryType",
     "OrdersListRequestStatus",
@@ -109,10 +129,12 @@ __all__ = [
     "ProductSkuCreateSku",
     "ProductsCreateSkuResponse",
     "SitesPublishResponse",
+    "SitesPublishResponsePublishScope",
     "UpdateStaticContentResponse",
     "assets",
     "collections",
     "components",
+    "custom_fonts",
     "ecommerce",
     "forms",
     "inventory",

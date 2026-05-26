@@ -180,9 +180,6 @@ class RawRedirectsClient:
                 "fromUrl": from_url,
                 "toUrl": to_url,
             },
-            headers={
-                "content-type": "application/json",
-            },
             request_options=request_options,
             omit=OMIT,
         )
@@ -418,9 +415,6 @@ class RawRedirectsClient:
                 "id": id,
                 "fromUrl": from_url,
                 "toUrl": to_url,
-            },
-            headers={
-                "content-type": "application/json",
             },
             request_options=request_options,
             omit=OMIT,
@@ -658,9 +652,6 @@ class AsyncRawRedirectsClient:
                 "fromUrl": from_url,
                 "toUrl": to_url,
             },
-            headers={
-                "content-type": "application/json",
-            },
             request_options=request_options,
             omit=OMIT,
         )
@@ -896,9 +887,6 @@ class AsyncRawRedirectsClient:
                 "id": id,
                 "fromUrl": from_url,
                 "toUrl": to_url,
-            },
-            headers={
-                "content-type": "application/json",
             },
             request_options=request_options,
             omit=OMIT,

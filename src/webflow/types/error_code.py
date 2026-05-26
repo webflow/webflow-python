@@ -26,6 +26,7 @@ ErrorCode = typing.Union[
         "not_enterprise_plan_workspace",
         "order_not_found",
         "resource_not_found",
+        "service_unavailable",
         "too_many_requests",
         "unsupported_version",
         "unsupported_webhook_trigger_type",
