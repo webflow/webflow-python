@@ -62,9 +62,6 @@ class RawFieldsClient:
             base_url=self._client_wrapper.get_environment().base,
             method="POST",
             json=convert_and_respect_annotation_metadata(object_=request, annotation=FieldCreate, direction="write"),
-            headers={
-                "content-type": "application/json",
-            },
             request_options=request_options,
             omit=OMIT,
         )
@@ -415,9 +412,6 @@ class AsyncRawFieldsClient:
             base_url=self._client_wrapper.get_environment().base,
             method="POST",
             json=convert_and_respect_annotation_metadata(object_=request, annotation=FieldCreate, direction="write"),
-            headers={
-                "content-type": "application/json",
-            },
             request_options=request_options,
             omit=OMIT,
         )

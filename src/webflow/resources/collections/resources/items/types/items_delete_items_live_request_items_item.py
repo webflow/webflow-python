@@ -18,7 +18,7 @@ class ItemsDeleteItemsLiveRequestItemsItem(UniversalBaseModel):
         typing.Optional[typing.List[str]],
         FieldMetadata(alias="cmsLocaleIds"),
         pydantic.Field(
-            alias="cmsLocaleIds", description="Array of identifiers for the locales where the item will be created"
+            alias="cmsLocaleIds", description="Array of identifiers for the locales where the item will be unpublished"
         ),
     ] = None
 

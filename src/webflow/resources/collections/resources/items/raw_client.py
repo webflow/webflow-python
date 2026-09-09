@@ -24,17 +24,25 @@ from .....types.collection_item_list_no_pagination import CollectionItemListNoPa
 from .....types.collection_item_patch_single_field_data import CollectionItemPatchSingleFieldData
 from .....types.collection_item_with_id_input import CollectionItemWithIdInput
 from .....types.error import Error
+from .....types.items_list_items_live_request_created_on import ItemsListItemsLiveRequestCreatedOn
 from .....types.items_list_items_live_request_last_published import ItemsListItemsLiveRequestLastPublished
+from .....types.items_list_items_live_request_last_updated import ItemsListItemsLiveRequestLastUpdated
+from .....types.items_list_items_request_created_on import ItemsListItemsRequestCreatedOn
 from .....types.items_list_items_request_last_published import ItemsListItemsRequestLastPublished
+from .....types.items_list_items_request_last_updated import ItemsListItemsRequestLastUpdated
 from .types.create_bulk_collection_item_request_body_field_data import CreateBulkCollectionItemRequestBodyFieldData
 from .types.items_create_item_live_request_body import ItemsCreateItemLiveRequestBody
 from .types.items_create_item_request_body import ItemsCreateItemRequestBody
 from .types.items_delete_items_live_request_items_item import ItemsDeleteItemsLiveRequestItemsItem
 from .types.items_delete_items_request_items_item import ItemsDeleteItemsRequestItemsItem
+from .types.items_list_items_live_request_filter_value import ItemsListItemsLiveRequestFilterValue
 from .types.items_list_items_live_request_sort_by import ItemsListItemsLiveRequestSortBy
 from .types.items_list_items_live_request_sort_order import ItemsListItemsLiveRequestSortOrder
+from .types.items_list_items_live_request_sort_value import ItemsListItemsLiveRequestSortValue
+from .types.items_list_items_request_filter_value import ItemsListItemsRequestFilterValue
 from .types.items_list_items_request_sort_by import ItemsListItemsRequestSortBy
 from .types.items_list_items_request_sort_order import ItemsListItemsRequestSortOrder
+from .types.items_list_items_request_sort_value import ItemsListItemsRequestSortValue
 from .types.items_publish_item_request import ItemsPublishItemRequest
 from .types.items_publish_item_response import ItemsPublishItemResponse
 from .types.items_update_items_response import ItemsUpdateItemsResponse
@@ -57,13 +65,29 @@ class RawItemsClient:
         limit: typing.Optional[int] = None,
         name: typing.Optional[str] = None,
         slug: typing.Optional[str] = None,
+        created_on: typing.Optional[ItemsListItemsRequestCreatedOn] = None,
         last_published: typing.Optional[ItemsListItemsRequestLastPublished] = None,
+        last_updated: typing.Optional[ItemsListItemsRequestLastUpdated] = None,
+        filter: typing.Optional[typing.Dict[str, typing.Optional[ItemsListItemsRequestFilterValue]]] = None,
         sort_by: typing.Optional[ItemsListItemsRequestSortBy] = None,
         sort_order: typing.Optional[ItemsListItemsRequestSortOrder] = None,
+        sort: typing.Optional[typing.Dict[str, typing.Optional[ItemsListItemsRequestSortValue]]] = None,
+        translatable: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[CollectionItemList]:
         """
+        <Tip title="Components in Rich Text">
+          Rich Text field values can contain Webflow component instances as `<wf-component>` markup — see [Components in Rich Text](/data/docs/working-with-the-cms/components-in-rich-text) for the markup grammar, how to find component and property IDs, and the write constraints.
+        </Tip>
+
         List of all Items within a Collection.
+
+        <Note>
+          This endpoint supports:
+
+          - Custom `filter[...]` queries support up to 10 filter terms and 2 text-search terms per request.
+          - Custom `sort[...]` queries support up to 3 sort fields per request.
+        </Note>
 
         Required scope | `CMS:read`
 
@@ -87,14 +111,83 @@ class RawItemsClient:
         slug : typing.Optional[str]
             Filter by the exact slug of the item
 
+        created_on : typing.Optional[ItemsListItemsRequestCreatedOn]
+            Filter by the creation date of the item(s)
+
         last_published : typing.Optional[ItemsListItemsRequestLastPublished]
             Filter by the last published date of the item(s)
+
+        last_updated : typing.Optional[ItemsListItemsRequestLastUpdated]
+            Filter by the last updated date of the item(s)
+
+        filter : typing.Optional[typing.Dict[str, typing.Optional[ItemsListItemsRequestFilterValue]]]
+            Filter collection items by custom field values. Use bracket notation:
+            `filter[<fieldSlug>][<operator>]=<value>`.
+
+            Example: `filter[price][gte]=10&filter[price][lte]=100&filter[name][contains]=shirt`.
+
+            Filters are combined with AND. You can combine custom field filters with top-level filters such as `name`, `slug`, `createdOn`, `lastPublished`, and `lastUpdated`. OR logic and nested filter groups are not supported on GET requests.
+
+            More filter terms can increase request latency.
+
+            Supported operators by field type:
+
+            | Field type | Supported operators |
+            | --- | --- |
+            | `id` | `eq`, `ne`, `in`, `nin` |
+            | `PlainText` | `eq`, `ne`, `in`, `nin`, `contains`, `ncontains`, `exists` |
+            | `Number` | `eq`, `ne`, `gt`, `gte`, `lt`, `lte`, `in`, `nin`, `exists` |
+            | `Switch` | `eq`, `ne`, `in`, `nin`, `exists` |
+            | `DateTime` | `eq`, `ne`, `gt`, `gte`, `lt`, `lte`, `in`, `nin`, `exists` |
+            | `Email`, `Phone`, `Link` | `eq`, `ne`, `in`, `nin`, `contains`, `ncontains`, `exists` |
+            | `Color` | `eq`, `ne`, `in`, `nin`, `exists` |
+            | `Reference` | `eq`, `ne`, `in`, `nin`, `exists` |
+            | `Option` | `eq`, `ne`, `in`, `nin` |
+            | `RichText`, `Image`, `MultiImage`, `VideoLink`, `MultiReference` | `exists` |
+
+            `contains` and `ncontains` are case-insensitive. `ncontains` also matches items where the field is empty or not set.
+
+            `exists=true` matches items where the field has a value. `exists=false` matches items where the field is missing or null. For `Switch` fields, `false` is still a set value.
+
+            Value formats:
+
+            | Field type | Value format |
+            | --- | --- |
+            | `Number` | A valid number, such as `10` or `12.5` |
+            | `Switch` | `true` or `false` |
+            | `DateTime` | ISO 8601 date-time string |
+            | `id`, `Reference` | 24-character item ID |
+            | `Option` | Option ID |
+            | `in`, `nin` | Comma-separated list, up to 100 values |
+
+            Invalid fields, invalid values, and operators that do not apply to a field type return a `400 BadArgument` response.
 
         sort_by : typing.Optional[ItemsListItemsRequestSortBy]
             Sort results by the provided value
 
         sort_order : typing.Optional[ItemsListItemsRequestSortOrder]
             Sorts the results by asc or desc
+
+        sort : typing.Optional[typing.Dict[str, typing.Optional[ItemsListItemsRequestSortValue]]]
+            Sort collection items by custom fields using bracket notation: `sort[<fieldSlug>]=<asc|desc>`.
+
+            - Example: `sort[price]=desc`
+            - Multiple sort fields are applied in query-string order. When `sort[...]` is provided, it takes precedence over `sortBy` and `sortOrder`.
+            - Sortable field types: `PlainText`, `Email`, `Phone`, `Number`, `DateTime`, and `Switch`.
+            - Unknown fields, invalid sort directions, and non-sortable field types return a `400 BadArgument` response.
+
+        translatable : typing.Optional[str]
+            Unique identifier for the secondary Locale you're translating **into**. Returns only content that hasn't been excluded from translation for that locale.
+
+            This is independent of `localeId`, which selects which version of the content is returned. To fetch the source text to translate, request the primary locale's content and set `translatable` to the locale you're translating into:
+
+            `?localeId={primary locale id}&translatable={target locale id}`
+
+            Only exclusion rules scoped to manual translation are respected — rules scoped only to automatic translation don't affect this parameter's response.
+
+            Omitting `translatable` returns the same response as if this parameter didn't exist. The value must be the id of one of the site's secondary locales — the primary locale id, or any other value, returns a `400` error. Requires translation exclusions to be enabled for the site; if they aren't, the request returns a `403` error.
+
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -114,11 +207,24 @@ class RawItemsClient:
                 "limit": limit,
                 "name": name,
                 "slug": slug,
+                "createdOn": convert_and_respect_annotation_metadata(
+                    object_=created_on, annotation=ItemsListItemsRequestCreatedOn, direction="write"
+                ),
                 "lastPublished": convert_and_respect_annotation_metadata(
                     object_=last_published, annotation=ItemsListItemsRequestLastPublished, direction="write"
                 ),
+                "lastUpdated": convert_and_respect_annotation_metadata(
+                    object_=last_updated, annotation=ItemsListItemsRequestLastUpdated, direction="write"
+                ),
+                "filter": convert_and_respect_annotation_metadata(
+                    object_=filter,
+                    annotation=typing.Dict[str, typing.Optional[ItemsListItemsRequestFilterValue]],
+                    direction="write",
+                ),
                 "sortBy": sort_by,
                 "sortOrder": sort_order,
+                "sort": sort,
+                "translatable": translatable,
             },
             request_options=request_options,
         )
@@ -205,8 +311,41 @@ class RawItemsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[CollectionItem]:
         """
+        <Tip title="Components in Rich Text">
+          Rich Text field values can contain Webflow component instances as `<wf-component>` markup — see [Components in Rich Text](/data/docs/working-with-the-cms/components-in-rich-text) for the markup grammar, how to find component and property IDs, and the write constraints.
+        </Tip>
+
         Create Item(s) in a Collection.
 
+        This endpoint accepts two request shapes, and a request must use one or the other:
+
+        - **Single item** — send `fieldData` at the top level. Set `cmsLocaleId` to create the item in a specific locale.
+        - **Multiple items** — send an `items` array with at least one entry. Each entry needs its own `fieldData`, and can set its own `cmsLocaleId`, `isDraft`, and `isArchived`. The API ignores any other property on an entry.
+
+        ```json
+        {
+          "items": [
+            {
+              "isArchived": false,
+              "isDraft": false,
+              "fieldData": {
+                "name": "Senior Data Analyst",
+                "slug": "senior-data-analyst"
+              }
+            },
+            {
+              "isArchived": false,
+              "isDraft": false,
+              "fieldData": {
+                "name": "Product Manager",
+                "slug": "product-manager"
+              }
+            }
+          ]
+        }
+        ```
+
+        A request that carries both `fieldData` and `items` returns a `400`.
 
         To create items across multiple locales, please use [this endpoint.](/data/reference/cms/collection-items/staged-items/create-items)
 
@@ -450,11 +589,24 @@ class RawItemsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[ItemsUpdateItemsResponse]:
         """
+        <Tip title="Components in Rich Text">
+          Rich Text field values can contain Webflow component instances as `<wf-component>` markup — see [Components in Rich Text](/data/docs/working-with-the-cms/components-in-rich-text) for the markup grammar, how to find component and property IDs, and the write constraints.
+        </Tip>
+
         Update a single item or multiple items in a Collection.
 
         The limit for this endpoint is 100 items.
 
         <Tip title="Localization Tip">Items will only be updated in the primary locale, unless a `cmsLocaleId` is included in the request.</Tip>
+
+        <Note title="Draft status behavior">
+          `isDraft: true` doesn't unpublish an item. The resulting status depends on whether the item has been published before:
+
+          - **Item that has never been published:** the item gets a `Draft` status.
+          - **Already-published item:** the item gets a `Changes in draft` status. The live item stays published, and your changes are held back until you publish them.
+
+          Setting `isDraft: false` queues the item to publish on the next site publish. To remove an item from the live site, use [Unpublish Live Collection Items](/data/reference/cms/collection-items/live-items/delete-items-live). For the full status mapping, see [Publishing with the CMS API](/data/docs/working-with-the-cms/publishing).
+        </Note>
 
         Required scope | `CMS:write`
 
@@ -577,17 +729,33 @@ class RawItemsClient:
         limit: typing.Optional[int] = None,
         name: typing.Optional[str] = None,
         slug: typing.Optional[str] = None,
+        created_on: typing.Optional[ItemsListItemsLiveRequestCreatedOn] = None,
         last_published: typing.Optional[ItemsListItemsLiveRequestLastPublished] = None,
+        last_updated: typing.Optional[ItemsListItemsLiveRequestLastUpdated] = None,
+        filter: typing.Optional[typing.Dict[str, typing.Optional[ItemsListItemsLiveRequestFilterValue]]] = None,
         sort_by: typing.Optional[ItemsListItemsLiveRequestSortBy] = None,
         sort_order: typing.Optional[ItemsListItemsLiveRequestSortOrder] = None,
+        sort: typing.Optional[typing.Dict[str, typing.Optional[ItemsListItemsLiveRequestSortValue]]] = None,
+        translatable: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[CollectionItemList]:
         """
+        <Tip title="Components in Rich Text">
+          Rich Text field values can contain Webflow component instances as `<wf-component>` markup — see [Components in Rich Text](/data/docs/working-with-the-cms/components-in-rich-text) for the markup grammar, how to find component and property IDs, and the write constraints.
+        </Tip>
+
         List all published items in a collection.
 
         <Tip title="Serve data with the Content Delivery API">
           Serving data to applications in real-time? Use the Content Delivery API at `api-cdn.webflow.com` for better performance. The CDN-backed endpoint is optimized for high-volume reads, while the Data API is designed for writes and management operations.
         </Tip>
+
+        <Note>
+          This endpoint supports:
+
+          - Custom `filter[...]` queries support up to 10 filter terms and 2 text-search terms per request.
+          - Custom `sort[...]` queries support up to 3 sort fields per request.
+        </Note>
 
         Required scope | `CMS:read`
 
@@ -611,14 +779,83 @@ class RawItemsClient:
         slug : typing.Optional[str]
             Filter by the exact slug of the item
 
+        created_on : typing.Optional[ItemsListItemsLiveRequestCreatedOn]
+            Filter by the creation date of the item(s)
+
         last_published : typing.Optional[ItemsListItemsLiveRequestLastPublished]
             Filter by the last published date of the item(s)
+
+        last_updated : typing.Optional[ItemsListItemsLiveRequestLastUpdated]
+            Filter by the last updated date of the item(s)
+
+        filter : typing.Optional[typing.Dict[str, typing.Optional[ItemsListItemsLiveRequestFilterValue]]]
+            Filter collection items by custom field values. Use bracket notation:
+            `filter[<fieldSlug>][<operator>]=<value>`.
+
+            Example: `filter[price][gte]=10&filter[price][lte]=100&filter[name][contains]=shirt`.
+
+            Filters are combined with AND. You can combine custom field filters with top-level filters such as `name`, `slug`, `createdOn`, `lastPublished`, and `lastUpdated`. OR logic and nested filter groups are not supported on GET requests.
+
+            More filter terms can increase request latency.
+
+            Supported operators by field type:
+
+            | Field type | Supported operators |
+            | --- | --- |
+            | `id` | `eq`, `ne`, `in`, `nin` |
+            | `PlainText` | `eq`, `ne`, `in`, `nin`, `contains`, `ncontains`, `exists` |
+            | `Number` | `eq`, `ne`, `gt`, `gte`, `lt`, `lte`, `in`, `nin`, `exists` |
+            | `Switch` | `eq`, `ne`, `in`, `nin`, `exists` |
+            | `DateTime` | `eq`, `ne`, `gt`, `gte`, `lt`, `lte`, `in`, `nin`, `exists` |
+            | `Email`, `Phone`, `Link` | `eq`, `ne`, `in`, `nin`, `contains`, `ncontains`, `exists` |
+            | `Color` | `eq`, `ne`, `in`, `nin`, `exists` |
+            | `Reference` | `eq`, `ne`, `in`, `nin`, `exists` |
+            | `Option` | `eq`, `ne`, `in`, `nin` |
+            | `RichText`, `Image`, `MultiImage`, `VideoLink`, `MultiReference` | `exists` |
+
+            `contains` and `ncontains` are case-insensitive. `ncontains` also matches items where the field is empty or not set.
+
+            `exists=true` matches items where the field has a value. `exists=false` matches items where the field is missing or null. For `Switch` fields, `false` is still a set value.
+
+            Value formats:
+
+            | Field type | Value format |
+            | --- | --- |
+            | `Number` | A valid number, such as `10` or `12.5` |
+            | `Switch` | `true` or `false` |
+            | `DateTime` | ISO 8601 date-time string |
+            | `id`, `Reference` | 24-character item ID |
+            | `Option` | Option ID |
+            | `in`, `nin` | Comma-separated list, up to 100 values |
+
+            Invalid fields, invalid values, and operators that do not apply to a field type return a `400 BadArgument` response.
 
         sort_by : typing.Optional[ItemsListItemsLiveRequestSortBy]
             Sort results by the provided value
 
         sort_order : typing.Optional[ItemsListItemsLiveRequestSortOrder]
             Sorts the results by asc or desc
+
+        sort : typing.Optional[typing.Dict[str, typing.Optional[ItemsListItemsLiveRequestSortValue]]]
+            Sort collection items by custom fields using bracket notation: `sort[<fieldSlug>]=<asc|desc>`.
+
+            - Example: `sort[price]=desc`
+            - Multiple sort fields are applied in query-string order. When `sort[...]` is provided, it takes precedence over `sortBy` and `sortOrder`.
+            - Sortable field types: `PlainText`, `Email`, `Phone`, `Number`, `DateTime`, and `Switch`.
+            - Unknown fields, invalid sort directions, and non-sortable field types return a `400 BadArgument` response.
+
+        translatable : typing.Optional[str]
+            Unique identifier for the secondary Locale you're translating **into**. Returns only content that hasn't been excluded from translation for that locale.
+
+            This is independent of `localeId`, which selects which version of the content is returned. To fetch the source text to translate, request the primary locale's content and set `translatable` to the locale you're translating into:
+
+            `?localeId={primary locale id}&translatable={target locale id}`
+
+            Only exclusion rules scoped to manual translation are respected — rules scoped only to automatic translation don't affect this parameter's response.
+
+            Omitting `translatable` returns the same response as if this parameter didn't exist. The value must be the id of one of the site's secondary locales — the primary locale id, or any other value, returns a `400` error. Requires translation exclusions to be enabled for the site; if they aren't, the request returns a `403` error.
+
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -638,11 +875,24 @@ class RawItemsClient:
                 "limit": limit,
                 "name": name,
                 "slug": slug,
+                "createdOn": convert_and_respect_annotation_metadata(
+                    object_=created_on, annotation=ItemsListItemsLiveRequestCreatedOn, direction="write"
+                ),
                 "lastPublished": convert_and_respect_annotation_metadata(
                     object_=last_published, annotation=ItemsListItemsLiveRequestLastPublished, direction="write"
                 ),
+                "lastUpdated": convert_and_respect_annotation_metadata(
+                    object_=last_updated, annotation=ItemsListItemsLiveRequestLastUpdated, direction="write"
+                ),
+                "filter": convert_and_respect_annotation_metadata(
+                    object_=filter,
+                    annotation=typing.Dict[str, typing.Optional[ItemsListItemsLiveRequestFilterValue]],
+                    direction="write",
+                ),
                 "sortBy": sort_by,
                 "sortOrder": sort_order,
+                "sort": sort,
+                "translatable": translatable,
             },
             request_options=request_options,
         )
@@ -729,11 +979,43 @@ class RawItemsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[CollectionItem]:
         """
+        <Tip title="Components in Rich Text">
+          Rich Text field values can contain Webflow component instances as `<wf-component>` markup — see [Components in Rich Text](/data/docs/working-with-the-cms/components-in-rich-text) for the markup grammar, how to find component and property IDs, and the write constraints.
+        </Tip>
+
         Create item(s) in a collection that will be immediately published to the live site.
 
+        This endpoint accepts two request shapes, and a request must use one or the other:
+
+        - **Single item** — send `fieldData` at the top level. Set `cmsLocaleId` to create the item in a specific locale.
+        - **Multiple items** — send an `items` array with at least one entry. Each entry needs its own `fieldData`, and can set its own `cmsLocaleId`, `isDraft`, and `isArchived`. The API ignores any other property on an entry.
+
+        ```json
+        {
+          "items": [
+            {
+              "isArchived": false,
+              "isDraft": false,
+              "fieldData": {
+                "name": "Senior Data Analyst",
+                "slug": "senior-data-analyst"
+              }
+            },
+            {
+              "isArchived": false,
+              "isDraft": false,
+              "fieldData": {
+                "name": "Product Manager",
+                "slug": "product-manager"
+              }
+            }
+          ]
+        }
+        ```
+
+        A request that carries both `fieldData` and `items` returns a `400`.
 
         To create items across multiple locales, [please use this endpoint.](/data/reference/cms/collection-items/staged-items/create-items)
-
 
         Required scope | `CMS:write`
 
@@ -964,6 +1246,10 @@ class RawItemsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[CollectionItemListNoPagination]:
         """
+        <Tip title="Components in Rich Text">
+          Rich Text field values can contain Webflow component instances as `<wf-component>` markup — see [Components in Rich Text](/data/docs/working-with-the-cms/components-in-rich-text) for the markup grammar, how to find component and property IDs, and the write constraints.
+        </Tip>
+
         Update a single published item or multiple published items (up to 100) in a Collection
 
         <Tip title="Localization Tip">Items will only be updated in the primary locale, unless a `cmsLocaleId` is included in the request.</Tip>
@@ -1103,6 +1389,10 @@ class RawItemsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[BulkCollectionItem]:
         """
+        <Tip title="Components in Rich Text">
+          Rich Text field values can contain Webflow component instances as `<wf-component>` markup — see [Components in Rich Text](/data/docs/working-with-the-cms/components-in-rich-text) for the markup grammar, how to find component and property IDs, and the write constraints.
+        </Tip>
+
         Create an item or multiple items in a CMS Collection across multiple corresponding locales.
 
         <Note>
@@ -1240,9 +1530,14 @@ class RawItemsClient:
         item_id: str,
         *,
         cms_locale_id: typing.Optional[str] = None,
+        translatable: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[CollectionItem]:
         """
+        <Tip title="Components in Rich Text">
+          Rich Text field values can contain Webflow component instances as `<wf-component>` markup — see [Components in Rich Text](/data/docs/working-with-the-cms/components-in-rich-text) for the markup grammar, how to find component and property IDs, and the write constraints.
+        </Tip>
+
         Get details of a selected Collection Item.
 
         Required scope | `CMS:read`
@@ -1256,7 +1551,20 @@ class RawItemsClient:
             Unique identifier for an Item
 
         cms_locale_id : typing.Optional[str]
-            Unique identifier for a CMS Locale. This UID is different from the Site locale identifier and is listed as `cmsLocaleId` in the Sites response. To query multiple locales, input a comma separated string.
+            Unique identifier for a CMS Locale. This UID is different from the Site locale identifier and is listed as `cmsLocaleId` in the Sites response. This endpoint returns a single item, so it accepts one locale. To retrieve an item in several locales, use [List Collection Items](/data/reference/cms/collection-items/staged-items/list-items) with `filter[id][eq]` and a comma separated `cmsLocaleId`.
+
+        translatable : typing.Optional[str]
+            Unique identifier for the secondary Locale you're translating **into**. Returns only content that hasn't been excluded from translation for that locale.
+
+            This is independent of `localeId`, which selects which version of the content is returned. To fetch the source text to translate, request the primary locale's content and set `translatable` to the locale you're translating into:
+
+            `?localeId={primary locale id}&translatable={target locale id}`
+
+            Only exclusion rules scoped to manual translation are respected — rules scoped only to automatic translation don't affect this parameter's response.
+
+            Omitting `translatable` returns the same response as if this parameter didn't exist. The value must be the id of one of the site's secondary locales — the primary locale id, or any other value, returns a `400` error. Requires translation exclusions to be enabled for the site; if they aren't, the request returns a `403` error.
+
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1272,6 +1580,7 @@ class RawItemsClient:
             method="GET",
             params={
                 "cmsLocaleId": cms_locale_id,
+                "translatable": translatable,
             },
             request_options=request_options,
         )
@@ -1473,7 +1782,20 @@ class RawItemsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[CollectionItem]:
         """
+        <Tip title="Components in Rich Text">
+          Rich Text field values can contain Webflow component instances as `<wf-component>` markup — see [Components in Rich Text](/data/docs/working-with-the-cms/components-in-rich-text) for the markup grammar, how to find component and property IDs, and the write constraints.
+        </Tip>
+
         Update a selected Item in a Collection.
+
+        <Note title="Draft status behavior">
+          `isDraft: true` doesn't unpublish an item. The resulting status depends on whether the item has been published before:
+
+          - **Item that has never been published:** the item gets a `Draft` status.
+          - **Already-published item:** the item gets a `Changes in draft` status. The live item stays published, and your changes are held back until you publish them.
+
+          Setting `isDraft: false` queues the item to publish on the next site publish. To remove an item from the live site, use [Unpublish Live Collection Items](/data/reference/cms/collection-items/live-items/delete-items-live). For the full status mapping, see [Publishing with the CMS API](/data/docs/working-with-the-cms/publishing).
+        </Note>
 
         Required scope | `CMS:write`
 
@@ -1507,7 +1829,12 @@ class RawItemsClient:
             Boolean determining if the Item is set to archived
 
         is_draft : typing.Optional[bool]
-            Boolean determining if the Item is set to draft
+            Sets the item's draft state. The resulting status depends on whether the item has been published before:
+
+            - **Item that has never been published:** `isDraft: true` results in a `Draft` status.
+            - **Already-published item:** `isDraft: true` results in a `Changes in draft` status. The live item stays published, and your changes are held back until you publish them.
+
+            Setting `isDraft: true` never unpublishes an item. To remove an item from the live site, use [Unpublish Live Collection Items](/data/reference/cms/collection-items/live-items/delete-items-live).
 
         field_data : typing.Optional[CollectionItemPatchSingleFieldData]
 
@@ -1624,9 +1951,14 @@ class RawItemsClient:
         item_id: str,
         *,
         cms_locale_id: typing.Optional[str] = None,
+        translatable: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[CollectionItem]:
         """
+        <Tip title="Components in Rich Text">
+          Rich Text field values can contain Webflow component instances as `<wf-component>` markup — see [Components in Rich Text](/data/docs/working-with-the-cms/components-in-rich-text) for the markup grammar, how to find component and property IDs, and the write constraints.
+        </Tip>
+
         Get details of a selected Collection live Item.
 
         <Tip title="Serve data with the Content Delivery API">
@@ -1644,7 +1976,20 @@ class RawItemsClient:
             Unique identifier for an Item
 
         cms_locale_id : typing.Optional[str]
-            Unique identifier for a CMS Locale. This UID is different from the Site locale identifier and is listed as `cmsLocaleId` in the Sites response. To query multiple locales, input a comma separated string.
+            Unique identifier for a CMS Locale. This UID is different from the Site locale identifier and is listed as `cmsLocaleId` in the Sites response. This endpoint returns a single item, so it accepts one locale. To retrieve an item in several locales, use [List Collection Items](/data/reference/cms/collection-items/staged-items/list-items) with `filter[id][eq]` and a comma separated `cmsLocaleId`.
+
+        translatable : typing.Optional[str]
+            Unique identifier for the secondary Locale you're translating **into**. Returns only content that hasn't been excluded from translation for that locale.
+
+            This is independent of `localeId`, which selects which version of the content is returned. To fetch the source text to translate, request the primary locale's content and set `translatable` to the locale you're translating into:
+
+            `?localeId={primary locale id}&translatable={target locale id}`
+
+            Only exclusion rules scoped to manual translation are respected — rules scoped only to automatic translation don't affect this parameter's response.
+
+            Omitting `translatable` returns the same response as if this parameter didn't exist. The value must be the id of one of the site's secondary locales — the primary locale id, or any other value, returns a `400` error. Requires translation exclusions to be enabled for the site; if they aren't, the request returns a `403` error.
+
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1660,6 +2005,7 @@ class RawItemsClient:
             method="GET",
             params={
                 "cmsLocaleId": cms_locale_id,
+                "translatable": translatable,
             },
             request_options=request_options,
         )
@@ -1863,6 +2209,10 @@ class RawItemsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[CollectionItem]:
         """
+        <Tip title="Components in Rich Text">
+          Rich Text field values can contain Webflow component instances as `<wf-component>` markup — see [Components in Rich Text](/data/docs/working-with-the-cms/components-in-rich-text) for the markup grammar, how to find component and property IDs, and the write constraints.
+        </Tip>
+
         Update a selected live Item in a Collection. The updates for this Item will be published to the live site.
 
         Required scope | `CMS:write`
@@ -1897,7 +2247,12 @@ class RawItemsClient:
             Boolean determining if the Item is set to archived
 
         is_draft : typing.Optional[bool]
-            Boolean determining if the Item is set to draft
+            Sets the item's draft state. The resulting status depends on whether the item has been published before:
+
+            - **Item that has never been published:** `isDraft: true` results in a `Draft` status.
+            - **Already-published item:** `isDraft: true` results in a `Changes in draft` status. The live item stays published, and your changes are held back until you publish them.
+
+            Setting `isDraft: true` never unpublishes an item. To remove an item from the live site, use [Unpublish Live Collection Items](/data/reference/cms/collection-items/live-items/delete-items-live).
 
         field_data : typing.Optional[CollectionItemPatchSingleFieldData]
 
@@ -2053,9 +2408,6 @@ class RawItemsClient:
             json=convert_and_respect_annotation_metadata(
                 object_=request, annotation=ItemsPublishItemRequest, direction="write"
             ),
-            headers={
-                "content-type": "application/json",
-            },
             request_options=request_options,
             omit=OMIT,
         )
@@ -2158,13 +2510,29 @@ class AsyncRawItemsClient:
         limit: typing.Optional[int] = None,
         name: typing.Optional[str] = None,
         slug: typing.Optional[str] = None,
+        created_on: typing.Optional[ItemsListItemsRequestCreatedOn] = None,
         last_published: typing.Optional[ItemsListItemsRequestLastPublished] = None,
+        last_updated: typing.Optional[ItemsListItemsRequestLastUpdated] = None,
+        filter: typing.Optional[typing.Dict[str, typing.Optional[ItemsListItemsRequestFilterValue]]] = None,
         sort_by: typing.Optional[ItemsListItemsRequestSortBy] = None,
         sort_order: typing.Optional[ItemsListItemsRequestSortOrder] = None,
+        sort: typing.Optional[typing.Dict[str, typing.Optional[ItemsListItemsRequestSortValue]]] = None,
+        translatable: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[CollectionItemList]:
         """
+        <Tip title="Components in Rich Text">
+          Rich Text field values can contain Webflow component instances as `<wf-component>` markup — see [Components in Rich Text](/data/docs/working-with-the-cms/components-in-rich-text) for the markup grammar, how to find component and property IDs, and the write constraints.
+        </Tip>
+
         List of all Items within a Collection.
+
+        <Note>
+          This endpoint supports:
+
+          - Custom `filter[...]` queries support up to 10 filter terms and 2 text-search terms per request.
+          - Custom `sort[...]` queries support up to 3 sort fields per request.
+        </Note>
 
         Required scope | `CMS:read`
 
@@ -2188,14 +2556,83 @@ class AsyncRawItemsClient:
         slug : typing.Optional[str]
             Filter by the exact slug of the item
 
+        created_on : typing.Optional[ItemsListItemsRequestCreatedOn]
+            Filter by the creation date of the item(s)
+
         last_published : typing.Optional[ItemsListItemsRequestLastPublished]
             Filter by the last published date of the item(s)
+
+        last_updated : typing.Optional[ItemsListItemsRequestLastUpdated]
+            Filter by the last updated date of the item(s)
+
+        filter : typing.Optional[typing.Dict[str, typing.Optional[ItemsListItemsRequestFilterValue]]]
+            Filter collection items by custom field values. Use bracket notation:
+            `filter[<fieldSlug>][<operator>]=<value>`.
+
+            Example: `filter[price][gte]=10&filter[price][lte]=100&filter[name][contains]=shirt`.
+
+            Filters are combined with AND. You can combine custom field filters with top-level filters such as `name`, `slug`, `createdOn`, `lastPublished`, and `lastUpdated`. OR logic and nested filter groups are not supported on GET requests.
+
+            More filter terms can increase request latency.
+
+            Supported operators by field type:
+
+            | Field type | Supported operators |
+            | --- | --- |
+            | `id` | `eq`, `ne`, `in`, `nin` |
+            | `PlainText` | `eq`, `ne`, `in`, `nin`, `contains`, `ncontains`, `exists` |
+            | `Number` | `eq`, `ne`, `gt`, `gte`, `lt`, `lte`, `in`, `nin`, `exists` |
+            | `Switch` | `eq`, `ne`, `in`, `nin`, `exists` |
+            | `DateTime` | `eq`, `ne`, `gt`, `gte`, `lt`, `lte`, `in`, `nin`, `exists` |
+            | `Email`, `Phone`, `Link` | `eq`, `ne`, `in`, `nin`, `contains`, `ncontains`, `exists` |
+            | `Color` | `eq`, `ne`, `in`, `nin`, `exists` |
+            | `Reference` | `eq`, `ne`, `in`, `nin`, `exists` |
+            | `Option` | `eq`, `ne`, `in`, `nin` |
+            | `RichText`, `Image`, `MultiImage`, `VideoLink`, `MultiReference` | `exists` |
+
+            `contains` and `ncontains` are case-insensitive. `ncontains` also matches items where the field is empty or not set.
+
+            `exists=true` matches items where the field has a value. `exists=false` matches items where the field is missing or null. For `Switch` fields, `false` is still a set value.
+
+            Value formats:
+
+            | Field type | Value format |
+            | --- | --- |
+            | `Number` | A valid number, such as `10` or `12.5` |
+            | `Switch` | `true` or `false` |
+            | `DateTime` | ISO 8601 date-time string |
+            | `id`, `Reference` | 24-character item ID |
+            | `Option` | Option ID |
+            | `in`, `nin` | Comma-separated list, up to 100 values |
+
+            Invalid fields, invalid values, and operators that do not apply to a field type return a `400 BadArgument` response.
 
         sort_by : typing.Optional[ItemsListItemsRequestSortBy]
             Sort results by the provided value
 
         sort_order : typing.Optional[ItemsListItemsRequestSortOrder]
             Sorts the results by asc or desc
+
+        sort : typing.Optional[typing.Dict[str, typing.Optional[ItemsListItemsRequestSortValue]]]
+            Sort collection items by custom fields using bracket notation: `sort[<fieldSlug>]=<asc|desc>`.
+
+            - Example: `sort[price]=desc`
+            - Multiple sort fields are applied in query-string order. When `sort[...]` is provided, it takes precedence over `sortBy` and `sortOrder`.
+            - Sortable field types: `PlainText`, `Email`, `Phone`, `Number`, `DateTime`, and `Switch`.
+            - Unknown fields, invalid sort directions, and non-sortable field types return a `400 BadArgument` response.
+
+        translatable : typing.Optional[str]
+            Unique identifier for the secondary Locale you're translating **into**. Returns only content that hasn't been excluded from translation for that locale.
+
+            This is independent of `localeId`, which selects which version of the content is returned. To fetch the source text to translate, request the primary locale's content and set `translatable` to the locale you're translating into:
+
+            `?localeId={primary locale id}&translatable={target locale id}`
+
+            Only exclusion rules scoped to manual translation are respected — rules scoped only to automatic translation don't affect this parameter's response.
+
+            Omitting `translatable` returns the same response as if this parameter didn't exist. The value must be the id of one of the site's secondary locales — the primary locale id, or any other value, returns a `400` error. Requires translation exclusions to be enabled for the site; if they aren't, the request returns a `403` error.
+
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -2215,11 +2652,24 @@ class AsyncRawItemsClient:
                 "limit": limit,
                 "name": name,
                 "slug": slug,
+                "createdOn": convert_and_respect_annotation_metadata(
+                    object_=created_on, annotation=ItemsListItemsRequestCreatedOn, direction="write"
+                ),
                 "lastPublished": convert_and_respect_annotation_metadata(
                     object_=last_published, annotation=ItemsListItemsRequestLastPublished, direction="write"
                 ),
+                "lastUpdated": convert_and_respect_annotation_metadata(
+                    object_=last_updated, annotation=ItemsListItemsRequestLastUpdated, direction="write"
+                ),
+                "filter": convert_and_respect_annotation_metadata(
+                    object_=filter,
+                    annotation=typing.Dict[str, typing.Optional[ItemsListItemsRequestFilterValue]],
+                    direction="write",
+                ),
                 "sortBy": sort_by,
                 "sortOrder": sort_order,
+                "sort": sort,
+                "translatable": translatable,
             },
             request_options=request_options,
         )
@@ -2306,8 +2756,41 @@ class AsyncRawItemsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[CollectionItem]:
         """
+        <Tip title="Components in Rich Text">
+          Rich Text field values can contain Webflow component instances as `<wf-component>` markup — see [Components in Rich Text](/data/docs/working-with-the-cms/components-in-rich-text) for the markup grammar, how to find component and property IDs, and the write constraints.
+        </Tip>
+
         Create Item(s) in a Collection.
 
+        This endpoint accepts two request shapes, and a request must use one or the other:
+
+        - **Single item** — send `fieldData` at the top level. Set `cmsLocaleId` to create the item in a specific locale.
+        - **Multiple items** — send an `items` array with at least one entry. Each entry needs its own `fieldData`, and can set its own `cmsLocaleId`, `isDraft`, and `isArchived`. The API ignores any other property on an entry.
+
+        ```json
+        {
+          "items": [
+            {
+              "isArchived": false,
+              "isDraft": false,
+              "fieldData": {
+                "name": "Senior Data Analyst",
+                "slug": "senior-data-analyst"
+              }
+            },
+            {
+              "isArchived": false,
+              "isDraft": false,
+              "fieldData": {
+                "name": "Product Manager",
+                "slug": "product-manager"
+              }
+            }
+          ]
+        }
+        ```
+
+        A request that carries both `fieldData` and `items` returns a `400`.
 
         To create items across multiple locales, please use [this endpoint.](/data/reference/cms/collection-items/staged-items/create-items)
 
@@ -2551,11 +3034,24 @@ class AsyncRawItemsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[ItemsUpdateItemsResponse]:
         """
+        <Tip title="Components in Rich Text">
+          Rich Text field values can contain Webflow component instances as `<wf-component>` markup — see [Components in Rich Text](/data/docs/working-with-the-cms/components-in-rich-text) for the markup grammar, how to find component and property IDs, and the write constraints.
+        </Tip>
+
         Update a single item or multiple items in a Collection.
 
         The limit for this endpoint is 100 items.
 
         <Tip title="Localization Tip">Items will only be updated in the primary locale, unless a `cmsLocaleId` is included in the request.</Tip>
+
+        <Note title="Draft status behavior">
+          `isDraft: true` doesn't unpublish an item. The resulting status depends on whether the item has been published before:
+
+          - **Item that has never been published:** the item gets a `Draft` status.
+          - **Already-published item:** the item gets a `Changes in draft` status. The live item stays published, and your changes are held back until you publish them.
+
+          Setting `isDraft: false` queues the item to publish on the next site publish. To remove an item from the live site, use [Unpublish Live Collection Items](/data/reference/cms/collection-items/live-items/delete-items-live). For the full status mapping, see [Publishing with the CMS API](/data/docs/working-with-the-cms/publishing).
+        </Note>
 
         Required scope | `CMS:write`
 
@@ -2678,17 +3174,33 @@ class AsyncRawItemsClient:
         limit: typing.Optional[int] = None,
         name: typing.Optional[str] = None,
         slug: typing.Optional[str] = None,
+        created_on: typing.Optional[ItemsListItemsLiveRequestCreatedOn] = None,
         last_published: typing.Optional[ItemsListItemsLiveRequestLastPublished] = None,
+        last_updated: typing.Optional[ItemsListItemsLiveRequestLastUpdated] = None,
+        filter: typing.Optional[typing.Dict[str, typing.Optional[ItemsListItemsLiveRequestFilterValue]]] = None,
         sort_by: typing.Optional[ItemsListItemsLiveRequestSortBy] = None,
         sort_order: typing.Optional[ItemsListItemsLiveRequestSortOrder] = None,
+        sort: typing.Optional[typing.Dict[str, typing.Optional[ItemsListItemsLiveRequestSortValue]]] = None,
+        translatable: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[CollectionItemList]:
         """
+        <Tip title="Components in Rich Text">
+          Rich Text field values can contain Webflow component instances as `<wf-component>` markup — see [Components in Rich Text](/data/docs/working-with-the-cms/components-in-rich-text) for the markup grammar, how to find component and property IDs, and the write constraints.
+        </Tip>
+
         List all published items in a collection.
 
         <Tip title="Serve data with the Content Delivery API">
           Serving data to applications in real-time? Use the Content Delivery API at `api-cdn.webflow.com` for better performance. The CDN-backed endpoint is optimized for high-volume reads, while the Data API is designed for writes and management operations.
         </Tip>
+
+        <Note>
+          This endpoint supports:
+
+          - Custom `filter[...]` queries support up to 10 filter terms and 2 text-search terms per request.
+          - Custom `sort[...]` queries support up to 3 sort fields per request.
+        </Note>
 
         Required scope | `CMS:read`
 
@@ -2712,14 +3224,83 @@ class AsyncRawItemsClient:
         slug : typing.Optional[str]
             Filter by the exact slug of the item
 
+        created_on : typing.Optional[ItemsListItemsLiveRequestCreatedOn]
+            Filter by the creation date of the item(s)
+
         last_published : typing.Optional[ItemsListItemsLiveRequestLastPublished]
             Filter by the last published date of the item(s)
+
+        last_updated : typing.Optional[ItemsListItemsLiveRequestLastUpdated]
+            Filter by the last updated date of the item(s)
+
+        filter : typing.Optional[typing.Dict[str, typing.Optional[ItemsListItemsLiveRequestFilterValue]]]
+            Filter collection items by custom field values. Use bracket notation:
+            `filter[<fieldSlug>][<operator>]=<value>`.
+
+            Example: `filter[price][gte]=10&filter[price][lte]=100&filter[name][contains]=shirt`.
+
+            Filters are combined with AND. You can combine custom field filters with top-level filters such as `name`, `slug`, `createdOn`, `lastPublished`, and `lastUpdated`. OR logic and nested filter groups are not supported on GET requests.
+
+            More filter terms can increase request latency.
+
+            Supported operators by field type:
+
+            | Field type | Supported operators |
+            | --- | --- |
+            | `id` | `eq`, `ne`, `in`, `nin` |
+            | `PlainText` | `eq`, `ne`, `in`, `nin`, `contains`, `ncontains`, `exists` |
+            | `Number` | `eq`, `ne`, `gt`, `gte`, `lt`, `lte`, `in`, `nin`, `exists` |
+            | `Switch` | `eq`, `ne`, `in`, `nin`, `exists` |
+            | `DateTime` | `eq`, `ne`, `gt`, `gte`, `lt`, `lte`, `in`, `nin`, `exists` |
+            | `Email`, `Phone`, `Link` | `eq`, `ne`, `in`, `nin`, `contains`, `ncontains`, `exists` |
+            | `Color` | `eq`, `ne`, `in`, `nin`, `exists` |
+            | `Reference` | `eq`, `ne`, `in`, `nin`, `exists` |
+            | `Option` | `eq`, `ne`, `in`, `nin` |
+            | `RichText`, `Image`, `MultiImage`, `VideoLink`, `MultiReference` | `exists` |
+
+            `contains` and `ncontains` are case-insensitive. `ncontains` also matches items where the field is empty or not set.
+
+            `exists=true` matches items where the field has a value. `exists=false` matches items where the field is missing or null. For `Switch` fields, `false` is still a set value.
+
+            Value formats:
+
+            | Field type | Value format |
+            | --- | --- |
+            | `Number` | A valid number, such as `10` or `12.5` |
+            | `Switch` | `true` or `false` |
+            | `DateTime` | ISO 8601 date-time string |
+            | `id`, `Reference` | 24-character item ID |
+            | `Option` | Option ID |
+            | `in`, `nin` | Comma-separated list, up to 100 values |
+
+            Invalid fields, invalid values, and operators that do not apply to a field type return a `400 BadArgument` response.
 
         sort_by : typing.Optional[ItemsListItemsLiveRequestSortBy]
             Sort results by the provided value
 
         sort_order : typing.Optional[ItemsListItemsLiveRequestSortOrder]
             Sorts the results by asc or desc
+
+        sort : typing.Optional[typing.Dict[str, typing.Optional[ItemsListItemsLiveRequestSortValue]]]
+            Sort collection items by custom fields using bracket notation: `sort[<fieldSlug>]=<asc|desc>`.
+
+            - Example: `sort[price]=desc`
+            - Multiple sort fields are applied in query-string order. When `sort[...]` is provided, it takes precedence over `sortBy` and `sortOrder`.
+            - Sortable field types: `PlainText`, `Email`, `Phone`, `Number`, `DateTime`, and `Switch`.
+            - Unknown fields, invalid sort directions, and non-sortable field types return a `400 BadArgument` response.
+
+        translatable : typing.Optional[str]
+            Unique identifier for the secondary Locale you're translating **into**. Returns only content that hasn't been excluded from translation for that locale.
+
+            This is independent of `localeId`, which selects which version of the content is returned. To fetch the source text to translate, request the primary locale's content and set `translatable` to the locale you're translating into:
+
+            `?localeId={primary locale id}&translatable={target locale id}`
+
+            Only exclusion rules scoped to manual translation are respected — rules scoped only to automatic translation don't affect this parameter's response.
+
+            Omitting `translatable` returns the same response as if this parameter didn't exist. The value must be the id of one of the site's secondary locales — the primary locale id, or any other value, returns a `400` error. Requires translation exclusions to be enabled for the site; if they aren't, the request returns a `403` error.
+
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -2739,11 +3320,24 @@ class AsyncRawItemsClient:
                 "limit": limit,
                 "name": name,
                 "slug": slug,
+                "createdOn": convert_and_respect_annotation_metadata(
+                    object_=created_on, annotation=ItemsListItemsLiveRequestCreatedOn, direction="write"
+                ),
                 "lastPublished": convert_and_respect_annotation_metadata(
                     object_=last_published, annotation=ItemsListItemsLiveRequestLastPublished, direction="write"
                 ),
+                "lastUpdated": convert_and_respect_annotation_metadata(
+                    object_=last_updated, annotation=ItemsListItemsLiveRequestLastUpdated, direction="write"
+                ),
+                "filter": convert_and_respect_annotation_metadata(
+                    object_=filter,
+                    annotation=typing.Dict[str, typing.Optional[ItemsListItemsLiveRequestFilterValue]],
+                    direction="write",
+                ),
                 "sortBy": sort_by,
                 "sortOrder": sort_order,
+                "sort": sort,
+                "translatable": translatable,
             },
             request_options=request_options,
         )
@@ -2830,11 +3424,43 @@ class AsyncRawItemsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[CollectionItem]:
         """
+        <Tip title="Components in Rich Text">
+          Rich Text field values can contain Webflow component instances as `<wf-component>` markup — see [Components in Rich Text](/data/docs/working-with-the-cms/components-in-rich-text) for the markup grammar, how to find component and property IDs, and the write constraints.
+        </Tip>
+
         Create item(s) in a collection that will be immediately published to the live site.
 
+        This endpoint accepts two request shapes, and a request must use one or the other:
+
+        - **Single item** — send `fieldData` at the top level. Set `cmsLocaleId` to create the item in a specific locale.
+        - **Multiple items** — send an `items` array with at least one entry. Each entry needs its own `fieldData`, and can set its own `cmsLocaleId`, `isDraft`, and `isArchived`. The API ignores any other property on an entry.
+
+        ```json
+        {
+          "items": [
+            {
+              "isArchived": false,
+              "isDraft": false,
+              "fieldData": {
+                "name": "Senior Data Analyst",
+                "slug": "senior-data-analyst"
+              }
+            },
+            {
+              "isArchived": false,
+              "isDraft": false,
+              "fieldData": {
+                "name": "Product Manager",
+                "slug": "product-manager"
+              }
+            }
+          ]
+        }
+        ```
+
+        A request that carries both `fieldData` and `items` returns a `400`.
 
         To create items across multiple locales, [please use this endpoint.](/data/reference/cms/collection-items/staged-items/create-items)
-
 
         Required scope | `CMS:write`
 
@@ -3065,6 +3691,10 @@ class AsyncRawItemsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[CollectionItemListNoPagination]:
         """
+        <Tip title="Components in Rich Text">
+          Rich Text field values can contain Webflow component instances as `<wf-component>` markup — see [Components in Rich Text](/data/docs/working-with-the-cms/components-in-rich-text) for the markup grammar, how to find component and property IDs, and the write constraints.
+        </Tip>
+
         Update a single published item or multiple published items (up to 100) in a Collection
 
         <Tip title="Localization Tip">Items will only be updated in the primary locale, unless a `cmsLocaleId` is included in the request.</Tip>
@@ -3204,6 +3834,10 @@ class AsyncRawItemsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[BulkCollectionItem]:
         """
+        <Tip title="Components in Rich Text">
+          Rich Text field values can contain Webflow component instances as `<wf-component>` markup — see [Components in Rich Text](/data/docs/working-with-the-cms/components-in-rich-text) for the markup grammar, how to find component and property IDs, and the write constraints.
+        </Tip>
+
         Create an item or multiple items in a CMS Collection across multiple corresponding locales.
 
         <Note>
@@ -3341,9 +3975,14 @@ class AsyncRawItemsClient:
         item_id: str,
         *,
         cms_locale_id: typing.Optional[str] = None,
+        translatable: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[CollectionItem]:
         """
+        <Tip title="Components in Rich Text">
+          Rich Text field values can contain Webflow component instances as `<wf-component>` markup — see [Components in Rich Text](/data/docs/working-with-the-cms/components-in-rich-text) for the markup grammar, how to find component and property IDs, and the write constraints.
+        </Tip>
+
         Get details of a selected Collection Item.
 
         Required scope | `CMS:read`
@@ -3357,7 +3996,20 @@ class AsyncRawItemsClient:
             Unique identifier for an Item
 
         cms_locale_id : typing.Optional[str]
-            Unique identifier for a CMS Locale. This UID is different from the Site locale identifier and is listed as `cmsLocaleId` in the Sites response. To query multiple locales, input a comma separated string.
+            Unique identifier for a CMS Locale. This UID is different from the Site locale identifier and is listed as `cmsLocaleId` in the Sites response. This endpoint returns a single item, so it accepts one locale. To retrieve an item in several locales, use [List Collection Items](/data/reference/cms/collection-items/staged-items/list-items) with `filter[id][eq]` and a comma separated `cmsLocaleId`.
+
+        translatable : typing.Optional[str]
+            Unique identifier for the secondary Locale you're translating **into**. Returns only content that hasn't been excluded from translation for that locale.
+
+            This is independent of `localeId`, which selects which version of the content is returned. To fetch the source text to translate, request the primary locale's content and set `translatable` to the locale you're translating into:
+
+            `?localeId={primary locale id}&translatable={target locale id}`
+
+            Only exclusion rules scoped to manual translation are respected — rules scoped only to automatic translation don't affect this parameter's response.
+
+            Omitting `translatable` returns the same response as if this parameter didn't exist. The value must be the id of one of the site's secondary locales — the primary locale id, or any other value, returns a `400` error. Requires translation exclusions to be enabled for the site; if they aren't, the request returns a `403` error.
+
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -3373,6 +4025,7 @@ class AsyncRawItemsClient:
             method="GET",
             params={
                 "cmsLocaleId": cms_locale_id,
+                "translatable": translatable,
             },
             request_options=request_options,
         )
@@ -3574,7 +4227,20 @@ class AsyncRawItemsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[CollectionItem]:
         """
+        <Tip title="Components in Rich Text">
+          Rich Text field values can contain Webflow component instances as `<wf-component>` markup — see [Components in Rich Text](/data/docs/working-with-the-cms/components-in-rich-text) for the markup grammar, how to find component and property IDs, and the write constraints.
+        </Tip>
+
         Update a selected Item in a Collection.
+
+        <Note title="Draft status behavior">
+          `isDraft: true` doesn't unpublish an item. The resulting status depends on whether the item has been published before:
+
+          - **Item that has never been published:** the item gets a `Draft` status.
+          - **Already-published item:** the item gets a `Changes in draft` status. The live item stays published, and your changes are held back until you publish them.
+
+          Setting `isDraft: false` queues the item to publish on the next site publish. To remove an item from the live site, use [Unpublish Live Collection Items](/data/reference/cms/collection-items/live-items/delete-items-live). For the full status mapping, see [Publishing with the CMS API](/data/docs/working-with-the-cms/publishing).
+        </Note>
 
         Required scope | `CMS:write`
 
@@ -3608,7 +4274,12 @@ class AsyncRawItemsClient:
             Boolean determining if the Item is set to archived
 
         is_draft : typing.Optional[bool]
-            Boolean determining if the Item is set to draft
+            Sets the item's draft state. The resulting status depends on whether the item has been published before:
+
+            - **Item that has never been published:** `isDraft: true` results in a `Draft` status.
+            - **Already-published item:** `isDraft: true` results in a `Changes in draft` status. The live item stays published, and your changes are held back until you publish them.
+
+            Setting `isDraft: true` never unpublishes an item. To remove an item from the live site, use [Unpublish Live Collection Items](/data/reference/cms/collection-items/live-items/delete-items-live).
 
         field_data : typing.Optional[CollectionItemPatchSingleFieldData]
 
@@ -3725,9 +4396,14 @@ class AsyncRawItemsClient:
         item_id: str,
         *,
         cms_locale_id: typing.Optional[str] = None,
+        translatable: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[CollectionItem]:
         """
+        <Tip title="Components in Rich Text">
+          Rich Text field values can contain Webflow component instances as `<wf-component>` markup — see [Components in Rich Text](/data/docs/working-with-the-cms/components-in-rich-text) for the markup grammar, how to find component and property IDs, and the write constraints.
+        </Tip>
+
         Get details of a selected Collection live Item.
 
         <Tip title="Serve data with the Content Delivery API">
@@ -3745,7 +4421,20 @@ class AsyncRawItemsClient:
             Unique identifier for an Item
 
         cms_locale_id : typing.Optional[str]
-            Unique identifier for a CMS Locale. This UID is different from the Site locale identifier and is listed as `cmsLocaleId` in the Sites response. To query multiple locales, input a comma separated string.
+            Unique identifier for a CMS Locale. This UID is different from the Site locale identifier and is listed as `cmsLocaleId` in the Sites response. This endpoint returns a single item, so it accepts one locale. To retrieve an item in several locales, use [List Collection Items](/data/reference/cms/collection-items/staged-items/list-items) with `filter[id][eq]` and a comma separated `cmsLocaleId`.
+
+        translatable : typing.Optional[str]
+            Unique identifier for the secondary Locale you're translating **into**. Returns only content that hasn't been excluded from translation for that locale.
+
+            This is independent of `localeId`, which selects which version of the content is returned. To fetch the source text to translate, request the primary locale's content and set `translatable` to the locale you're translating into:
+
+            `?localeId={primary locale id}&translatable={target locale id}`
+
+            Only exclusion rules scoped to manual translation are respected — rules scoped only to automatic translation don't affect this parameter's response.
+
+            Omitting `translatable` returns the same response as if this parameter didn't exist. The value must be the id of one of the site's secondary locales — the primary locale id, or any other value, returns a `400` error. Requires translation exclusions to be enabled for the site; if they aren't, the request returns a `403` error.
+
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -3761,6 +4450,7 @@ class AsyncRawItemsClient:
             method="GET",
             params={
                 "cmsLocaleId": cms_locale_id,
+                "translatable": translatable,
             },
             request_options=request_options,
         )
@@ -3964,6 +4654,10 @@ class AsyncRawItemsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[CollectionItem]:
         """
+        <Tip title="Components in Rich Text">
+          Rich Text field values can contain Webflow component instances as `<wf-component>` markup — see [Components in Rich Text](/data/docs/working-with-the-cms/components-in-rich-text) for the markup grammar, how to find component and property IDs, and the write constraints.
+        </Tip>
+
         Update a selected live Item in a Collection. The updates for this Item will be published to the live site.
 
         Required scope | `CMS:write`
@@ -3998,7 +4692,12 @@ class AsyncRawItemsClient:
             Boolean determining if the Item is set to archived
 
         is_draft : typing.Optional[bool]
-            Boolean determining if the Item is set to draft
+            Sets the item's draft state. The resulting status depends on whether the item has been published before:
+
+            - **Item that has never been published:** `isDraft: true` results in a `Draft` status.
+            - **Already-published item:** `isDraft: true` results in a `Changes in draft` status. The live item stays published, and your changes are held back until you publish them.
+
+            Setting `isDraft: true` never unpublishes an item. To remove an item from the live site, use [Unpublish Live Collection Items](/data/reference/cms/collection-items/live-items/delete-items-live).
 
         field_data : typing.Optional[CollectionItemPatchSingleFieldData]
 
@@ -4154,9 +4853,6 @@ class AsyncRawItemsClient:
             json=convert_and_respect_annotation_metadata(
                 object_=request, annotation=ItemsPublishItemRequest, direction="write"
             ),
-            headers={
-                "content-type": "application/json",
-            },
             request_options=request_options,
             omit=OMIT,
         )
