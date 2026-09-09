@@ -4,6 +4,7 @@ import typing
 
 from .....core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from .....core.request_options import RequestOptions
+from .....types.comment_reply import CommentReply
 from .....types.comment_reply_list import CommentReplyList
 from .....types.comment_thread import CommentThread
 from .....types.comment_thread_list import CommentThreadList
@@ -14,6 +15,9 @@ from .types.comments_list_comment_replies_request_sort_by import CommentsListCom
 from .types.comments_list_comment_replies_request_sort_order import CommentsListCommentRepliesRequestSortOrder
 from .types.comments_list_comment_threads_request_sort_by import CommentsListCommentThreadsRequestSortBy
 from .types.comments_list_comment_threads_request_sort_order import CommentsListCommentThreadsRequestSortOrder
+
+# this is used as the default value for optional parameters
+OMIT = typing.cast(typing.Any, ...)
 
 
 class CommentsClient:
@@ -59,7 +63,7 @@ class CommentsClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         offset : typing.Optional[int]
             Offset used for pagination if the results have more than limit records
@@ -140,7 +144,7 @@ class CommentsClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         offset : typing.Optional[int]
             Offset used for pagination if the results have more than limit records
@@ -191,6 +195,60 @@ class CommentsClient:
         )
         return _response.data
 
+    def resolve_comment_thread(
+        self,
+        site_id: str,
+        comment_thread_id: str,
+        *,
+        resolved: bool,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> CommentThread:
+        """
+        Resolve or unresolve a comment thread.
+
+        <Note>
+          This endpoint is rate limited to 60 requests per minute per site.
+        </Note>
+
+        Required scope | `comments:write`
+
+        Parameters
+        ----------
+        site_id : str
+            Unique identifier for a Site
+
+        comment_thread_id : str
+            Unique identifier for a Comment Thread
+
+        resolved : bool
+            Set to `true` to resolve the thread, or `false` to unresolve it
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        CommentThread
+            Request was successful
+
+        Examples
+        --------
+        from webflow import Webflow
+
+        client = Webflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+        client.sites.comments.resolve_comment_thread(
+            site_id="580e63e98c9a982ac9b8b741",
+            comment_thread_id="580e63e98c9a982ac9b8b741",
+            resolved=True,
+        )
+        """
+        _response = self._raw_client.resolve_comment_thread(
+            site_id, comment_thread_id, resolved=resolved, request_options=request_options
+        )
+        return _response.data
+
     def list_comment_replies(
         self,
         site_id: str,
@@ -223,7 +281,7 @@ class CommentsClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         offset : typing.Optional[int]
             Offset used for pagination if the results have more than limit records
@@ -274,6 +332,63 @@ class CommentsClient:
         )
         return _response.data
 
+    def create_comment_reply(
+        self,
+        site_id: str,
+        comment_thread_id: str,
+        *,
+        content: str,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> CommentReply:
+        """
+        Create a reply to an existing comment thread.
+
+        The reply author is always the user who authorized the OAuth token.
+        To @mention a user in the reply, include their user ID in double square brackets in the `content` field, as in `[[userId]]`.
+
+        <Note>
+          The `comment_created` webhook fires automatically when a reply is created.
+        </Note>
+
+        Required scope | `comments:write`
+
+        Parameters
+        ----------
+        site_id : str
+            Unique identifier for a Site
+
+        comment_thread_id : str
+            Unique identifier for a Comment Thread
+
+        content : str
+            The text content of the reply. To @mention a user, include their user ID in double square brackets, as in `[[userId]]`.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        CommentReply
+            Reply created successfully
+
+        Examples
+        --------
+        from webflow import Webflow
+
+        client = Webflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+        client.sites.comments.create_comment_reply(
+            site_id="580e63e98c9a982ac9b8b741",
+            comment_thread_id="580e63e98c9a982ac9b8b741",
+            content="Thanks for the feedback [[6287ec36a841b25637c663df]]!",
+        )
+        """
+        _response = self._raw_client.create_comment_reply(
+            site_id, comment_thread_id, content=content, request_options=request_options
+        )
+        return _response.data
+
 
 class AsyncCommentsClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
@@ -318,7 +433,7 @@ class AsyncCommentsClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         offset : typing.Optional[int]
             Offset used for pagination if the results have more than limit records
@@ -407,7 +522,7 @@ class AsyncCommentsClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         offset : typing.Optional[int]
             Offset used for pagination if the results have more than limit records
@@ -466,6 +581,68 @@ class AsyncCommentsClient:
         )
         return _response.data
 
+    async def resolve_comment_thread(
+        self,
+        site_id: str,
+        comment_thread_id: str,
+        *,
+        resolved: bool,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> CommentThread:
+        """
+        Resolve or unresolve a comment thread.
+
+        <Note>
+          This endpoint is rate limited to 60 requests per minute per site.
+        </Note>
+
+        Required scope | `comments:write`
+
+        Parameters
+        ----------
+        site_id : str
+            Unique identifier for a Site
+
+        comment_thread_id : str
+            Unique identifier for a Comment Thread
+
+        resolved : bool
+            Set to `true` to resolve the thread, or `false` to unresolve it
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        CommentThread
+            Request was successful
+
+        Examples
+        --------
+        import asyncio
+
+        from webflow import AsyncWebflow
+
+        client = AsyncWebflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+
+
+        async def main() -> None:
+            await client.sites.comments.resolve_comment_thread(
+                site_id="580e63e98c9a982ac9b8b741",
+                comment_thread_id="580e63e98c9a982ac9b8b741",
+                resolved=True,
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.resolve_comment_thread(
+            site_id, comment_thread_id, resolved=resolved, request_options=request_options
+        )
+        return _response.data
+
     async def list_comment_replies(
         self,
         site_id: str,
@@ -498,7 +675,7 @@ class AsyncCommentsClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         offset : typing.Optional[int]
             Offset used for pagination if the results have more than limit records
@@ -554,5 +731,70 @@ class AsyncCommentsClient:
             sort_by=sort_by,
             sort_order=sort_order,
             request_options=request_options,
+        )
+        return _response.data
+
+    async def create_comment_reply(
+        self,
+        site_id: str,
+        comment_thread_id: str,
+        *,
+        content: str,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> CommentReply:
+        """
+        Create a reply to an existing comment thread.
+
+        The reply author is always the user who authorized the OAuth token.
+        To @mention a user in the reply, include their user ID in double square brackets in the `content` field, as in `[[userId]]`.
+
+        <Note>
+          The `comment_created` webhook fires automatically when a reply is created.
+        </Note>
+
+        Required scope | `comments:write`
+
+        Parameters
+        ----------
+        site_id : str
+            Unique identifier for a Site
+
+        comment_thread_id : str
+            Unique identifier for a Comment Thread
+
+        content : str
+            The text content of the reply. To @mention a user, include their user ID in double square brackets, as in `[[userId]]`.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        CommentReply
+            Reply created successfully
+
+        Examples
+        --------
+        import asyncio
+
+        from webflow import AsyncWebflow
+
+        client = AsyncWebflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+
+
+        async def main() -> None:
+            await client.sites.comments.create_comment_reply(
+                site_id="580e63e98c9a982ac9b8b741",
+                comment_thread_id="580e63e98c9a982ac9b8b741",
+                content="Thanks for the feedback [[6287ec36a841b25637c663df]]!",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.create_comment_reply(
+            site_id, comment_thread_id, content=content, request_options=request_options
         )
         return _response.data

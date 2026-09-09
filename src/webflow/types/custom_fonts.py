@@ -6,12 +6,19 @@ import pydantic
 import typing_extensions
 from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
 from ..core.serialization import FieldMetadata
+from .custom_font import CustomFont
+from .pagination import Pagination
 
 
-class FieldValidationsAdditionalPropertiesAdditionalProperties(UniversalBaseModel):
-    additional_properties: typing_extensions.Annotated[
-        typing.Any, FieldMetadata(alias="additionalProperties"), pydantic.Field(alias="additionalProperties")
+class CustomFonts(UniversalBaseModel):
+    """
+    A list of custom fonts
+    """
+
+    custom_fonts: typing_extensions.Annotated[
+        typing.List[CustomFont], FieldMetadata(alias="customFonts"), pydantic.Field(alias="customFonts")
     ]
+    pagination: Pagination
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

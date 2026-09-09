@@ -79,7 +79,7 @@ client.token.authorized_by()
 
 Information about the authorization token
 
-<Note>Access to this endpoint requires a bearer token from a [Data Client App](/data/docs/getting-started-data-clients).</Note>
+<Note>Access to this endpoint requires a bearer token from a [Data Client App](/data/docs/data-clients/getting-started).</Note>
 </dd>
 </dl>
 </dd>
@@ -630,9 +630,14 @@ client.sites.get_custom_domain(
 <dl>
 <dd>
 
-Publishes a site to one or more more domains.
+Publishes a site or an individual page to one or more domains.
+If multiple individual pages are published to staging, publishing from staging to production publishes all staged changes.
 
 To publish to a specific custom domain, use the domain IDs from the [Get Custom Domains](/data/reference/sites/get-custom-domain) endpoint.
+
+You must include at least one of the `customDomains` or `publishToWebflowSubdomain` properties in the request body.
+
+To publish an individual page instead of the entire site, provide the ID of the page in the `pageId` parameter.
 
 <Note title="Rate limit: 1 publish per minute">This endpoint has a specific rate limit of one successful publish queue per minute.</Note>
 
@@ -699,6 +704,14 @@ client.sites.publish(
 <dd>
 
 **publish_to_webflow_subdomain:** `typing.Optional[bool]` — Choice of whether to publish to the default Webflow Subdomain
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**page_id:** `typing.Optional[str]` — The ID of the page to publish
     
 </dd>
 </dl>
@@ -1076,6 +1089,119 @@ client.collections.delete(
 </dl>
 </details>
 
+<details><summary><code>client.collections.<a href="src/webflow/collections/client.py">patch</a>(...) -> Collection</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Update a collection's display name, singular name, slug, or field groups.
+
+**Field group rules:**
+- A collection can have a maximum of 50 field groups
+- Each `displayName` must be unique across all field groups in the collection
+- Each `fieldId` must be unique across all field groups in the collection
+- Ecommerce collections do not support field groups
+
+Required scope | `cms:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow
+from webflow.environment import WebflowEnvironment
+
+client = Webflow(
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
+)
+
+client.collections.patch(
+    collection_id="580e63fc8c9a982ac9b8b745",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**collection_id:** `str` — Unique identifier for a Collection
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**display_name:** `typing.Optional[str]` — Name given to the Collection
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**singular_name:** `typing.Optional[str]` — The name of one Item in Collection (e.g. ”Blog Post” if the Collection is called “Blog Posts”)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**slug:** `typing.Optional[str]` — Slug of Collection in Site URL structure
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**field_groups:** `typing.Optional[typing.List[FieldGroup]]` — The list of field groups in the Collection. Replaces the existing field groups.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 ## Pages
 <details><summary><code>client.pages.<a href="src/webflow/pages/client.py">list</a>(...) -> PageList</code></summary>
 <dl>
@@ -1147,7 +1273,7 @@ client.pages.list(
 
 Unique identifier for a specific Locale.
 
-[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -1223,6 +1349,7 @@ client = Webflow(
 client.pages.get_metadata(
     page_id="63c720f9347c2139b248e552",
     locale_id="65427cf400e02b306eaa04a0",
+    translatable="65427cf400e02b306eaa04a0",
 )
 
 ```
@@ -1251,7 +1378,27 @@ client.pages.get_metadata(
 
 Unique identifier for a specific Locale.
 
-[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**translatable:** `typing.Optional[str]` 
+
+Unique identifier for the secondary Locale you're translating **into**. Returns only content that hasn't been excluded from translation for that locale.
+
+This is independent of `localeId`, which selects which version of the content is returned. To fetch the source text to translate, request the primary locale's content and set `translatable` to the locale you're translating into:
+
+`?localeId={primary locale id}&translatable={target locale id}`
+
+Only exclusion rules scoped to manual translation are respected — rules scoped only to automatic translation don't affect this parameter's response.
+
+Omitting `translatable` returns the same response as if this parameter didn't exist. The value must be the id of one of the site's secondary locales — the primary locale id, or any other value, returns a `400` error. Requires translation exclusions to be enabled for the site; if they aren't, the request returns a `403` error.
+
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -1352,7 +1499,7 @@ client.pages.update_page_settings(
 
 Unique identifier for a specific Locale.
 
-[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -1372,8 +1519,9 @@ Unique identifier for a specific Locale.
 
 Slug for the page.
 
-
-**Note:** Updating slugs in secondary locales is only supported in <a href="https://webflow.com/localization">Advanced and Enterprise localization add-on plans.</a>
+**Note:** The slug field is ignored in the following cases — all other fields in the same request still apply:
+- The site's home page, collection template pages, and utility pages (e.g. 404, password, search).
+- For secondary locales, updating the slug requires an <a href="https://webflow.com/feature/localization">Advanced or Enterprise localization add-on plan</a>.
     
 </dd>
 </dl>
@@ -1453,6 +1601,7 @@ client.pages.get_content(
     locale_id="65427cf400e02b306eaa04a0",
     limit=1,
     offset=1,
+    translatable="65427cf400e02b306eaa04a0",
 )
 
 ```
@@ -1481,7 +1630,7 @@ client.pages.get_content(
 
 Unique identifier for a specific Locale.
 
-[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -1498,6 +1647,26 @@ Unique identifier for a specific Locale.
 <dd>
 
 **offset:** `typing.Optional[int]` — Offset used for pagination if the results have more than limit records
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**translatable:** `typing.Optional[str]` 
+
+Unique identifier for the secondary Locale you're translating **into**. Returns only content that hasn't been excluded from translation for that locale.
+
+This is independent of `localeId`, which selects which version of the content is returned. To fetch the source text to translate, request the primary locale's content and set `translatable` to the locale you're translating into:
+
+`?localeId={primary locale id}&translatable={target locale id}`
+
+Only exclusion rules scoped to manual translation are respected — rules scoped only to automatic translation don't affect this parameter's response.
+
+Omitting `translatable` returns the same response as if this parameter didn't exist. The value must be the id of one of the site's secondary locales — the primary locale id, or any other value, returns a `400` error. Requires translation exclusions to be enabled for the site; if they aren't, the request returns a `403` error.
+
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -1790,6 +1959,7 @@ client.components.get_content(
     branch_id="68026fa68ef6dc744c75b833",
     limit=1,
     offset=1,
+    translatable="65427cf400e02b306eaa04a0",
 )
 
 ```
@@ -1826,7 +1996,7 @@ client.components.get_content(
 
 Unique identifier for a specific Locale.
 
-[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -1851,6 +2021,26 @@ Unique identifier for a specific Locale.
 <dd>
 
 **offset:** `typing.Optional[int]` — Offset used for pagination if the results have more than limit records
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**translatable:** `typing.Optional[str]` 
+
+Unique identifier for the secondary Locale you're translating **into**. Returns only content that hasn't been excluded from translation for that locale.
+
+This is independent of `localeId`, which selects which version of the content is returned. To fetch the source text to translate, request the primary locale's content and set `translatable` to the locale you're translating into:
+
+`?localeId={primary locale id}&translatable={target locale id}`
+
+Only exclusion rules scoped to manual translation are respected — rules scoped only to automatic translation don't affect this parameter's response.
+
+Omitting `translatable` returns the same response as if this parameter didn't exist. The value must be the id of one of the site's secondary locales — the primary locale id, or any other value, returns a `400` error. Requires translation exclusions to be enabled for the site; if they aren't, the request returns a `403` error.
+
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -1987,7 +2177,7 @@ client.components.update_content(
 
 Unique identifier for a specific Locale.
 
-[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -2061,6 +2251,7 @@ client.components.get_properties(
     branch_id="68026fa68ef6dc744c75b833",
     limit=1,
     offset=1,
+    translatable="65427cf400e02b306eaa04a0",
 )
 
 ```
@@ -2097,7 +2288,7 @@ client.components.get_properties(
 
 Unique identifier for a specific Locale.
 
-[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -2122,6 +2313,26 @@ Unique identifier for a specific Locale.
 <dd>
 
 **offset:** `typing.Optional[int]` — Offset used for pagination if the results have more than limit records
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**translatable:** `typing.Optional[str]` 
+
+Unique identifier for the secondary Locale you're translating **into**. Returns only content that hasn't been excluded from translation for that locale.
+
+This is independent of `localeId`, which selects which version of the content is returned. To fetch the source text to translate, request the primary locale's content and set `translatable` to the locale you're translating into:
+
+`?localeId={primary locale id}&translatable={target locale id}`
+
+Only exclusion rules scoped to manual translation are respected — rules scoped only to automatic translation don't affect this parameter's response.
+
+Omitting `translatable` returns the same response as if this parameter didn't exist. The value must be the id of one of the site's secondary locales — the primary locale id, or any other value, returns a `400` error. Requires translation exclusions to be enabled for the site; if they aren't, the request returns a `403` error.
+
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -2244,7 +2455,7 @@ client.components.update_properties(
 
 Unique identifier for a specific Locale.
 
-[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -2290,6 +2501,8 @@ Get a list of scripts that have been registered to a site. A site can have a max
 <Note title="Script Registration">
   To apply a script to a site or page, the script must first be registered to a site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints. See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
 </Note>
+
+<Note>Access to this endpoint requires a bearer token obtained from an [OAuth Code Grant Flow](/data/reference/oauth-app).</Note>
 
 Required scope | `custom_code:read`
 </dd>
@@ -2369,6 +2582,8 @@ Register a hosted script to a site.
 <Note title="Script Registration">
   To apply a script to a site or page, the script must first be registered to a site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints. See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
 </Note>
+
+<Note>Access to this endpoint requires a bearer token obtained from an [OAuth Code Grant Flow](/data/reference/oauth-app).</Note>
 
 Required scope | `custom_code:write`
 </dd>
@@ -2492,6 +2707,8 @@ Register an inline script to a site. Inline scripts are limited to 2000 characte
 <Note title="Script Registration">
   To apply a script to a site or page, the script must first be registered to a site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints. See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
 </Note>
+
+<Note>Access to this endpoint requires a bearer token obtained from an [OAuth Code Grant Flow](/data/reference/oauth-app).</Note>
 
 Required scope | `custom_code:write`
 </dd>
@@ -2637,8 +2854,10 @@ client = Webflow(
 
 client.assets.list(
     site_id="580e63e98c9a982ac9b8b741",
+    locale_id="65427cf400e02b306eaa04a0",
     offset=1,
     limit=1,
+    folder_id="folderId",
 )
 
 ```
@@ -2663,6 +2882,18 @@ client.assets.list(
 <dl>
 <dd>
 
+**locale_id:** `typing.Optional[str]` 
+
+Unique identifier for a specific Locale.
+
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **offset:** `typing.Optional[int]` — Offset used for pagination if the results have more than limit records
     
 </dd>
@@ -2672,6 +2903,17 @@ client.assets.list(
 <dd>
 
 **limit:** `typing.Optional[int]` — Maximum number of records to be returned (max limit: 100)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**folder_id:** `typing.Optional[str]` 
+
+Filter assets to those in the specified folder and all descendant folders.
+Must be a 24-character hex ObjectId.
     
 </dd>
 </dl>
@@ -2840,6 +3082,7 @@ client = Webflow(
 
 client.assets.get(
     asset_id="580e63fc8c9a982ac9b8b745",
+    locale_id="65427cf400e02b306eaa04a0",
 )
 
 ```
@@ -2857,6 +3100,18 @@ client.assets.get(
 <dd>
 
 **asset_id:** `str` — Unique identifier for an Asset on a site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**locale_id:** `typing.Optional[str]` 
+
+Unique identifier for a specific Locale.
+
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -2990,6 +3245,7 @@ client = Webflow(
 
 client.assets.update(
     asset_id="580e63fc8c9a982ac9b8b745",
+    locale_id="65427cf400e02b306eaa04a0",
 )
 
 ```
@@ -3014,7 +3270,11 @@ client.assets.update(
 <dl>
 <dd>
 
-**locale_id:** `typing.Optional[str]` — Unique identifier for a specific locale. Applicable, when using localization.
+**locale_id:** `typing.Optional[str]` 
+
+Unique identifier for a specific Locale.
+
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -3022,7 +3282,15 @@ client.assets.update(
 <dl>
 <dd>
 
-**display_name:** `typing.Optional[str]` — A human readable name for the asset
+**display_name:** `typing.Optional[str]` — A human readable name for the asset. This value is not localizable.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**alt_text:** `typing.Optional[str]` — Alternate text describing the image
     
 </dd>
 </dl>
@@ -3284,6 +3552,847 @@ client.assets.get_folder(
 </dl>
 </details>
 
+## Custom Fonts
+<details><summary><code>client.custom_fonts.<a href="src/webflow/custom_fonts/client.py">list</a>(...) -> CustomFonts</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+List the custom fonts uploaded to a site.
+
+Required scope | `sites:read`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow
+from webflow.environment import WebflowEnvironment
+
+client = Webflow(
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
+)
+
+client.custom_fonts.list(
+    site_id="580e63e98c9a982ac9b8b741",
+    offset=1,
+    limit=1,
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**offset:** `typing.Optional[int]` — Offset used for pagination if the results have more than limit records
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[int]` — Maximum number of records to be returned (max limit: 100)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.custom_fonts.<a href="src/webflow/custom_fonts/client.py">create</a>(...) -> CustomFontCreateResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Register a custom font on a site and get a presigned S3 URL to upload the font binary.
+
+The response includes a `customFont` object and an `upload` object. Use the `upload.url` and `upload.fields`
+to POST the font binary directly to S3 as `multipart/form-data`. The binary must go in a field named `file`
+and must be the last field in the form (an AWS S3 requirement). S3 returns `201 Created` on a successful upload.
+
+To learn more, see [Custom fonts](/data/docs/custom-fonts).
+
+Required scope | `sites:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow
+from webflow.environment import WebflowEnvironment
+
+client = Webflow(
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
+)
+
+client.custom_fonts.create(
+    site_id="580e63e98c9a982ac9b8b741",
+    file_name="AcmeSans-Regular.woff2",
+    file_hash="3c7d87c9575702bc3b1e991f4d3c638e",
+    font_family="Acme Sans",
+    weight=400,
+    italic=False,
+    font_display="auto",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**file_name:** `str` — File name including extension. Accepted extensions are `.woff2`, `.woff`, `.ttf`, `.otf`, and `.eot`. Maximum 256 characters.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**file_hash:** `str` — Lowercase hex MD5 hash of the font binary (exactly 32 characters)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**font_family:** `str` — The CSS font-family name (1-256 characters). Commas are stripped server-side.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**weight:** `int` — CSS font-weight value (1-1000)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**italic:** `bool` — Whether the font is italic
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**font_display:** `CustomFontsCreateRequestFontDisplay` — CSS font-display value
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**axes:** `typing.Optional[typing.List[CustomFontAxis]]` — Variable font axes. Omit or pass an empty array for static fonts.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.custom_fonts.<a href="src/webflow/custom_fonts/client.py">get</a>(...) -> CustomFontsGetResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Get details about a custom font on a site.
+
+Required scope | `sites:read`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow
+from webflow.environment import WebflowEnvironment
+
+client = Webflow(
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
+)
+
+client.custom_fonts.get(
+    site_id="580e63e98c9a982ac9b8b741",
+    font_id="66f3a1b2c4d5e6f7a8b9c0d1",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**font_id:** `str` — Unique identifier for a custom font on a site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.custom_fonts.<a href="src/webflow/custom_fonts/client.py">delete</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Delete a custom font from a site.
+
+Required scope | `sites:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow
+from webflow.environment import WebflowEnvironment
+
+client = Webflow(
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
+)
+
+client.custom_fonts.delete(
+    site_id="580e63e98c9a982ac9b8b741",
+    font_id="66f3a1b2c4d5e6f7a8b9c0d1",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**font_id:** `str` — Unique identifier for a custom font on a site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.custom_fonts.<a href="src/webflow/custom_fonts/client.py">update</a>(...) -> CustomFontsUpdateResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Update the metadata of a custom font. The font binary is not changed by this endpoint.
+To replace the binary, use [Replace custom font file](#operation/replace-custom-font-file).
+
+The request body must include at least one of `fontFamily`, `weight`, `italic`, or `fontDisplay`.
+
+Required scope | `sites:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow
+from webflow.environment import WebflowEnvironment
+
+client = Webflow(
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
+)
+
+client.custom_fonts.update(
+    site_id="580e63e98c9a982ac9b8b741",
+    font_id="66f3a1b2c4d5e6f7a8b9c0d1",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**font_id:** `str` — Unique identifier for a custom font on a site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**font_family:** `typing.Optional[str]` — The CSS font-family name (1-256 characters)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**weight:** `typing.Optional[int]` — CSS font-weight value (1-1000)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**italic:** `typing.Optional[bool]` — Whether the font is italic
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**font_display:** `typing.Optional[CustomFontsUpdateRequestFontDisplay]` — CSS font-display value
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.custom_fonts.<a href="src/webflow/custom_fonts/client.py">replace_file</a>(...) -> CustomFontCreateResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Replace the binary of an existing custom font while preserving its ID and any references to it.
+The upload handshake is identical to [Create custom font](#operation/create-custom-font).
+
+If the existing font has a non-empty `axes` array (a variable font), you must include an `axes` field
+in the request. Send `axes: []` to declare that the new binary is a static font, or send the new variable
+axes to declare it is still variable. Omitting `axes` when the existing font is variable returns `400`.
+
+Required scope | `sites:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow
+from webflow.environment import WebflowEnvironment
+
+client = Webflow(
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
+)
+
+client.custom_fonts.replace_file(
+    site_id="580e63e98c9a982ac9b8b741",
+    font_id="66f3a1b2c4d5e6f7a8b9c0d1",
+    file_name="AcmeSans-Regular-v2.woff2",
+    file_hash="3c7d87c9575702bc3b1e991f4d3c638e",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**font_id:** `str` — Unique identifier for a custom font on a site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**file_name:** `str` — File name including extension. Accepted extensions are `.woff2`, `.woff`, `.ttf`, `.otf`, and `.eot`. Maximum 256 characters.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**file_hash:** `str` — Lowercase hex MD5 hash of the font binary (exactly 32 characters)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**axes:** `typing.Optional[typing.List[CustomFontAxis]]` — Variable font axes for the replacement binary. Required when the existing font has a non-empty `axes` array.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.custom_fonts.<a href="src/webflow/custom_fonts/client.py">batch_create</a>(...) -> CustomFontBatchCreateResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Register 1–25 custom fonts in a single request and get a presigned S3 URL for each one.
+This collapses the registration step for a whole font family (for example, Regular, Bold,
+Italic, and Bold Italic) into one rate-limited request.
+
+Registration is batched, but the binary uploads are not: the response contains one `upload`
+object per registered font, and you must POST each font binary to its own presigned S3 URL
+exactly as you would for [Create custom font](#operation/create-custom-font). The Webflow API
+server never receives the raw font bytes.
+
+The response is `200 OK` for a valid request body. Per-font results are reported in the
+`created` and `failed` arrays. If the site's font limit is reached partway through the batch,
+the fonts that still fit are registered and returned in `created`, while the rest appear in
+`failed` with `name: "FontLimitReached"` — valid fonts are never discarded because a later
+font in the same batch could not be registered. Each presigned URL expires approximately
+15 minutes after issuance, so upload the binaries promptly.
+
+Required scope | `sites:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow
+from webflow.environment import WebflowEnvironment
+from webflow.custom_fonts import CustomFontBatchCreateRequestItemsItem
+
+client = Webflow(
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
+)
+
+client.custom_fonts.batch_create(
+    site_id="580e63e98c9a982ac9b8b741",
+    items=[
+        CustomFontBatchCreateRequestItemsItem(
+            file_name="AcmeSans-Regular.woff2",
+            file_hash="3c7d87c9575702bc3b1e991f4d3c638e",
+            font_family="Acme Sans",
+            weight=400,
+            italic=False,
+            font_display="auto",
+        )
+    ],
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**items:** `typing.List[CustomFontBatchCreateRequestItemsItem]` — The custom fonts to register. Each item uses the same shape as the single-font create request.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.custom_fonts.<a href="src/webflow/custom_fonts/client.py">batch_delete</a>(...) -> CustomFontBatchDeleteResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Delete 1-100 custom fonts in a single request. The response is always `200 OK` for a valid request body.
+Per-font results are reported in the `deleted` and `failed` arrays.
+
+The endpoint is idempotent: fonts that do not exist appear in `failed` with `name: "NotFound"` rather than
+failing the entire request. You can safely retry a partial failure by re-sending only the IDs that did not
+appear in `deleted`.
+
+Required scope | `sites:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow
+from webflow.environment import WebflowEnvironment
+from webflow.custom_fonts import CustomFontBatchDeleteRequestItemsItem
+
+client = Webflow(
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
+)
+
+client.custom_fonts.batch_delete(
+    site_id="580e63e98c9a982ac9b8b741",
+    items=[
+        CustomFontBatchDeleteRequestItemsItem(
+            id="66f3a1b2c4d5e6f7a8b9c0d1",
+        )
+    ],
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**items:** `typing.List[CustomFontBatchDeleteRequestItemsItem]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 ## Webhooks
 <details><summary><code>client.webhooks.<a href="src/webflow/webhooks/client.py">list</a>(...) -> WebhookList</code></summary>
 <dl>
@@ -3376,7 +4485,7 @@ Create a new Webhook.
 
 Limit of 75 registrations per `triggerType`, per site.
 
-<Note>Access to this endpoint requires a bearer token from a [Data Client App](/data/docs/getting-started-data-clients).</Note>
+<Note>Access to this endpoint requires a bearer token from a [Data Client App](/data/docs/data-clients/getting-started).</Note>
 Required scope | `sites:write`
 </dd>
 </dl>
@@ -5667,6 +6776,1067 @@ client.ecommerce.get_settings(
 </dl>
 </details>
 
+## Analyze Reports
+<details><summary><code>client.analyze.reports.<a href="src/webflow/analyze/reports/client.py">traffic</a>(...) -> TrafficResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns a daily time series of a single metric — sessions, users, or pageviews — over a time window.
+
+Filter the report with top-level query parameters (`country`, `deviceType`, `pagePath`, etc.) or via the `filter` parameter for multi-value and negation matching.
+
+<Warning title="Analyze add-on required">This endpoint requires a workspace with the Analyze add-on.</Warning>
+
+<Note title="Concurrency limit: 1 request at a time">Each access token can have one Analyze request in flight at a time, across all Analyze endpoints. Additional concurrent requests return `429 Too Many Requests`; wait for your in-flight request to finish, or for the `Retry-After` interval, then retry.</Note>
+
+Required scope | `sites:read`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow
+from webflow.environment import WebflowEnvironment
+import datetime
+
+client = Webflow(
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
+)
+
+client.analyze.reports.traffic(
+    site_id="580e63e98c9a982ac9b8b741",
+    start_time=datetime.datetime.fromisoformat("2026-04-01T00:00:00+00:00"),
+    end_time=datetime.datetime.fromisoformat("2026-04-08T00:00:00+00:00"),
+    metric_scope="session",
+    bucket_time_zone="America/New_York",
+    device_type="desktop",
+    country="US",
+    page_path="/towels",
+    traffic_source="SO",
+    referrer="google.com",
+    browser="Chrome",
+    utm_campaign="dont-panic-2026",
+    utm_medium="email",
+    utm_source="hitchhikers-guide",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**start_time:** `datetime.datetime` — Inclusive start of the reporting window. Must be a UTC timestamp in ISO 8601 / RFC 3339 format ending in `Z` (for example, `2026-04-01T00:00:00Z`); numeric offsets such as `-04:00` or `+00:00` are not accepted. Must be on or after `2025-04-09T00:00:00Z`.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**end_time:** `datetime.datetime` — Exclusive end of the reporting window. Must be a UTC timestamp in ISO 8601 / RFC 3339 format ending in `Z` (for example, `2026-04-08T00:00:00Z`); numeric offsets such as `-04:00` or `+00:00` are not accepted. Must be greater than `startTime` and within 100 days of it.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**metric_scope:** `TrafficMetricScope` — The unit each `count` data point is measured in.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**bucket_time_zone:** `AnalyzeBucketTimeZone` — IANA time zone used to align daily bucket boundaries.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**device_type:** `typing.Optional[ReportsTrafficRequestDeviceType]` — Restrict the report to a single device type.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**country:** `typing.Optional[str]` — Restrict the report to a single country. ISO 3166-1 alpha-2 (two letters, normalized to uppercase).
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**page_path:** `typing.Optional[str]` — Restrict the report to a single page path.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**traffic_source:** `typing.Optional[str]` — Restrict the report to a single traffic source code (for example, `SO` for Organic Search).
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**referrer:** `typing.Optional[str]` — Restrict the report to a single referrer domain.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**browser:** `typing.Optional[str]` — Restrict the report to a single browser.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**utm_campaign:** `typing.Optional[str]` — Restrict the report to a single `utm_campaign` value.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**utm_medium:** `typing.Optional[str]` — Restrict the report to a single `utm_medium` value.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**utm_source:** `typing.Optional[str]` — Restrict the report to a single `utm_source` value.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**filter:** `typing.Optional[TrafficFilter]` 
+
+Filter the report by dimension. Use bracket notation. Scalars take a single value (`filter[country][eq]=US`, `filter[country][ne]=US`). Arrays use indexed brackets (`filter[country][in][0]=US&filter[country][in][1]=CA`, `filter[country][nin][0]=US&filter[country][nin][1]=CA`).
+Each dimension entry takes at least one of `eq`, `in`, `ne`, or `nin`. Filter a given dimension in one place — either a top-level query parameter or a `filter` entry. See the `TrafficFilter` schema for the full list of supported dimensions.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.analyze.reports.<a href="src/webflow/analyze/reports/client.py">top_pages</a>(...) -> TopPagesResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns the most-visited pages over a time window, ranked by `sortBy` (sessions, users, or pageviews).
+
+Each row carries all three scope counts; `sortBy` only governs ordering. Filter the report with top-level query parameters (`country`, `deviceType`, `pagePath`, etc.) or via the `filter` parameter for multi-value and negation matching.
+
+Set `timeseries[bucketTimeZone]` to attach a daily pageview `timeseries` to each row. Bucket counts are always pageviews regardless of `sortBy` — row-level counts honor the requested sort; the timeseries does not.
+
+<Warning title="Analyze add-on required">This endpoint requires a workspace with the Analyze add-on.</Warning>
+
+<Note title="Concurrency limit: 1 request at a time">Each access token can have one Analyze request in flight at a time, across all Analyze endpoints. Additional concurrent requests return `429 Too Many Requests`; wait for your in-flight request to finish, or for the `Retry-After` interval, then retry.</Note>
+
+Required scope | `sites:read`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow
+from webflow.environment import WebflowEnvironment
+import datetime
+
+client = Webflow(
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
+)
+
+client.analyze.reports.top_pages(
+    site_id="580e63e98c9a982ac9b8b741",
+    start_time=datetime.datetime.fromisoformat("2026-04-01T00:00:00+00:00"),
+    end_time=datetime.datetime.fromisoformat("2026-04-08T00:00:00+00:00"),
+    sort_by="session",
+    limit=1,
+    device_type="desktop",
+    country="US",
+    page_path="/towels",
+    traffic_source="SO",
+    referrer="google.com",
+    browser="Chrome",
+    utm_campaign="dont-panic-2026",
+    utm_medium="email",
+    utm_source="hitchhikers-guide",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**start_time:** `datetime.datetime` — Inclusive start of the reporting window. Must be a UTC timestamp in ISO 8601 / RFC 3339 format ending in `Z` (for example, `2026-04-01T00:00:00Z`); numeric offsets such as `-04:00` or `+00:00` are not accepted. Must be on or after `2025-04-09T00:00:00Z`.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**end_time:** `datetime.datetime` — Exclusive end of the reporting window. Must be a UTC timestamp in ISO 8601 / RFC 3339 format ending in `Z` (for example, `2026-04-08T00:00:00Z`); numeric offsets such as `-04:00` or `+00:00` are not accepted. Must be greater than `startTime` and within 100 days of it.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sort_by:** `typing.Optional[TopPagesSortBy]` — Metric used to rank rows in the response, descending. Defaults to `session`.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[int]` — Maximum number of rows to return. Defaults to `25`, up to a maximum of `250`.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**timeseries:** `typing.Optional[AnalyzeDailyTimeseriesQuery]` — Include a daily pageview `timeseries` for each row, bucketed in the supplied IANA time zone. Omit this parameter to return ranked rows without per-page timeseries data.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**device_type:** `typing.Optional[ReportsTopPagesRequestDeviceType]` — Restrict the report to a single device type.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**country:** `typing.Optional[str]` — Restrict the report to a single country. ISO 3166-1 alpha-2 (two letters, normalized to uppercase).
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**page_path:** `typing.Optional[str]` — Restrict the report to a single page path.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**traffic_source:** `typing.Optional[str]` — Restrict the report to a single traffic source code (for example, `SO` for Organic Search).
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**referrer:** `typing.Optional[str]` — Restrict the report to a single referrer domain.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**browser:** `typing.Optional[str]` — Restrict the report to a single browser.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**utm_campaign:** `typing.Optional[str]` — Restrict the report to a single `utm_campaign` value.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**utm_medium:** `typing.Optional[str]` — Restrict the report to a single `utm_medium` value.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**utm_source:** `typing.Optional[str]` — Restrict the report to a single `utm_source` value.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**filter:** `typing.Optional[TopPagesFilter]` 
+
+Filter the report by dimension. Use bracket notation. Scalars take a single value (`filter[country][eq]=US`, `filter[country][ne]=US`). Arrays use indexed brackets (`filter[country][in][0]=US&filter[country][in][1]=CA`, `filter[country][nin][0]=US&filter[country][nin][1]=CA`).
+Each dimension entry takes at least one of `eq`, `in`, `ne`, or `nin`. Filter a given dimension in one place — either a top-level query parameter or a `filter` entry. See the `TopPagesFilter` schema for the full list of supported dimensions.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.analyze.reports.<a href="src/webflow/analyze/reports/client.py">top_dimensions</a>(...) -> TopDimensionsResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns the top values within a chosen `dimension` — top countries, top traffic sources, top campaigns, top audiences, and so on — over a time window, ranked by sessions or users.
+
+Filter the report with top-level query parameters (`country`, `deviceType`, `pagePath`, etc.) or via the `filter` parameter for multi-value and negation matching.
+
+<Warning title="Analyze add-on required">This endpoint requires a workspace with the Analyze add-on.</Warning>
+
+<Note title="Concurrency limit: 1 request at a time">Each access token can have one Analyze request in flight at a time, across all Analyze endpoints. Additional concurrent requests return `429 Too Many Requests`; wait for your in-flight request to finish, or for the `Retry-After` interval, then retry.</Note>
+
+Required scope | `sites:read`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow
+from webflow.environment import WebflowEnvironment
+import datetime
+
+client = Webflow(
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
+)
+
+client.analyze.reports.top_dimensions(
+    site_id="580e63e98c9a982ac9b8b741",
+    start_time=datetime.datetime.fromisoformat("2026-04-01T00:00:00+00:00"),
+    end_time=datetime.datetime.fromisoformat("2026-04-08T00:00:00+00:00"),
+    dimension="country",
+    metric_scope="session",
+    limit=1,
+    device_type="desktop",
+    country="US",
+    page_path="/towels",
+    traffic_source="SO",
+    referrer="google.com",
+    browser="Chrome",
+    utm_campaign="dont-panic-2026",
+    utm_medium="email",
+    utm_source="hitchhikers-guide",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**start_time:** `datetime.datetime` — Inclusive start of the reporting window. Must be a UTC timestamp in ISO 8601 / RFC 3339 format ending in `Z` (for example, `2026-04-01T00:00:00Z`); numeric offsets such as `-04:00` or `+00:00` are not accepted. Must be on or after `2025-04-09T00:00:00Z`.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**end_time:** `datetime.datetime` — Exclusive end of the reporting window. Must be a UTC timestamp in ISO 8601 / RFC 3339 format ending in `Z` (for example, `2026-04-08T00:00:00Z`); numeric offsets such as `-04:00` or `+00:00` are not accepted. Must be greater than `startTime` and within 100 days of it.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**dimension:** `TopDimensionsDimension` — The dimension whose top values are ranked. See `TopDimensionsDimension` for the supported values.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**metric_scope:** `TopDimensionsMetricScope` — The unit each row's `count` is measured in — sessions or users.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[int]` — Maximum number of rows to return. Defaults to `25`, up to a maximum of `100`.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**device_type:** `typing.Optional[ReportsTopDimensionsRequestDeviceType]` — Restrict the report to a single device type.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**country:** `typing.Optional[str]` — Restrict the report to a single country. ISO 3166-1 alpha-2 (two letters, normalized to uppercase).
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**page_path:** `typing.Optional[str]` — Restrict the report to a single page path.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**traffic_source:** `typing.Optional[str]` — Restrict the report to a single traffic source code (for example, `SO` for Organic Search).
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**referrer:** `typing.Optional[str]` — Restrict the report to a single referrer domain.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**browser:** `typing.Optional[str]` — Restrict the report to a single browser.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**utm_campaign:** `typing.Optional[str]` — Restrict the report to a single `utm_campaign` value.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**utm_medium:** `typing.Optional[str]` — Restrict the report to a single `utm_medium` value.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**utm_source:** `typing.Optional[str]` — Restrict the report to a single `utm_source` value.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**filter:** `typing.Optional[TopDimensionsFilter]` 
+
+Filter the report by dimension. Use bracket notation. Scalars take a single value (`filter[country][eq]=US`, `filter[country][ne]=US`). Arrays use indexed brackets (`filter[country][in][0]=US&filter[country][in][1]=CA`, `filter[country][nin][0]=US&filter[country][nin][1]=CA`).
+Each dimension entry takes at least one of `eq`, `in`, `ne`, or `nin`. Filter a given dimension in one place — either a top-level query parameter or a `filter` entry. See the `TopDimensionsFilter` schema for the full list of supported dimensions.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.analyze.reports.<a href="src/webflow/analyze/reports/client.py">top_events</a>(...) -> TopEventsResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns the top events over a time window, ranked by how often they occurred.
+
+Events are counted individually, not rolled up into sessions, users, or pageviews — so this report has no `metricScope`. Each row's `count` is how many times the event occurred. Filter the report with top-level query parameters (`country`, `deviceType`, `pagePath`, etc.) or via the `filter` parameter for multi-value and negation matching.
+
+Set `timeseries[bucketTimeZone]` to attach a daily event count `timeseries` to each row.
+
+<Warning title="Analyze add-on required">This endpoint requires a workspace with the Analyze add-on.</Warning>
+
+<Note title="Concurrency limit: 1 request at a time">Each access token can have one Analyze request in flight at a time, across all Analyze endpoints. Additional concurrent requests return `429 Too Many Requests`; wait for your in-flight request to finish, or for the `Retry-After` interval, then retry.</Note>
+
+Required scope | `sites:read`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow
+from webflow.environment import WebflowEnvironment
+import datetime
+
+client = Webflow(
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
+)
+
+client.analyze.reports.top_events(
+    site_id="580e63e98c9a982ac9b8b741",
+    start_time=datetime.datetime.fromisoformat("2026-04-01T00:00:00+00:00"),
+    end_time=datetime.datetime.fromisoformat("2026-04-08T00:00:00+00:00"),
+    limit=1,
+    device_type="desktop",
+    country="US",
+    page_path="/towels",
+    traffic_source="SO",
+    browser="Chrome",
+    utm_campaign="dont-panic-2026",
+    utm_medium="email",
+    utm_source="hitchhikers-guide",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**start_time:** `datetime.datetime` — Inclusive start of the reporting window. Must be a UTC timestamp in ISO 8601 / RFC 3339 format ending in `Z` (for example, `2026-04-01T00:00:00Z`); numeric offsets such as `-04:00` or `+00:00` are not accepted. Must be on or after `2025-04-09T00:00:00Z`.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**end_time:** `datetime.datetime` — Exclusive end of the reporting window. Must be a UTC timestamp in ISO 8601 / RFC 3339 format ending in `Z` (for example, `2026-04-08T00:00:00Z`); numeric offsets such as `-04:00` or `+00:00` are not accepted. Must be greater than `startTime` and within 100 days of it.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[int]` — Maximum number of rows to return. Defaults to `25`, up to a maximum of `250`.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**timeseries:** `typing.Optional[AnalyzeDailyTimeseriesQuery]` — Include a daily event count `timeseries` for each row, bucketed in the supplied IANA time zone. Omit this parameter to return ranked rows without per-event timeseries data.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**device_type:** `typing.Optional[ReportsTopEventsRequestDeviceType]` — Restrict the report to a single device type.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**country:** `typing.Optional[str]` — Restrict the report to a single country. ISO 3166-1 alpha-2 (two letters, normalized to uppercase).
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**page_path:** `typing.Optional[str]` — Restrict the report to a single page path.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**traffic_source:** `typing.Optional[str]` — Restrict the report to a single traffic source code (for example, `SO` for Organic Search).
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**browser:** `typing.Optional[str]` — Restrict the report to a single browser.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**utm_campaign:** `typing.Optional[str]` — Restrict the report to a single `utm_campaign` value.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**utm_medium:** `typing.Optional[str]` — Restrict the report to a single `utm_medium` value.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**utm_source:** `typing.Optional[str]` — Restrict the report to a single `utm_source` value.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**filter:** `typing.Optional[TopEventsFilter]` 
+
+Filter the report by dimension. Use bracket notation. Scalars take a single value (`filter[country][eq]=US`, `filter[country][ne]=US`). Arrays use indexed brackets (`filter[country][in][0]=US&filter[country][in][1]=CA`, `filter[country][nin][0]=US&filter[country][nin][1]=CA`).
+Each dimension entry takes at least one of `eq`, `in`, `ne`, or `nin`. Filter a given dimension in one place — either a top-level query parameter or a `filter` entry. See the `TopEventsFilter` schema for the full list of supported dimensions.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.analyze.reports.<a href="src/webflow/analyze/reports/client.py">time_on_page</a>(...) -> TimeOnPageResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns the average time on page over a time window — as a single aggregate value, or bucketed by day or week when `timeseries` is supplied.
+
+Choose how the average is computed with `metricScope` (per session, user, or pageview). Filter the report with top-level query parameters (`country`, `deviceType`, `pagePath`, etc.) or via the `filter` parameter for multi-value and negation matching.
+
+<Warning title="Analyze add-on required">This endpoint requires a workspace with the Analyze add-on.</Warning>
+
+<Note title="Concurrency limit: 1 request at a time">Each access token can have one Analyze request in flight at a time, across all Analyze endpoints. Additional concurrent requests return `429 Too Many Requests`; wait for your in-flight request to finish, or for the `Retry-After` interval, then retry.</Note>
+
+Required scope | `sites:read`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow
+from webflow.environment import WebflowEnvironment
+import datetime
+
+client = Webflow(
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
+)
+
+client.analyze.reports.time_on_page(
+    site_id="580e63e98c9a982ac9b8b741",
+    start_time=datetime.datetime.fromisoformat("2026-04-01T00:00:00+00:00"),
+    end_time=datetime.datetime.fromisoformat("2026-04-08T00:00:00+00:00"),
+    metric_scope="session",
+    device_type="desktop",
+    country="US",
+    page_path="/towels",
+    traffic_source="SO",
+    referrer="google.com",
+    browser="Chrome",
+    utm_campaign="dont-panic-2026",
+    utm_medium="email",
+    utm_source="hitchhikers-guide",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**start_time:** `datetime.datetime` — Inclusive start of the reporting window. Must be a UTC timestamp in ISO 8601 / RFC 3339 format ending in `Z` (for example, `2026-04-01T00:00:00Z`); numeric offsets such as `-04:00` or `+00:00` are not accepted. Must be on or after `2025-04-09T00:00:00Z`.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**end_time:** `datetime.datetime` — Exclusive end of the reporting window. Must be a UTC timestamp in ISO 8601 / RFC 3339 format ending in `Z` (for example, `2026-04-08T00:00:00Z`); numeric offsets such as `-04:00` or `+00:00` are not accepted. Must be greater than `startTime` and within 100 days of it.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**metric_scope:** `TimeOnPageMetricScope` — How the average time on page is computed — per session, user, or pageview.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**timeseries:** `typing.Optional[TimeOnPageTimeseriesQuery]` — Include bucketed average time data using the supplied granularity and IANA time zone. Omit this parameter to return a single aggregate value for the requested window.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**device_type:** `typing.Optional[ReportsTimeOnPageRequestDeviceType]` — Restrict the report to a single device type.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**country:** `typing.Optional[str]` — Restrict the report to a single country. ISO 3166-1 alpha-2 (two letters, normalized to uppercase).
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**page_path:** `typing.Optional[str]` — Restrict the report to a single page path.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**traffic_source:** `typing.Optional[str]` — Restrict the report to a single traffic source code (for example, `SO` for Organic Search).
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**referrer:** `typing.Optional[str]` — Restrict the report to a single referrer domain.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**browser:** `typing.Optional[str]` — Restrict the report to a single browser.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**utm_campaign:** `typing.Optional[str]` — Restrict the report to a single `utm_campaign` value.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**utm_medium:** `typing.Optional[str]` — Restrict the report to a single `utm_medium` value.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**utm_source:** `typing.Optional[str]` — Restrict the report to a single `utm_source` value.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**filter:** `typing.Optional[TimeOnPageFilter]` 
+
+Filter the report by dimension. Use bracket notation. Scalars take a single value (`filter[country][eq]=US`, `filter[country][ne]=US`). Arrays use indexed brackets (`filter[country][in][0]=US&filter[country][in][1]=CA`, `filter[country][nin][0]=US&filter[country][nin][1]=CA`).
+Each dimension entry takes at least one of `eq`, `in`, `ne`, or `nin`. Filter a given dimension in one place — either a top-level query parameter or a `filter` entry. See the `TimeOnPageFilter` schema for the full list of supported dimensions.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 ## Collections Fields
 <details><summary><code>client.collections.fields.<a href="src/webflow/collections/fields/client.py">create</a>(...) -> FieldCreate</code></summary>
 <dl>
@@ -5971,7 +8141,18 @@ client.collections.fields.update(
 <dl>
 <dd>
 
+<Tip title="Components in Rich Text">
+  Rich Text field values can contain Webflow component instances as `<wf-component>` markup — see [Components in Rich Text](/data/docs/working-with-the-cms/components-in-rich-text) for the markup grammar, how to find component and property IDs, and the write constraints.
+</Tip>
+
 List of all Items within a Collection.
+
+<Note>
+  This endpoint supports:
+
+  - Custom `filter[...]` queries support up to 10 filter terms and 2 text-search terms per request.
+  - Custom `sort[...]` queries support up to 3 sort fields per request.
+</Note>
 
 Required scope | `CMS:read`
 </dd>
@@ -6003,8 +8184,9 @@ client.collections.items.list_items(
     limit=1,
     name="name",
     slug="slug",
-    sort_by="lastPublished",
+    sort_by="createdOn",
     sort_order="asc",
+    translatable="65427cf400e02b306eaa04a0",
 )
 
 ```
@@ -6069,7 +8251,72 @@ client.collections.items.list_items(
 <dl>
 <dd>
 
+**created_on:** `typing.Optional[ItemsListItemsRequestCreatedOn]` — Filter by the creation date of the item(s)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **last_published:** `typing.Optional[ItemsListItemsRequestLastPublished]` — Filter by the last published date of the item(s)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**last_updated:** `typing.Optional[ItemsListItemsRequestLastUpdated]` — Filter by the last updated date of the item(s)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**filter:** `typing.Optional[typing.Dict[str, typing.Optional[ItemsListItemsRequestFilterValue]]]` 
+
+Filter collection items by custom field values. Use bracket notation:
+`filter[<fieldSlug>][<operator>]=<value>`.
+
+Example: `filter[price][gte]=10&filter[price][lte]=100&filter[name][contains]=shirt`.
+
+Filters are combined with AND. You can combine custom field filters with top-level filters such as `name`, `slug`, `createdOn`, `lastPublished`, and `lastUpdated`. OR logic and nested filter groups are not supported on GET requests.
+
+More filter terms can increase request latency.
+
+Supported operators by field type:
+
+| Field type | Supported operators |
+| --- | --- |
+| `id` | `eq`, `ne`, `in`, `nin` |
+| `PlainText` | `eq`, `ne`, `in`, `nin`, `contains`, `ncontains`, `exists` |
+| `Number` | `eq`, `ne`, `gt`, `gte`, `lt`, `lte`, `in`, `nin`, `exists` |
+| `Switch` | `eq`, `ne`, `in`, `nin`, `exists` |
+| `DateTime` | `eq`, `ne`, `gt`, `gte`, `lt`, `lte`, `in`, `nin`, `exists` |
+| `Email`, `Phone`, `Link` | `eq`, `ne`, `in`, `nin`, `contains`, `ncontains`, `exists` |
+| `Color` | `eq`, `ne`, `in`, `nin`, `exists` |
+| `Reference` | `eq`, `ne`, `in`, `nin`, `exists` |
+| `Option` | `eq`, `ne`, `in`, `nin` |
+| `RichText`, `Image`, `MultiImage`, `VideoLink`, `MultiReference` | `exists` |
+
+`contains` and `ncontains` are case-insensitive. `ncontains` also matches items where the field is empty or not set.
+
+`exists=true` matches items where the field has a value. `exists=false` matches items where the field is missing or null. For `Switch` fields, `false` is still a set value.
+
+Value formats:
+
+| Field type | Value format |
+| --- | --- |
+| `Number` | A valid number, such as `10` or `12.5` |
+| `Switch` | `true` or `false` |
+| `DateTime` | ISO 8601 date-time string |
+| `id`, `Reference` | 24-character item ID |
+| `Option` | Option ID |
+| `in`, `nin` | Comma-separated list, up to 100 values |
+
+Invalid fields, invalid values, and operators that do not apply to a field type return a `400 BadArgument` response.
     
 </dd>
 </dl>
@@ -6086,6 +8333,41 @@ client.collections.items.list_items(
 <dd>
 
 **sort_order:** `typing.Optional[ItemsListItemsRequestSortOrder]` — Sorts the results by asc or desc
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sort:** `typing.Optional[typing.Dict[str, typing.Optional[ItemsListItemsRequestSortValue]]]` 
+
+Sort collection items by custom fields using bracket notation: `sort[<fieldSlug>]=<asc|desc>`.
+
+- Example: `sort[price]=desc`
+- Multiple sort fields are applied in query-string order. When `sort[...]` is provided, it takes precedence over `sortBy` and `sortOrder`.
+- Sortable field types: `PlainText`, `Email`, `Phone`, `Number`, `DateTime`, and `Switch`.
+- Unknown fields, invalid sort directions, and non-sortable field types return a `400 BadArgument` response.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**translatable:** `typing.Optional[str]` 
+
+Unique identifier for the secondary Locale you're translating **into**. Returns only content that hasn't been excluded from translation for that locale.
+
+This is independent of `localeId`, which selects which version of the content is returned. To fetch the source text to translate, request the primary locale's content and set `translatable` to the locale you're translating into:
+
+`?localeId={primary locale id}&translatable={target locale id}`
+
+Only exclusion rules scoped to manual translation are respected — rules scoped only to automatic translation don't affect this parameter's response.
+
+Omitting `translatable` returns the same response as if this parameter didn't exist. The value must be the id of one of the site's secondary locales — the primary locale id, or any other value, returns a `400` error. Requires translation exclusions to be enabled for the site; if they aren't, the request returns a `403` error.
+
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -6117,8 +8399,41 @@ client.collections.items.list_items(
 <dl>
 <dd>
 
+<Tip title="Components in Rich Text">
+  Rich Text field values can contain Webflow component instances as `<wf-component>` markup — see [Components in Rich Text](/data/docs/working-with-the-cms/components-in-rich-text) for the markup grammar, how to find component and property IDs, and the write constraints.
+</Tip>
+
 Create Item(s) in a Collection.
 
+This endpoint accepts two request shapes, and a request must use one or the other:
+
+- **Single item** — send `fieldData` at the top level. Set `cmsLocaleId` to create the item in a specific locale.
+- **Multiple items** — send an `items` array with at least one entry. Each entry needs its own `fieldData`, and can set its own `cmsLocaleId`, `isDraft`, and `isArchived`. The API ignores any other property on an entry.
+
+```json
+{
+  "items": [
+    {
+      "isArchived": false,
+      "isDraft": false,
+      "fieldData": {
+        "name": "Senior Data Analyst",
+        "slug": "senior-data-analyst"
+      }
+    },
+    {
+      "isArchived": false,
+      "isDraft": false,
+      "fieldData": {
+        "name": "Product Manager",
+        "slug": "product-manager"
+      }
+    }
+  ]
+}
+```
+
+A request that carries both `fieldData` and `items` returns a `400`.
 
 To create items across multiple locales, please use [this endpoint.](/data/reference/cms/collection-items/staged-items/create-items)
 
@@ -6311,11 +8626,24 @@ client.collections.items.delete_items(
 <dl>
 <dd>
 
+<Tip title="Components in Rich Text">
+  Rich Text field values can contain Webflow component instances as `<wf-component>` markup — see [Components in Rich Text](/data/docs/working-with-the-cms/components-in-rich-text) for the markup grammar, how to find component and property IDs, and the write constraints.
+</Tip>
+
 Update a single item or multiple items in a Collection.
 
 The limit for this endpoint is 100 items.
 
 <Tip title="Localization Tip">Items will only be updated in the primary locale, unless a `cmsLocaleId` is included in the request.</Tip>
+
+<Note title="Draft status behavior">
+  `isDraft: true` doesn't unpublish an item. The resulting status depends on whether the item has been published before:
+
+  - **Item that has never been published:** the item gets a `Draft` status.
+  - **Already-published item:** the item gets a `Changes in draft` status. The live item stays published, and your changes are held back until you publish them.
+
+  Setting `isDraft: false` queues the item to publish on the next site publish. To remove an item from the live site, use [Unpublish Live Collection Items](/data/reference/cms/collection-items/live-items/delete-items-live). For the full status mapping, see [Publishing with the CMS API](/data/docs/working-with-the-cms/publishing).
+</Note>
 
 Required scope | `CMS:write`
 </dd>
@@ -6441,11 +8769,22 @@ client.collections.items.update_items(
 <dl>
 <dd>
 
+<Tip title="Components in Rich Text">
+  Rich Text field values can contain Webflow component instances as `<wf-component>` markup — see [Components in Rich Text](/data/docs/working-with-the-cms/components-in-rich-text) for the markup grammar, how to find component and property IDs, and the write constraints.
+</Tip>
+
 List all published items in a collection.
 
 <Tip title="Serve data with the Content Delivery API">
   Serving data to applications in real-time? Use the Content Delivery API at `api-cdn.webflow.com` for better performance. The CDN-backed endpoint is optimized for high-volume reads, while the Data API is designed for writes and management operations.
 </Tip>
+
+<Note>
+  This endpoint supports:
+
+  - Custom `filter[...]` queries support up to 10 filter terms and 2 text-search terms per request.
+  - Custom `sort[...]` queries support up to 3 sort fields per request.
+</Note>
 
 Required scope | `CMS:read`
 </dd>
@@ -6477,8 +8816,9 @@ client.collections.items.list_items_live(
     limit=1,
     name="name",
     slug="slug",
-    sort_by="lastPublished",
+    sort_by="createdOn",
     sort_order="asc",
+    translatable="65427cf400e02b306eaa04a0",
 )
 
 ```
@@ -6543,7 +8883,72 @@ client.collections.items.list_items_live(
 <dl>
 <dd>
 
+**created_on:** `typing.Optional[ItemsListItemsLiveRequestCreatedOn]` — Filter by the creation date of the item(s)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **last_published:** `typing.Optional[ItemsListItemsLiveRequestLastPublished]` — Filter by the last published date of the item(s)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**last_updated:** `typing.Optional[ItemsListItemsLiveRequestLastUpdated]` — Filter by the last updated date of the item(s)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**filter:** `typing.Optional[typing.Dict[str, typing.Optional[ItemsListItemsLiveRequestFilterValue]]]` 
+
+Filter collection items by custom field values. Use bracket notation:
+`filter[<fieldSlug>][<operator>]=<value>`.
+
+Example: `filter[price][gte]=10&filter[price][lte]=100&filter[name][contains]=shirt`.
+
+Filters are combined with AND. You can combine custom field filters with top-level filters such as `name`, `slug`, `createdOn`, `lastPublished`, and `lastUpdated`. OR logic and nested filter groups are not supported on GET requests.
+
+More filter terms can increase request latency.
+
+Supported operators by field type:
+
+| Field type | Supported operators |
+| --- | --- |
+| `id` | `eq`, `ne`, `in`, `nin` |
+| `PlainText` | `eq`, `ne`, `in`, `nin`, `contains`, `ncontains`, `exists` |
+| `Number` | `eq`, `ne`, `gt`, `gte`, `lt`, `lte`, `in`, `nin`, `exists` |
+| `Switch` | `eq`, `ne`, `in`, `nin`, `exists` |
+| `DateTime` | `eq`, `ne`, `gt`, `gte`, `lt`, `lte`, `in`, `nin`, `exists` |
+| `Email`, `Phone`, `Link` | `eq`, `ne`, `in`, `nin`, `contains`, `ncontains`, `exists` |
+| `Color` | `eq`, `ne`, `in`, `nin`, `exists` |
+| `Reference` | `eq`, `ne`, `in`, `nin`, `exists` |
+| `Option` | `eq`, `ne`, `in`, `nin` |
+| `RichText`, `Image`, `MultiImage`, `VideoLink`, `MultiReference` | `exists` |
+
+`contains` and `ncontains` are case-insensitive. `ncontains` also matches items where the field is empty or not set.
+
+`exists=true` matches items where the field has a value. `exists=false` matches items where the field is missing or null. For `Switch` fields, `false` is still a set value.
+
+Value formats:
+
+| Field type | Value format |
+| --- | --- |
+| `Number` | A valid number, such as `10` or `12.5` |
+| `Switch` | `true` or `false` |
+| `DateTime` | ISO 8601 date-time string |
+| `id`, `Reference` | 24-character item ID |
+| `Option` | Option ID |
+| `in`, `nin` | Comma-separated list, up to 100 values |
+
+Invalid fields, invalid values, and operators that do not apply to a field type return a `400 BadArgument` response.
     
 </dd>
 </dl>
@@ -6560,6 +8965,41 @@ client.collections.items.list_items_live(
 <dd>
 
 **sort_order:** `typing.Optional[ItemsListItemsLiveRequestSortOrder]` — Sorts the results by asc or desc
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sort:** `typing.Optional[typing.Dict[str, typing.Optional[ItemsListItemsLiveRequestSortValue]]]` 
+
+Sort collection items by custom fields using bracket notation: `sort[<fieldSlug>]=<asc|desc>`.
+
+- Example: `sort[price]=desc`
+- Multiple sort fields are applied in query-string order. When `sort[...]` is provided, it takes precedence over `sortBy` and `sortOrder`.
+- Sortable field types: `PlainText`, `Email`, `Phone`, `Number`, `DateTime`, and `Switch`.
+- Unknown fields, invalid sort directions, and non-sortable field types return a `400 BadArgument` response.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**translatable:** `typing.Optional[str]` 
+
+Unique identifier for the secondary Locale you're translating **into**. Returns only content that hasn't been excluded from translation for that locale.
+
+This is independent of `localeId`, which selects which version of the content is returned. To fetch the source text to translate, request the primary locale's content and set `translatable` to the locale you're translating into:
+
+`?localeId={primary locale id}&translatable={target locale id}`
+
+Only exclusion rules scoped to manual translation are respected — rules scoped only to automatic translation don't affect this parameter's response.
+
+Omitting `translatable` returns the same response as if this parameter didn't exist. The value must be the id of one of the site's secondary locales — the primary locale id, or any other value, returns a `400` error. Requires translation exclusions to be enabled for the site; if they aren't, the request returns a `403` error.
+
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -6591,11 +9031,43 @@ client.collections.items.list_items_live(
 <dl>
 <dd>
 
+<Tip title="Components in Rich Text">
+  Rich Text field values can contain Webflow component instances as `<wf-component>` markup — see [Components in Rich Text](/data/docs/working-with-the-cms/components-in-rich-text) for the markup grammar, how to find component and property IDs, and the write constraints.
+</Tip>
+
 Create item(s) in a collection that will be immediately published to the live site.
 
+This endpoint accepts two request shapes, and a request must use one or the other:
+
+- **Single item** — send `fieldData` at the top level. Set `cmsLocaleId` to create the item in a specific locale.
+- **Multiple items** — send an `items` array with at least one entry. Each entry needs its own `fieldData`, and can set its own `cmsLocaleId`, `isDraft`, and `isArchived`. The API ignores any other property on an entry.
+
+```json
+{
+  "items": [
+    {
+      "isArchived": false,
+      "isDraft": false,
+      "fieldData": {
+        "name": "Senior Data Analyst",
+        "slug": "senior-data-analyst"
+      }
+    },
+    {
+      "isArchived": false,
+      "isDraft": false,
+      "fieldData": {
+        "name": "Product Manager",
+        "slug": "product-manager"
+      }
+    }
+  ]
+}
+```
+
+A request that carries both `fieldData` and `items` returns a `400`.
 
 To create items across multiple locales, [please use this endpoint.](/data/reference/cms/collection-items/staged-items/create-items)
-
 
 Required scope | `CMS:write`
 </dd>
@@ -6786,6 +9258,10 @@ client.collections.items.delete_items_live(
 <dl>
 <dd>
 
+<Tip title="Components in Rich Text">
+  Rich Text field values can contain Webflow component instances as `<wf-component>` markup — see [Components in Rich Text](/data/docs/working-with-the-cms/components-in-rich-text) for the markup grammar, how to find component and property IDs, and the write constraints.
+</Tip>
+
 Update a single published item or multiple published items (up to 100) in a Collection
 
 <Tip title="Localization Tip">Items will only be updated in the primary locale, unless a `cmsLocaleId` is included in the request.</Tip>
@@ -6913,6 +9389,10 @@ client.collections.items.update_items_live(
 
 <dl>
 <dd>
+
+<Tip title="Components in Rich Text">
+  Rich Text field values can contain Webflow component instances as `<wf-component>` markup — see [Components in Rich Text](/data/docs/working-with-the-cms/components-in-rich-text) for the markup grammar, how to find component and property IDs, and the write constraints.
+</Tip>
 
 Create an item or multiple items in a CMS Collection across multiple corresponding locales.
 
@@ -7047,6 +9527,10 @@ client.collections.items.create_items(
 <dl>
 <dd>
 
+<Tip title="Components in Rich Text">
+  Rich Text field values can contain Webflow component instances as `<wf-component>` markup — see [Components in Rich Text](/data/docs/working-with-the-cms/components-in-rich-text) for the markup grammar, how to find component and property IDs, and the write constraints.
+</Tip>
+
 Get details of a selected Collection Item.
 
 Required scope | `CMS:read`
@@ -7076,6 +9560,7 @@ client.collections.items.get_item(
     collection_id="580e63fc8c9a982ac9b8b745",
     item_id="580e64008c9a982ac9b8b754",
     cms_locale_id="cmsLocaleId",
+    translatable="65427cf400e02b306eaa04a0",
 )
 
 ```
@@ -7108,7 +9593,27 @@ client.collections.items.get_item(
 <dl>
 <dd>
 
-**cms_locale_id:** `typing.Optional[str]` — Unique identifier for a CMS Locale. This UID is different from the Site locale identifier and is listed as `cmsLocaleId` in the Sites response. To query multiple locales, input a comma separated string.
+**cms_locale_id:** `typing.Optional[str]` — Unique identifier for a CMS Locale. This UID is different from the Site locale identifier and is listed as `cmsLocaleId` in the Sites response. This endpoint returns a single item, so it accepts one locale. To retrieve an item in several locales, use [List Collection Items](/data/reference/cms/collection-items/staged-items/list-items) with `filter[id][eq]` and a comma separated `cmsLocaleId`.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**translatable:** `typing.Optional[str]` 
+
+Unique identifier for the secondary Locale you're translating **into**. Returns only content that hasn't been excluded from translation for that locale.
+
+This is independent of `localeId`, which selects which version of the content is returned. To fetch the source text to translate, request the primary locale's content and set `translatable` to the locale you're translating into:
+
+`?localeId={primary locale id}&translatable={target locale id}`
+
+Only exclusion rules scoped to manual translation are respected — rules scoped only to automatic translation don't affect this parameter's response.
+
+Omitting `translatable` returns the same response as if this parameter didn't exist. The value must be the id of one of the site's secondary locales — the primary locale id, or any other value, returns a `400` error. Requires translation exclusions to be enabled for the site; if they aren't, the request returns a `403` error.
+
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -7233,7 +9738,20 @@ client.collections.items.delete_item(
 <dl>
 <dd>
 
+<Tip title="Components in Rich Text">
+  Rich Text field values can contain Webflow component instances as `<wf-component>` markup — see [Components in Rich Text](/data/docs/working-with-the-cms/components-in-rich-text) for the markup grammar, how to find component and property IDs, and the write constraints.
+</Tip>
+
 Update a selected Item in a Collection.
+
+<Note title="Draft status behavior">
+  `isDraft: true` doesn't unpublish an item. The resulting status depends on whether the item has been published before:
+
+  - **Item that has never been published:** the item gets a `Draft` status.
+  - **Already-published item:** the item gets a `Changes in draft` status. The live item stays published, and your changes are held back until you publish them.
+
+  Setting `isDraft: false` queues the item to publish on the next site publish. To remove an item from the live site, use [Unpublish Live Collection Items](/data/reference/cms/collection-items/live-items/delete-items-live). For the full status mapping, see [Publishing with the CMS API](/data/docs/working-with-the-cms/publishing).
+</Note>
 
 Required scope | `CMS:write`
 </dd>
@@ -7340,6 +9858,10 @@ client.collections.items.update_item(
 <dl>
 <dd>
 
+<Tip title="Components in Rich Text">
+  Rich Text field values can contain Webflow component instances as `<wf-component>` markup — see [Components in Rich Text](/data/docs/working-with-the-cms/components-in-rich-text) for the markup grammar, how to find component and property IDs, and the write constraints.
+</Tip>
+
 Get details of a selected Collection live Item.
 
 <Tip title="Serve data with the Content Delivery API">
@@ -7373,6 +9895,7 @@ client.collections.items.get_item_live(
     collection_id="580e63fc8c9a982ac9b8b745",
     item_id="580e64008c9a982ac9b8b754",
     cms_locale_id="cmsLocaleId",
+    translatable="65427cf400e02b306eaa04a0",
 )
 
 ```
@@ -7405,7 +9928,27 @@ client.collections.items.get_item_live(
 <dl>
 <dd>
 
-**cms_locale_id:** `typing.Optional[str]` — Unique identifier for a CMS Locale. This UID is different from the Site locale identifier and is listed as `cmsLocaleId` in the Sites response. To query multiple locales, input a comma separated string.
+**cms_locale_id:** `typing.Optional[str]` — Unique identifier for a CMS Locale. This UID is different from the Site locale identifier and is listed as `cmsLocaleId` in the Sites response. This endpoint returns a single item, so it accepts one locale. To retrieve an item in several locales, use [List Collection Items](/data/reference/cms/collection-items/staged-items/list-items) with `filter[id][eq]` and a comma separated `cmsLocaleId`.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**translatable:** `typing.Optional[str]` 
+
+Unique identifier for the secondary Locale you're translating **into**. Returns only content that hasn't been excluded from translation for that locale.
+
+This is independent of `localeId`, which selects which version of the content is returned. To fetch the source text to translate, request the primary locale's content and set `translatable` to the locale you're translating into:
+
+`?localeId={primary locale id}&translatable={target locale id}`
+
+Only exclusion rules scoped to manual translation are respected — rules scoped only to automatic translation don't affect this parameter's response.
+
+Omitting `translatable` returns the same response as if this parameter didn't exist. The value must be the id of one of the site's secondary locales — the primary locale id, or any other value, returns a `400` error. Requires translation exclusions to be enabled for the site; if they aren't, the request returns a `403` error.
+
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -7531,6 +10074,10 @@ client.collections.items.delete_item_live(
 
 <dl>
 <dd>
+
+<Tip title="Components in Rich Text">
+  Rich Text field values can contain Webflow component instances as `<wf-component>` markup — see [Components in Rich Text](/data/docs/working-with-the-cms/components-in-rich-text) for the markup grammar, how to find component and property IDs, and the write constraints.
+</Tip>
 
 Update a selected live Item in a Collection. The updates for this Item will be published to the live site.
 
@@ -7733,6 +10280,8 @@ client.collections.items.publish_item(
 
 Get all scripts applied to a page.
 
+<Note>Access to this endpoint requires a bearer token obtained from an [OAuth Code Grant Flow](/data/reference/oauth-app).</Note>
+
 Required scope | `custom_code:read`
 </dd>
 </dl>
@@ -7811,6 +10360,8 @@ Apply registered scripts to a page. If you have multiple scripts your App needs 
 <Note title="Script Registration">
   To apply a script to a page, the script must first be registered to a Site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints. See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
 </Note>
+
+<Note>Access to this endpoint requires a bearer token obtained from an [OAuth Code Grant Flow](/data/reference/oauth-app).</Note>
 
 Required scope | `custom_code:write`
 </dd>
@@ -8979,6 +11530,333 @@ client.sites.well_known.delete(
 </dl>
 </details>
 
+## Sites GoogleTag
+<details><summary><code>client.sites.google_tag.<a href="src/webflow/sites/google_tag/client.py">list</a>(...) -> GoogleTagIds</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+List all Google Tag IDs configured for a site, sorted by order.
+
+Required scope: `sites:read`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow
+from webflow.environment import WebflowEnvironment
+
+client = Webflow(
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
+)
+
+client.sites.google_tag.list(
+    site_id="580e63e98c9a982ac9b8b741",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sites.google_tag.<a href="src/webflow/sites/google_tag/client.py">delete_all</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Delete all Google Tag IDs from a site.
+
+Required scope: `sites:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow
+from webflow.environment import WebflowEnvironment
+
+client = Webflow(
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
+)
+
+client.sites.google_tag.delete_all(
+    site_id="580e63e98c9a982ac9b8b741",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sites.google_tag.<a href="src/webflow/sites/google_tag/client.py">upsert</a>(...) -> GoogleTagIds</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Add or update Google Tag IDs for a site. Existing tags not referenced in the request are preserved. A site may have a maximum of 25 tags total.
+
+`order` is optional on input — it is auto-assigned for new tags and returned on all tags in the response.
+
+Required scope: `sites:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow, GoogleTagId
+from webflow.environment import WebflowEnvironment
+
+client = Webflow(
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
+)
+
+client.sites.google_tag.upsert(
+    site_id="580e63e98c9a982ac9b8b741",
+    google_tag_ids=[
+        GoogleTagId(
+            order=0,
+            display_name="Main Analytics Tag",
+            tag_id="G-1234567890",
+        )
+    ],
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `GoogleTagIds` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sites.google_tag.<a href="src/webflow/sites/google_tag/client.py">delete</a>(...) -> GoogleTagIds</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Delete a single Google Tag ID from a site. The `order` values of the remaining tags are renormalized after deletion.
+
+Required scope: `sites:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow
+from webflow.environment import WebflowEnvironment
+
+client = Webflow(
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
+)
+
+client.sites.google_tag.delete(
+    site_id="580e63e98c9a982ac9b8b741",
+    tag_id="G-XXXXXXXXXX",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**tag_id:** `str` — The Google Tag ID (e.g. G-XXXXXXXXXX)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 ## Sites ActivityLogs
 <details><summary><code>client.sites.activity_logs.<a href="src/webflow/sites/activity_logs/client.py">list</a>(...) -> SiteActivityLogResponse</code></summary>
 <dl>
@@ -9152,7 +12030,7 @@ client.sites.comments.list_comment_threads(
 
 Unique identifier for a specific Locale.
 
-[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -9289,7 +12167,7 @@ client.sites.comments.get_comment_thread(
 
 Unique identifier for a specific Locale.
 
-[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -9322,6 +12200,103 @@ Unique identifier for a specific Locale.
 <dd>
 
 **sort_order:** `typing.Optional[CommentsGetCommentThreadRequestSortOrder]` — Sorts the results by asc or desc
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sites.comments.<a href="src/webflow/sites/comments/client.py">resolve_comment_thread</a>(...) -> CommentThread</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Resolve or unresolve a comment thread.
+
+<Note>
+  This endpoint is rate limited to 60 requests per minute per site.
+</Note>
+
+Required scope | `comments:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow
+from webflow.environment import WebflowEnvironment
+
+client = Webflow(
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
+)
+
+client.sites.comments.resolve_comment_thread(
+    site_id="580e63e98c9a982ac9b8b741",
+    comment_thread_id="580e63e98c9a982ac9b8b741",
+    resolved=True,
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**comment_thread_id:** `str` — Unique identifier for a Comment Thread
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**resolved:** `bool` — Set to `true` to resolve the thread, or `false` to unresolve it
     
 </dd>
 </dl>
@@ -9426,7 +12401,7 @@ client.sites.comments.list_comment_replies(
 
 Unique identifier for a specific Locale.
 
-[Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+[Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
     
 </dd>
 </dl>
@@ -9478,6 +12453,106 @@ Unique identifier for a specific Locale.
 </dl>
 </details>
 
+<details><summary><code>client.sites.comments.<a href="src/webflow/sites/comments/client.py">create_comment_reply</a>(...) -> CommentReply</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Create a reply to an existing comment thread.
+
+The reply author is always the user who authorized the OAuth token.
+To @mention a user in the reply, include their user ID in double square brackets in the `content` field, as in `[[userId]]`.
+
+<Note>
+  The `comment_created` webhook fires automatically when a reply is created.
+</Note>
+
+Required scope | `comments:write`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from webflow import Webflow
+from webflow.environment import WebflowEnvironment
+
+client = Webflow(
+    access_token="<token>",
+    environment=WebflowEnvironment.DATA_API,
+)
+
+client.sites.comments.create_comment_reply(
+    site_id="580e63e98c9a982ac9b8b741",
+    comment_thread_id="580e63e98c9a982ac9b8b741",
+    content="Thanks for the feedback [[6287ec36a841b25637c663df]]!",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**site_id:** `str` — Unique identifier for a Site
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**comment_thread_id:** `str` — Unique identifier for a Comment Thread
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**content:** `str` — The text content of the reply. To @mention a user, include their user ID in double square brackets, as in `[[userId]]`.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 ## Sites Scripts
 <details><summary><code>client.sites.scripts.<a href="src/webflow/sites/scripts/client.py">get_custom_code</a>(...) -> ScriptApplyList</code></summary>
 <dl>
@@ -9496,6 +12571,8 @@ Get all scripts applied to a site by the App.
 <Note title="Script Registration">
   To apply a script to a site or page, the script must first be registered to a site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints. See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
 </Note>
+
+<Note>Access to this endpoint requires a bearer token obtained from an [OAuth Code Grant Flow](/data/reference/oauth-app).</Note>
 
 Required scope | `custom_code:read`
 </dd>
@@ -9575,6 +12652,8 @@ Apply registered scripts to a site. If you have multiple scripts your App needs 
 <Note title="Script Registration">
   To apply a script to a site or page, the script must first be registered to a site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints. See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
 </Note>
+
+<Note>Access to this endpoint requires a bearer token obtained from an [OAuth Code Grant Flow](/data/reference/oauth-app).</Note>
 
 Required scope | `custom_code:write`
 </dd>
@@ -9758,6 +12837,8 @@ Get a list of scripts that have been applied to a site and/or individual pages.
 
   See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
 </Note>
+
+<Note>Access to this endpoint requires a bearer token obtained from an [OAuth Code Grant Flow](/data/reference/oauth-app).</Note>
 
 Required scope | `custom_code:read`
 </dd>

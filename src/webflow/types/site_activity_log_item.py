@@ -7,8 +7,10 @@ import pydantic
 import typing_extensions
 from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
 from ..core.serialization import FieldMetadata
+from .site_activity_log_item_actor_type import SiteActivityLogItemActorType
 from .site_activity_log_item_event import SiteActivityLogItemEvent
 from .site_activity_log_item_resource_operation import SiteActivityLogItemResourceOperation
+from .site_activity_log_item_source import SiteActivityLogItemSource
 from .site_activity_log_item_user import SiteActivityLogItemUser
 
 
@@ -40,6 +42,35 @@ class SiteActivityLogItem(UniversalBaseModel):
         typing.Optional[str], FieldMetadata(alias="previousValue"), pydantic.Field(alias="previousValue")
     ] = None
     payload: typing.Optional[typing.Dict[str, typing.Any]] = None
+    source: typing.Optional[SiteActivityLogItemSource] = pydantic.Field(default=None)
+    """
+    The system that originated the event. `WEBFLOW_AI` for Webflow AI features, `WEBFLOW_MCP` for an external MCP server or Bridge App, `DESIGNER` for human writes from the Designer, and `SYSTEM` for automated Webflow processes such as backups or migrations. `null` for legacy events recorded before attribution was available.
+    """
+
+    actor_type: typing_extensions.Annotated[
+        typing.Optional[SiteActivityLogItemActorType],
+        FieldMetadata(alias="actorType"),
+        pydantic.Field(
+            alias="actorType",
+            description="The type of actor responsible for the event. `user` for a human who directly triggered or accepted the action, `agent` for a fully autonomous AI agent, `workflow` for a user-created workflow that ran autonomously, and `rule` for an autonomous rule that fired on a trigger. `null` for legacy events.",
+        ),
+    ] = None
+    actor_id: typing_extensions.Annotated[
+        typing.Optional[str],
+        FieldMetadata(alias="actorId"),
+        pydantic.Field(
+            alias="actorId",
+            description="Unique identifier of the actor that originated the event. `null` when not available.",
+        ),
+    ] = None
+    actor_name: typing_extensions.Annotated[
+        typing.Optional[str],
+        FieldMetadata(alias="actorName"),
+        pydantic.Field(
+            alias="actorName",
+            description="Display name of the actor that originated the event. `null` when not available.",
+        ),
+    ] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

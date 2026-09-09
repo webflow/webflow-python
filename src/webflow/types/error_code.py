@@ -4,7 +4,11 @@ import typing
 
 ErrorCode = typing.Union[
     typing.Literal[
+        "analyze_filter_conflict",
+        "analyze_input_validation",
+        "analyze_unsupported_filter",
         "bad_request",
+        "before_historical_floor",
         "collection_not_found",
         "conflict",
         "duplicate_collection",
@@ -17,6 +21,7 @@ ErrorCode = typing.Union[
         "invalid_auth_version",
         "invalid_credentials",
         "invalid_domain",
+        "invalid_time_range",
         "invalid_user_email",
         "item_not_found",
         "missing_scopes",
@@ -26,6 +31,8 @@ ErrorCode = typing.Union[
         "not_enterprise_plan_workspace",
         "order_not_found",
         "resource_not_found",
+        "service_unavailable",
+        "time_range_too_wide",
         "too_many_requests",
         "unsupported_version",
         "unsupported_webhook_trigger_type",
