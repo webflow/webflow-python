@@ -6,7 +6,7 @@ import typing
 from importlib import import_module
 
 if typing.TYPE_CHECKING:
-    from . import activity_logs, comments, forms, plans, redirects, robots_txt, scripts, well_known
+    from . import activity_logs, comments, forms, google_tag, plans, redirects, robots_txt, scripts, well_known
     from .comments import (
         CommentsGetCommentThreadRequestSortBy,
         CommentsGetCommentThreadRequestSortOrder,
@@ -27,6 +27,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "activity_logs": ".activity_logs",
     "comments": ".comments",
     "forms": ".forms",
+    "google_tag": ".google_tag",
     "plans": ".plans",
     "redirects": ".redirects",
     "robots_txt": ".robots_txt",
@@ -67,6 +68,7 @@ __all__ = [
     "activity_logs",
     "comments",
     "forms",
+    "google_tag",
     "plans",
     "redirects",
     "robots_txt",

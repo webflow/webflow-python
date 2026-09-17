@@ -15,6 +15,7 @@ from .....errors.internal_server_error import InternalServerError
 from .....errors.not_found_error import NotFoundError
 from .....errors.too_many_requests_error import TooManyRequestsError
 from .....errors.unauthorized_error import UnauthorizedError
+from .....types.comment_reply import CommentReply
 from .....types.comment_reply_list import CommentReplyList
 from .....types.comment_thread import CommentThread
 from .....types.comment_thread_list import CommentThreadList
@@ -26,6 +27,9 @@ from .types.comments_list_comment_replies_request_sort_order import CommentsList
 from .types.comments_list_comment_threads_request_sort_by import CommentsListCommentThreadsRequestSortBy
 from .types.comments_list_comment_threads_request_sort_order import CommentsListCommentThreadsRequestSortOrder
 from pydantic import ValidationError
+
+# this is used as the default value for optional parameters
+OMIT = typing.cast(typing.Any, ...)
 
 
 class RawCommentsClient:
@@ -60,7 +64,7 @@ class RawCommentsClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         offset : typing.Optional[int]
             Offset used for pagination if the results have more than limit records
@@ -201,7 +205,7 @@ class RawCommentsClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         offset : typing.Optional[int]
             Offset used for pagination if the results have more than limit records
@@ -310,6 +314,129 @@ class RawCommentsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
+    def resolve_comment_thread(
+        self,
+        site_id: str,
+        comment_thread_id: str,
+        *,
+        resolved: bool,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HttpResponse[CommentThread]:
+        """
+        Resolve or unresolve a comment thread.
+
+        <Note>
+          This endpoint is rate limited to 60 requests per minute per site.
+        </Note>
+
+        Required scope | `comments:write`
+
+        Parameters
+        ----------
+        site_id : str
+            Unique identifier for a Site
+
+        comment_thread_id : str
+            Unique identifier for a Comment Thread
+
+        resolved : bool
+            Set to `true` to resolve the thread, or `false` to unresolve it
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[CommentThread]
+            Request was successful
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"sites/{jsonable_encoder(site_id)}/comments/{jsonable_encoder(comment_thread_id)}",
+            base_url=self._client_wrapper.get_environment().base,
+            method="PATCH",
+            json={
+                "resolved": resolved,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    CommentThread,
+                    parse_obj_as(
+                        type_=CommentThread,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        Error,
+                        parse_obj_as(
+                            type_=Error,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        Error,
+                        parse_obj_as(
+                            type_=Error,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 429:
+                raise TooManyRequestsError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        Error,
+                        parse_obj_as(
+                            type_=Error,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        Error,
+                        parse_obj_as(
+                            type_=Error,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
     def list_comment_replies(
         self,
         site_id: str,
@@ -342,7 +469,7 @@ class RawCommentsClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         offset : typing.Optional[int]
             Offset used for pagination if the results have more than limit records
@@ -451,6 +578,132 @@ class RawCommentsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
+    def create_comment_reply(
+        self,
+        site_id: str,
+        comment_thread_id: str,
+        *,
+        content: str,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HttpResponse[CommentReply]:
+        """
+        Create a reply to an existing comment thread.
+
+        The reply author is always the user who authorized the OAuth token.
+        To @mention a user in the reply, include their user ID in double square brackets in the `content` field, as in `[[userId]]`.
+
+        <Note>
+          The `comment_created` webhook fires automatically when a reply is created.
+        </Note>
+
+        Required scope | `comments:write`
+
+        Parameters
+        ----------
+        site_id : str
+            Unique identifier for a Site
+
+        comment_thread_id : str
+            Unique identifier for a Comment Thread
+
+        content : str
+            The text content of the reply. To @mention a user, include their user ID in double square brackets, as in `[[userId]]`.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[CommentReply]
+            Reply created successfully
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"sites/{jsonable_encoder(site_id)}/comments/{jsonable_encoder(comment_thread_id)}/replies",
+            base_url=self._client_wrapper.get_environment().base,
+            method="POST",
+            json={
+                "content": content,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    CommentReply,
+                    parse_obj_as(
+                        type_=CommentReply,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        Error,
+                        parse_obj_as(
+                            type_=Error,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        Error,
+                        parse_obj_as(
+                            type_=Error,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 429:
+                raise TooManyRequestsError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        Error,
+                        parse_obj_as(
+                            type_=Error,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        Error,
+                        parse_obj_as(
+                            type_=Error,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
 
 class AsyncRawCommentsClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
@@ -484,7 +737,7 @@ class AsyncRawCommentsClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         offset : typing.Optional[int]
             Offset used for pagination if the results have more than limit records
@@ -625,7 +878,7 @@ class AsyncRawCommentsClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         offset : typing.Optional[int]
             Offset used for pagination if the results have more than limit records
@@ -734,6 +987,129 @@ class AsyncRawCommentsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
+    async def resolve_comment_thread(
+        self,
+        site_id: str,
+        comment_thread_id: str,
+        *,
+        resolved: bool,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncHttpResponse[CommentThread]:
+        """
+        Resolve or unresolve a comment thread.
+
+        <Note>
+          This endpoint is rate limited to 60 requests per minute per site.
+        </Note>
+
+        Required scope | `comments:write`
+
+        Parameters
+        ----------
+        site_id : str
+            Unique identifier for a Site
+
+        comment_thread_id : str
+            Unique identifier for a Comment Thread
+
+        resolved : bool
+            Set to `true` to resolve the thread, or `false` to unresolve it
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[CommentThread]
+            Request was successful
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"sites/{jsonable_encoder(site_id)}/comments/{jsonable_encoder(comment_thread_id)}",
+            base_url=self._client_wrapper.get_environment().base,
+            method="PATCH",
+            json={
+                "resolved": resolved,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    CommentThread,
+                    parse_obj_as(
+                        type_=CommentThread,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        Error,
+                        parse_obj_as(
+                            type_=Error,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        Error,
+                        parse_obj_as(
+                            type_=Error,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 429:
+                raise TooManyRequestsError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        Error,
+                        parse_obj_as(
+                            type_=Error,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        Error,
+                        parse_obj_as(
+                            type_=Error,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
     async def list_comment_replies(
         self,
         site_id: str,
@@ -766,7 +1142,7 @@ class AsyncRawCommentsClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         offset : typing.Optional[int]
             Offset used for pagination if the results have more than limit records
@@ -807,6 +1183,132 @@ class AsyncRawCommentsClient:
                     CommentReplyList,
                     parse_obj_as(
                         type_=CommentReplyList,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        Error,
+                        parse_obj_as(
+                            type_=Error,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        Error,
+                        parse_obj_as(
+                            type_=Error,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 429:
+                raise TooManyRequestsError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        Error,
+                        parse_obj_as(
+                            type_=Error,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        Error,
+                        parse_obj_as(
+                            type_=Error,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def create_comment_reply(
+        self,
+        site_id: str,
+        comment_thread_id: str,
+        *,
+        content: str,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncHttpResponse[CommentReply]:
+        """
+        Create a reply to an existing comment thread.
+
+        The reply author is always the user who authorized the OAuth token.
+        To @mention a user in the reply, include their user ID in double square brackets in the `content` field, as in `[[userId]]`.
+
+        <Note>
+          The `comment_created` webhook fires automatically when a reply is created.
+        </Note>
+
+        Required scope | `comments:write`
+
+        Parameters
+        ----------
+        site_id : str
+            Unique identifier for a Site
+
+        comment_thread_id : str
+            Unique identifier for a Comment Thread
+
+        content : str
+            The text content of the reply. To @mention a user, include their user ID in double square brackets, as in `[[userId]]`.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[CommentReply]
+            Reply created successfully
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"sites/{jsonable_encoder(site_id)}/comments/{jsonable_encoder(comment_thread_id)}/replies",
+            base_url=self._client_wrapper.get_environment().base,
+            method="POST",
+            json={
+                "content": content,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    CommentReply,
+                    parse_obj_as(
+                        type_=CommentReply,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
