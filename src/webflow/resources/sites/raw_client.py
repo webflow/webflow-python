@@ -686,12 +686,18 @@ class RawSitesClient:
         *,
         custom_domains: typing.Optional[typing.Sequence[str]] = OMIT,
         publish_to_webflow_subdomain: typing.Optional[bool] = OMIT,
+        page_id: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[SitesPublishResponse]:
         """
-        Publishes a site to one or more more domains.
+        Publishes a site or an individual page to one or more domains.
+        If multiple individual pages are published to staging, publishing from staging to production publishes all staged changes.
 
         To publish to a specific custom domain, use the domain IDs from the [Get Custom Domains](/data/reference/sites/get-custom-domain) endpoint.
+
+        You must include at least one of the `customDomains` or `publishToWebflowSubdomain` properties in the request body.
+
+        To publish an individual page instead of the entire site, provide the ID of the page in the `pageId` parameter.
 
         <Note title="Rate limit: 1 publish per minute">This endpoint has a specific rate limit of one successful publish queue per minute.</Note>
 
@@ -708,6 +714,9 @@ class RawSitesClient:
         publish_to_webflow_subdomain : typing.Optional[bool]
             Choice of whether to publish to the default Webflow Subdomain
 
+        page_id : typing.Optional[str]
+            The ID of the page to publish
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -723,6 +732,7 @@ class RawSitesClient:
             json={
                 "customDomains": custom_domains,
                 "publishToWebflowSubdomain": publish_to_webflow_subdomain,
+                "pageId": page_id,
             },
             headers={
                 "content-type": "application/json",
@@ -1468,12 +1478,18 @@ class AsyncRawSitesClient:
         *,
         custom_domains: typing.Optional[typing.Sequence[str]] = OMIT,
         publish_to_webflow_subdomain: typing.Optional[bool] = OMIT,
+        page_id: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[SitesPublishResponse]:
         """
-        Publishes a site to one or more more domains.
+        Publishes a site or an individual page to one or more domains.
+        If multiple individual pages are published to staging, publishing from staging to production publishes all staged changes.
 
         To publish to a specific custom domain, use the domain IDs from the [Get Custom Domains](/data/reference/sites/get-custom-domain) endpoint.
+
+        You must include at least one of the `customDomains` or `publishToWebflowSubdomain` properties in the request body.
+
+        To publish an individual page instead of the entire site, provide the ID of the page in the `pageId` parameter.
 
         <Note title="Rate limit: 1 publish per minute">This endpoint has a specific rate limit of one successful publish queue per minute.</Note>
 
@@ -1490,6 +1506,9 @@ class AsyncRawSitesClient:
         publish_to_webflow_subdomain : typing.Optional[bool]
             Choice of whether to publish to the default Webflow Subdomain
 
+        page_id : typing.Optional[str]
+            The ID of the page to publish
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -1505,6 +1524,7 @@ class AsyncRawSitesClient:
             json={
                 "customDomains": custom_domains,
                 "publishToWebflowSubdomain": publish_to_webflow_subdomain,
+                "pageId": page_id,
             },
             headers={
                 "content-type": "application/json",

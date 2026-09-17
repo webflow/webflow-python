@@ -47,7 +47,10 @@ class CollectionItemPatchSingle(UniversalBaseModel):
     is_draft: typing_extensions.Annotated[
         typing.Optional[bool],
         FieldMetadata(alias="isDraft"),
-        pydantic.Field(alias="isDraft", description="Boolean determining if the Item is set to draft"),
+        pydantic.Field(
+            alias="isDraft",
+            description="Sets the item's draft state. The resulting status depends on whether the item has been published before:\n\n- **Item that has never been published:** `isDraft: true` results in a `Draft` status.\n- **Already-published item:** `isDraft: true` results in a `Changes in draft` status. The live item stays published, and your changes are held back until you publish them.\n\nSetting `isDraft: true` never unpublishes an item. To remove an item from the live site, use [Unpublish Live Collection Items](/data/reference/cms/collection-items/live-items/delete-items-live).",
+        ),
     ] = None
     field_data: typing_extensions.Annotated[
         typing.Optional[CollectionItemPatchSingleFieldData],

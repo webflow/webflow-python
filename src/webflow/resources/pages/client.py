@@ -60,7 +60,7 @@ class PagesClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         limit : typing.Optional[int]
             Maximum number of records to be returned (max limit: 100)
@@ -100,6 +100,7 @@ class PagesClient:
         page_id: str,
         *,
         locale_id: typing.Optional[str] = None,
+        translatable: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> Page:
         """
@@ -115,7 +116,20 @@ class PagesClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
+
+        translatable : typing.Optional[str]
+            Unique identifier for the secondary Locale you're translating **into**. Returns only content that hasn't been excluded from translation for that locale.
+
+            This is independent of `localeId`, which selects which version of the content is returned. To fetch the source text to translate, request the primary locale's content and set `translatable` to the locale you're translating into:
+
+            `?localeId={primary locale id}&translatable={target locale id}`
+
+            Only exclusion rules scoped to manual translation are respected — rules scoped only to automatic translation don't affect this parameter's response.
+
+            Omitting `translatable` returns the same response as if this parameter didn't exist. The value must be the id of one of the site's secondary locales — the primary locale id, or any other value, returns a `400` error. Requires translation exclusions to be enabled for the site; if they aren't, the request returns a `403` error.
+
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -135,9 +149,12 @@ class PagesClient:
         client.pages.get_metadata(
             page_id="63c720f9347c2139b248e552",
             locale_id="65427cf400e02b306eaa04a0",
+            translatable="65427cf400e02b306eaa04a0",
         )
         """
-        _response = self._raw_client.get_metadata(page_id, locale_id=locale_id, request_options=request_options)
+        _response = self._raw_client.get_metadata(
+            page_id, locale_id=locale_id, translatable=translatable, request_options=request_options
+        )
         return _response.data
 
     def update_page_settings(
@@ -164,7 +181,7 @@ class PagesClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         title : typing.Optional[str]
             Title for the page
@@ -172,8 +189,9 @@ class PagesClient:
         slug : typing.Optional[str]
             Slug for the page.
 
-
-            **Note:** Updating slugs in secondary locales is only supported in <a href="https://webflow.com/localization">Advanced and Enterprise localization add-on plans.</a>
+            **Note:** The slug field is ignored in the following cases — all other fields in the same request still apply:
+            - The site's home page, collection template pages, and utility pages (e.g. 404, password, search).
+            - For secondary locales, updating the slug requires an <a href="https://webflow.com/feature/localization">Advanced or Enterprise localization add-on plan</a>.
 
         seo : typing.Optional[PageMetadataWriteSeo]
             SEO-related fields for the Page
@@ -235,6 +253,7 @@ class PagesClient:
         locale_id: typing.Optional[str] = None,
         limit: typing.Optional[int] = None,
         offset: typing.Optional[int] = None,
+        translatable: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> Dom:
         """
@@ -252,13 +271,26 @@ class PagesClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         limit : typing.Optional[int]
             Maximum number of records to be returned (max limit: 100)
 
         offset : typing.Optional[int]
             Offset used for pagination if the results have more than limit records
+
+        translatable : typing.Optional[str]
+            Unique identifier for the secondary Locale you're translating **into**. Returns only content that hasn't been excluded from translation for that locale.
+
+            This is independent of `localeId`, which selects which version of the content is returned. To fetch the source text to translate, request the primary locale's content and set `translatable` to the locale you're translating into:
+
+            `?localeId={primary locale id}&translatable={target locale id}`
+
+            Only exclusion rules scoped to manual translation are respected — rules scoped only to automatic translation don't affect this parameter's response.
+
+            Omitting `translatable` returns the same response as if this parameter didn't exist. The value must be the id of one of the site's secondary locales — the primary locale id, or any other value, returns a `400` error. Requires translation exclusions to be enabled for the site; if they aren't, the request returns a `403` error.
+
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -280,10 +312,16 @@ class PagesClient:
             locale_id="65427cf400e02b306eaa04a0",
             limit=1,
             offset=1,
+            translatable="65427cf400e02b306eaa04a0",
         )
         """
         _response = self._raw_client.get_content(
-            page_id, locale_id=locale_id, limit=limit, offset=offset, request_options=request_options
+            page_id,
+            locale_id=locale_id,
+            limit=limit,
+            offset=offset,
+            translatable=translatable,
+            request_options=request_options,
         )
         return _response.data
 
@@ -447,7 +485,7 @@ class AsyncPagesClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         limit : typing.Optional[int]
             Maximum number of records to be returned (max limit: 100)
@@ -495,6 +533,7 @@ class AsyncPagesClient:
         page_id: str,
         *,
         locale_id: typing.Optional[str] = None,
+        translatable: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> Page:
         """
@@ -510,7 +549,20 @@ class AsyncPagesClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
+
+        translatable : typing.Optional[str]
+            Unique identifier for the secondary Locale you're translating **into**. Returns only content that hasn't been excluded from translation for that locale.
+
+            This is independent of `localeId`, which selects which version of the content is returned. To fetch the source text to translate, request the primary locale's content and set `translatable` to the locale you're translating into:
+
+            `?localeId={primary locale id}&translatable={target locale id}`
+
+            Only exclusion rules scoped to manual translation are respected — rules scoped only to automatic translation don't affect this parameter's response.
+
+            Omitting `translatable` returns the same response as if this parameter didn't exist. The value must be the id of one of the site's secondary locales — the primary locale id, or any other value, returns a `400` error. Requires translation exclusions to be enabled for the site; if they aren't, the request returns a `403` error.
+
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -535,12 +587,15 @@ class AsyncPagesClient:
             await client.pages.get_metadata(
                 page_id="63c720f9347c2139b248e552",
                 locale_id="65427cf400e02b306eaa04a0",
+                translatable="65427cf400e02b306eaa04a0",
             )
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.get_metadata(page_id, locale_id=locale_id, request_options=request_options)
+        _response = await self._raw_client.get_metadata(
+            page_id, locale_id=locale_id, translatable=translatable, request_options=request_options
+        )
         return _response.data
 
     async def update_page_settings(
@@ -567,7 +622,7 @@ class AsyncPagesClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         title : typing.Optional[str]
             Title for the page
@@ -575,8 +630,9 @@ class AsyncPagesClient:
         slug : typing.Optional[str]
             Slug for the page.
 
-
-            **Note:** Updating slugs in secondary locales is only supported in <a href="https://webflow.com/localization">Advanced and Enterprise localization add-on plans.</a>
+            **Note:** The slug field is ignored in the following cases — all other fields in the same request still apply:
+            - The site's home page, collection template pages, and utility pages (e.g. 404, password, search).
+            - For secondary locales, updating the slug requires an <a href="https://webflow.com/feature/localization">Advanced or Enterprise localization add-on plan</a>.
 
         seo : typing.Optional[PageMetadataWriteSeo]
             SEO-related fields for the Page
@@ -646,6 +702,7 @@ class AsyncPagesClient:
         locale_id: typing.Optional[str] = None,
         limit: typing.Optional[int] = None,
         offset: typing.Optional[int] = None,
+        translatable: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> Dom:
         """
@@ -663,13 +720,26 @@ class AsyncPagesClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         limit : typing.Optional[int]
             Maximum number of records to be returned (max limit: 100)
 
         offset : typing.Optional[int]
             Offset used for pagination if the results have more than limit records
+
+        translatable : typing.Optional[str]
+            Unique identifier for the secondary Locale you're translating **into**. Returns only content that hasn't been excluded from translation for that locale.
+
+            This is independent of `localeId`, which selects which version of the content is returned. To fetch the source text to translate, request the primary locale's content and set `translatable` to the locale you're translating into:
+
+            `?localeId={primary locale id}&translatable={target locale id}`
+
+            Only exclusion rules scoped to manual translation are respected — rules scoped only to automatic translation don't affect this parameter's response.
+
+            Omitting `translatable` returns the same response as if this parameter didn't exist. The value must be the id of one of the site's secondary locales — the primary locale id, or any other value, returns a `400` error. Requires translation exclusions to be enabled for the site; if they aren't, the request returns a `403` error.
+
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -696,13 +766,19 @@ class AsyncPagesClient:
                 locale_id="65427cf400e02b306eaa04a0",
                 limit=1,
                 offset=1,
+                translatable="65427cf400e02b306eaa04a0",
             )
 
 
         asyncio.run(main())
         """
         _response = await self._raw_client.get_content(
-            page_id, locale_id=locale_id, limit=limit, offset=offset, request_options=request_options
+            page_id,
+            locale_id=locale_id,
+            limit=limit,
+            offset=offset,
+            translatable=translatable,
+            request_options=request_options,
         )
         return _response.data
 
