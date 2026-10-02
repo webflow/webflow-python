@@ -6,6 +6,12 @@ import typing
 from importlib import import_module
 
 if typing.TYPE_CHECKING:
+    from .analyze_bucket_time_zone import AnalyzeBucketTimeZone
+    from .analyze_daily_bucketing import AnalyzeDailyBucketing
+    from .analyze_daily_timeseries_query import AnalyzeDailyTimeseriesQuery
+    from .analyze_filter_operators import AnalyzeFilterOperators
+    from .analyze_time_on_page_bucketing import AnalyzeTimeOnPageBucketing
+    from .analyze_window import AnalyzeWindow
     from .application import Application
     from .asset import Asset
     from .asset_folder import AssetFolder
@@ -19,6 +25,12 @@ if typing.TYPE_CHECKING:
     from .authorization_authorization_authorized_to import AuthorizationAuthorizationAuthorizedTo
     from .authorized_user import AuthorizedUser
     from .bad_request_error_body import BadRequestErrorBody
+    from .branch_created_webhook import BranchCreatedWebhook
+    from .branch_created_webhook_payload import BranchCreatedWebhookPayload
+    from .branch_deleted_webhook import BranchDeletedWebhook
+    from .branch_deleted_webhook_payload import BranchDeletedWebhookPayload
+    from .branch_merged_webhook import BranchMergedWebhook
+    from .branch_merged_webhook_payload import BranchMergedWebhookPayload
     from .bulk_collection_item import BulkCollectionItem
     from .bulk_collection_item_field_data import BulkCollectionItemFieldData
     from .collection import Collection
@@ -48,6 +60,7 @@ if typing.TYPE_CHECKING:
     from .comment_payload import CommentPayload
     from .comment_payload_author import CommentPayloadAuthor
     from .comment_payload_mentioned_users_item import CommentPayloadMentionedUsersItem
+    from .comment_payload_type import CommentPayloadType
     from .comment_reply import CommentReply
     from .comment_reply_author import CommentReplyAuthor
     from .comment_reply_list import CommentReplyList
@@ -68,12 +81,27 @@ if typing.TYPE_CHECKING:
     from .component_node import ComponentNode
     from .component_properties import ComponentProperties
     from .component_property import ComponentProperty
-    from .component_property_type import ComponentPropertyType
+    from .component_property_text import ComponentPropertyText
+    from .component_property_text_type import ComponentPropertyTextType
     from .conflict import Conflict
     from .custom_code_block import CustomCodeBlock
     from .custom_code_block_type import CustomCodeBlockType
     from .custom_code_hosted_response import CustomCodeHostedResponse
     from .custom_code_inline_response import CustomCodeInlineResponse
+    from .custom_font import CustomFont
+    from .custom_font_axis import CustomFontAxis
+    from .custom_font_batch_create_response import CustomFontBatchCreateResponse
+    from .custom_font_batch_create_response_created_item import CustomFontBatchCreateResponseCreatedItem
+    from .custom_font_batch_create_response_failed_item import CustomFontBatchCreateResponseFailedItem
+    from .custom_font_batch_delete_response import CustomFontBatchDeleteResponse
+    from .custom_font_batch_delete_response_deleted_item import CustomFontBatchDeleteResponseDeletedItem
+    from .custom_font_batch_delete_response_failed_item import CustomFontBatchDeleteResponseFailedItem
+    from .custom_font_create_response import CustomFontCreateResponse
+    from .custom_font_font_display import CustomFontFontDisplay
+    from .custom_font_format import CustomFontFormat
+    from .custom_font_upload import CustomFontUpload
+    from .custom_font_upload_fields import CustomFontUploadFields
+    from .custom_fonts import CustomFonts
     from .custom_role import CustomRole
     from .custom_role_audit_log_item import CustomRoleAuditLogItem
     from .custom_role_audit_log_item_event_sub_type import CustomRoleAuditLogItemEventSubType
@@ -85,12 +113,10 @@ if typing.TYPE_CHECKING:
     from .error_code import ErrorCode
     from .field import Field
     from .field_create import FieldCreate
+    from .field_group import FieldGroup
     from .field_type import FieldType
     from .field_validations import FieldValidations
     from .field_validations_additional_properties import FieldValidationsAdditionalProperties
-    from .field_validations_additional_properties_additional_properties import (
-        FieldValidationsAdditionalPropertiesAdditionalProperties,
-    )
     from .forbidden_error_body import ForbiddenErrorBody
     from .form import Form
     from .form_field import FormField
@@ -104,14 +130,47 @@ if typing.TYPE_CHECKING:
     from .form_submission_trigger_payload import FormSubmissionTriggerPayload
     from .form_submission_trigger_payload_schema_item import FormSubmissionTriggerPayloadSchemaItem
     from .form_submission_trigger_payload_schema_item_field_type import FormSubmissionTriggerPayloadSchemaItemFieldType
+    from .google_tag_id import GoogleTagId
+    from .google_tag_ids import GoogleTagIds
     from .image_node import ImageNode
     from .image_node_image import ImageNodeImage
+    from .insert_collection_item import InsertCollectionItem
+    from .insert_collection_item_field_data import InsertCollectionItemFieldData
+    from .inserted_collection_item import InsertedCollectionItem
+    from .inserted_collection_item_field_data import InsertedCollectionItemFieldData
     from .invalid_domain import InvalidDomain
     from .invalid_scopes import InvalidScopes
     from .inventory_item import InventoryItem
     from .inventory_item_inventory_type import InventoryItemInventoryType
+    from .invite_workspace_member_request_body import InviteWorkspaceMemberRequestBody
+    from .invite_workspace_member_request_body_default_site_role_default_site_role import (
+        InviteWorkspaceMemberRequestBodyDefaultSiteRoleDefaultSiteRole,
+    )
+    from .invite_workspace_member_request_body_default_site_role_workspace_role import (
+        InviteWorkspaceMemberRequestBodyDefaultSiteRoleWorkspaceRole,
+    )
+    from .invite_workspace_member_request_body_site_access_site_access_item import (
+        InviteWorkspaceMemberRequestBodySiteAccessSiteAccessItem,
+    )
+    from .invite_workspace_member_request_body_site_access_site_access_item_site_role import (
+        InviteWorkspaceMemberRequestBodySiteAccessSiteAccessItemSiteRole,
+    )
+    from .invite_workspace_member_request_body_site_access_workspace_role import (
+        InviteWorkspaceMemberRequestBodySiteAccessWorkspaceRole,
+    )
+    from .invite_workspace_member_response_body import (
+        InviteWorkspaceMemberResponseBody,
+        InviteWorkspaceMemberResponseBody_Active,
+        InviteWorkspaceMemberResponseBody_Invited,
+    )
+    from .invite_workspace_member_response_body_active import InviteWorkspaceMemberResponseBodyActive
+    from .invited import Invited
+    from .items_list_items_live_request_created_on import ItemsListItemsLiveRequestCreatedOn
     from .items_list_items_live_request_last_published import ItemsListItemsLiveRequestLastPublished
+    from .items_list_items_live_request_last_updated import ItemsListItemsLiveRequestLastUpdated
+    from .items_list_items_request_created_on import ItemsListItemsRequestCreatedOn
     from .items_list_items_request_last_published import ItemsListItemsRequestLastPublished
+    from .items_list_items_request_last_updated import ItemsListItemsRequestLastUpdated
     from .list_custom_code_blocks import ListCustomCodeBlocks
     from .locale import Locale
     from .locales import Locales
@@ -170,6 +229,7 @@ if typing.TYPE_CHECKING:
     from .payload import Payload
     from .payload_field_data import PayloadFieldData
     from .paypal_details import PaypalDetails
+    from .person_actor import PersonActor
     from .product import Product
     from .product_and_sk_us import ProductAndSkUs
     from .product_and_sk_us_list import ProductAndSkUsList
@@ -201,11 +261,19 @@ if typing.TYPE_CHECKING:
     from .single_locale_created_payload_field_data import SingleLocaleCreatedPayloadFieldData
     from .site import Site
     from .site_activity_log_item import SiteActivityLogItem
+    from .site_activity_log_item_actor_type import SiteActivityLogItemActorType
     from .site_activity_log_item_event import SiteActivityLogItemEvent
     from .site_activity_log_item_resource_operation import SiteActivityLogItemResourceOperation
+    from .site_activity_log_item_source import SiteActivityLogItemSource
     from .site_activity_log_item_user import SiteActivityLogItemUser
     from .site_activity_log_response import SiteActivityLogResponse
     from .site_data_collection_type import SiteDataCollectionType
+    from .site_member import SiteMember
+    from .site_member_roles import SiteMemberRoles
+    from .site_member_roles_site import SiteMemberRolesSite
+    from .site_member_roles_workspace import SiteMemberRolesWorkspace
+    from .site_members_response import SiteMembersResponse
+    from .site_members_response_pagination import SiteMembersResponsePagination
     from .site_membership import SiteMembership
     from .site_membership_audit_log_item import SiteMembershipAuditLogItem
     from .site_membership_audit_log_item_event_sub_type import SiteMembershipAuditLogItemEventSubType
@@ -214,6 +282,7 @@ if typing.TYPE_CHECKING:
     from .site_plan_name import SitePlanName
     from .site_publish import SitePublish
     from .site_publish_payload import SitePublishPayload
+    from .site_publish_payload_publish_scope import SitePublishPayloadPublishScope
     from .sites import Sites
     from .sku import Sku
     from .sku_field_data import SkuFieldData
@@ -243,7 +312,36 @@ if typing.TYPE_CHECKING:
     from .text_node import TextNode
     from .text_node_text import TextNodeText
     from .text_node_write import TextNodeWrite
+    from .time_on_page_data_point import TimeOnPageDataPoint
+    from .time_on_page_filter import TimeOnPageFilter
+    from .time_on_page_granularity_period import TimeOnPageGranularityPeriod
+    from .time_on_page_metric_scope import TimeOnPageMetricScope
+    from .time_on_page_response import TimeOnPageResponse
+    from .time_on_page_timeseries_query import TimeOnPageTimeseriesQuery
+    from .token_actor import TokenActor
+    from .top_dimensions_dimension import TopDimensionsDimension
+    from .top_dimensions_filter import TopDimensionsFilter
+    from .top_dimensions_metric_scope import TopDimensionsMetricScope
+    from .top_dimensions_response import TopDimensionsResponse
+    from .top_dimensions_row import TopDimensionsRow
+    from .top_events_cms_context_entry import TopEventsCmsContextEntry
+    from .top_events_component_context_entry import TopEventsComponentContextEntry
+    from .top_events_filter import TopEventsFilter
+    from .top_events_response import TopEventsResponse
+    from .top_events_row import TopEventsRow
+    from .top_events_timeseries_point import TopEventsTimeseriesPoint
+    from .top_pages_filter import TopPagesFilter
+    from .top_pages_response import TopPagesResponse
+    from .top_pages_row import TopPagesRow
+    from .top_pages_sort_by import TopPagesSortBy
+    from .top_pages_timeseries_point import TopPagesTimeseriesPoint
+    from .traffic_data_point import TrafficDataPoint
+    from .traffic_filter import TrafficFilter
+    from .traffic_metric_scope import TrafficMetricScope
+    from .traffic_response import TrafficResponse
     from .trigger_type import TriggerType
+    from .update_site_member_role_request_body import UpdateSiteMemberRoleRequestBody
+    from .update_site_member_role_request_body_site_role import UpdateSiteMemberRoleRequestBodySiteRole
     from .updated_order import UpdatedOrder
     from .user_access import UserAccess
     from .user_access_audit_log_item import UserAccessAuditLogItem
@@ -251,6 +349,13 @@ if typing.TYPE_CHECKING:
     from .webhook import Webhook
     from .webhook_filter import WebhookFilter
     from .webhook_list import WebhookList
+    from .with_default_site_role import WithDefaultSiteRole
+    from .with_site_access import WithSiteAccess
+    from .workspace_audit_log_actor import (
+        WorkspaceAuditLogActor,
+        WorkspaceAuditLogActor_Person,
+        WorkspaceAuditLogActor_Token,
+    )
     from .workspace_audit_log_item import (
         WorkspaceAuditLogItem,
         WorkspaceAuditLogItem_CustomRole,
@@ -260,8 +365,6 @@ if typing.TYPE_CHECKING:
         WorkspaceAuditLogItem_WorkspaceMembership,
         WorkspaceAuditLogItem_WorkspaceSetting,
     )
-    from .workspace_audit_log_item_actor import WorkspaceAuditLogItemActor
-    from .workspace_audit_log_item_payload_setting_change_method import WorkspaceAuditLogItemPayloadSettingChangeMethod
     from .workspace_audit_log_item_payload_site_membership_granular_access import (
         WorkspaceAuditLogItemPayloadSiteMembershipGranularAccess,
     )
@@ -299,13 +402,39 @@ if typing.TYPE_CHECKING:
     )
     from .workspace_audit_log_item_workspace import WorkspaceAuditLogItemWorkspace
     from .workspace_audit_log_response import WorkspaceAuditLogResponse
+    from .workspace_bulk_role_change_response import WorkspaceBulkRoleChangeResponse
+    from .workspace_bulk_role_change_response_results_item import WorkspaceBulkRoleChangeResponseResultsItem
+    from .workspace_bulk_role_change_response_results_item_error import WorkspaceBulkRoleChangeResponseResultsItemError
+    from .workspace_bulk_role_change_response_results_item_error_code import (
+        WorkspaceBulkRoleChangeResponseResultsItemErrorCode,
+    )
+    from .workspace_bulk_role_change_response_results_item_outcome import (
+        WorkspaceBulkRoleChangeResponseResultsItemOutcome,
+    )
+    from .workspace_bulk_role_change_response_results_item_type import WorkspaceBulkRoleChangeResponseResultsItemType
+    from .workspace_bulk_role_change_response_summary import WorkspaceBulkRoleChangeResponseSummary
     from .workspace_invitation import WorkspaceInvitation
     from .workspace_invitation_audit_log_item import WorkspaceInvitationAuditLogItem
     from .workspace_invitation_audit_log_item_event_sub_type import WorkspaceInvitationAuditLogItemEventSubType
+    from .workspace_invite import WorkspaceInvite
+    from .workspace_invite_role import WorkspaceInviteRole
+    from .workspace_invite_status import WorkspaceInviteStatus
+    from .workspace_member import WorkspaceMember
+    from .workspace_member_roles import WorkspaceMemberRoles
+    from .workspace_member_roles_site import WorkspaceMemberRolesSite
+    from .workspace_member_roles_workspace import WorkspaceMemberRolesWorkspace
+    from .workspace_members_response import WorkspaceMembersResponse
+    from .workspace_members_response_pagination import WorkspaceMembersResponsePagination
     from .workspace_membership import WorkspaceMembership
     from .workspace_membership_audit_log_item import WorkspaceMembershipAuditLogItem
     from .workspace_membership_audit_log_item_event_sub_type import WorkspaceMembershipAuditLogItemEventSubType
 _dynamic_imports: typing.Dict[str, str] = {
+    "AnalyzeBucketTimeZone": ".analyze_bucket_time_zone",
+    "AnalyzeDailyBucketing": ".analyze_daily_bucketing",
+    "AnalyzeDailyTimeseriesQuery": ".analyze_daily_timeseries_query",
+    "AnalyzeFilterOperators": ".analyze_filter_operators",
+    "AnalyzeTimeOnPageBucketing": ".analyze_time_on_page_bucketing",
+    "AnalyzeWindow": ".analyze_window",
     "Application": ".application",
     "Asset": ".asset",
     "AssetFolder": ".asset_folder",
@@ -319,6 +448,12 @@ _dynamic_imports: typing.Dict[str, str] = {
     "AuthorizationAuthorizationAuthorizedTo": ".authorization_authorization_authorized_to",
     "AuthorizedUser": ".authorized_user",
     "BadRequestErrorBody": ".bad_request_error_body",
+    "BranchCreatedWebhook": ".branch_created_webhook",
+    "BranchCreatedWebhookPayload": ".branch_created_webhook_payload",
+    "BranchDeletedWebhook": ".branch_deleted_webhook",
+    "BranchDeletedWebhookPayload": ".branch_deleted_webhook_payload",
+    "BranchMergedWebhook": ".branch_merged_webhook",
+    "BranchMergedWebhookPayload": ".branch_merged_webhook_payload",
     "BulkCollectionItem": ".bulk_collection_item",
     "BulkCollectionItemFieldData": ".bulk_collection_item_field_data",
     "Collection": ".collection",
@@ -348,6 +483,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "CommentPayload": ".comment_payload",
     "CommentPayloadAuthor": ".comment_payload_author",
     "CommentPayloadMentionedUsersItem": ".comment_payload_mentioned_users_item",
+    "CommentPayloadType": ".comment_payload_type",
     "CommentReply": ".comment_reply",
     "CommentReplyAuthor": ".comment_reply_author",
     "CommentReplyList": ".comment_reply_list",
@@ -366,12 +502,27 @@ _dynamic_imports: typing.Dict[str, str] = {
     "ComponentNode": ".component_node",
     "ComponentProperties": ".component_properties",
     "ComponentProperty": ".component_property",
-    "ComponentPropertyType": ".component_property_type",
+    "ComponentPropertyText": ".component_property_text",
+    "ComponentPropertyTextType": ".component_property_text_type",
     "Conflict": ".conflict",
     "CustomCodeBlock": ".custom_code_block",
     "CustomCodeBlockType": ".custom_code_block_type",
     "CustomCodeHostedResponse": ".custom_code_hosted_response",
     "CustomCodeInlineResponse": ".custom_code_inline_response",
+    "CustomFont": ".custom_font",
+    "CustomFontAxis": ".custom_font_axis",
+    "CustomFontBatchCreateResponse": ".custom_font_batch_create_response",
+    "CustomFontBatchCreateResponseCreatedItem": ".custom_font_batch_create_response_created_item",
+    "CustomFontBatchCreateResponseFailedItem": ".custom_font_batch_create_response_failed_item",
+    "CustomFontBatchDeleteResponse": ".custom_font_batch_delete_response",
+    "CustomFontBatchDeleteResponseDeletedItem": ".custom_font_batch_delete_response_deleted_item",
+    "CustomFontBatchDeleteResponseFailedItem": ".custom_font_batch_delete_response_failed_item",
+    "CustomFontCreateResponse": ".custom_font_create_response",
+    "CustomFontFontDisplay": ".custom_font_font_display",
+    "CustomFontFormat": ".custom_font_format",
+    "CustomFontUpload": ".custom_font_upload",
+    "CustomFontUploadFields": ".custom_font_upload_fields",
+    "CustomFonts": ".custom_fonts",
     "CustomRole": ".custom_role",
     "CustomRoleAuditLogItem": ".custom_role_audit_log_item",
     "CustomRoleAuditLogItemEventSubType": ".custom_role_audit_log_item_event_sub_type",
@@ -383,10 +534,10 @@ _dynamic_imports: typing.Dict[str, str] = {
     "ErrorCode": ".error_code",
     "Field": ".field",
     "FieldCreate": ".field_create",
+    "FieldGroup": ".field_group",
     "FieldType": ".field_type",
     "FieldValidations": ".field_validations",
     "FieldValidationsAdditionalProperties": ".field_validations_additional_properties",
-    "FieldValidationsAdditionalPropertiesAdditionalProperties": ".field_validations_additional_properties_additional_properties",
     "ForbiddenErrorBody": ".forbidden_error_body",
     "Form": ".form",
     "FormField": ".form_field",
@@ -400,14 +551,35 @@ _dynamic_imports: typing.Dict[str, str] = {
     "FormSubmissionTriggerPayload": ".form_submission_trigger_payload",
     "FormSubmissionTriggerPayloadSchemaItem": ".form_submission_trigger_payload_schema_item",
     "FormSubmissionTriggerPayloadSchemaItemFieldType": ".form_submission_trigger_payload_schema_item_field_type",
+    "GoogleTagId": ".google_tag_id",
+    "GoogleTagIds": ".google_tag_ids",
     "ImageNode": ".image_node",
     "ImageNodeImage": ".image_node_image",
+    "InsertCollectionItem": ".insert_collection_item",
+    "InsertCollectionItemFieldData": ".insert_collection_item_field_data",
+    "InsertedCollectionItem": ".inserted_collection_item",
+    "InsertedCollectionItemFieldData": ".inserted_collection_item_field_data",
     "InvalidDomain": ".invalid_domain",
     "InvalidScopes": ".invalid_scopes",
     "InventoryItem": ".inventory_item",
     "InventoryItemInventoryType": ".inventory_item_inventory_type",
+    "InviteWorkspaceMemberRequestBody": ".invite_workspace_member_request_body",
+    "InviteWorkspaceMemberRequestBodyDefaultSiteRoleDefaultSiteRole": ".invite_workspace_member_request_body_default_site_role_default_site_role",
+    "InviteWorkspaceMemberRequestBodyDefaultSiteRoleWorkspaceRole": ".invite_workspace_member_request_body_default_site_role_workspace_role",
+    "InviteWorkspaceMemberRequestBodySiteAccessSiteAccessItem": ".invite_workspace_member_request_body_site_access_site_access_item",
+    "InviteWorkspaceMemberRequestBodySiteAccessSiteAccessItemSiteRole": ".invite_workspace_member_request_body_site_access_site_access_item_site_role",
+    "InviteWorkspaceMemberRequestBodySiteAccessWorkspaceRole": ".invite_workspace_member_request_body_site_access_workspace_role",
+    "InviteWorkspaceMemberResponseBody": ".invite_workspace_member_response_body",
+    "InviteWorkspaceMemberResponseBodyActive": ".invite_workspace_member_response_body_active",
+    "InviteWorkspaceMemberResponseBody_Active": ".invite_workspace_member_response_body",
+    "InviteWorkspaceMemberResponseBody_Invited": ".invite_workspace_member_response_body",
+    "Invited": ".invited",
+    "ItemsListItemsLiveRequestCreatedOn": ".items_list_items_live_request_created_on",
     "ItemsListItemsLiveRequestLastPublished": ".items_list_items_live_request_last_published",
+    "ItemsListItemsLiveRequestLastUpdated": ".items_list_items_live_request_last_updated",
+    "ItemsListItemsRequestCreatedOn": ".items_list_items_request_created_on",
     "ItemsListItemsRequestLastPublished": ".items_list_items_request_last_published",
+    "ItemsListItemsRequestLastUpdated": ".items_list_items_request_last_updated",
     "ListCustomCodeBlocks": ".list_custom_code_blocks",
     "Locale": ".locale",
     "Locales": ".locales",
@@ -464,6 +636,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "Payload": ".payload",
     "PayloadFieldData": ".payload_field_data",
     "PaypalDetails": ".paypal_details",
+    "PersonActor": ".person_actor",
     "Product": ".product",
     "ProductAndSkUs": ".product_and_sk_us",
     "ProductAndSkUsList": ".product_and_sk_us_list",
@@ -495,11 +668,19 @@ _dynamic_imports: typing.Dict[str, str] = {
     "SingleLocaleCreatedPayloadFieldData": ".single_locale_created_payload_field_data",
     "Site": ".site",
     "SiteActivityLogItem": ".site_activity_log_item",
+    "SiteActivityLogItemActorType": ".site_activity_log_item_actor_type",
     "SiteActivityLogItemEvent": ".site_activity_log_item_event",
     "SiteActivityLogItemResourceOperation": ".site_activity_log_item_resource_operation",
+    "SiteActivityLogItemSource": ".site_activity_log_item_source",
     "SiteActivityLogItemUser": ".site_activity_log_item_user",
     "SiteActivityLogResponse": ".site_activity_log_response",
     "SiteDataCollectionType": ".site_data_collection_type",
+    "SiteMember": ".site_member",
+    "SiteMemberRoles": ".site_member_roles",
+    "SiteMemberRolesSite": ".site_member_roles_site",
+    "SiteMemberRolesWorkspace": ".site_member_roles_workspace",
+    "SiteMembersResponse": ".site_members_response",
+    "SiteMembersResponsePagination": ".site_members_response_pagination",
     "SiteMembership": ".site_membership",
     "SiteMembershipAuditLogItem": ".site_membership_audit_log_item",
     "SiteMembershipAuditLogItemEventSubType": ".site_membership_audit_log_item_event_sub_type",
@@ -508,6 +689,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "SitePlanName": ".site_plan_name",
     "SitePublish": ".site_publish",
     "SitePublishPayload": ".site_publish_payload",
+    "SitePublishPayloadPublishScope": ".site_publish_payload_publish_scope",
     "Sites": ".sites",
     "Sku": ".sku",
     "SkuFieldData": ".sku_field_data",
@@ -535,7 +717,36 @@ _dynamic_imports: typing.Dict[str, str] = {
     "TextNode": ".text_node",
     "TextNodeText": ".text_node_text",
     "TextNodeWrite": ".text_node_write",
+    "TimeOnPageDataPoint": ".time_on_page_data_point",
+    "TimeOnPageFilter": ".time_on_page_filter",
+    "TimeOnPageGranularityPeriod": ".time_on_page_granularity_period",
+    "TimeOnPageMetricScope": ".time_on_page_metric_scope",
+    "TimeOnPageResponse": ".time_on_page_response",
+    "TimeOnPageTimeseriesQuery": ".time_on_page_timeseries_query",
+    "TokenActor": ".token_actor",
+    "TopDimensionsDimension": ".top_dimensions_dimension",
+    "TopDimensionsFilter": ".top_dimensions_filter",
+    "TopDimensionsMetricScope": ".top_dimensions_metric_scope",
+    "TopDimensionsResponse": ".top_dimensions_response",
+    "TopDimensionsRow": ".top_dimensions_row",
+    "TopEventsCmsContextEntry": ".top_events_cms_context_entry",
+    "TopEventsComponentContextEntry": ".top_events_component_context_entry",
+    "TopEventsFilter": ".top_events_filter",
+    "TopEventsResponse": ".top_events_response",
+    "TopEventsRow": ".top_events_row",
+    "TopEventsTimeseriesPoint": ".top_events_timeseries_point",
+    "TopPagesFilter": ".top_pages_filter",
+    "TopPagesResponse": ".top_pages_response",
+    "TopPagesRow": ".top_pages_row",
+    "TopPagesSortBy": ".top_pages_sort_by",
+    "TopPagesTimeseriesPoint": ".top_pages_timeseries_point",
+    "TrafficDataPoint": ".traffic_data_point",
+    "TrafficFilter": ".traffic_filter",
+    "TrafficMetricScope": ".traffic_metric_scope",
+    "TrafficResponse": ".traffic_response",
     "TriggerType": ".trigger_type",
+    "UpdateSiteMemberRoleRequestBody": ".update_site_member_role_request_body",
+    "UpdateSiteMemberRoleRequestBodySiteRole": ".update_site_member_role_request_body_site_role",
     "UpdatedOrder": ".updated_order",
     "UserAccess": ".user_access",
     "UserAccessAuditLogItem": ".user_access_audit_log_item",
@@ -543,9 +754,12 @@ _dynamic_imports: typing.Dict[str, str] = {
     "Webhook": ".webhook",
     "WebhookFilter": ".webhook_filter",
     "WebhookList": ".webhook_list",
+    "WithDefaultSiteRole": ".with_default_site_role",
+    "WithSiteAccess": ".with_site_access",
+    "WorkspaceAuditLogActor": ".workspace_audit_log_actor",
+    "WorkspaceAuditLogActor_Person": ".workspace_audit_log_actor",
+    "WorkspaceAuditLogActor_Token": ".workspace_audit_log_actor",
     "WorkspaceAuditLogItem": ".workspace_audit_log_item",
-    "WorkspaceAuditLogItemActor": ".workspace_audit_log_item_actor",
-    "WorkspaceAuditLogItemPayloadSettingChangeMethod": ".workspace_audit_log_item_payload_setting_change_method",
     "WorkspaceAuditLogItemPayloadSiteMembershipGranularAccess": ".workspace_audit_log_item_payload_site_membership_granular_access",
     "WorkspaceAuditLogItemPayloadSiteMembershipMethod": ".workspace_audit_log_item_payload_site_membership_method",
     "WorkspaceAuditLogItemPayloadSiteMembershipSite": ".workspace_audit_log_item_payload_site_membership_site",
@@ -567,9 +781,25 @@ _dynamic_imports: typing.Dict[str, str] = {
     "WorkspaceAuditLogItem_WorkspaceMembership": ".workspace_audit_log_item",
     "WorkspaceAuditLogItem_WorkspaceSetting": ".workspace_audit_log_item",
     "WorkspaceAuditLogResponse": ".workspace_audit_log_response",
+    "WorkspaceBulkRoleChangeResponse": ".workspace_bulk_role_change_response",
+    "WorkspaceBulkRoleChangeResponseResultsItem": ".workspace_bulk_role_change_response_results_item",
+    "WorkspaceBulkRoleChangeResponseResultsItemError": ".workspace_bulk_role_change_response_results_item_error",
+    "WorkspaceBulkRoleChangeResponseResultsItemErrorCode": ".workspace_bulk_role_change_response_results_item_error_code",
+    "WorkspaceBulkRoleChangeResponseResultsItemOutcome": ".workspace_bulk_role_change_response_results_item_outcome",
+    "WorkspaceBulkRoleChangeResponseResultsItemType": ".workspace_bulk_role_change_response_results_item_type",
+    "WorkspaceBulkRoleChangeResponseSummary": ".workspace_bulk_role_change_response_summary",
     "WorkspaceInvitation": ".workspace_invitation",
     "WorkspaceInvitationAuditLogItem": ".workspace_invitation_audit_log_item",
     "WorkspaceInvitationAuditLogItemEventSubType": ".workspace_invitation_audit_log_item_event_sub_type",
+    "WorkspaceInvite": ".workspace_invite",
+    "WorkspaceInviteRole": ".workspace_invite_role",
+    "WorkspaceInviteStatus": ".workspace_invite_status",
+    "WorkspaceMember": ".workspace_member",
+    "WorkspaceMemberRoles": ".workspace_member_roles",
+    "WorkspaceMemberRolesSite": ".workspace_member_roles_site",
+    "WorkspaceMemberRolesWorkspace": ".workspace_member_roles_workspace",
+    "WorkspaceMembersResponse": ".workspace_members_response",
+    "WorkspaceMembersResponsePagination": ".workspace_members_response_pagination",
     "WorkspaceMembership": ".workspace_membership",
     "WorkspaceMembershipAuditLogItem": ".workspace_membership_audit_log_item",
     "WorkspaceMembershipAuditLogItemEventSubType": ".workspace_membership_audit_log_item_event_sub_type",
@@ -598,6 +828,12 @@ def __dir__():
 
 
 __all__ = [
+    "AnalyzeBucketTimeZone",
+    "AnalyzeDailyBucketing",
+    "AnalyzeDailyTimeseriesQuery",
+    "AnalyzeFilterOperators",
+    "AnalyzeTimeOnPageBucketing",
+    "AnalyzeWindow",
     "Application",
     "Asset",
     "AssetFolder",
@@ -611,6 +847,12 @@ __all__ = [
     "AuthorizationAuthorizationAuthorizedTo",
     "AuthorizedUser",
     "BadRequestErrorBody",
+    "BranchCreatedWebhook",
+    "BranchCreatedWebhookPayload",
+    "BranchDeletedWebhook",
+    "BranchDeletedWebhookPayload",
+    "BranchMergedWebhook",
+    "BranchMergedWebhookPayload",
     "BulkCollectionItem",
     "BulkCollectionItemFieldData",
     "Collection",
@@ -640,6 +882,7 @@ __all__ = [
     "CommentPayload",
     "CommentPayloadAuthor",
     "CommentPayloadMentionedUsersItem",
+    "CommentPayloadType",
     "CommentReply",
     "CommentReplyAuthor",
     "CommentReplyList",
@@ -658,12 +901,27 @@ __all__ = [
     "ComponentNode",
     "ComponentProperties",
     "ComponentProperty",
-    "ComponentPropertyType",
+    "ComponentPropertyText",
+    "ComponentPropertyTextType",
     "Conflict",
     "CustomCodeBlock",
     "CustomCodeBlockType",
     "CustomCodeHostedResponse",
     "CustomCodeInlineResponse",
+    "CustomFont",
+    "CustomFontAxis",
+    "CustomFontBatchCreateResponse",
+    "CustomFontBatchCreateResponseCreatedItem",
+    "CustomFontBatchCreateResponseFailedItem",
+    "CustomFontBatchDeleteResponse",
+    "CustomFontBatchDeleteResponseDeletedItem",
+    "CustomFontBatchDeleteResponseFailedItem",
+    "CustomFontCreateResponse",
+    "CustomFontFontDisplay",
+    "CustomFontFormat",
+    "CustomFontUpload",
+    "CustomFontUploadFields",
+    "CustomFonts",
     "CustomRole",
     "CustomRoleAuditLogItem",
     "CustomRoleAuditLogItemEventSubType",
@@ -675,10 +933,10 @@ __all__ = [
     "ErrorCode",
     "Field",
     "FieldCreate",
+    "FieldGroup",
     "FieldType",
     "FieldValidations",
     "FieldValidationsAdditionalProperties",
-    "FieldValidationsAdditionalPropertiesAdditionalProperties",
     "ForbiddenErrorBody",
     "Form",
     "FormField",
@@ -692,14 +950,35 @@ __all__ = [
     "FormSubmissionTriggerPayload",
     "FormSubmissionTriggerPayloadSchemaItem",
     "FormSubmissionTriggerPayloadSchemaItemFieldType",
+    "GoogleTagId",
+    "GoogleTagIds",
     "ImageNode",
     "ImageNodeImage",
+    "InsertCollectionItem",
+    "InsertCollectionItemFieldData",
+    "InsertedCollectionItem",
+    "InsertedCollectionItemFieldData",
     "InvalidDomain",
     "InvalidScopes",
     "InventoryItem",
     "InventoryItemInventoryType",
+    "InviteWorkspaceMemberRequestBody",
+    "InviteWorkspaceMemberRequestBodyDefaultSiteRoleDefaultSiteRole",
+    "InviteWorkspaceMemberRequestBodyDefaultSiteRoleWorkspaceRole",
+    "InviteWorkspaceMemberRequestBodySiteAccessSiteAccessItem",
+    "InviteWorkspaceMemberRequestBodySiteAccessSiteAccessItemSiteRole",
+    "InviteWorkspaceMemberRequestBodySiteAccessWorkspaceRole",
+    "InviteWorkspaceMemberResponseBody",
+    "InviteWorkspaceMemberResponseBodyActive",
+    "InviteWorkspaceMemberResponseBody_Active",
+    "InviteWorkspaceMemberResponseBody_Invited",
+    "Invited",
+    "ItemsListItemsLiveRequestCreatedOn",
     "ItemsListItemsLiveRequestLastPublished",
+    "ItemsListItemsLiveRequestLastUpdated",
+    "ItemsListItemsRequestCreatedOn",
     "ItemsListItemsRequestLastPublished",
+    "ItemsListItemsRequestLastUpdated",
     "ListCustomCodeBlocks",
     "Locale",
     "Locales",
@@ -756,6 +1035,7 @@ __all__ = [
     "Payload",
     "PayloadFieldData",
     "PaypalDetails",
+    "PersonActor",
     "Product",
     "ProductAndSkUs",
     "ProductAndSkUsList",
@@ -787,11 +1067,19 @@ __all__ = [
     "SingleLocaleCreatedPayloadFieldData",
     "Site",
     "SiteActivityLogItem",
+    "SiteActivityLogItemActorType",
     "SiteActivityLogItemEvent",
     "SiteActivityLogItemResourceOperation",
+    "SiteActivityLogItemSource",
     "SiteActivityLogItemUser",
     "SiteActivityLogResponse",
     "SiteDataCollectionType",
+    "SiteMember",
+    "SiteMemberRoles",
+    "SiteMemberRolesSite",
+    "SiteMemberRolesWorkspace",
+    "SiteMembersResponse",
+    "SiteMembersResponsePagination",
     "SiteMembership",
     "SiteMembershipAuditLogItem",
     "SiteMembershipAuditLogItemEventSubType",
@@ -800,6 +1088,7 @@ __all__ = [
     "SitePlanName",
     "SitePublish",
     "SitePublishPayload",
+    "SitePublishPayloadPublishScope",
     "Sites",
     "Sku",
     "SkuFieldData",
@@ -827,7 +1116,36 @@ __all__ = [
     "TextNode",
     "TextNodeText",
     "TextNodeWrite",
+    "TimeOnPageDataPoint",
+    "TimeOnPageFilter",
+    "TimeOnPageGranularityPeriod",
+    "TimeOnPageMetricScope",
+    "TimeOnPageResponse",
+    "TimeOnPageTimeseriesQuery",
+    "TokenActor",
+    "TopDimensionsDimension",
+    "TopDimensionsFilter",
+    "TopDimensionsMetricScope",
+    "TopDimensionsResponse",
+    "TopDimensionsRow",
+    "TopEventsCmsContextEntry",
+    "TopEventsComponentContextEntry",
+    "TopEventsFilter",
+    "TopEventsResponse",
+    "TopEventsRow",
+    "TopEventsTimeseriesPoint",
+    "TopPagesFilter",
+    "TopPagesResponse",
+    "TopPagesRow",
+    "TopPagesSortBy",
+    "TopPagesTimeseriesPoint",
+    "TrafficDataPoint",
+    "TrafficFilter",
+    "TrafficMetricScope",
+    "TrafficResponse",
     "TriggerType",
+    "UpdateSiteMemberRoleRequestBody",
+    "UpdateSiteMemberRoleRequestBodySiteRole",
     "UpdatedOrder",
     "UserAccess",
     "UserAccessAuditLogItem",
@@ -835,9 +1153,12 @@ __all__ = [
     "Webhook",
     "WebhookFilter",
     "WebhookList",
+    "WithDefaultSiteRole",
+    "WithSiteAccess",
+    "WorkspaceAuditLogActor",
+    "WorkspaceAuditLogActor_Person",
+    "WorkspaceAuditLogActor_Token",
     "WorkspaceAuditLogItem",
-    "WorkspaceAuditLogItemActor",
-    "WorkspaceAuditLogItemPayloadSettingChangeMethod",
     "WorkspaceAuditLogItemPayloadSiteMembershipGranularAccess",
     "WorkspaceAuditLogItemPayloadSiteMembershipMethod",
     "WorkspaceAuditLogItemPayloadSiteMembershipSite",
@@ -859,9 +1180,25 @@ __all__ = [
     "WorkspaceAuditLogItem_WorkspaceMembership",
     "WorkspaceAuditLogItem_WorkspaceSetting",
     "WorkspaceAuditLogResponse",
+    "WorkspaceBulkRoleChangeResponse",
+    "WorkspaceBulkRoleChangeResponseResultsItem",
+    "WorkspaceBulkRoleChangeResponseResultsItemError",
+    "WorkspaceBulkRoleChangeResponseResultsItemErrorCode",
+    "WorkspaceBulkRoleChangeResponseResultsItemOutcome",
+    "WorkspaceBulkRoleChangeResponseResultsItemType",
+    "WorkspaceBulkRoleChangeResponseSummary",
     "WorkspaceInvitation",
     "WorkspaceInvitationAuditLogItem",
     "WorkspaceInvitationAuditLogItemEventSubType",
+    "WorkspaceInvite",
+    "WorkspaceInviteRole",
+    "WorkspaceInviteStatus",
+    "WorkspaceMember",
+    "WorkspaceMemberRoles",
+    "WorkspaceMemberRolesSite",
+    "WorkspaceMemberRolesWorkspace",
+    "WorkspaceMembersResponse",
+    "WorkspaceMembersResponsePagination",
     "WorkspaceMembership",
     "WorkspaceMembershipAuditLogItem",
     "WorkspaceMembershipAuditLogItemEventSubType",

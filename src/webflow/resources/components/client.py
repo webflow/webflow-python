@@ -96,6 +96,7 @@ class ComponentsClient:
         branch_id: typing.Optional[str] = None,
         limit: typing.Optional[int] = None,
         offset: typing.Optional[int] = None,
+        translatable: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ComponentDom:
         """
@@ -117,7 +118,7 @@ class ComponentsClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         branch_id : typing.Optional[str]
             Scope the operation to work on a specific branch.
@@ -127,6 +128,19 @@ class ComponentsClient:
 
         offset : typing.Optional[int]
             Offset used for pagination if the results have more than limit records
+
+        translatable : typing.Optional[str]
+            Unique identifier for the secondary Locale you're translating **into**. Returns only content that hasn't been excluded from translation for that locale.
+
+            This is independent of `localeId`, which selects which version of the content is returned. To fetch the source text to translate, request the primary locale's content and set `translatable` to the locale you're translating into:
+
+            `?localeId={primary locale id}&translatable={target locale id}`
+
+            Only exclusion rules scoped to manual translation are respected — rules scoped only to automatic translation don't affect this parameter's response.
+
+            Omitting `translatable` returns the same response as if this parameter didn't exist. The value must be the id of one of the site's secondary locales — the primary locale id, or any other value, returns a `400` error. Requires translation exclusions to be enabled for the site; if they aren't, the request returns a `403` error.
+
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -150,6 +164,7 @@ class ComponentsClient:
             branch_id="68026fa68ef6dc744c75b833",
             limit=1,
             offset=1,
+            translatable="65427cf400e02b306eaa04a0",
         )
         """
         _response = self._raw_client.get_content(
@@ -159,6 +174,7 @@ class ComponentsClient:
             branch_id=branch_id,
             limit=limit,
             offset=offset,
+            translatable=translatable,
             request_options=request_options,
         )
         return _response.data
@@ -201,7 +217,7 @@ class ComponentsClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         branch_id : typing.Optional[str]
             Scope the operation to work on a specific branch.
@@ -301,6 +317,7 @@ class ComponentsClient:
         branch_id: typing.Optional[str] = None,
         limit: typing.Optional[int] = None,
         offset: typing.Optional[int] = None,
+        translatable: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ComponentProperties:
         """
@@ -321,7 +338,7 @@ class ComponentsClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         branch_id : typing.Optional[str]
             Scope the operation to work on a specific branch.
@@ -331,6 +348,19 @@ class ComponentsClient:
 
         offset : typing.Optional[int]
             Offset used for pagination if the results have more than limit records
+
+        translatable : typing.Optional[str]
+            Unique identifier for the secondary Locale you're translating **into**. Returns only content that hasn't been excluded from translation for that locale.
+
+            This is independent of `localeId`, which selects which version of the content is returned. To fetch the source text to translate, request the primary locale's content and set `translatable` to the locale you're translating into:
+
+            `?localeId={primary locale id}&translatable={target locale id}`
+
+            Only exclusion rules scoped to manual translation are respected — rules scoped only to automatic translation don't affect this parameter's response.
+
+            Omitting `translatable` returns the same response as if this parameter didn't exist. The value must be the id of one of the site's secondary locales — the primary locale id, or any other value, returns a `400` error. Requires translation exclusions to be enabled for the site; if they aren't, the request returns a `403` error.
+
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -354,6 +384,7 @@ class ComponentsClient:
             branch_id="68026fa68ef6dc744c75b833",
             limit=1,
             offset=1,
+            translatable="65427cf400e02b306eaa04a0",
         )
         """
         _response = self._raw_client.get_properties(
@@ -363,6 +394,7 @@ class ComponentsClient:
             branch_id=branch_id,
             limit=limit,
             offset=offset,
+            translatable=translatable,
             request_options=request_options,
         )
         return _response.data
@@ -402,7 +434,7 @@ class ComponentsClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         branch_id : typing.Optional[str]
             Scope the operation to work on a specific branch.
@@ -538,6 +570,7 @@ class AsyncComponentsClient:
         branch_id: typing.Optional[str] = None,
         limit: typing.Optional[int] = None,
         offset: typing.Optional[int] = None,
+        translatable: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ComponentDom:
         """
@@ -559,7 +592,7 @@ class AsyncComponentsClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         branch_id : typing.Optional[str]
             Scope the operation to work on a specific branch.
@@ -569,6 +602,19 @@ class AsyncComponentsClient:
 
         offset : typing.Optional[int]
             Offset used for pagination if the results have more than limit records
+
+        translatable : typing.Optional[str]
+            Unique identifier for the secondary Locale you're translating **into**. Returns only content that hasn't been excluded from translation for that locale.
+
+            This is independent of `localeId`, which selects which version of the content is returned. To fetch the source text to translate, request the primary locale's content and set `translatable` to the locale you're translating into:
+
+            `?localeId={primary locale id}&translatable={target locale id}`
+
+            Only exclusion rules scoped to manual translation are respected — rules scoped only to automatic translation don't affect this parameter's response.
+
+            Omitting `translatable` returns the same response as if this parameter didn't exist. The value must be the id of one of the site's secondary locales — the primary locale id, or any other value, returns a `400` error. Requires translation exclusions to be enabled for the site; if they aren't, the request returns a `403` error.
+
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -597,6 +643,7 @@ class AsyncComponentsClient:
                 branch_id="68026fa68ef6dc744c75b833",
                 limit=1,
                 offset=1,
+                translatable="65427cf400e02b306eaa04a0",
             )
 
 
@@ -609,6 +656,7 @@ class AsyncComponentsClient:
             branch_id=branch_id,
             limit=limit,
             offset=offset,
+            translatable=translatable,
             request_options=request_options,
         )
         return _response.data
@@ -651,7 +699,7 @@ class AsyncComponentsClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         branch_id : typing.Optional[str]
             Scope the operation to work on a specific branch.
@@ -759,6 +807,7 @@ class AsyncComponentsClient:
         branch_id: typing.Optional[str] = None,
         limit: typing.Optional[int] = None,
         offset: typing.Optional[int] = None,
+        translatable: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ComponentProperties:
         """
@@ -779,7 +828,7 @@ class AsyncComponentsClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         branch_id : typing.Optional[str]
             Scope the operation to work on a specific branch.
@@ -789,6 +838,19 @@ class AsyncComponentsClient:
 
         offset : typing.Optional[int]
             Offset used for pagination if the results have more than limit records
+
+        translatable : typing.Optional[str]
+            Unique identifier for the secondary Locale you're translating **into**. Returns only content that hasn't been excluded from translation for that locale.
+
+            This is independent of `localeId`, which selects which version of the content is returned. To fetch the source text to translate, request the primary locale's content and set `translatable` to the locale you're translating into:
+
+            `?localeId={primary locale id}&translatable={target locale id}`
+
+            Only exclusion rules scoped to manual translation are respected — rules scoped only to automatic translation don't affect this parameter's response.
+
+            Omitting `translatable` returns the same response as if this parameter didn't exist. The value must be the id of one of the site's secondary locales — the primary locale id, or any other value, returns a `400` error. Requires translation exclusions to be enabled for the site; if they aren't, the request returns a `403` error.
+
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -817,6 +879,7 @@ class AsyncComponentsClient:
                 branch_id="68026fa68ef6dc744c75b833",
                 limit=1,
                 offset=1,
+                translatable="65427cf400e02b306eaa04a0",
             )
 
 
@@ -829,6 +892,7 @@ class AsyncComponentsClient:
             branch_id=branch_id,
             limit=limit,
             offset=offset,
+            translatable=translatable,
             request_options=request_options,
         )
         return _response.data
@@ -868,7 +932,7 @@ class AsyncComponentsClient:
         locale_id : typing.Optional[str]
             Unique identifier for a specific Locale.
 
-            [Lear more about localization.](/data/v2.0.0/docs/working-with-localization)
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         branch_id : typing.Optional[str]
             Scope the operation to work on a specific branch.

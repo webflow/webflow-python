@@ -6,7 +6,6 @@ import pydantic
 import typing_extensions
 from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
 from ..core.serialization import FieldMetadata
-from .workspace_audit_log_item_payload_setting_change_method import WorkspaceAuditLogItemPayloadSettingChangeMethod
 
 
 class SettingChange(UniversalBaseModel):
@@ -15,7 +14,7 @@ class SettingChange(UniversalBaseModel):
         typing.Optional[str], FieldMetadata(alias="previousValue"), pydantic.Field(alias="previousValue")
     ] = None
     value: typing.Optional[str] = None
-    method: typing.Optional[WorkspaceAuditLogItemPayloadSettingChangeMethod] = None
+    method: typing.Optional[typing.Literal["dashboard"]] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

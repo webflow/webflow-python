@@ -3,15 +3,19 @@
 import typing
 
 import pydantic
-import typing_extensions
 from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
-from ..core.serialization import FieldMetadata
 
 
-class FieldValidationsAdditionalPropertiesAdditionalProperties(UniversalBaseModel):
-    additional_properties: typing_extensions.Annotated[
-        typing.Any, FieldMetadata(alias="additionalProperties"), pydantic.Field(alias="additionalProperties")
-    ]
+class PersonActor(UniversalBaseModel):
+    id: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    The ID of the user who performed the action
+    """
+
+    email: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    The email address of the user who performed the action
+    """
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

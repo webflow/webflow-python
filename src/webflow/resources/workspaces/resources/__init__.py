@@ -6,15 +6,28 @@ import typing
 from importlib import import_module
 
 if typing.TYPE_CHECKING:
-    from . import audit_logs
+    from . import audit_logs, members
     from .audit_logs import (
         AuditLogsGetWorkspaceAuditLogsRequestEventType,
         AuditLogsGetWorkspaceAuditLogsRequestSortOrder,
     )
+    from .members import (
+        BulkUpdateWorkspaceMemberRolesRequestBodyDefaultSiteRole,
+        BulkUpdateWorkspaceMemberRolesRequestBodyRole,
+        MembersListMembersRequestRolesItem,
+        UpdateWorkspaceMemberRoleRequestBodyDefaultSiteRole,
+        UpdateWorkspaceMemberRoleRequestBodyRole,
+    )
 _dynamic_imports: typing.Dict[str, str] = {
     "AuditLogsGetWorkspaceAuditLogsRequestEventType": ".audit_logs",
     "AuditLogsGetWorkspaceAuditLogsRequestSortOrder": ".audit_logs",
+    "BulkUpdateWorkspaceMemberRolesRequestBodyDefaultSiteRole": ".members",
+    "BulkUpdateWorkspaceMemberRolesRequestBodyRole": ".members",
+    "MembersListMembersRequestRolesItem": ".members",
+    "UpdateWorkspaceMemberRoleRequestBodyDefaultSiteRole": ".members",
+    "UpdateWorkspaceMemberRoleRequestBodyRole": ".members",
     "audit_logs": ".audit_logs",
+    "members": ".members",
 }
 
 
@@ -42,5 +55,11 @@ def __dir__():
 __all__ = [
     "AuditLogsGetWorkspaceAuditLogsRequestEventType",
     "AuditLogsGetWorkspaceAuditLogsRequestSortOrder",
+    "BulkUpdateWorkspaceMemberRolesRequestBodyDefaultSiteRole",
+    "BulkUpdateWorkspaceMemberRolesRequestBodyRole",
+    "MembersListMembersRequestRolesItem",
+    "UpdateWorkspaceMemberRoleRequestBodyDefaultSiteRole",
+    "UpdateWorkspaceMemberRoleRequestBodyRole",
     "audit_logs",
+    "members",
 ]

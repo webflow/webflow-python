@@ -9,12 +9,24 @@ if typing.TYPE_CHECKING:
     from .resources import (
         AuditLogsGetWorkspaceAuditLogsRequestEventType,
         AuditLogsGetWorkspaceAuditLogsRequestSortOrder,
+        BulkUpdateWorkspaceMemberRolesRequestBodyDefaultSiteRole,
+        BulkUpdateWorkspaceMemberRolesRequestBodyRole,
+        MembersListMembersRequestRolesItem,
+        UpdateWorkspaceMemberRoleRequestBodyDefaultSiteRole,
+        UpdateWorkspaceMemberRoleRequestBodyRole,
         audit_logs,
+        members,
     )
 _dynamic_imports: typing.Dict[str, str] = {
     "AuditLogsGetWorkspaceAuditLogsRequestEventType": ".resources",
     "AuditLogsGetWorkspaceAuditLogsRequestSortOrder": ".resources",
+    "BulkUpdateWorkspaceMemberRolesRequestBodyDefaultSiteRole": ".resources",
+    "BulkUpdateWorkspaceMemberRolesRequestBodyRole": ".resources",
+    "MembersListMembersRequestRolesItem": ".resources",
+    "UpdateWorkspaceMemberRoleRequestBodyDefaultSiteRole": ".resources",
+    "UpdateWorkspaceMemberRoleRequestBodyRole": ".resources",
     "audit_logs": ".resources",
+    "members": ".resources",
 }
 
 
@@ -42,5 +54,11 @@ def __dir__():
 __all__ = [
     "AuditLogsGetWorkspaceAuditLogsRequestEventType",
     "AuditLogsGetWorkspaceAuditLogsRequestSortOrder",
+    "BulkUpdateWorkspaceMemberRolesRequestBodyDefaultSiteRole",
+    "BulkUpdateWorkspaceMemberRolesRequestBodyRole",
+    "MembersListMembersRequestRolesItem",
+    "UpdateWorkspaceMemberRoleRequestBodyDefaultSiteRole",
+    "UpdateWorkspaceMemberRoleRequestBodyRole",
     "audit_logs",
+    "members",
 ]
