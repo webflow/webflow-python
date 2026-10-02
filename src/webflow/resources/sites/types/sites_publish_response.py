@@ -7,6 +7,7 @@ import typing_extensions
 from ....core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
 from ....core.serialization import FieldMetadata
 from ....types.domain import Domain
+from .sites_publish_response_publish_scope import SitesPublishResponsePublishScope
 
 
 class SitesPublishResponse(UniversalBaseModel):
@@ -19,6 +20,11 @@ class SitesPublishResponse(UniversalBaseModel):
         typing.Optional[bool],
         FieldMetadata(alias="publishToWebflowSubdomain"),
         pydantic.Field(alias="publishToWebflowSubdomain", description="Flag for publishing to webflow.io subdomain"),
+    ] = None
+    publish_scope: typing_extensions.Annotated[
+        typing.Optional[SitesPublishResponsePublishScope],
+        FieldMetadata(alias="publishScope"),
+        pydantic.Field(alias="publishScope", description="Whether the site or an individual page was published"),
     ] = None
 
     if IS_PYDANTIC_V2:

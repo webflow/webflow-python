@@ -9,6 +9,7 @@ from .raw_client import AsyncRawWorkspacesClient, RawWorkspacesClient
 
 if typing.TYPE_CHECKING:
     from .resources.audit_logs.client import AsyncAuditLogsClient, AuditLogsClient
+    from .resources.members.client import AsyncMembersClient, MembersClient
 
 
 class WorkspacesClient:
@@ -16,6 +17,7 @@ class WorkspacesClient:
         self._raw_client = RawWorkspacesClient(client_wrapper=client_wrapper)
         self._client_wrapper = client_wrapper
         self._audit_logs: typing.Optional[AuditLogsClient] = None
+        self._members: typing.Optional[MembersClient] = None
 
     @property
     def with_raw_response(self) -> RawWorkspacesClient:
@@ -36,12 +38,21 @@ class WorkspacesClient:
             self._audit_logs = AuditLogsClient(client_wrapper=self._client_wrapper)
         return self._audit_logs
 
+    @property
+    def members(self):
+        if self._members is None:
+            from .resources.members.client import MembersClient  # noqa: E402
+
+            self._members = MembersClient(client_wrapper=self._client_wrapper)
+        return self._members
+
 
 class AsyncWorkspacesClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._raw_client = AsyncRawWorkspacesClient(client_wrapper=client_wrapper)
         self._client_wrapper = client_wrapper
         self._audit_logs: typing.Optional[AsyncAuditLogsClient] = None
+        self._members: typing.Optional[AsyncMembersClient] = None
 
     @property
     def with_raw_response(self) -> AsyncRawWorkspacesClient:
@@ -61,3 +72,11 @@ class AsyncWorkspacesClient:
 
             self._audit_logs = AsyncAuditLogsClient(client_wrapper=self._client_wrapper)
         return self._audit_logs
+
+    @property
+    def members(self):
+        if self._members is None:
+            from .resources.members.client import AsyncMembersClient  # noqa: E402
+
+            self._members = AsyncMembersClient(client_wrapper=self._client_wrapper)
+        return self._members

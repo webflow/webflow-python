@@ -70,6 +70,14 @@ class Asset(UniversalBaseModel):
         FieldMetadata(alias="altText"),
         pydantic.Field(alias="altText", description="The visual description of the asset"),
     ] = None
+    folder_id: typing_extensions.Annotated[
+        typing.Optional[str],
+        FieldMetadata(alias="folderId"),
+        pydantic.Field(
+            alias="folderId",
+            description="The ID of the folder the asset belongs to, or `null` if the asset is at the site root.\nThis field is present only in list responses (`GET /sites/{site_id}/assets`).",
+        ),
+    ] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2
