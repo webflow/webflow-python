@@ -7,6 +7,7 @@ import pydantic
 import typing_extensions
 from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
 from ..core.serialization import FieldMetadata
+from .site_publish_payload_publish_scope import SitePublishPayloadPublishScope
 
 
 class SitePublishPayload(UniversalBaseModel):
@@ -32,7 +33,17 @@ class SitePublishPayload(UniversalBaseModel):
     published_by: typing_extensions.Annotated[
         typing.Optional[typing.Dict[str, typing.Any]],
         FieldMetadata(alias="publishedBy"),
-        pydantic.Field(alias="publishedBy", description="The name andID of the user who published the site"),
+        pydantic.Field(alias="publishedBy", description="The name and ID of the user who published the site"),
+    ] = None
+    publish_scope: typing_extensions.Annotated[
+        typing.Optional[SitePublishPayloadPublishScope],
+        FieldMetadata(alias="publishScope"),
+        pydantic.Field(alias="publishScope", description="Whether the entire site or an individual page was published"),
+    ] = None
+    page_id: typing_extensions.Annotated[
+        typing.Optional[str],
+        FieldMetadata(alias="pageId"),
+        pydantic.Field(alias="pageId", description="The ID of the page that was published"),
     ] = None
 
     if IS_PYDANTIC_V2:

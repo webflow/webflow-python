@@ -2,4 +2,6 @@
 
 import typing
 
-ItemsListItemsRequestSortBy = typing.Union[typing.Literal["lastPublished", "name", "slug"], typing.Any]
+ItemsListItemsRequestSortBy = typing.Union[
+    typing.Literal["createdOn", "lastPublished", "lastUpdated", "name", "slug"], typing.Any
+]

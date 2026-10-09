@@ -3,5 +3,5 @@
 import typing
 
 WorkspaceAuditLogItemPayloadSiteMembershipMethod = typing.Union[
-    typing.Literal["sso", "invite", "scim", "dashboard", "admin", "access_request"], typing.Any
+    typing.Literal["invite", "scim", "dashboard", "admin", "access_request", "api"], typing.Any
 ]
