@@ -10,7 +10,7 @@ from ......types.collection_item import CollectionItem
 class MultipleLiveItems(UniversalBaseModel):
     items: typing.Optional[typing.List[CollectionItem]] = pydantic.Field(default=None)
     """
-    List of collection items to create
+    The items to create. Each entry needs its own `fieldData`. Don't send a top-level `fieldData` with this shape.
     """
 
     if IS_PYDANTIC_V2:

@@ -10,9 +10,11 @@ from .core.logging import LogConfig, Logger
 from .environment import WebflowEnvironment
 
 if typing.TYPE_CHECKING:
+    from .resources.analyze.client import AnalyzeClient, AsyncAnalyzeClient
     from .resources.assets.client import AssetsClient, AsyncAssetsClient
     from .resources.collections.client import AsyncCollectionsClient, CollectionsClient
     from .resources.components.client import AsyncComponentsClient, ComponentsClient
+    from .resources.custom_fonts.client import AsyncCustomFontsClient, CustomFontsClient
     from .resources.ecommerce.client import AsyncEcommerceClient, EcommerceClient
     from .resources.forms.client import AsyncFormsClient, FormsClient
     from .resources.inventory.client import AsyncInventoryClient, InventoryClient
@@ -93,19 +95,21 @@ class Webflow:
             logging=logging,
         )
         self._token: typing.Optional[TokenClient] = None
+        self._workspaces: typing.Optional[WorkspacesClient] = None
         self._sites: typing.Optional[SitesClient] = None
         self._collections: typing.Optional[CollectionsClient] = None
         self._pages: typing.Optional[PagesClient] = None
         self._components: typing.Optional[ComponentsClient] = None
         self._scripts: typing.Optional[ScriptsClient] = None
         self._assets: typing.Optional[AssetsClient] = None
+        self._custom_fonts: typing.Optional[CustomFontsClient] = None
         self._webhooks: typing.Optional[WebhooksClient] = None
         self._forms: typing.Optional[FormsClient] = None
         self._products: typing.Optional[ProductsClient] = None
         self._orders: typing.Optional[OrdersClient] = None
         self._inventory: typing.Optional[InventoryClient] = None
         self._ecommerce: typing.Optional[EcommerceClient] = None
-        self._workspaces: typing.Optional[WorkspacesClient] = None
+        self._analyze: typing.Optional[AnalyzeClient] = None
 
     @property
     def token(self):
@@ -114,6 +118,14 @@ class Webflow:
 
             self._token = TokenClient(client_wrapper=self._client_wrapper)
         return self._token
+
+    @property
+    def workspaces(self):
+        if self._workspaces is None:
+            from .resources.workspaces.client import WorkspacesClient  # noqa: E402
+
+            self._workspaces = WorkspacesClient(client_wrapper=self._client_wrapper)
+        return self._workspaces
 
     @property
     def sites(self):
@@ -164,6 +176,14 @@ class Webflow:
         return self._assets
 
     @property
+    def custom_fonts(self):
+        if self._custom_fonts is None:
+            from .resources.custom_fonts.client import CustomFontsClient  # noqa: E402
+
+            self._custom_fonts = CustomFontsClient(client_wrapper=self._client_wrapper)
+        return self._custom_fonts
+
+    @property
     def webhooks(self):
         if self._webhooks is None:
             from .resources.webhooks.client import WebhooksClient  # noqa: E402
@@ -212,12 +232,12 @@ class Webflow:
         return self._ecommerce
 
     @property
-    def workspaces(self):
-        if self._workspaces is None:
-            from .resources.workspaces.client import WorkspacesClient  # noqa: E402
+    def analyze(self):
+        if self._analyze is None:
+            from .resources.analyze.client import AnalyzeClient  # noqa: E402
 
-            self._workspaces = WorkspacesClient(client_wrapper=self._client_wrapper)
-        return self._workspaces
+            self._analyze = AnalyzeClient(client_wrapper=self._client_wrapper)
+        return self._analyze
 
 
 class AsyncWebflow:
@@ -287,19 +307,21 @@ class AsyncWebflow:
             logging=logging,
         )
         self._token: typing.Optional[AsyncTokenClient] = None
+        self._workspaces: typing.Optional[AsyncWorkspacesClient] = None
         self._sites: typing.Optional[AsyncSitesClient] = None
         self._collections: typing.Optional[AsyncCollectionsClient] = None
         self._pages: typing.Optional[AsyncPagesClient] = None
         self._components: typing.Optional[AsyncComponentsClient] = None
         self._scripts: typing.Optional[AsyncScriptsClient] = None
         self._assets: typing.Optional[AsyncAssetsClient] = None
+        self._custom_fonts: typing.Optional[AsyncCustomFontsClient] = None
         self._webhooks: typing.Optional[AsyncWebhooksClient] = None
         self._forms: typing.Optional[AsyncFormsClient] = None
         self._products: typing.Optional[AsyncProductsClient] = None
         self._orders: typing.Optional[AsyncOrdersClient] = None
         self._inventory: typing.Optional[AsyncInventoryClient] = None
         self._ecommerce: typing.Optional[AsyncEcommerceClient] = None
-        self._workspaces: typing.Optional[AsyncWorkspacesClient] = None
+        self._analyze: typing.Optional[AsyncAnalyzeClient] = None
 
     @property
     def token(self):
@@ -308,6 +330,14 @@ class AsyncWebflow:
 
             self._token = AsyncTokenClient(client_wrapper=self._client_wrapper)
         return self._token
+
+    @property
+    def workspaces(self):
+        if self._workspaces is None:
+            from .resources.workspaces.client import AsyncWorkspacesClient  # noqa: E402
+
+            self._workspaces = AsyncWorkspacesClient(client_wrapper=self._client_wrapper)
+        return self._workspaces
 
     @property
     def sites(self):
@@ -358,6 +388,14 @@ class AsyncWebflow:
         return self._assets
 
     @property
+    def custom_fonts(self):
+        if self._custom_fonts is None:
+            from .resources.custom_fonts.client import AsyncCustomFontsClient  # noqa: E402
+
+            self._custom_fonts = AsyncCustomFontsClient(client_wrapper=self._client_wrapper)
+        return self._custom_fonts
+
+    @property
     def webhooks(self):
         if self._webhooks is None:
             from .resources.webhooks.client import AsyncWebhooksClient  # noqa: E402
@@ -406,9 +444,9 @@ class AsyncWebflow:
         return self._ecommerce
 
     @property
-    def workspaces(self):
-        if self._workspaces is None:
-            from .resources.workspaces.client import AsyncWorkspacesClient  # noqa: E402
+    def analyze(self):
+        if self._analyze is None:
+            from .resources.analyze.client import AsyncAnalyzeClient  # noqa: E402
 
-            self._workspaces = AsyncWorkspacesClient(client_wrapper=self._client_wrapper)
-        return self._workspaces
+            self._analyze = AsyncAnalyzeClient(client_wrapper=self._client_wrapper)
+        return self._analyze
