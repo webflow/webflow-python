@@ -51,7 +51,10 @@ class CollectionItem(UniversalBaseModel):
     is_draft: typing_extensions.Annotated[
         typing.Optional[bool],
         FieldMetadata(alias="isDraft"),
-        pydantic.Field(alias="isDraft", description="Boolean determining if the Item is set to draft"),
+        pydantic.Field(
+            alias="isDraft",
+            description="Whether the item is in a draft state. Together with `lastPublished`, this determines the status shown in the Webflow UI. See [Publishing with the CMS API](/data/docs/working-with-the-cms/publishing) for the full mapping.",
+        ),
     ] = None
     field_data: typing_extensions.Annotated[
         CollectionItemFieldData, FieldMetadata(alias="fieldData"), pydantic.Field(alias="fieldData")

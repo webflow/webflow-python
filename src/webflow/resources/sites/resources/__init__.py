@@ -6,7 +6,19 @@ import typing
 from importlib import import_module
 
 if typing.TYPE_CHECKING:
-    from . import activity_logs, comments, forms, plans, redirects, robots_txt, scripts, well_known
+    from . import (
+        activity_logs,
+        aeo,
+        comments,
+        forms,
+        google_tag,
+        members,
+        plans,
+        redirects,
+        robots_txt,
+        scripts,
+        well_known,
+    )
     from .comments import (
         CommentsGetCommentThreadRequestSortBy,
         CommentsGetCommentThreadRequestSortOrder,
@@ -15,6 +27,7 @@ if typing.TYPE_CHECKING:
         CommentsListCommentThreadsRequestSortBy,
         CommentsListCommentThreadsRequestSortOrder,
     )
+    from .members import GrantSiteMemberRequestBodySiteRole
     from .well_known import WellKnownFileContentType
 _dynamic_imports: typing.Dict[str, str] = {
     "CommentsGetCommentThreadRequestSortBy": ".comments",
@@ -23,10 +36,14 @@ _dynamic_imports: typing.Dict[str, str] = {
     "CommentsListCommentRepliesRequestSortOrder": ".comments",
     "CommentsListCommentThreadsRequestSortBy": ".comments",
     "CommentsListCommentThreadsRequestSortOrder": ".comments",
+    "GrantSiteMemberRequestBodySiteRole": ".members",
     "WellKnownFileContentType": ".well_known",
     "activity_logs": ".activity_logs",
+    "aeo": ".aeo",
     "comments": ".comments",
     "forms": ".forms",
+    "google_tag": ".google_tag",
+    "members": ".members",
     "plans": ".plans",
     "redirects": ".redirects",
     "robots_txt": ".robots_txt",
@@ -63,10 +80,14 @@ __all__ = [
     "CommentsListCommentRepliesRequestSortOrder",
     "CommentsListCommentThreadsRequestSortBy",
     "CommentsListCommentThreadsRequestSortOrder",
+    "GrantSiteMemberRequestBodySiteRole",
     "WellKnownFileContentType",
     "activity_logs",
+    "aeo",
     "comments",
     "forms",
+    "google_tag",
+    "members",
     "plans",
     "redirects",
     "robots_txt",

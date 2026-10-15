@@ -14,7 +14,10 @@ class Authorization(UniversalBaseModel):
     The Authorization object
     """
 
-    application: typing.Optional[Application] = None
+    application: typing.Optional[Application] = pydantic.Field(default=None)
+    """
+    Details of the OAuth app the token belongs to. Present only for tokens issued to an OAuth app. Omitted for `client_credentials` tokens without an OAuth app, such as Site and Workspace API tokens.
+    """
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2
