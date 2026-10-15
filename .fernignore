@@ -5,3 +5,6 @@ assets/
 
 src/webflow/oauth.py
 src/webflow/types/oauth_scope.py
+.fern/replay.lock
+.fern/replay.yml
+.gitattributes

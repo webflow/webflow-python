@@ -2,10 +2,4 @@
 
 import typing
 
-from .field_validations_additional_properties_additional_properties import (
-    FieldValidationsAdditionalPropertiesAdditionalProperties,
-)
-
-FieldValidationsAdditionalProperties = typing.Union[
-    str, float, bool, int, FieldValidationsAdditionalPropertiesAdditionalProperties
-]
+FieldValidationsAdditionalProperties = typing.Union[str, float, bool, int, typing.Any]
