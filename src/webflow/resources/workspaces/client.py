@@ -5,10 +5,13 @@ from __future__ import annotations
 import typing
 
 from ...core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
+from ...core.request_options import RequestOptions
+from ...types.workspaces import Workspaces
 from .raw_client import AsyncRawWorkspacesClient, RawWorkspacesClient
 
 if typing.TYPE_CHECKING:
     from .resources.audit_logs.client import AsyncAuditLogsClient, AuditLogsClient
+    from .resources.members.client import AsyncMembersClient, MembersClient
 
 
 class WorkspacesClient:
@@ -16,6 +19,7 @@ class WorkspacesClient:
         self._raw_client = RawWorkspacesClient(client_wrapper=client_wrapper)
         self._client_wrapper = client_wrapper
         self._audit_logs: typing.Optional[AuditLogsClient] = None
+        self._members: typing.Optional[MembersClient] = None
 
     @property
     def with_raw_response(self) -> RawWorkspacesClient:
@@ -28,6 +32,38 @@ class WorkspacesClient:
         """
         return self._raw_client
 
+    def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> Workspaces:
+        """
+        List the workspaces the token can access, including each workspace's ID. Use this endpoint to find the `workspace_id` that other workspace endpoints require.
+
+        The response includes the workspaces granted to the token, plus the workspace that owns each site granted to the token. It returns only active workspaces (not archived, deleted, or draft) and isn't paginated.
+
+        <Note>This endpoint supports workspace API tokens and Data Client apps.</Note>
+
+        Required scope | `workspace:read`
+
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        Workspaces
+            A list of workspaces
+
+        Examples
+        --------
+        from webflow import Webflow
+
+        client = Webflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+        client.workspaces.list()
+        """
+        _response = self._raw_client.list(request_options=request_options)
+        return _response.data
+
     @property
     def audit_logs(self):
         if self._audit_logs is None:
@@ -36,12 +72,21 @@ class WorkspacesClient:
             self._audit_logs = AuditLogsClient(client_wrapper=self._client_wrapper)
         return self._audit_logs
 
+    @property
+    def members(self):
+        if self._members is None:
+            from .resources.members.client import MembersClient  # noqa: E402
+
+            self._members = MembersClient(client_wrapper=self._client_wrapper)
+        return self._members
+
 
 class AsyncWorkspacesClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._raw_client = AsyncRawWorkspacesClient(client_wrapper=client_wrapper)
         self._client_wrapper = client_wrapper
         self._audit_logs: typing.Optional[AsyncAuditLogsClient] = None
+        self._members: typing.Optional[AsyncMembersClient] = None
 
     @property
     def with_raw_response(self) -> AsyncRawWorkspacesClient:
@@ -54,6 +99,46 @@ class AsyncWorkspacesClient:
         """
         return self._raw_client
 
+    async def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> Workspaces:
+        """
+        List the workspaces the token can access, including each workspace's ID. Use this endpoint to find the `workspace_id` that other workspace endpoints require.
+
+        The response includes the workspaces granted to the token, plus the workspace that owns each site granted to the token. It returns only active workspaces (not archived, deleted, or draft) and isn't paginated.
+
+        <Note>This endpoint supports workspace API tokens and Data Client apps.</Note>
+
+        Required scope | `workspace:read`
+
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        Workspaces
+            A list of workspaces
+
+        Examples
+        --------
+        import asyncio
+
+        from webflow import AsyncWebflow
+
+        client = AsyncWebflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+
+
+        async def main() -> None:
+            await client.workspaces.list()
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.list(request_options=request_options)
+        return _response.data
+
     @property
     def audit_logs(self):
         if self._audit_logs is None:
@@ -61,3 +146,11 @@ class AsyncWorkspacesClient:
 
             self._audit_logs = AsyncAuditLogsClient(client_wrapper=self._client_wrapper)
         return self._audit_logs
+
+    @property
+    def members(self):
+        if self._members is None:
+            from .resources.members.client import AsyncMembersClient  # noqa: E402
+
+            self._members = AsyncMembersClient(client_wrapper=self._client_wrapper)
+        return self._members

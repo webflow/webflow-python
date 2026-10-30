@@ -6,10 +6,11 @@ WorkspaceInvitationAuditLogItemEventSubType = typing.Union[
     typing.Literal[
         "invite_sent",
         "invite_accepted",
-        "invite_updated",
+        "invite_role_updated",
         "invite_canceled",
         "invite_declined",
         "access_request_accepted",
+        "access_request_declined",
     ],
     typing.Any,
 ]
