@@ -49,7 +49,10 @@ class BulkCollectionItem(UniversalBaseModel):
     is_draft: typing_extensions.Annotated[
         typing.Optional[bool],
         FieldMetadata(alias="isDraft"),
-        pydantic.Field(alias="isDraft", description="Boolean determining if the Item is set to draft"),
+        pydantic.Field(
+            alias="isDraft",
+            description="Whether the item is in a draft state. `true` unless the request set `isDraft: false`.",
+        ),
     ] = None
     field_data: typing_extensions.Annotated[
         typing.Optional[BulkCollectionItemFieldData],

@@ -9,6 +9,7 @@ from ...core.request_options import RequestOptions
 from ...types.collection import Collection
 from ...types.collection_list import CollectionList
 from ...types.field_create import FieldCreate
+from ...types.field_group import FieldGroup
 from .raw_client import AsyncRawCollectionsClient, RawCollectionsClient
 
 if typing.TYPE_CHECKING:
@@ -221,6 +222,73 @@ class CollectionsClient:
         )
         """
         _response = self._raw_client.delete(collection_id, request_options=request_options)
+        return _response.data
+
+    def patch(
+        self,
+        collection_id: str,
+        *,
+        display_name: typing.Optional[str] = OMIT,
+        singular_name: typing.Optional[str] = OMIT,
+        slug: typing.Optional[str] = OMIT,
+        field_groups: typing.Optional[typing.Sequence[FieldGroup]] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> Collection:
+        """
+        Update a collection's display name, singular name, slug, or field groups.
+
+        **Field group rules:**
+        - A collection can have a maximum of 50 field groups
+        - Each `displayName` must be unique across all field groups in the collection
+        - Each `fieldId` must be unique across all field groups in the collection
+        - Ecommerce collections do not support field groups
+
+        Required scope | `cms:write`
+
+        Parameters
+        ----------
+        collection_id : str
+            Unique identifier for a Collection
+
+        display_name : typing.Optional[str]
+            Name given to the Collection
+
+        singular_name : typing.Optional[str]
+            The name of one Item in Collection (e.g. ”Blog Post” if the Collection is called “Blog Posts”)
+
+        slug : typing.Optional[str]
+            Slug of Collection in Site URL structure
+
+        field_groups : typing.Optional[typing.Sequence[FieldGroup]]
+            The list of field groups in the Collection. Replaces the existing field groups.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        Collection
+            Request was successful
+
+        Examples
+        --------
+        from webflow import Webflow
+
+        client = Webflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+        client.collections.patch(
+            collection_id="580e63fc8c9a982ac9b8b745",
+        )
+        """
+        _response = self._raw_client.patch(
+            collection_id,
+            display_name=display_name,
+            singular_name=singular_name,
+            slug=slug,
+            field_groups=field_groups,
+            request_options=request_options,
+        )
         return _response.data
 
     @property
@@ -480,6 +548,81 @@ class AsyncCollectionsClient:
         asyncio.run(main())
         """
         _response = await self._raw_client.delete(collection_id, request_options=request_options)
+        return _response.data
+
+    async def patch(
+        self,
+        collection_id: str,
+        *,
+        display_name: typing.Optional[str] = OMIT,
+        singular_name: typing.Optional[str] = OMIT,
+        slug: typing.Optional[str] = OMIT,
+        field_groups: typing.Optional[typing.Sequence[FieldGroup]] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> Collection:
+        """
+        Update a collection's display name, singular name, slug, or field groups.
+
+        **Field group rules:**
+        - A collection can have a maximum of 50 field groups
+        - Each `displayName` must be unique across all field groups in the collection
+        - Each `fieldId` must be unique across all field groups in the collection
+        - Ecommerce collections do not support field groups
+
+        Required scope | `cms:write`
+
+        Parameters
+        ----------
+        collection_id : str
+            Unique identifier for a Collection
+
+        display_name : typing.Optional[str]
+            Name given to the Collection
+
+        singular_name : typing.Optional[str]
+            The name of one Item in Collection (e.g. ”Blog Post” if the Collection is called “Blog Posts”)
+
+        slug : typing.Optional[str]
+            Slug of Collection in Site URL structure
+
+        field_groups : typing.Optional[typing.Sequence[FieldGroup]]
+            The list of field groups in the Collection. Replaces the existing field groups.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        Collection
+            Request was successful
+
+        Examples
+        --------
+        import asyncio
+
+        from webflow import AsyncWebflow
+
+        client = AsyncWebflow(
+            access_token="YOUR_ACCESS_TOKEN",
+        )
+
+
+        async def main() -> None:
+            await client.collections.patch(
+                collection_id="580e63fc8c9a982ac9b8b745",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.patch(
+            collection_id,
+            display_name=display_name,
+            singular_name=singular_name,
+            slug=slug,
+            field_groups=field_groups,
+            request_options=request_options,
+        )
         return _response.data
 
     @property
