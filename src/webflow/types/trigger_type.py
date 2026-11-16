@@ -18,6 +18,9 @@ TriggerType = typing.Union[
         "collection_item_published",
         "collection_item_unpublished",
         "comment_created",
+        "branch_created",
+        "branch_merged",
+        "branch_deleted",
     ],
     typing.Any,
 ]

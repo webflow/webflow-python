@@ -51,7 +51,10 @@ class CollectionItemPostSingle(UniversalBaseModel):
     is_draft: typing_extensions.Annotated[
         typing.Optional[bool],
         FieldMetadata(alias="isDraft"),
-        pydantic.Field(alias="isDraft", description="Boolean determining if the Item is in a draft state."),
+        pydantic.Field(
+            alias="isDraft",
+            description="Whether the item is created in a draft state. A new item has never been published, so `isDraft: true` gives it a `Draft` status. Set `isDraft: false` to queue the item to publish on the next site publish.",
+        ),
     ] = None
     field_data: typing_extensions.Annotated[
         CollectionItemPostSingleFieldData, FieldMetadata(alias="fieldData"), pydantic.Field(alias="fieldData")

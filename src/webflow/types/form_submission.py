@@ -40,6 +40,14 @@ class FormSubmission(UniversalBaseModel):
         FieldMetadata(alias="formResponse"),
         pydantic.Field(alias="formResponse", description="The data submitted in the Form"),
     ] = None
+    locale_id: typing_extensions.Annotated[
+        typing.Optional[str],
+        FieldMetadata(alias="localeId"),
+        pydantic.Field(
+            alias="localeId",
+            description="The ID of the locale the form was submitted from. `null` for primary-locale submissions or sites without localization.",
+        ),
+    ] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2
