@@ -16,7 +16,7 @@ from .site_membership import SiteMembership
 from .site_membership_audit_log_item_event_sub_type import SiteMembershipAuditLogItemEventSubType
 from .user_access import UserAccess
 from .user_access_audit_log_item_event_sub_type import UserAccessAuditLogItemEventSubType
-from .workspace_audit_log_item_actor import WorkspaceAuditLogItemActor
+from .workspace_audit_log_actor import WorkspaceAuditLogActor
 from .workspace_audit_log_item_workspace import WorkspaceAuditLogItemWorkspace
 from .workspace_invitation import WorkspaceInvitation
 from .workspace_invitation_audit_log_item_event_sub_type import WorkspaceInvitationAuditLogItemEventSubType
@@ -26,7 +26,7 @@ from .workspace_membership_audit_log_item_event_sub_type import WorkspaceMembers
 
 class Base(UniversalBaseModel):
     timestamp: typing.Optional[dt.datetime] = None
-    actor: typing.Optional[WorkspaceAuditLogItemActor] = None
+    actor: typing.Optional[WorkspaceAuditLogActor] = None
     workspace: typing.Optional[WorkspaceAuditLogItemWorkspace] = None
 
     if IS_PYDANTIC_V2:

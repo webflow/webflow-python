@@ -174,9 +174,6 @@ class RawRobotsTxtClient:
                 ),
                 "sitemap": sitemap,
             },
-            headers={
-                "content-type": "application/json",
-            },
             request_options=request_options,
             omit=OMIT,
         )
@@ -300,9 +297,6 @@ class RawRobotsTxtClient:
                 ),
                 "sitemap": sitemap,
             },
-            headers={
-                "content-type": "application/json",
-            },
             request_options=request_options,
             omit=OMIT,
         )
@@ -423,9 +417,6 @@ class RawRobotsTxtClient:
                     object_=rules, annotation=typing.Sequence[RobotsRulesItem], direction="write"
                 ),
                 "sitemap": sitemap,
-            },
-            headers={
-                "content-type": "application/json",
             },
             request_options=request_options,
             omit=OMIT,
@@ -656,9 +647,6 @@ class AsyncRawRobotsTxtClient:
                 ),
                 "sitemap": sitemap,
             },
-            headers={
-                "content-type": "application/json",
-            },
             request_options=request_options,
             omit=OMIT,
         )
@@ -782,9 +770,6 @@ class AsyncRawRobotsTxtClient:
                 ),
                 "sitemap": sitemap,
             },
-            headers={
-                "content-type": "application/json",
-            },
             request_options=request_options,
             omit=OMIT,
         )
@@ -905,9 +890,6 @@ class AsyncRawRobotsTxtClient:
                     object_=rules, annotation=typing.Sequence[RobotsRulesItem], direction="write"
                 ),
                 "sitemap": sitemap,
-            },
-            headers={
-                "content-type": "application/json",
             },
             request_options=request_options,
             omit=OMIT,

@@ -35,8 +35,10 @@ class RawAssetsClient:
         self,
         site_id: str,
         *,
+        locale_id: typing.Optional[str] = None,
         offset: typing.Optional[int] = None,
         limit: typing.Optional[int] = None,
+        folder_id: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[Assets]:
         """
@@ -49,11 +51,20 @@ class RawAssetsClient:
         site_id : str
             Unique identifier for a Site
 
+        locale_id : typing.Optional[str]
+            Unique identifier for a specific Locale.
+
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
+
         offset : typing.Optional[int]
             Offset used for pagination if the results have more than limit records
 
         limit : typing.Optional[int]
             Maximum number of records to be returned (max limit: 100)
+
+        folder_id : typing.Optional[str]
+            Filter assets to those in the specified folder and all descendant folders.
+            Must be a 24-character hex ObjectId.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -68,8 +79,10 @@ class RawAssetsClient:
             base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
+                "localeId": locale_id,
                 "offset": offset,
                 "limit": limit,
+                "folderId": folder_id,
             },
             request_options=request_options,
         )
@@ -154,6 +167,9 @@ class RawAssetsClient:
         file_name: str,
         file_hash: str,
         parent_folder: typing.Optional[str] = OMIT,
+        size: typing.Optional[int] = OMIT,
+        width: typing.Optional[int] = OMIT,
+        height: typing.Optional[int] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[AssetUpload]:
         """
@@ -184,6 +200,15 @@ class RawAssetsClient:
         parent_folder : typing.Optional[str]
             ID of the Asset folder (optional)
 
+        size : typing.Optional[int]
+            Size of the file in bytes. Maximum 30 MB.
+
+        width : typing.Optional[int]
+            Intrinsic width of the image in pixels. Webflow stores this value as provided. Omit for non-image files.
+
+        height : typing.Optional[int]
+            Intrinsic height of the image in pixels. Webflow stores this value as provided. Omit for non-image files.
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -200,6 +225,9 @@ class RawAssetsClient:
                 "fileName": file_name,
                 "fileHash": file_hash,
                 "parentFolder": parent_folder,
+                "size": size,
+                "width": width,
+                "height": height,
             },
             headers={
                 "content-type": "application/json",
@@ -281,7 +309,13 @@ class RawAssetsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def get(self, asset_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> HttpResponse[Asset]:
+    def get(
+        self,
+        asset_id: str,
+        *,
+        locale_id: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HttpResponse[Asset]:
         """
         Get details about an asset
 
@@ -291,6 +325,11 @@ class RawAssetsClient:
         ----------
         asset_id : str
             Unique identifier for an Asset on a site
+
+        locale_id : typing.Optional[str]
+            Unique identifier for a specific Locale.
+
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -304,6 +343,9 @@ class RawAssetsClient:
             f"assets/{jsonable_encoder(asset_id)}",
             base_url=self._client_wrapper.get_environment().base,
             method="GET",
+            params={
+                "localeId": locale_id,
+            },
             request_options=request_options,
         )
         try:
@@ -475,8 +517,9 @@ class RawAssetsClient:
         self,
         asset_id: str,
         *,
-        locale_id: typing.Optional[str] = OMIT,
+        locale_id: typing.Optional[str] = None,
         display_name: typing.Optional[str] = OMIT,
+        alt_text: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[Asset]:
         """
@@ -490,10 +533,15 @@ class RawAssetsClient:
             Unique identifier for an Asset on a site
 
         locale_id : typing.Optional[str]
-            Unique identifier for a specific locale. Applicable, when using localization.
+            Unique identifier for a specific Locale.
+
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         display_name : typing.Optional[str]
-            A human readable name for the asset
+            A human readable name for the asset. This value is not localizable.
+
+        alt_text : typing.Optional[str]
+            Alternate text describing the image
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -507,9 +555,12 @@ class RawAssetsClient:
             f"assets/{jsonable_encoder(asset_id)}",
             base_url=self._client_wrapper.get_environment().base,
             method="PATCH",
-            json={
+            params={
                 "localeId": locale_id,
+            },
+            json={
                 "displayName": display_name,
+                "altText": alt_text,
             },
             headers={
                 "content-type": "application/json",
@@ -922,8 +973,10 @@ class AsyncRawAssetsClient:
         self,
         site_id: str,
         *,
+        locale_id: typing.Optional[str] = None,
         offset: typing.Optional[int] = None,
         limit: typing.Optional[int] = None,
+        folder_id: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[Assets]:
         """
@@ -936,11 +989,20 @@ class AsyncRawAssetsClient:
         site_id : str
             Unique identifier for a Site
 
+        locale_id : typing.Optional[str]
+            Unique identifier for a specific Locale.
+
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
+
         offset : typing.Optional[int]
             Offset used for pagination if the results have more than limit records
 
         limit : typing.Optional[int]
             Maximum number of records to be returned (max limit: 100)
+
+        folder_id : typing.Optional[str]
+            Filter assets to those in the specified folder and all descendant folders.
+            Must be a 24-character hex ObjectId.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -955,8 +1017,10 @@ class AsyncRawAssetsClient:
             base_url=self._client_wrapper.get_environment().base,
             method="GET",
             params={
+                "localeId": locale_id,
                 "offset": offset,
                 "limit": limit,
+                "folderId": folder_id,
             },
             request_options=request_options,
         )
@@ -1041,6 +1105,9 @@ class AsyncRawAssetsClient:
         file_name: str,
         file_hash: str,
         parent_folder: typing.Optional[str] = OMIT,
+        size: typing.Optional[int] = OMIT,
+        width: typing.Optional[int] = OMIT,
+        height: typing.Optional[int] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[AssetUpload]:
         """
@@ -1071,6 +1138,15 @@ class AsyncRawAssetsClient:
         parent_folder : typing.Optional[str]
             ID of the Asset folder (optional)
 
+        size : typing.Optional[int]
+            Size of the file in bytes. Maximum 30 MB.
+
+        width : typing.Optional[int]
+            Intrinsic width of the image in pixels. Webflow stores this value as provided. Omit for non-image files.
+
+        height : typing.Optional[int]
+            Intrinsic height of the image in pixels. Webflow stores this value as provided. Omit for non-image files.
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -1087,6 +1163,9 @@ class AsyncRawAssetsClient:
                 "fileName": file_name,
                 "fileHash": file_hash,
                 "parentFolder": parent_folder,
+                "size": size,
+                "width": width,
+                "height": height,
             },
             headers={
                 "content-type": "application/json",
@@ -1169,7 +1248,11 @@ class AsyncRawAssetsClient:
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
     async def get(
-        self, asset_id: str, *, request_options: typing.Optional[RequestOptions] = None
+        self,
+        asset_id: str,
+        *,
+        locale_id: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[Asset]:
         """
         Get details about an asset
@@ -1180,6 +1263,11 @@ class AsyncRawAssetsClient:
         ----------
         asset_id : str
             Unique identifier for an Asset on a site
+
+        locale_id : typing.Optional[str]
+            Unique identifier for a specific Locale.
+
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1193,6 +1281,9 @@ class AsyncRawAssetsClient:
             f"assets/{jsonable_encoder(asset_id)}",
             base_url=self._client_wrapper.get_environment().base,
             method="GET",
+            params={
+                "localeId": locale_id,
+            },
             request_options=request_options,
         )
         try:
@@ -1366,8 +1457,9 @@ class AsyncRawAssetsClient:
         self,
         asset_id: str,
         *,
-        locale_id: typing.Optional[str] = OMIT,
+        locale_id: typing.Optional[str] = None,
         display_name: typing.Optional[str] = OMIT,
+        alt_text: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[Asset]:
         """
@@ -1381,10 +1473,15 @@ class AsyncRawAssetsClient:
             Unique identifier for an Asset on a site
 
         locale_id : typing.Optional[str]
-            Unique identifier for a specific locale. Applicable, when using localization.
+            Unique identifier for a specific Locale.
+
+            [Learn more about localization.](/data/v2.0.0/docs/working-with-localization)
 
         display_name : typing.Optional[str]
-            A human readable name for the asset
+            A human readable name for the asset. This value is not localizable.
+
+        alt_text : typing.Optional[str]
+            Alternate text describing the image
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1398,9 +1495,12 @@ class AsyncRawAssetsClient:
             f"assets/{jsonable_encoder(asset_id)}",
             base_url=self._client_wrapper.get_environment().base,
             method="PATCH",
-            json={
+            params={
                 "localeId": locale_id,
+            },
+            json={
                 "displayName": display_name,
+                "altText": alt_text,
             },
             headers={
                 "content-type": "application/json",
