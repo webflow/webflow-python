@@ -36,6 +36,8 @@ class RawScriptsClient:
         """
         Get all scripts applied to a page.
 
+        <Note>Access to this endpoint requires a bearer token obtained from an [OAuth Code Grant Flow](/data/reference/oauth-app).</Note>
+
         Required scope | `custom_code:read`
 
         Parameters
@@ -147,6 +149,8 @@ class RawScriptsClient:
           To apply a script to a page, the script must first be registered to a Site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints. See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
         </Note>
 
+        <Note>Access to this endpoint requires a bearer token obtained from an [OAuth Code Grant Flow](/data/reference/oauth-app).</Note>
+
         Required scope | `custom_code:write`
 
         Parameters
@@ -181,9 +185,6 @@ class RawScriptsClient:
                 ),
                 "lastUpdated": last_updated,
                 "createdOn": created_on,
-            },
-            headers={
-                "content-type": "application/json",
             },
             request_options=request_options,
             omit=OMIT,
@@ -381,6 +382,8 @@ class AsyncRawScriptsClient:
         """
         Get all scripts applied to a page.
 
+        <Note>Access to this endpoint requires a bearer token obtained from an [OAuth Code Grant Flow](/data/reference/oauth-app).</Note>
+
         Required scope | `custom_code:read`
 
         Parameters
@@ -492,6 +495,8 @@ class AsyncRawScriptsClient:
           To apply a script to a page, the script must first be registered to a Site via the [Register Script](/data/reference/custom-code/custom-code/register-hosted) endpoints. Once registered, the script can be applied to a Site or Page using the appropriate endpoints. See the documentation on [working with Custom Code](/data/docs/custom-code) for more information.
         </Note>
 
+        <Note>Access to this endpoint requires a bearer token obtained from an [OAuth Code Grant Flow](/data/reference/oauth-app).</Note>
+
         Required scope | `custom_code:write`
 
         Parameters
@@ -526,9 +531,6 @@ class AsyncRawScriptsClient:
                 ),
                 "lastUpdated": last_updated,
                 "createdOn": created_on,
-            },
-            headers={
-                "content-type": "application/json",
             },
             request_options=request_options,
             omit=OMIT,

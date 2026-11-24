@@ -20,6 +20,11 @@ class ComponentProperties(UniversalBaseModel):
         FieldMetadata(alias="componentId"),
         pydantic.Field(alias="componentId", description="Component ID"),
     ] = None
+    name: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    The component's name, matching `name` in List Components. Always the primary-locale name, regardless of `localeId`. Null if no component matches `component_id`.
+    """
+
     properties: typing.Optional[typing.List[ComponentProperty]] = None
     pagination: typing.Optional[Pagination] = None
 

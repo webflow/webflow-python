@@ -8,6 +8,7 @@ from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
 from ..core.serialization import FieldMetadata
 from .comment_payload_author import CommentPayloadAuthor
 from .comment_payload_mentioned_users_item import CommentPayloadMentionedUsersItem
+from .comment_payload_type import CommentPayloadType
 
 
 class CommentPayload(UniversalBaseModel):
@@ -25,9 +26,9 @@ class CommentPayload(UniversalBaseModel):
         FieldMetadata(alias="commentId"),
         pydantic.Field(alias="commentId", description="Unique identifier for the comment reply"),
     ] = None
-    type: typing.Optional[str] = pydantic.Field(default=None)
+    type: typing.Optional[CommentPayloadType] = pydantic.Field(default=None)
     """
-    The type of comment payload
+    The type of comment payload. `new_comment` indicates a new thread; `reply` indicates a reply to an existing thread.
     """
 
     site_id: typing_extensions.Annotated[
@@ -38,17 +39,14 @@ class CommentPayload(UniversalBaseModel):
     page_id: typing_extensions.Annotated[
         typing.Optional[str],
         FieldMetadata(alias="pageId"),
-        pydantic.Field(alias="pageId", description="The page unique identifier"),
+        pydantic.Field(
+            alias="pageId", description="The page unique identifier, or for CMS item comments, the template page ID"
+        ),
     ] = None
     locale_id: typing_extensions.Annotated[
         typing.Optional[str],
         FieldMetadata(alias="localeId"),
         pydantic.Field(alias="localeId", description="The locale unique identifier"),
-    ] = None
-    item_id: typing_extensions.Annotated[
-        typing.Optional[str],
-        FieldMetadata(alias="itemId"),
-        pydantic.Field(alias="itemId", description="The item unique identifier"),
     ] = None
     breakpoint: typing.Optional[str] = pydantic.Field(default=None)
     """

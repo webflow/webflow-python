@@ -6,6 +6,64 @@ import typing
 from importlib import import_module
 
 if typing.TYPE_CHECKING:
+    from .aeo_answer_engine import AeoAnswerEngine
+    from .aeo_answer_engine_key import AeoAnswerEngineKey
+    from .aeo_answer_engines_filter import AeoAnswerEnginesFilter
+    from .aeo_bot_category import AeoBotCategory
+    from .aeo_bot_provider import AeoBotProvider
+    from .aeo_bot_traffic_filter import AeoBotTrafficFilter
+    from .aeo_bot_traffic_page import AeoBotTrafficPage
+    from .aeo_bot_traffic_pages_response import AeoBotTrafficPagesResponse
+    from .aeo_bot_traffic_response import AeoBotTrafficResponse
+    from .aeo_brand_names import AeoBrandNames
+    from .aeo_citation_filter import AeoCitationFilter
+    from .aeo_citation_rate_response import AeoCitationRateResponse
+    from .aeo_citation_rate_response_breakdown import AeoCitationRateResponseBreakdown
+    from .aeo_citation_rate_response_data_item import AeoCitationRateResponseDataItem
+    from .aeo_citations_response import AeoCitationsResponse
+    from .aeo_citations_response_data_item import AeoCitationsResponseDataItem
+    from .aeo_cited_domain_paths_response import AeoCitedDomainPathsResponse
+    from .aeo_cited_path import AeoCitedPath
+    from .aeo_competitor_citations_response import AeoCompetitorCitationsResponse
+    from .aeo_competitor_citations_response_data_item import AeoCompetitorCitationsResponseDataItem
+    from .aeo_owned_cited_path import AeoOwnedCitedPath
+    from .aeo_page import AeoPage
+    from .aeo_page_citation_share_response import AeoPageCitationShareResponse
+    from .aeo_page_citation_share_response_data_item import AeoPageCitationShareResponseDataItem
+    from .aeo_page_citation_share_response_filter import AeoPageCitationShareResponseFilter
+    from .aeo_page_citation_share_response_page import AeoPageCitationShareResponsePage
+    from .aeo_prompt import AeoPrompt
+    from .aeo_prompt_execution import AeoPromptExecution
+    from .aeo_prompt_execution_list_response import AeoPromptExecutionListResponse
+    from .aeo_prompt_execution_prompt_status import AeoPromptExecutionPromptStatus
+    from .aeo_prompt_execution_status import AeoPromptExecutionStatus
+    from .aeo_prompt_execution_topic import AeoPromptExecutionTopic
+    from .aeo_prompt_ids_filter import AeoPromptIdsFilter
+    from .aeo_prompt_label import AeoPromptLabel
+    from .aeo_prompt_list_response import AeoPromptListResponse
+    from .aeo_prompt_status import AeoPromptStatus
+    from .aeo_prompt_topic import AeoPromptTopic
+    from .aeo_timeseries import AeoTimeseries
+    from .aeo_timeseries_granularity_period import AeoTimeseriesGranularityPeriod
+    from .aeo_top_cited_domains_response import AeoTopCitedDomainsResponse
+    from .aeo_top_cited_domains_response_data_item import AeoTopCitedDomainsResponseDataItem
+    from .aeo_topic_engine_filter import AeoTopicEngineFilter
+    from .aeo_topic_ids_filter import AeoTopicIdsFilter
+    from .aeo_topic_label import AeoTopicLabel
+    from .aeo_visibility_breakdown_response import AeoVisibilityBreakdownResponse
+    from .aeo_visibility_breakdown_response_breakdown import AeoVisibilityBreakdownResponseBreakdown
+    from .aeo_visibility_breakdown_response_data_item import AeoVisibilityBreakdownResponseDataItem
+    from .aeo_visibility_filter import AeoVisibilityFilter
+    from .aeo_visibility_response import AeoVisibilityResponse
+    from .aeo_visibility_response_data_item import AeoVisibilityResponseDataItem
+    from .aeo_visibility_score import AeoVisibilityScore
+    from .aeo_window import AeoWindow
+    from .analyze_bucket_time_zone import AnalyzeBucketTimeZone
+    from .analyze_daily_bucketing import AnalyzeDailyBucketing
+    from .analyze_daily_timeseries_query import AnalyzeDailyTimeseriesQuery
+    from .analyze_filter_operators import AnalyzeFilterOperators
+    from .analyze_time_on_page_bucketing import AnalyzeTimeOnPageBucketing
+    from .analyze_window import AnalyzeWindow
     from .application import Application
     from .asset import Asset
     from .asset_folder import AssetFolder
@@ -19,8 +77,18 @@ if typing.TYPE_CHECKING:
     from .authorization_authorization_authorized_to import AuthorizationAuthorizationAuthorizedTo
     from .authorized_user import AuthorizedUser
     from .bad_request_error_body import BadRequestErrorBody
+    from .branch_created_webhook import BranchCreatedWebhook
+    from .branch_created_webhook_payload import BranchCreatedWebhookPayload
+    from .branch_deleted_webhook import BranchDeletedWebhook
+    from .branch_deleted_webhook_payload import BranchDeletedWebhookPayload
+    from .branch_merged_webhook import BranchMergedWebhook
+    from .branch_merged_webhook_payload import BranchMergedWebhookPayload
+    from .browser_window_height_data_point import BrowserWindowHeightDataPoint
+    from .browser_window_height_filter import BrowserWindowHeightFilter
+    from .browser_window_height_response import BrowserWindowHeightResponse
     from .bulk_collection_item import BulkCollectionItem
     from .bulk_collection_item_field_data import BulkCollectionItemFieldData
+    from .collaborator_client_invite import CollaboratorClientInvite
     from .collection import Collection
     from .collection_item import CollectionItem
     from .collection_item_changed import CollectionItemChanged
@@ -48,6 +116,7 @@ if typing.TYPE_CHECKING:
     from .comment_payload import CommentPayload
     from .comment_payload_author import CommentPayloadAuthor
     from .comment_payload_mentioned_users_item import CommentPayloadMentionedUsersItem
+    from .comment_payload_type import CommentPayloadType
     from .comment_reply import CommentReply
     from .comment_reply_author import CommentReplyAuthor
     from .comment_reply_list import CommentReplyList
@@ -68,12 +137,27 @@ if typing.TYPE_CHECKING:
     from .component_node import ComponentNode
     from .component_properties import ComponentProperties
     from .component_property import ComponentProperty
-    from .component_property_type import ComponentPropertyType
+    from .component_property_text import ComponentPropertyText
+    from .component_property_text_type import ComponentPropertyTextType
     from .conflict import Conflict
     from .custom_code_block import CustomCodeBlock
     from .custom_code_block_type import CustomCodeBlockType
     from .custom_code_hosted_response import CustomCodeHostedResponse
     from .custom_code_inline_response import CustomCodeInlineResponse
+    from .custom_font import CustomFont
+    from .custom_font_axis import CustomFontAxis
+    from .custom_font_batch_create_response import CustomFontBatchCreateResponse
+    from .custom_font_batch_create_response_created_item import CustomFontBatchCreateResponseCreatedItem
+    from .custom_font_batch_create_response_failed_item import CustomFontBatchCreateResponseFailedItem
+    from .custom_font_batch_delete_response import CustomFontBatchDeleteResponse
+    from .custom_font_batch_delete_response_deleted_item import CustomFontBatchDeleteResponseDeletedItem
+    from .custom_font_batch_delete_response_failed_item import CustomFontBatchDeleteResponseFailedItem
+    from .custom_font_create_response import CustomFontCreateResponse
+    from .custom_font_font_display import CustomFontFontDisplay
+    from .custom_font_format import CustomFontFormat
+    from .custom_font_upload import CustomFontUpload
+    from .custom_font_upload_fields import CustomFontUploadFields
+    from .custom_fonts import CustomFonts
     from .custom_role import CustomRole
     from .custom_role_audit_log_item import CustomRoleAuditLogItem
     from .custom_role_audit_log_item_event_sub_type import CustomRoleAuditLogItemEventSubType
@@ -85,12 +169,10 @@ if typing.TYPE_CHECKING:
     from .error_code import ErrorCode
     from .field import Field
     from .field_create import FieldCreate
+    from .field_group import FieldGroup
     from .field_type import FieldType
     from .field_validations import FieldValidations
     from .field_validations_additional_properties import FieldValidationsAdditionalProperties
-    from .field_validations_additional_properties_additional_properties import (
-        FieldValidationsAdditionalPropertiesAdditionalProperties,
-    )
     from .forbidden_error_body import ForbiddenErrorBody
     from .form import Form
     from .form_field import FormField
@@ -104,14 +186,63 @@ if typing.TYPE_CHECKING:
     from .form_submission_trigger_payload import FormSubmissionTriggerPayload
     from .form_submission_trigger_payload_schema_item import FormSubmissionTriggerPayloadSchemaItem
     from .form_submission_trigger_payload_schema_item_field_type import FormSubmissionTriggerPayloadSchemaItemFieldType
+    from .goal import Goal
+    from .goal_category import GoalCategory
+    from .goal_integration_source import GoalIntegrationSource
+    from .goal_performance_data_point import GoalPerformanceDataPoint
+    from .goal_performance_filter import GoalPerformanceFilter
+    from .goal_performance_response import GoalPerformanceResponse
+    from .goal_scope import GoalScope
+    from .goal_type import GoalType
+    from .goal_value_type import GoalValueType
+    from .goals_response import GoalsResponse
+    from .google_tag_id import GoogleTagId
+    from .google_tag_ids import GoogleTagIds
     from .image_node import ImageNode
     from .image_node_image import ImageNodeImage
+    from .insert_collection_item import InsertCollectionItem
+    from .insert_collection_item_field_data import InsertCollectionItemFieldData
+    from .inserted_collection_item import InsertedCollectionItem
+    from .inserted_collection_item_field_data import InsertedCollectionItemFieldData
     from .invalid_domain import InvalidDomain
     from .invalid_scopes import InvalidScopes
     from .inventory_item import InventoryItem
     from .inventory_item_inventory_type import InventoryItemInventoryType
+    from .invite_workspace_member_request_body import InviteWorkspaceMemberRequestBody
+    from .invite_workspace_member_request_body_default_site_role_default_site_role import (
+        InviteWorkspaceMemberRequestBodyDefaultSiteRoleDefaultSiteRole,
+    )
+    from .invite_workspace_member_request_body_default_site_role_workspace_role import (
+        InviteWorkspaceMemberRequestBodyDefaultSiteRoleWorkspaceRole,
+    )
+    from .invite_workspace_member_request_body_email_site_access_item import (
+        InviteWorkspaceMemberRequestBodyEmailSiteAccessItem,
+    )
+    from .invite_workspace_member_request_body_email_site_access_item_site_role import (
+        InviteWorkspaceMemberRequestBodyEmailSiteAccessItemSiteRole,
+    )
+    from .invite_workspace_member_request_body_one_site_access_item import (
+        InviteWorkspaceMemberRequestBodyOneSiteAccessItem,
+    )
+    from .invite_workspace_member_request_body_one_site_access_item_site_role import (
+        InviteWorkspaceMemberRequestBodyOneSiteAccessItemSiteRole,
+    )
+    from .invite_workspace_member_request_body_one_workspace_role import (
+        InviteWorkspaceMemberRequestBodyOneWorkspaceRole,
+    )
+    from .invite_workspace_member_response_body import (
+        InviteWorkspaceMemberResponseBody,
+        InviteWorkspaceMemberResponseBody_Active,
+        InviteWorkspaceMemberResponseBody_Invited,
+    )
+    from .invite_workspace_member_response_body_active import InviteWorkspaceMemberResponseBodyActive
+    from .invited import Invited
+    from .items_list_items_live_request_created_on import ItemsListItemsLiveRequestCreatedOn
     from .items_list_items_live_request_last_published import ItemsListItemsLiveRequestLastPublished
+    from .items_list_items_live_request_last_updated import ItemsListItemsLiveRequestLastUpdated
+    from .items_list_items_request_created_on import ItemsListItemsRequestCreatedOn
     from .items_list_items_request_last_published import ItemsListItemsRequestLastPublished
+    from .items_list_items_request_last_updated import ItemsListItemsRequestLastUpdated
     from .list_custom_code_blocks import ListCustomCodeBlocks
     from .locale import Locale
     from .locales import Locales
@@ -131,6 +262,48 @@ if typing.TYPE_CHECKING:
     )
     from .not_enterprise_plan_site import NotEnterprisePlanSite
     from .not_enterprise_plan_workspace import NotEnterprisePlanWorkspace
+    from .optimization import Optimization
+    from .optimization_audience_insights_response import OptimizationAudienceInsightsResponse
+    from .optimization_dimension_values_response import OptimizationDimensionValuesResponse
+    from .optimization_dimensions_response import OptimizationDimensionsResponse
+    from .optimization_goals_response import OptimizationGoalsResponse
+    from .optimization_interval import OptimizationInterval
+    from .optimization_list_response import OptimizationListResponse
+    from .optimization_status import OptimizationStatus
+    from .optimization_summary_response import OptimizationSummaryResponse
+    from .optimization_trend_response import OptimizationTrendResponse
+    from .optimization_type import OptimizationType
+    from .optimize_applied_filter import OptimizeAppliedFilter
+    from .optimize_applied_filter_entry import OptimizeAppliedFilterEntry
+    from .optimize_audience_segment import OptimizeAudienceSegment
+    from .optimize_audience_variation import OptimizeAudienceVariation
+    from .optimize_current_goal import OptimizeCurrentGoal
+    from .optimize_dimension import OptimizeDimension
+    from .optimize_dimension_value import OptimizeDimensionValue
+    from .optimize_filter import OptimizeFilter
+    from .optimize_filter_operators import OptimizeFilterOperators
+    from .optimize_goal import OptimizeGoal
+    from .optimize_goal_counting_method import OptimizeGoalCountingMethod
+    from .optimize_goal_metric_type import OptimizeGoalMetricType
+    from .optimize_goal_scope import OptimizeGoalScope
+    from .optimize_goal_source import OptimizeGoalSource
+    from .optimize_non_webflow_site_resource import OptimizeNonWebflowSiteResource
+    from .optimize_reference import OptimizeReference
+    from .optimize_reference_list_response import OptimizeReferenceListResponse
+    from .optimize_reference_resource import (
+        OptimizeReferenceResource,
+        OptimizeReferenceResource_OptimizeSite,
+        OptimizeReferenceResource_WebflowSite,
+    )
+    from .optimize_report_goal import OptimizeReportGoal
+    from .optimize_report_interval_end import OptimizeReportIntervalEnd
+    from .optimize_report_interval_start import OptimizeReportIntervalStart
+    from .optimize_trend_direction import OptimizeTrendDirection
+    from .optimize_trend_granularity import OptimizeTrendGranularity
+    from .optimize_trend_point import OptimizeTrendPoint
+    from .optimize_variation_comparison import OptimizeVariationComparison
+    from .optimize_variation_result import OptimizeVariationResult
+    from .optimize_webflow_site_resource import OptimizeWebflowSiteResource
     from .option_field import OptionField
     from .order import Order
     from .order_address import OrderAddress
@@ -161,15 +334,23 @@ if typing.TYPE_CHECKING:
     from .page_created_webhook_payload import PageCreatedWebhookPayload
     from .page_deleted_webhook import PageDeletedWebhook
     from .page_deleted_webhook_payload import PageDeletedWebhookPayload
+    from .page_flow_direction import PageFlowDirection
+    from .page_flow_filter import PageFlowFilter
+    from .page_flow_metric_scope import PageFlowMetricScope
+    from .page_flow_response import PageFlowResponse
+    from .page_flow_row import PageFlowRow
     from .page_list import PageList
     from .page_metadata_updated_webhook import PageMetadataUpdatedWebhook
     from .page_metadata_updated_webhook_payload import PageMetadataUpdatedWebhookPayload
     from .page_open_graph import PageOpenGraph
     from .page_seo import PageSeo
+    from .pages_list_request_filter import PagesListRequestFilter
+    from .pages_list_request_filter_title import PagesListRequestFilterTitle
     from .pagination import Pagination
     from .payload import Payload
     from .payload_field_data import PayloadFieldData
     from .paypal_details import PaypalDetails
+    from .person_actor import PersonActor
     from .product import Product
     from .product_and_sk_us import ProductAndSkUs
     from .product_and_sk_us_list import ProductAndSkUsList
@@ -189,6 +370,9 @@ if typing.TYPE_CHECKING:
     from .script_apply_list import ScriptApplyList
     from .script_apply_location import ScriptApplyLocation
     from .scripts import Scripts
+    from .scroll_depth_data_point import ScrollDepthDataPoint
+    from .scroll_depth_filter import ScrollDepthFilter
+    from .scroll_depth_response import ScrollDepthResponse
     from .search_button_node import SearchButtonNode
     from .search_button_node_write import SearchButtonNodeWrite
     from .select import Select
@@ -201,11 +385,19 @@ if typing.TYPE_CHECKING:
     from .single_locale_created_payload_field_data import SingleLocaleCreatedPayloadFieldData
     from .site import Site
     from .site_activity_log_item import SiteActivityLogItem
+    from .site_activity_log_item_actor_type import SiteActivityLogItemActorType
     from .site_activity_log_item_event import SiteActivityLogItemEvent
     from .site_activity_log_item_resource_operation import SiteActivityLogItemResourceOperation
+    from .site_activity_log_item_source import SiteActivityLogItemSource
     from .site_activity_log_item_user import SiteActivityLogItemUser
     from .site_activity_log_response import SiteActivityLogResponse
     from .site_data_collection_type import SiteDataCollectionType
+    from .site_member import SiteMember
+    from .site_member_roles import SiteMemberRoles
+    from .site_member_roles_site import SiteMemberRolesSite
+    from .site_member_roles_workspace import SiteMemberRolesWorkspace
+    from .site_members_response import SiteMembersResponse
+    from .site_members_response_pagination import SiteMembersResponsePagination
     from .site_membership import SiteMembership
     from .site_membership_audit_log_item import SiteMembershipAuditLogItem
     from .site_membership_audit_log_item_event_sub_type import SiteMembershipAuditLogItemEventSubType
@@ -214,6 +406,7 @@ if typing.TYPE_CHECKING:
     from .site_plan_name import SitePlanName
     from .site_publish import SitePublish
     from .site_publish_payload import SitePublishPayload
+    from .site_publish_payload_publish_scope import SitePublishPayloadPublishScope
     from .sites import Sites
     from .sku import Sku
     from .sku_field_data import SkuFieldData
@@ -243,7 +436,36 @@ if typing.TYPE_CHECKING:
     from .text_node import TextNode
     from .text_node_text import TextNodeText
     from .text_node_write import TextNodeWrite
+    from .time_on_page_data_point import TimeOnPageDataPoint
+    from .time_on_page_filter import TimeOnPageFilter
+    from .time_on_page_granularity_period import TimeOnPageGranularityPeriod
+    from .time_on_page_metric_scope import TimeOnPageMetricScope
+    from .time_on_page_response import TimeOnPageResponse
+    from .time_on_page_timeseries_query import TimeOnPageTimeseriesQuery
+    from .token_actor import TokenActor
+    from .top_dimensions_dimension import TopDimensionsDimension
+    from .top_dimensions_filter import TopDimensionsFilter
+    from .top_dimensions_metric_scope import TopDimensionsMetricScope
+    from .top_dimensions_response import TopDimensionsResponse
+    from .top_dimensions_row import TopDimensionsRow
+    from .top_events_cms_context_entry import TopEventsCmsContextEntry
+    from .top_events_component_context_entry import TopEventsComponentContextEntry
+    from .top_events_filter import TopEventsFilter
+    from .top_events_response import TopEventsResponse
+    from .top_events_row import TopEventsRow
+    from .top_events_timeseries_point import TopEventsTimeseriesPoint
+    from .top_pages_filter import TopPagesFilter
+    from .top_pages_response import TopPagesResponse
+    from .top_pages_row import TopPagesRow
+    from .top_pages_sort_by import TopPagesSortBy
+    from .top_pages_timeseries_point import TopPagesTimeseriesPoint
+    from .traffic_data_point import TrafficDataPoint
+    from .traffic_filter import TrafficFilter
+    from .traffic_metric_scope import TrafficMetricScope
+    from .traffic_response import TrafficResponse
     from .trigger_type import TriggerType
+    from .update_site_member_role_request_body import UpdateSiteMemberRoleRequestBody
+    from .update_site_member_role_request_body_site_role import UpdateSiteMemberRoleRequestBodySiteRole
     from .updated_order import UpdatedOrder
     from .user_access import UserAccess
     from .user_access_audit_log_item import UserAccessAuditLogItem
@@ -251,6 +473,14 @@ if typing.TYPE_CHECKING:
     from .webhook import Webhook
     from .webhook_filter import WebhookFilter
     from .webhook_list import WebhookList
+    from .with_default_site_role import WithDefaultSiteRole
+    from .with_site_access import WithSiteAccess
+    from .workspace import Workspace
+    from .workspace_audit_log_actor import (
+        WorkspaceAuditLogActor,
+        WorkspaceAuditLogActor_Person,
+        WorkspaceAuditLogActor_Token,
+    )
     from .workspace_audit_log_item import (
         WorkspaceAuditLogItem,
         WorkspaceAuditLogItem_CustomRole,
@@ -260,8 +490,6 @@ if typing.TYPE_CHECKING:
         WorkspaceAuditLogItem_WorkspaceMembership,
         WorkspaceAuditLogItem_WorkspaceSetting,
     )
-    from .workspace_audit_log_item_actor import WorkspaceAuditLogItemActor
-    from .workspace_audit_log_item_payload_setting_change_method import WorkspaceAuditLogItemPayloadSettingChangeMethod
     from .workspace_audit_log_item_payload_site_membership_granular_access import (
         WorkspaceAuditLogItemPayloadSiteMembershipGranularAccess,
     )
@@ -299,13 +527,100 @@ if typing.TYPE_CHECKING:
     )
     from .workspace_audit_log_item_workspace import WorkspaceAuditLogItemWorkspace
     from .workspace_audit_log_response import WorkspaceAuditLogResponse
+    from .workspace_bulk_remove_response import WorkspaceBulkRemoveResponse
+    from .workspace_bulk_remove_response_results_item import WorkspaceBulkRemoveResponseResultsItem
+    from .workspace_bulk_remove_response_results_item_error import WorkspaceBulkRemoveResponseResultsItemError
+    from .workspace_bulk_remove_response_results_item_error_code import WorkspaceBulkRemoveResponseResultsItemErrorCode
+    from .workspace_bulk_remove_response_results_item_outcome import WorkspaceBulkRemoveResponseResultsItemOutcome
+    from .workspace_bulk_remove_response_results_item_type import WorkspaceBulkRemoveResponseResultsItemType
+    from .workspace_bulk_remove_response_summary import WorkspaceBulkRemoveResponseSummary
+    from .workspace_bulk_role_change_response import WorkspaceBulkRoleChangeResponse
+    from .workspace_bulk_role_change_response_results_item import WorkspaceBulkRoleChangeResponseResultsItem
+    from .workspace_bulk_role_change_response_results_item_error import WorkspaceBulkRoleChangeResponseResultsItemError
+    from .workspace_bulk_role_change_response_results_item_error_code import (
+        WorkspaceBulkRoleChangeResponseResultsItemErrorCode,
+    )
+    from .workspace_bulk_role_change_response_results_item_outcome import (
+        WorkspaceBulkRoleChangeResponseResultsItemOutcome,
+    )
+    from .workspace_bulk_role_change_response_results_item_type import WorkspaceBulkRoleChangeResponseResultsItemType
+    from .workspace_bulk_role_change_response_summary import WorkspaceBulkRoleChangeResponseSummary
     from .workspace_invitation import WorkspaceInvitation
     from .workspace_invitation_audit_log_item import WorkspaceInvitationAuditLogItem
     from .workspace_invitation_audit_log_item_event_sub_type import WorkspaceInvitationAuditLogItemEventSubType
+    from .workspace_invite import WorkspaceInvite
+    from .workspace_invite_default_site_role import WorkspaceInviteDefaultSiteRole
+    from .workspace_invite_role import WorkspaceInviteRole
+    from .workspace_invite_status import WorkspaceInviteStatus
+    from .workspace_member import WorkspaceMember
+    from .workspace_member_roles import WorkspaceMemberRoles
+    from .workspace_member_roles_site import WorkspaceMemberRolesSite
+    from .workspace_member_roles_workspace import WorkspaceMemberRolesWorkspace
+    from .workspace_members_response import WorkspaceMembersResponse
+    from .workspace_members_response_pagination import WorkspaceMembersResponsePagination
     from .workspace_membership import WorkspaceMembership
     from .workspace_membership_audit_log_item import WorkspaceMembershipAuditLogItem
     from .workspace_membership_audit_log_item_event_sub_type import WorkspaceMembershipAuditLogItemEventSubType
+    from .workspaces import Workspaces
 _dynamic_imports: typing.Dict[str, str] = {
+    "AeoAnswerEngine": ".aeo_answer_engine",
+    "AeoAnswerEngineKey": ".aeo_answer_engine_key",
+    "AeoAnswerEnginesFilter": ".aeo_answer_engines_filter",
+    "AeoBotCategory": ".aeo_bot_category",
+    "AeoBotProvider": ".aeo_bot_provider",
+    "AeoBotTrafficFilter": ".aeo_bot_traffic_filter",
+    "AeoBotTrafficPage": ".aeo_bot_traffic_page",
+    "AeoBotTrafficPagesResponse": ".aeo_bot_traffic_pages_response",
+    "AeoBotTrafficResponse": ".aeo_bot_traffic_response",
+    "AeoBrandNames": ".aeo_brand_names",
+    "AeoCitationFilter": ".aeo_citation_filter",
+    "AeoCitationRateResponse": ".aeo_citation_rate_response",
+    "AeoCitationRateResponseBreakdown": ".aeo_citation_rate_response_breakdown",
+    "AeoCitationRateResponseDataItem": ".aeo_citation_rate_response_data_item",
+    "AeoCitationsResponse": ".aeo_citations_response",
+    "AeoCitationsResponseDataItem": ".aeo_citations_response_data_item",
+    "AeoCitedDomainPathsResponse": ".aeo_cited_domain_paths_response",
+    "AeoCitedPath": ".aeo_cited_path",
+    "AeoCompetitorCitationsResponse": ".aeo_competitor_citations_response",
+    "AeoCompetitorCitationsResponseDataItem": ".aeo_competitor_citations_response_data_item",
+    "AeoOwnedCitedPath": ".aeo_owned_cited_path",
+    "AeoPage": ".aeo_page",
+    "AeoPageCitationShareResponse": ".aeo_page_citation_share_response",
+    "AeoPageCitationShareResponseDataItem": ".aeo_page_citation_share_response_data_item",
+    "AeoPageCitationShareResponseFilter": ".aeo_page_citation_share_response_filter",
+    "AeoPageCitationShareResponsePage": ".aeo_page_citation_share_response_page",
+    "AeoPrompt": ".aeo_prompt",
+    "AeoPromptExecution": ".aeo_prompt_execution",
+    "AeoPromptExecutionListResponse": ".aeo_prompt_execution_list_response",
+    "AeoPromptExecutionPromptStatus": ".aeo_prompt_execution_prompt_status",
+    "AeoPromptExecutionStatus": ".aeo_prompt_execution_status",
+    "AeoPromptExecutionTopic": ".aeo_prompt_execution_topic",
+    "AeoPromptIdsFilter": ".aeo_prompt_ids_filter",
+    "AeoPromptLabel": ".aeo_prompt_label",
+    "AeoPromptListResponse": ".aeo_prompt_list_response",
+    "AeoPromptStatus": ".aeo_prompt_status",
+    "AeoPromptTopic": ".aeo_prompt_topic",
+    "AeoTimeseries": ".aeo_timeseries",
+    "AeoTimeseriesGranularityPeriod": ".aeo_timeseries_granularity_period",
+    "AeoTopCitedDomainsResponse": ".aeo_top_cited_domains_response",
+    "AeoTopCitedDomainsResponseDataItem": ".aeo_top_cited_domains_response_data_item",
+    "AeoTopicEngineFilter": ".aeo_topic_engine_filter",
+    "AeoTopicIdsFilter": ".aeo_topic_ids_filter",
+    "AeoTopicLabel": ".aeo_topic_label",
+    "AeoVisibilityBreakdownResponse": ".aeo_visibility_breakdown_response",
+    "AeoVisibilityBreakdownResponseBreakdown": ".aeo_visibility_breakdown_response_breakdown",
+    "AeoVisibilityBreakdownResponseDataItem": ".aeo_visibility_breakdown_response_data_item",
+    "AeoVisibilityFilter": ".aeo_visibility_filter",
+    "AeoVisibilityResponse": ".aeo_visibility_response",
+    "AeoVisibilityResponseDataItem": ".aeo_visibility_response_data_item",
+    "AeoVisibilityScore": ".aeo_visibility_score",
+    "AeoWindow": ".aeo_window",
+    "AnalyzeBucketTimeZone": ".analyze_bucket_time_zone",
+    "AnalyzeDailyBucketing": ".analyze_daily_bucketing",
+    "AnalyzeDailyTimeseriesQuery": ".analyze_daily_timeseries_query",
+    "AnalyzeFilterOperators": ".analyze_filter_operators",
+    "AnalyzeTimeOnPageBucketing": ".analyze_time_on_page_bucketing",
+    "AnalyzeWindow": ".analyze_window",
     "Application": ".application",
     "Asset": ".asset",
     "AssetFolder": ".asset_folder",
@@ -319,8 +634,18 @@ _dynamic_imports: typing.Dict[str, str] = {
     "AuthorizationAuthorizationAuthorizedTo": ".authorization_authorization_authorized_to",
     "AuthorizedUser": ".authorized_user",
     "BadRequestErrorBody": ".bad_request_error_body",
+    "BranchCreatedWebhook": ".branch_created_webhook",
+    "BranchCreatedWebhookPayload": ".branch_created_webhook_payload",
+    "BranchDeletedWebhook": ".branch_deleted_webhook",
+    "BranchDeletedWebhookPayload": ".branch_deleted_webhook_payload",
+    "BranchMergedWebhook": ".branch_merged_webhook",
+    "BranchMergedWebhookPayload": ".branch_merged_webhook_payload",
+    "BrowserWindowHeightDataPoint": ".browser_window_height_data_point",
+    "BrowserWindowHeightFilter": ".browser_window_height_filter",
+    "BrowserWindowHeightResponse": ".browser_window_height_response",
     "BulkCollectionItem": ".bulk_collection_item",
     "BulkCollectionItemFieldData": ".bulk_collection_item_field_data",
+    "CollaboratorClientInvite": ".collaborator_client_invite",
     "Collection": ".collection",
     "CollectionItem": ".collection_item",
     "CollectionItemChanged": ".collection_item_changed",
@@ -348,6 +673,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "CommentPayload": ".comment_payload",
     "CommentPayloadAuthor": ".comment_payload_author",
     "CommentPayloadMentionedUsersItem": ".comment_payload_mentioned_users_item",
+    "CommentPayloadType": ".comment_payload_type",
     "CommentReply": ".comment_reply",
     "CommentReplyAuthor": ".comment_reply_author",
     "CommentReplyList": ".comment_reply_list",
@@ -366,12 +692,27 @@ _dynamic_imports: typing.Dict[str, str] = {
     "ComponentNode": ".component_node",
     "ComponentProperties": ".component_properties",
     "ComponentProperty": ".component_property",
-    "ComponentPropertyType": ".component_property_type",
+    "ComponentPropertyText": ".component_property_text",
+    "ComponentPropertyTextType": ".component_property_text_type",
     "Conflict": ".conflict",
     "CustomCodeBlock": ".custom_code_block",
     "CustomCodeBlockType": ".custom_code_block_type",
     "CustomCodeHostedResponse": ".custom_code_hosted_response",
     "CustomCodeInlineResponse": ".custom_code_inline_response",
+    "CustomFont": ".custom_font",
+    "CustomFontAxis": ".custom_font_axis",
+    "CustomFontBatchCreateResponse": ".custom_font_batch_create_response",
+    "CustomFontBatchCreateResponseCreatedItem": ".custom_font_batch_create_response_created_item",
+    "CustomFontBatchCreateResponseFailedItem": ".custom_font_batch_create_response_failed_item",
+    "CustomFontBatchDeleteResponse": ".custom_font_batch_delete_response",
+    "CustomFontBatchDeleteResponseDeletedItem": ".custom_font_batch_delete_response_deleted_item",
+    "CustomFontBatchDeleteResponseFailedItem": ".custom_font_batch_delete_response_failed_item",
+    "CustomFontCreateResponse": ".custom_font_create_response",
+    "CustomFontFontDisplay": ".custom_font_font_display",
+    "CustomFontFormat": ".custom_font_format",
+    "CustomFontUpload": ".custom_font_upload",
+    "CustomFontUploadFields": ".custom_font_upload_fields",
+    "CustomFonts": ".custom_fonts",
     "CustomRole": ".custom_role",
     "CustomRoleAuditLogItem": ".custom_role_audit_log_item",
     "CustomRoleAuditLogItemEventSubType": ".custom_role_audit_log_item_event_sub_type",
@@ -383,10 +724,10 @@ _dynamic_imports: typing.Dict[str, str] = {
     "ErrorCode": ".error_code",
     "Field": ".field",
     "FieldCreate": ".field_create",
+    "FieldGroup": ".field_group",
     "FieldType": ".field_type",
     "FieldValidations": ".field_validations",
     "FieldValidationsAdditionalProperties": ".field_validations_additional_properties",
-    "FieldValidationsAdditionalPropertiesAdditionalProperties": ".field_validations_additional_properties_additional_properties",
     "ForbiddenErrorBody": ".forbidden_error_body",
     "Form": ".form",
     "FormField": ".form_field",
@@ -400,14 +741,47 @@ _dynamic_imports: typing.Dict[str, str] = {
     "FormSubmissionTriggerPayload": ".form_submission_trigger_payload",
     "FormSubmissionTriggerPayloadSchemaItem": ".form_submission_trigger_payload_schema_item",
     "FormSubmissionTriggerPayloadSchemaItemFieldType": ".form_submission_trigger_payload_schema_item_field_type",
+    "Goal": ".goal",
+    "GoalCategory": ".goal_category",
+    "GoalIntegrationSource": ".goal_integration_source",
+    "GoalPerformanceDataPoint": ".goal_performance_data_point",
+    "GoalPerformanceFilter": ".goal_performance_filter",
+    "GoalPerformanceResponse": ".goal_performance_response",
+    "GoalScope": ".goal_scope",
+    "GoalType": ".goal_type",
+    "GoalValueType": ".goal_value_type",
+    "GoalsResponse": ".goals_response",
+    "GoogleTagId": ".google_tag_id",
+    "GoogleTagIds": ".google_tag_ids",
     "ImageNode": ".image_node",
     "ImageNodeImage": ".image_node_image",
+    "InsertCollectionItem": ".insert_collection_item",
+    "InsertCollectionItemFieldData": ".insert_collection_item_field_data",
+    "InsertedCollectionItem": ".inserted_collection_item",
+    "InsertedCollectionItemFieldData": ".inserted_collection_item_field_data",
     "InvalidDomain": ".invalid_domain",
     "InvalidScopes": ".invalid_scopes",
     "InventoryItem": ".inventory_item",
     "InventoryItemInventoryType": ".inventory_item_inventory_type",
+    "InviteWorkspaceMemberRequestBody": ".invite_workspace_member_request_body",
+    "InviteWorkspaceMemberRequestBodyDefaultSiteRoleDefaultSiteRole": ".invite_workspace_member_request_body_default_site_role_default_site_role",
+    "InviteWorkspaceMemberRequestBodyDefaultSiteRoleWorkspaceRole": ".invite_workspace_member_request_body_default_site_role_workspace_role",
+    "InviteWorkspaceMemberRequestBodyEmailSiteAccessItem": ".invite_workspace_member_request_body_email_site_access_item",
+    "InviteWorkspaceMemberRequestBodyEmailSiteAccessItemSiteRole": ".invite_workspace_member_request_body_email_site_access_item_site_role",
+    "InviteWorkspaceMemberRequestBodyOneSiteAccessItem": ".invite_workspace_member_request_body_one_site_access_item",
+    "InviteWorkspaceMemberRequestBodyOneSiteAccessItemSiteRole": ".invite_workspace_member_request_body_one_site_access_item_site_role",
+    "InviteWorkspaceMemberRequestBodyOneWorkspaceRole": ".invite_workspace_member_request_body_one_workspace_role",
+    "InviteWorkspaceMemberResponseBody": ".invite_workspace_member_response_body",
+    "InviteWorkspaceMemberResponseBodyActive": ".invite_workspace_member_response_body_active",
+    "InviteWorkspaceMemberResponseBody_Active": ".invite_workspace_member_response_body",
+    "InviteWorkspaceMemberResponseBody_Invited": ".invite_workspace_member_response_body",
+    "Invited": ".invited",
+    "ItemsListItemsLiveRequestCreatedOn": ".items_list_items_live_request_created_on",
     "ItemsListItemsLiveRequestLastPublished": ".items_list_items_live_request_last_published",
+    "ItemsListItemsLiveRequestLastUpdated": ".items_list_items_live_request_last_updated",
+    "ItemsListItemsRequestCreatedOn": ".items_list_items_request_created_on",
     "ItemsListItemsRequestLastPublished": ".items_list_items_request_last_published",
+    "ItemsListItemsRequestLastUpdated": ".items_list_items_request_last_updated",
     "ListCustomCodeBlocks": ".list_custom_code_blocks",
     "Locale": ".locale",
     "Locales": ".locales",
@@ -425,6 +799,46 @@ _dynamic_imports: typing.Dict[str, str] = {
     "Node_TextInput": ".node",
     "NotEnterprisePlanSite": ".not_enterprise_plan_site",
     "NotEnterprisePlanWorkspace": ".not_enterprise_plan_workspace",
+    "Optimization": ".optimization",
+    "OptimizationAudienceInsightsResponse": ".optimization_audience_insights_response",
+    "OptimizationDimensionValuesResponse": ".optimization_dimension_values_response",
+    "OptimizationDimensionsResponse": ".optimization_dimensions_response",
+    "OptimizationGoalsResponse": ".optimization_goals_response",
+    "OptimizationInterval": ".optimization_interval",
+    "OptimizationListResponse": ".optimization_list_response",
+    "OptimizationStatus": ".optimization_status",
+    "OptimizationSummaryResponse": ".optimization_summary_response",
+    "OptimizationTrendResponse": ".optimization_trend_response",
+    "OptimizationType": ".optimization_type",
+    "OptimizeAppliedFilter": ".optimize_applied_filter",
+    "OptimizeAppliedFilterEntry": ".optimize_applied_filter_entry",
+    "OptimizeAudienceSegment": ".optimize_audience_segment",
+    "OptimizeAudienceVariation": ".optimize_audience_variation",
+    "OptimizeCurrentGoal": ".optimize_current_goal",
+    "OptimizeDimension": ".optimize_dimension",
+    "OptimizeDimensionValue": ".optimize_dimension_value",
+    "OptimizeFilter": ".optimize_filter",
+    "OptimizeFilterOperators": ".optimize_filter_operators",
+    "OptimizeGoal": ".optimize_goal",
+    "OptimizeGoalCountingMethod": ".optimize_goal_counting_method",
+    "OptimizeGoalMetricType": ".optimize_goal_metric_type",
+    "OptimizeGoalScope": ".optimize_goal_scope",
+    "OptimizeGoalSource": ".optimize_goal_source",
+    "OptimizeNonWebflowSiteResource": ".optimize_non_webflow_site_resource",
+    "OptimizeReference": ".optimize_reference",
+    "OptimizeReferenceListResponse": ".optimize_reference_list_response",
+    "OptimizeReferenceResource": ".optimize_reference_resource",
+    "OptimizeReferenceResource_OptimizeSite": ".optimize_reference_resource",
+    "OptimizeReferenceResource_WebflowSite": ".optimize_reference_resource",
+    "OptimizeReportGoal": ".optimize_report_goal",
+    "OptimizeReportIntervalEnd": ".optimize_report_interval_end",
+    "OptimizeReportIntervalStart": ".optimize_report_interval_start",
+    "OptimizeTrendDirection": ".optimize_trend_direction",
+    "OptimizeTrendGranularity": ".optimize_trend_granularity",
+    "OptimizeTrendPoint": ".optimize_trend_point",
+    "OptimizeVariationComparison": ".optimize_variation_comparison",
+    "OptimizeVariationResult": ".optimize_variation_result",
+    "OptimizeWebflowSiteResource": ".optimize_webflow_site_resource",
     "OptionField": ".option_field",
     "Order": ".order",
     "OrderAddress": ".order_address",
@@ -455,15 +869,23 @@ _dynamic_imports: typing.Dict[str, str] = {
     "PageCreatedWebhookPayload": ".page_created_webhook_payload",
     "PageDeletedWebhook": ".page_deleted_webhook",
     "PageDeletedWebhookPayload": ".page_deleted_webhook_payload",
+    "PageFlowDirection": ".page_flow_direction",
+    "PageFlowFilter": ".page_flow_filter",
+    "PageFlowMetricScope": ".page_flow_metric_scope",
+    "PageFlowResponse": ".page_flow_response",
+    "PageFlowRow": ".page_flow_row",
     "PageList": ".page_list",
     "PageMetadataUpdatedWebhook": ".page_metadata_updated_webhook",
     "PageMetadataUpdatedWebhookPayload": ".page_metadata_updated_webhook_payload",
     "PageOpenGraph": ".page_open_graph",
     "PageSeo": ".page_seo",
+    "PagesListRequestFilter": ".pages_list_request_filter",
+    "PagesListRequestFilterTitle": ".pages_list_request_filter_title",
     "Pagination": ".pagination",
     "Payload": ".payload",
     "PayloadFieldData": ".payload_field_data",
     "PaypalDetails": ".paypal_details",
+    "PersonActor": ".person_actor",
     "Product": ".product",
     "ProductAndSkUs": ".product_and_sk_us",
     "ProductAndSkUsList": ".product_and_sk_us_list",
@@ -483,6 +905,9 @@ _dynamic_imports: typing.Dict[str, str] = {
     "ScriptApplyList": ".script_apply_list",
     "ScriptApplyLocation": ".script_apply_location",
     "Scripts": ".scripts",
+    "ScrollDepthDataPoint": ".scroll_depth_data_point",
+    "ScrollDepthFilter": ".scroll_depth_filter",
+    "ScrollDepthResponse": ".scroll_depth_response",
     "SearchButtonNode": ".search_button_node",
     "SearchButtonNodeWrite": ".search_button_node_write",
     "Select": ".select",
@@ -495,11 +920,19 @@ _dynamic_imports: typing.Dict[str, str] = {
     "SingleLocaleCreatedPayloadFieldData": ".single_locale_created_payload_field_data",
     "Site": ".site",
     "SiteActivityLogItem": ".site_activity_log_item",
+    "SiteActivityLogItemActorType": ".site_activity_log_item_actor_type",
     "SiteActivityLogItemEvent": ".site_activity_log_item_event",
     "SiteActivityLogItemResourceOperation": ".site_activity_log_item_resource_operation",
+    "SiteActivityLogItemSource": ".site_activity_log_item_source",
     "SiteActivityLogItemUser": ".site_activity_log_item_user",
     "SiteActivityLogResponse": ".site_activity_log_response",
     "SiteDataCollectionType": ".site_data_collection_type",
+    "SiteMember": ".site_member",
+    "SiteMemberRoles": ".site_member_roles",
+    "SiteMemberRolesSite": ".site_member_roles_site",
+    "SiteMemberRolesWorkspace": ".site_member_roles_workspace",
+    "SiteMembersResponse": ".site_members_response",
+    "SiteMembersResponsePagination": ".site_members_response_pagination",
     "SiteMembership": ".site_membership",
     "SiteMembershipAuditLogItem": ".site_membership_audit_log_item",
     "SiteMembershipAuditLogItemEventSubType": ".site_membership_audit_log_item_event_sub_type",
@@ -508,6 +941,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "SitePlanName": ".site_plan_name",
     "SitePublish": ".site_publish",
     "SitePublishPayload": ".site_publish_payload",
+    "SitePublishPayloadPublishScope": ".site_publish_payload_publish_scope",
     "Sites": ".sites",
     "Sku": ".sku",
     "SkuFieldData": ".sku_field_data",
@@ -535,7 +969,36 @@ _dynamic_imports: typing.Dict[str, str] = {
     "TextNode": ".text_node",
     "TextNodeText": ".text_node_text",
     "TextNodeWrite": ".text_node_write",
+    "TimeOnPageDataPoint": ".time_on_page_data_point",
+    "TimeOnPageFilter": ".time_on_page_filter",
+    "TimeOnPageGranularityPeriod": ".time_on_page_granularity_period",
+    "TimeOnPageMetricScope": ".time_on_page_metric_scope",
+    "TimeOnPageResponse": ".time_on_page_response",
+    "TimeOnPageTimeseriesQuery": ".time_on_page_timeseries_query",
+    "TokenActor": ".token_actor",
+    "TopDimensionsDimension": ".top_dimensions_dimension",
+    "TopDimensionsFilter": ".top_dimensions_filter",
+    "TopDimensionsMetricScope": ".top_dimensions_metric_scope",
+    "TopDimensionsResponse": ".top_dimensions_response",
+    "TopDimensionsRow": ".top_dimensions_row",
+    "TopEventsCmsContextEntry": ".top_events_cms_context_entry",
+    "TopEventsComponentContextEntry": ".top_events_component_context_entry",
+    "TopEventsFilter": ".top_events_filter",
+    "TopEventsResponse": ".top_events_response",
+    "TopEventsRow": ".top_events_row",
+    "TopEventsTimeseriesPoint": ".top_events_timeseries_point",
+    "TopPagesFilter": ".top_pages_filter",
+    "TopPagesResponse": ".top_pages_response",
+    "TopPagesRow": ".top_pages_row",
+    "TopPagesSortBy": ".top_pages_sort_by",
+    "TopPagesTimeseriesPoint": ".top_pages_timeseries_point",
+    "TrafficDataPoint": ".traffic_data_point",
+    "TrafficFilter": ".traffic_filter",
+    "TrafficMetricScope": ".traffic_metric_scope",
+    "TrafficResponse": ".traffic_response",
     "TriggerType": ".trigger_type",
+    "UpdateSiteMemberRoleRequestBody": ".update_site_member_role_request_body",
+    "UpdateSiteMemberRoleRequestBodySiteRole": ".update_site_member_role_request_body_site_role",
     "UpdatedOrder": ".updated_order",
     "UserAccess": ".user_access",
     "UserAccessAuditLogItem": ".user_access_audit_log_item",
@@ -543,9 +1006,13 @@ _dynamic_imports: typing.Dict[str, str] = {
     "Webhook": ".webhook",
     "WebhookFilter": ".webhook_filter",
     "WebhookList": ".webhook_list",
+    "WithDefaultSiteRole": ".with_default_site_role",
+    "WithSiteAccess": ".with_site_access",
+    "Workspace": ".workspace",
+    "WorkspaceAuditLogActor": ".workspace_audit_log_actor",
+    "WorkspaceAuditLogActor_Person": ".workspace_audit_log_actor",
+    "WorkspaceAuditLogActor_Token": ".workspace_audit_log_actor",
     "WorkspaceAuditLogItem": ".workspace_audit_log_item",
-    "WorkspaceAuditLogItemActor": ".workspace_audit_log_item_actor",
-    "WorkspaceAuditLogItemPayloadSettingChangeMethod": ".workspace_audit_log_item_payload_setting_change_method",
     "WorkspaceAuditLogItemPayloadSiteMembershipGranularAccess": ".workspace_audit_log_item_payload_site_membership_granular_access",
     "WorkspaceAuditLogItemPayloadSiteMembershipMethod": ".workspace_audit_log_item_payload_site_membership_method",
     "WorkspaceAuditLogItemPayloadSiteMembershipSite": ".workspace_audit_log_item_payload_site_membership_site",
@@ -567,12 +1034,37 @@ _dynamic_imports: typing.Dict[str, str] = {
     "WorkspaceAuditLogItem_WorkspaceMembership": ".workspace_audit_log_item",
     "WorkspaceAuditLogItem_WorkspaceSetting": ".workspace_audit_log_item",
     "WorkspaceAuditLogResponse": ".workspace_audit_log_response",
+    "WorkspaceBulkRemoveResponse": ".workspace_bulk_remove_response",
+    "WorkspaceBulkRemoveResponseResultsItem": ".workspace_bulk_remove_response_results_item",
+    "WorkspaceBulkRemoveResponseResultsItemError": ".workspace_bulk_remove_response_results_item_error",
+    "WorkspaceBulkRemoveResponseResultsItemErrorCode": ".workspace_bulk_remove_response_results_item_error_code",
+    "WorkspaceBulkRemoveResponseResultsItemOutcome": ".workspace_bulk_remove_response_results_item_outcome",
+    "WorkspaceBulkRemoveResponseResultsItemType": ".workspace_bulk_remove_response_results_item_type",
+    "WorkspaceBulkRemoveResponseSummary": ".workspace_bulk_remove_response_summary",
+    "WorkspaceBulkRoleChangeResponse": ".workspace_bulk_role_change_response",
+    "WorkspaceBulkRoleChangeResponseResultsItem": ".workspace_bulk_role_change_response_results_item",
+    "WorkspaceBulkRoleChangeResponseResultsItemError": ".workspace_bulk_role_change_response_results_item_error",
+    "WorkspaceBulkRoleChangeResponseResultsItemErrorCode": ".workspace_bulk_role_change_response_results_item_error_code",
+    "WorkspaceBulkRoleChangeResponseResultsItemOutcome": ".workspace_bulk_role_change_response_results_item_outcome",
+    "WorkspaceBulkRoleChangeResponseResultsItemType": ".workspace_bulk_role_change_response_results_item_type",
+    "WorkspaceBulkRoleChangeResponseSummary": ".workspace_bulk_role_change_response_summary",
     "WorkspaceInvitation": ".workspace_invitation",
     "WorkspaceInvitationAuditLogItem": ".workspace_invitation_audit_log_item",
     "WorkspaceInvitationAuditLogItemEventSubType": ".workspace_invitation_audit_log_item_event_sub_type",
+    "WorkspaceInvite": ".workspace_invite",
+    "WorkspaceInviteDefaultSiteRole": ".workspace_invite_default_site_role",
+    "WorkspaceInviteRole": ".workspace_invite_role",
+    "WorkspaceInviteStatus": ".workspace_invite_status",
+    "WorkspaceMember": ".workspace_member",
+    "WorkspaceMemberRoles": ".workspace_member_roles",
+    "WorkspaceMemberRolesSite": ".workspace_member_roles_site",
+    "WorkspaceMemberRolesWorkspace": ".workspace_member_roles_workspace",
+    "WorkspaceMembersResponse": ".workspace_members_response",
+    "WorkspaceMembersResponsePagination": ".workspace_members_response_pagination",
     "WorkspaceMembership": ".workspace_membership",
     "WorkspaceMembershipAuditLogItem": ".workspace_membership_audit_log_item",
     "WorkspaceMembershipAuditLogItemEventSubType": ".workspace_membership_audit_log_item_event_sub_type",
+    "Workspaces": ".workspaces",
 }
 
 
@@ -598,6 +1090,64 @@ def __dir__():
 
 
 __all__ = [
+    "AeoAnswerEngine",
+    "AeoAnswerEngineKey",
+    "AeoAnswerEnginesFilter",
+    "AeoBotCategory",
+    "AeoBotProvider",
+    "AeoBotTrafficFilter",
+    "AeoBotTrafficPage",
+    "AeoBotTrafficPagesResponse",
+    "AeoBotTrafficResponse",
+    "AeoBrandNames",
+    "AeoCitationFilter",
+    "AeoCitationRateResponse",
+    "AeoCitationRateResponseBreakdown",
+    "AeoCitationRateResponseDataItem",
+    "AeoCitationsResponse",
+    "AeoCitationsResponseDataItem",
+    "AeoCitedDomainPathsResponse",
+    "AeoCitedPath",
+    "AeoCompetitorCitationsResponse",
+    "AeoCompetitorCitationsResponseDataItem",
+    "AeoOwnedCitedPath",
+    "AeoPage",
+    "AeoPageCitationShareResponse",
+    "AeoPageCitationShareResponseDataItem",
+    "AeoPageCitationShareResponseFilter",
+    "AeoPageCitationShareResponsePage",
+    "AeoPrompt",
+    "AeoPromptExecution",
+    "AeoPromptExecutionListResponse",
+    "AeoPromptExecutionPromptStatus",
+    "AeoPromptExecutionStatus",
+    "AeoPromptExecutionTopic",
+    "AeoPromptIdsFilter",
+    "AeoPromptLabel",
+    "AeoPromptListResponse",
+    "AeoPromptStatus",
+    "AeoPromptTopic",
+    "AeoTimeseries",
+    "AeoTimeseriesGranularityPeriod",
+    "AeoTopCitedDomainsResponse",
+    "AeoTopCitedDomainsResponseDataItem",
+    "AeoTopicEngineFilter",
+    "AeoTopicIdsFilter",
+    "AeoTopicLabel",
+    "AeoVisibilityBreakdownResponse",
+    "AeoVisibilityBreakdownResponseBreakdown",
+    "AeoVisibilityBreakdownResponseDataItem",
+    "AeoVisibilityFilter",
+    "AeoVisibilityResponse",
+    "AeoVisibilityResponseDataItem",
+    "AeoVisibilityScore",
+    "AeoWindow",
+    "AnalyzeBucketTimeZone",
+    "AnalyzeDailyBucketing",
+    "AnalyzeDailyTimeseriesQuery",
+    "AnalyzeFilterOperators",
+    "AnalyzeTimeOnPageBucketing",
+    "AnalyzeWindow",
     "Application",
     "Asset",
     "AssetFolder",
@@ -611,8 +1161,18 @@ __all__ = [
     "AuthorizationAuthorizationAuthorizedTo",
     "AuthorizedUser",
     "BadRequestErrorBody",
+    "BranchCreatedWebhook",
+    "BranchCreatedWebhookPayload",
+    "BranchDeletedWebhook",
+    "BranchDeletedWebhookPayload",
+    "BranchMergedWebhook",
+    "BranchMergedWebhookPayload",
+    "BrowserWindowHeightDataPoint",
+    "BrowserWindowHeightFilter",
+    "BrowserWindowHeightResponse",
     "BulkCollectionItem",
     "BulkCollectionItemFieldData",
+    "CollaboratorClientInvite",
     "Collection",
     "CollectionItem",
     "CollectionItemChanged",
@@ -640,6 +1200,7 @@ __all__ = [
     "CommentPayload",
     "CommentPayloadAuthor",
     "CommentPayloadMentionedUsersItem",
+    "CommentPayloadType",
     "CommentReply",
     "CommentReplyAuthor",
     "CommentReplyList",
@@ -658,12 +1219,27 @@ __all__ = [
     "ComponentNode",
     "ComponentProperties",
     "ComponentProperty",
-    "ComponentPropertyType",
+    "ComponentPropertyText",
+    "ComponentPropertyTextType",
     "Conflict",
     "CustomCodeBlock",
     "CustomCodeBlockType",
     "CustomCodeHostedResponse",
     "CustomCodeInlineResponse",
+    "CustomFont",
+    "CustomFontAxis",
+    "CustomFontBatchCreateResponse",
+    "CustomFontBatchCreateResponseCreatedItem",
+    "CustomFontBatchCreateResponseFailedItem",
+    "CustomFontBatchDeleteResponse",
+    "CustomFontBatchDeleteResponseDeletedItem",
+    "CustomFontBatchDeleteResponseFailedItem",
+    "CustomFontCreateResponse",
+    "CustomFontFontDisplay",
+    "CustomFontFormat",
+    "CustomFontUpload",
+    "CustomFontUploadFields",
+    "CustomFonts",
     "CustomRole",
     "CustomRoleAuditLogItem",
     "CustomRoleAuditLogItemEventSubType",
@@ -675,10 +1251,10 @@ __all__ = [
     "ErrorCode",
     "Field",
     "FieldCreate",
+    "FieldGroup",
     "FieldType",
     "FieldValidations",
     "FieldValidationsAdditionalProperties",
-    "FieldValidationsAdditionalPropertiesAdditionalProperties",
     "ForbiddenErrorBody",
     "Form",
     "FormField",
@@ -692,14 +1268,47 @@ __all__ = [
     "FormSubmissionTriggerPayload",
     "FormSubmissionTriggerPayloadSchemaItem",
     "FormSubmissionTriggerPayloadSchemaItemFieldType",
+    "Goal",
+    "GoalCategory",
+    "GoalIntegrationSource",
+    "GoalPerformanceDataPoint",
+    "GoalPerformanceFilter",
+    "GoalPerformanceResponse",
+    "GoalScope",
+    "GoalType",
+    "GoalValueType",
+    "GoalsResponse",
+    "GoogleTagId",
+    "GoogleTagIds",
     "ImageNode",
     "ImageNodeImage",
+    "InsertCollectionItem",
+    "InsertCollectionItemFieldData",
+    "InsertedCollectionItem",
+    "InsertedCollectionItemFieldData",
     "InvalidDomain",
     "InvalidScopes",
     "InventoryItem",
     "InventoryItemInventoryType",
+    "InviteWorkspaceMemberRequestBody",
+    "InviteWorkspaceMemberRequestBodyDefaultSiteRoleDefaultSiteRole",
+    "InviteWorkspaceMemberRequestBodyDefaultSiteRoleWorkspaceRole",
+    "InviteWorkspaceMemberRequestBodyEmailSiteAccessItem",
+    "InviteWorkspaceMemberRequestBodyEmailSiteAccessItemSiteRole",
+    "InviteWorkspaceMemberRequestBodyOneSiteAccessItem",
+    "InviteWorkspaceMemberRequestBodyOneSiteAccessItemSiteRole",
+    "InviteWorkspaceMemberRequestBodyOneWorkspaceRole",
+    "InviteWorkspaceMemberResponseBody",
+    "InviteWorkspaceMemberResponseBodyActive",
+    "InviteWorkspaceMemberResponseBody_Active",
+    "InviteWorkspaceMemberResponseBody_Invited",
+    "Invited",
+    "ItemsListItemsLiveRequestCreatedOn",
     "ItemsListItemsLiveRequestLastPublished",
+    "ItemsListItemsLiveRequestLastUpdated",
+    "ItemsListItemsRequestCreatedOn",
     "ItemsListItemsRequestLastPublished",
+    "ItemsListItemsRequestLastUpdated",
     "ListCustomCodeBlocks",
     "Locale",
     "Locales",
@@ -717,6 +1326,46 @@ __all__ = [
     "Node_TextInput",
     "NotEnterprisePlanSite",
     "NotEnterprisePlanWorkspace",
+    "Optimization",
+    "OptimizationAudienceInsightsResponse",
+    "OptimizationDimensionValuesResponse",
+    "OptimizationDimensionsResponse",
+    "OptimizationGoalsResponse",
+    "OptimizationInterval",
+    "OptimizationListResponse",
+    "OptimizationStatus",
+    "OptimizationSummaryResponse",
+    "OptimizationTrendResponse",
+    "OptimizationType",
+    "OptimizeAppliedFilter",
+    "OptimizeAppliedFilterEntry",
+    "OptimizeAudienceSegment",
+    "OptimizeAudienceVariation",
+    "OptimizeCurrentGoal",
+    "OptimizeDimension",
+    "OptimizeDimensionValue",
+    "OptimizeFilter",
+    "OptimizeFilterOperators",
+    "OptimizeGoal",
+    "OptimizeGoalCountingMethod",
+    "OptimizeGoalMetricType",
+    "OptimizeGoalScope",
+    "OptimizeGoalSource",
+    "OptimizeNonWebflowSiteResource",
+    "OptimizeReference",
+    "OptimizeReferenceListResponse",
+    "OptimizeReferenceResource",
+    "OptimizeReferenceResource_OptimizeSite",
+    "OptimizeReferenceResource_WebflowSite",
+    "OptimizeReportGoal",
+    "OptimizeReportIntervalEnd",
+    "OptimizeReportIntervalStart",
+    "OptimizeTrendDirection",
+    "OptimizeTrendGranularity",
+    "OptimizeTrendPoint",
+    "OptimizeVariationComparison",
+    "OptimizeVariationResult",
+    "OptimizeWebflowSiteResource",
     "OptionField",
     "Order",
     "OrderAddress",
@@ -747,15 +1396,23 @@ __all__ = [
     "PageCreatedWebhookPayload",
     "PageDeletedWebhook",
     "PageDeletedWebhookPayload",
+    "PageFlowDirection",
+    "PageFlowFilter",
+    "PageFlowMetricScope",
+    "PageFlowResponse",
+    "PageFlowRow",
     "PageList",
     "PageMetadataUpdatedWebhook",
     "PageMetadataUpdatedWebhookPayload",
     "PageOpenGraph",
     "PageSeo",
+    "PagesListRequestFilter",
+    "PagesListRequestFilterTitle",
     "Pagination",
     "Payload",
     "PayloadFieldData",
     "PaypalDetails",
+    "PersonActor",
     "Product",
     "ProductAndSkUs",
     "ProductAndSkUsList",
@@ -775,6 +1432,9 @@ __all__ = [
     "ScriptApplyList",
     "ScriptApplyLocation",
     "Scripts",
+    "ScrollDepthDataPoint",
+    "ScrollDepthFilter",
+    "ScrollDepthResponse",
     "SearchButtonNode",
     "SearchButtonNodeWrite",
     "Select",
@@ -787,11 +1447,19 @@ __all__ = [
     "SingleLocaleCreatedPayloadFieldData",
     "Site",
     "SiteActivityLogItem",
+    "SiteActivityLogItemActorType",
     "SiteActivityLogItemEvent",
     "SiteActivityLogItemResourceOperation",
+    "SiteActivityLogItemSource",
     "SiteActivityLogItemUser",
     "SiteActivityLogResponse",
     "SiteDataCollectionType",
+    "SiteMember",
+    "SiteMemberRoles",
+    "SiteMemberRolesSite",
+    "SiteMemberRolesWorkspace",
+    "SiteMembersResponse",
+    "SiteMembersResponsePagination",
     "SiteMembership",
     "SiteMembershipAuditLogItem",
     "SiteMembershipAuditLogItemEventSubType",
@@ -800,6 +1468,7 @@ __all__ = [
     "SitePlanName",
     "SitePublish",
     "SitePublishPayload",
+    "SitePublishPayloadPublishScope",
     "Sites",
     "Sku",
     "SkuFieldData",
@@ -827,7 +1496,36 @@ __all__ = [
     "TextNode",
     "TextNodeText",
     "TextNodeWrite",
+    "TimeOnPageDataPoint",
+    "TimeOnPageFilter",
+    "TimeOnPageGranularityPeriod",
+    "TimeOnPageMetricScope",
+    "TimeOnPageResponse",
+    "TimeOnPageTimeseriesQuery",
+    "TokenActor",
+    "TopDimensionsDimension",
+    "TopDimensionsFilter",
+    "TopDimensionsMetricScope",
+    "TopDimensionsResponse",
+    "TopDimensionsRow",
+    "TopEventsCmsContextEntry",
+    "TopEventsComponentContextEntry",
+    "TopEventsFilter",
+    "TopEventsResponse",
+    "TopEventsRow",
+    "TopEventsTimeseriesPoint",
+    "TopPagesFilter",
+    "TopPagesResponse",
+    "TopPagesRow",
+    "TopPagesSortBy",
+    "TopPagesTimeseriesPoint",
+    "TrafficDataPoint",
+    "TrafficFilter",
+    "TrafficMetricScope",
+    "TrafficResponse",
     "TriggerType",
+    "UpdateSiteMemberRoleRequestBody",
+    "UpdateSiteMemberRoleRequestBodySiteRole",
     "UpdatedOrder",
     "UserAccess",
     "UserAccessAuditLogItem",
@@ -835,9 +1533,13 @@ __all__ = [
     "Webhook",
     "WebhookFilter",
     "WebhookList",
+    "WithDefaultSiteRole",
+    "WithSiteAccess",
+    "Workspace",
+    "WorkspaceAuditLogActor",
+    "WorkspaceAuditLogActor_Person",
+    "WorkspaceAuditLogActor_Token",
     "WorkspaceAuditLogItem",
-    "WorkspaceAuditLogItemActor",
-    "WorkspaceAuditLogItemPayloadSettingChangeMethod",
     "WorkspaceAuditLogItemPayloadSiteMembershipGranularAccess",
     "WorkspaceAuditLogItemPayloadSiteMembershipMethod",
     "WorkspaceAuditLogItemPayloadSiteMembershipSite",
@@ -859,10 +1561,35 @@ __all__ = [
     "WorkspaceAuditLogItem_WorkspaceMembership",
     "WorkspaceAuditLogItem_WorkspaceSetting",
     "WorkspaceAuditLogResponse",
+    "WorkspaceBulkRemoveResponse",
+    "WorkspaceBulkRemoveResponseResultsItem",
+    "WorkspaceBulkRemoveResponseResultsItemError",
+    "WorkspaceBulkRemoveResponseResultsItemErrorCode",
+    "WorkspaceBulkRemoveResponseResultsItemOutcome",
+    "WorkspaceBulkRemoveResponseResultsItemType",
+    "WorkspaceBulkRemoveResponseSummary",
+    "WorkspaceBulkRoleChangeResponse",
+    "WorkspaceBulkRoleChangeResponseResultsItem",
+    "WorkspaceBulkRoleChangeResponseResultsItemError",
+    "WorkspaceBulkRoleChangeResponseResultsItemErrorCode",
+    "WorkspaceBulkRoleChangeResponseResultsItemOutcome",
+    "WorkspaceBulkRoleChangeResponseResultsItemType",
+    "WorkspaceBulkRoleChangeResponseSummary",
     "WorkspaceInvitation",
     "WorkspaceInvitationAuditLogItem",
     "WorkspaceInvitationAuditLogItemEventSubType",
+    "WorkspaceInvite",
+    "WorkspaceInviteDefaultSiteRole",
+    "WorkspaceInviteRole",
+    "WorkspaceInviteStatus",
+    "WorkspaceMember",
+    "WorkspaceMemberRoles",
+    "WorkspaceMemberRolesSite",
+    "WorkspaceMemberRolesWorkspace",
+    "WorkspaceMembersResponse",
+    "WorkspaceMembersResponsePagination",
     "WorkspaceMembership",
     "WorkspaceMembershipAuditLogItem",
     "WorkspaceMembershipAuditLogItemEventSubType",
+    "Workspaces",
 ]
