@@ -10,7 +10,7 @@ from ......types.collection_item_post_single import CollectionItemPostSingle
 class MultipleItems(UniversalBaseModel):
     items: typing.Optional[typing.List[CollectionItemPostSingle]] = pydantic.Field(default=None)
     """
-    An array of items to create
+    The items to create. Each entry needs its own `fieldData`. Don't send a top-level `fieldData` with this shape.
     """
 
     if IS_PYDANTIC_V2:

@@ -21,6 +21,7 @@ from ...types.collection import Collection
 from ...types.collection_list import CollectionList
 from ...types.error import Error
 from ...types.field_create import FieldCreate
+from ...types.field_group import FieldGroup
 from pydantic import ValidationError
 
 # this is used as the default value for optional parameters
@@ -471,6 +472,144 @@ class RawCollectionsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
+    def patch(
+        self,
+        collection_id: str,
+        *,
+        display_name: typing.Optional[str] = OMIT,
+        singular_name: typing.Optional[str] = OMIT,
+        slug: typing.Optional[str] = OMIT,
+        field_groups: typing.Optional[typing.Sequence[FieldGroup]] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HttpResponse[Collection]:
+        """
+        Update a collection's display name, singular name, slug, or field groups.
+
+        **Field group rules:**
+        - A collection can have a maximum of 50 field groups
+        - Each `displayName` must be unique across all field groups in the collection
+        - Each `fieldId` must be unique across all field groups in the collection
+        - Ecommerce collections do not support field groups
+
+        Required scope | `cms:write`
+
+        Parameters
+        ----------
+        collection_id : str
+            Unique identifier for a Collection
+
+        display_name : typing.Optional[str]
+            Name given to the Collection
+
+        singular_name : typing.Optional[str]
+            The name of one Item in Collection (e.g. ”Blog Post” if the Collection is called “Blog Posts”)
+
+        slug : typing.Optional[str]
+            Slug of Collection in Site URL structure
+
+        field_groups : typing.Optional[typing.Sequence[FieldGroup]]
+            The list of field groups in the Collection. Replaces the existing field groups.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[Collection]
+            Request was successful
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"collections/{jsonable_encoder(collection_id)}",
+            base_url=self._client_wrapper.get_environment().base,
+            method="PATCH",
+            json={
+                "displayName": display_name,
+                "singularName": singular_name,
+                "slug": slug,
+                "fieldGroups": convert_and_respect_annotation_metadata(
+                    object_=field_groups, annotation=typing.Sequence[FieldGroup], direction="write"
+                ),
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    Collection,
+                    parse_obj_as(
+                        type_=Collection,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        Error,
+                        parse_obj_as(
+                            type_=Error,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        Error,
+                        parse_obj_as(
+                            type_=Error,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 429:
+                raise TooManyRequestsError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        Error,
+                        parse_obj_as(
+                            type_=Error,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        Error,
+                        parse_obj_as(
+                            type_=Error,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
 
 class AsyncRawCollectionsClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
@@ -852,6 +991,144 @@ class AsyncRawCollectionsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return AsyncHttpResponse(response=_response, data=None)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        Error,
+                        parse_obj_as(
+                            type_=Error,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        Error,
+                        parse_obj_as(
+                            type_=Error,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 429:
+                raise TooManyRequestsError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        Error,
+                        parse_obj_as(
+                            type_=Error,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        Error,
+                        parse_obj_as(
+                            type_=Error,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def patch(
+        self,
+        collection_id: str,
+        *,
+        display_name: typing.Optional[str] = OMIT,
+        singular_name: typing.Optional[str] = OMIT,
+        slug: typing.Optional[str] = OMIT,
+        field_groups: typing.Optional[typing.Sequence[FieldGroup]] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncHttpResponse[Collection]:
+        """
+        Update a collection's display name, singular name, slug, or field groups.
+
+        **Field group rules:**
+        - A collection can have a maximum of 50 field groups
+        - Each `displayName` must be unique across all field groups in the collection
+        - Each `fieldId` must be unique across all field groups in the collection
+        - Ecommerce collections do not support field groups
+
+        Required scope | `cms:write`
+
+        Parameters
+        ----------
+        collection_id : str
+            Unique identifier for a Collection
+
+        display_name : typing.Optional[str]
+            Name given to the Collection
+
+        singular_name : typing.Optional[str]
+            The name of one Item in Collection (e.g. ”Blog Post” if the Collection is called “Blog Posts”)
+
+        slug : typing.Optional[str]
+            Slug of Collection in Site URL structure
+
+        field_groups : typing.Optional[typing.Sequence[FieldGroup]]
+            The list of field groups in the Collection. Replaces the existing field groups.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[Collection]
+            Request was successful
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"collections/{jsonable_encoder(collection_id)}",
+            base_url=self._client_wrapper.get_environment().base,
+            method="PATCH",
+            json={
+                "displayName": display_name,
+                "singularName": singular_name,
+                "slug": slug,
+                "fieldGroups": convert_and_respect_annotation_metadata(
+                    object_=field_groups, annotation=typing.Sequence[FieldGroup], direction="write"
+                ),
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    Collection,
+                    parse_obj_as(
+                        type_=Collection,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
             if _response.status_code == 400:
                 raise BadRequestError(
                     headers=dict(_response.headers),
